@@ -1,0 +1,20 @@
+{
+  "globalDependencies": {
+    "core-js": "registry:dt/core-js#0.0.0+20160725163759",
+    "d3": "registry:dt/d3#0.0.0+20160907005744",
+    "lodash": "registry:dt/lodash#4.14.0+20161004174455",
+    "node": "registry:dt/node#6.0.0+20160831021119",
+    "react": "registry:dt/react#0.14.0+20161008064207",
+    "react-bootstrap": "registry:dt/react-bootstrap#0.0.0+20160806072414",
+    "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
+    "react-redux": "registry:dt/react-redux#4.4.0+20160908183346",
+    "react-router": "registry:dt/react-router#2.0.0+20160928130202",
+    "redux": "registry:dt/redux#3.5.2+20160703092728",
+    "redux-form": "registry:dt/redux-form#4.0.3+20160907012813",
+    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20161004182750"
+  },
+  "dependencies": {
+    "react": "registry:npm/react#15.0.1+20160601175240",
+    "react-dom": "registry:npm/react-dom#15.0.1+20160826174104"
+  }
+}

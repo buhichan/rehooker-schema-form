@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "jsx":"react",
+    "outDir":"./build"
+  },
+  "exclude": ["node_modules"]
+}
