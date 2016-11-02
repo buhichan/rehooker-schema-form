@@ -26,7 +26,22 @@ let schema = [
                 name:"梨子",
                 value:"pear"
             }
-        ]
+        ],
+        normalize:(value,prevValue,formData)=>{
+            if(value==='pear')
+                return [
+                    {
+                        key:"conditional1",
+                        hide:true
+                    }
+                ];
+            else return [
+                {
+                    key:"conditional1",
+                    hide:false
+                }
+            ]
+        }
     },{
         key:"checkbox",
         type:"checkbox",
@@ -74,11 +89,7 @@ let schema = [
     },{
         key:"conditional1",
         type:"text",
-        label:"当单选框为梨子的时候，隐藏",
-        relation:(formData,schema)=>{
-            schema.hide = formData.select === 'pear';
-            return schema;
-        }
+        label:"当单选框为梨子的时候，隐藏"
     },{
         key:"nest.1",
         type:"text",
@@ -94,7 +105,7 @@ let schema = [
                 label:"日期"
             },
             {
-                type:"datetime",
+                type:"datetime-local",
                 key:"nested[1]",
                 label:"日期时间"
             }
@@ -113,40 +124,96 @@ let schema = [
                 value:"animal"
             }
         ],
+        normalize:(value):any=>{
+            if(value ==='animal'){
+                return [
+                    {
+                        key:"dependant_lv2",
+                        hide:false,
+                        value:null,
+                        options:[
+                            {
+                                name: "狗",
+                                value: "dog"
+                            }, {
+                                name: "猫",
+                                value: "cat"
+                            }
+                        ]
+                    },{
+                        key:"dependant_lv3",
+                        hide:true,
+                        value:null
+                    }
+                ]
+            }else if(value ==='plant'){
+                return [
+                    {
+                        key:"dependant_lv2",
+                        hide:false,
+                        value:null,
+                        options:[
+                            {
+                                name: "苹果",
+                                value: "apple"
+                            },
+                            {
+                                name: "梨子",
+                                value: "pear"
+                            }
+                        ]
+                    },{
+                        key:"dependant_lv3",
+                        hide:true,
+                        value:null
+                    }
+                ]
+            }else{
+                return [
+                    {
+                        key:"dependant_lv2",
+                        hide:true,
+                        value:null
+                    },{
+                        key:"dependant_lv3",
+                        hide:true,
+                        value:null
+                    }
+                ]
+            }
+        }
     },{
         key:"dependant_lv2",
         type:"select",
         label:"有依赖的单选lv2",
-        relation:(formValue,schema)=>{
-            if(formValue['depandant_lv1']=="animal"){
-                schema.hide = false;
-                schema.options = [
+        normalize:(value):any=>{
+            if(value ==='dog'){
+                return [
                     {
-                        name: "狗",
-                        value: "dog"
-                    }, {
-                        name: "猫",
-                        value: "cat"
+                        key:"dependant_lv3",
+                        hide:false,
+                        value:null,
+                        options:[{name:'dogg1',value:"dogg1"}, {name:'doggy',value:'doggy'}, {name:'puppy',value:'puppy'}]
                     }
                 ]
-            }else if(formValue['depandant_lv1']=="plant") {
-                schema.hide = false;
-                schema.options = [
+            }else if(value ==='cat'){
+                return [
                     {
-                        name: "苹果",
-                        value: "apple"
-                    },
-                    {
-                        name: "梨子",
-                        value: "pear"
+                        key:"dependant_lv3",
+                        hide:false,
+                        value:null,
+                        options:[{name:'kitten',value:'kitten'}, {name:'cat',value:'cat'}, {name:'kitty',value:'kitty'}]
                     }
-                ];
+                ]
+            }else{
+                return [
+                    {
+                        key:"dependant_lv3",
+                        hide:true,
+                        value:null
+                    }
+                ]
             }
-            else{
-                schema.options = [];
-                schema.hide = true;
-            }
-            return schema;
         },
         options:[],
         hide:true
@@ -155,31 +222,15 @@ let schema = [
         type:"select",
         label:"有依赖的单选lv3",
         options:[],
-        hide:true,
-        relation:(formValue,schema)=>{
-            if(formValue['depandant_lv1']=="animal"){
-                if(formValue['dependant_lv2']=="dog"){
-                    schema.hide = false;
-                    schema.options = [{name:'dogg1',value:"doggy"}, {name:'doggy',value:'doggy'}, {name:'puppy',value:'puppy'}]
-                }else if(formValue['dependant_lv2']=='cat'){
-                    schema.hide = false;
-                    schema.options = [{name:'kitten',value:'kitten'}, {name:'cat',value:'cat'}, {name:'kitty',value:'kitty'}]
-                }else{
-                    schema.options = [];
-                    schema.hide = true;
-                }
-            }else {
-                schema.options = [];
-                schema.hide = true;
-            }
-            return schema;
-        }
+        hide:true
     }
 ];
 
 const reducer = combineReducers({
     data:(state,action)=>{
-        if(!state) return {};
+        if(!state) return {
+            text:2
+        };
         else return state
     },
     formSchema: function(state,action){
@@ -197,7 +248,13 @@ const store = createStore(reducer);
 )
 class App extends React.Component<any,any>{
     render(){
-        return <ReduxSchemaForm form="random" schema={this.props.formSchema} data={this.props.data} onSubmit={console.log}>
+        return <ReduxSchemaForm form="random" schema={this.props.formSchema} data={this.props.data} onSubmit={(values)=>{
+            if(values.text){
+                return new Promise(resolve=>{
+                    setTimeout(resolve,3000)
+                })
+            }else return true;
+        }}>
             <pre>data:{
                 this.props.form.random && JSON.stringify(this.props.form.random.values,null,"\t")
             }</pre>
