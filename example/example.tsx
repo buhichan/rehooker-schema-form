@@ -1,3 +1,6 @@
+
+/// <reference path="../src/declares.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider,connect } from 'react-redux'
@@ -248,7 +251,7 @@ const store = createStore(reducer);
 )
 class App extends React.Component<any,any>{
     render(){
-        return <ReduxSchemaForm form="random" schema={this.props.formSchema} data={this.props.data} onSubmit={(values)=>{
+        return <ReduxSchemaForm form="random" schema={this.props['formSchema']} initialValues={this.props['data']} onSubmit={(values)=>{
             if(values.text){
                 return new Promise(resolve=>{
                     setTimeout(resolve,3000)
@@ -256,7 +259,7 @@ class App extends React.Component<any,any>{
             }else return true;
         }}>
             <pre>data:{
-                this.props.form.random && JSON.stringify(this.props.form.random.values,null,"\t")
+                this.props['form'].random && JSON.stringify(this.props['form'].random.values,null,"\t")
             }</pre>
         </ReduxSchemaForm>
     }

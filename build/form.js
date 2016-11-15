@@ -1,4 +1,9 @@
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -19,13 +24,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 /**
  * Created by YS on 2016/10/31.
  */
-const React = require('react');
+///<reference path="./declares.d.ts" />
+var React = require('react');
 require("./main.css");
-const redux_form_1 = require('redux-form');
+var redux_form_1 = require('redux-form');
 require("whatwg-fetch");
-let Field = require("redux-form").Field;
+var Field = require("redux-form").Field;
 function changeField(parsedSchema, value) {
-    for (let i = 0; i < parsedSchema.length; i++) {
+    for (var i = 0; i < parsedSchema.length; i++) {
         if (parsedSchema[i].key === value.key) {
             parsedSchema[i] = Object.assign(parsedSchema[i], value);
             return true;
@@ -37,91 +43,112 @@ function changeField(parsedSchema, value) {
     }
     return false;
 }
-let ReduxSchemaForm = class ReduxSchemaForm extends React.Component {
-    constructor() {
-        super();
+var customTypes = new Map();
+function addType(name, component) {
+    customTypes.set(name, component);
+}
+exports.addType = addType;
+var ReduxSchemaForm = (function (_super) {
+    __extends(ReduxSchemaForm, _super);
+    function ReduxSchemaForm() {
+        _super.call(this);
         this.state = {
             parsedSchema: []
         };
     }
-    parseField(field, prefix) {
-        let promises = [];
-        let parsedField = (Object.assign({}, field));
+    ReduxSchemaForm.prototype.parseField = function (field, prefix) {
+        var _this = this;
+        var promises = [];
+        var parsedField = (Object.assign({}, field));
         parsedField.parsedKey = (prefix ? (prefix + ".") : "") + parsedField.key;
         if (field.normalize)
-            parsedField.normalize = (...args) => {
-                let newFields = field.normalize.apply(null, args);
-                let result = newFields.reduce((prev, curr) => {
-                    return changeField(this.state.parsedSchema, curr) || prev;
+            parsedField.normalize = function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i - 0] = arguments[_i];
+                }
+                var newFields = field.normalize.apply(null, args);
+                var result = newFields.reduce(function (prev, curr) {
+                    return changeField(_this.state.parsedSchema, curr) || prev;
                 }, true);
                 if (result)
-                    this.setState({
-                        parsedSchema: this.state.parsedSchema
+                    _this.setState({
+                        parsedSchema: _this.state.parsedSchema
                     });
                 return args[0];
             };
         if (field.children instanceof Array) {
-            promises.push(this.parseSchema(field.children, parsedField.key).then((children) => {
+            promises.push(this.parseSchema(field.children, parsedField.key).then(function (children) {
                 parsedField['children'] = children;
             }));
         }
-        if (typeof field.options === 'string') {
-            let src = field.options;
-            promises.push(fetch(src).then(res => res.json()).then(data => {
-                parsedField['options'] = data;
+        if (field.options && !(field.options instanceof Array)) {
+            var asyncOptions_1 = field.options;
+            promises.push(fetch(asyncOptions_1.url).then(function (res) { return res.json(); }).then(function (data) {
+                parsedField['options'] = asyncOptions_1.mapResToOptions ? asyncOptions_1.mapResToOptions(data) : data;
                 return parsedField;
             }));
         }
         else {
             promises.push(Promise.resolve(field));
         }
-        return Promise.all(promises).then(() => {
+        return Promise.all(promises).then(function () {
             return parsedField;
         });
-    }
-    parseSchema(newSchema, prefix = "") {
-        let promises = newSchema.map(field => this.parseField(field, prefix));
-        return new Promise(resolve => {
+    };
+    ReduxSchemaForm.prototype.parseSchema = function (newSchema, prefix) {
+        var _this = this;
+        if (prefix === void 0) { prefix = ""; }
+        var promises = newSchema.map(function (field) { return _this.parseField(field, prefix); });
+        return new Promise(function (resolve) {
             Promise.all(promises).then(resolve);
         });
-    }
-    componentWillReceiveProps(newProps) {
+    };
+    ReduxSchemaForm.prototype.componentWillReceiveProps = function (newProps) {
+        var _this = this;
         if (newProps.schema !== this.props.schema) {
-            this.parseSchema(newProps.schema).then(schema => {
-                this.setState({
+            this.parseSchema(newProps.schema).then(function (schema) {
+                !_this.isUnmounting && _this.setState({
                     parsedSchema: schema
                 });
             });
         }
-        if (newProps.data !== this.props.data) {
-            this.props.initialize(this.props.data, true);
-        }
-    }
-    componentDidMount() {
-        this.parseSchema(this.props.schema).then(schema => {
-            this.setState({
+    };
+    ReduxSchemaForm.prototype.componentDidMount = function () {
+        var _this = this;
+        this.parseSchema(this.props.schema).then(function (schema) {
+            !_this.isUnmounting && _this.setState({
                 parsedSchema: schema
             });
-            this.props.initialize(this.props.data, true);
         });
-    }
-    renderField(fieldSchema) {
+    };
+    ReduxSchemaForm.prototype.componentWillUnmount = function () {
+        this.isUnmounting = true;
+    };
+    ReduxSchemaForm.prototype.renderField = function (fieldSchema) {
+        var _this = this;
         if (fieldSchema.hide)
             return React.createElement("div", null);
-        let knownProps = {
+        var knownProps = {
             type: fieldSchema.type,
-            value: fieldSchema.value,
             required: fieldSchema.required,
             disabled: fieldSchema.disabled,
             placeholder: fieldSchema.placeholder,
             normalize: fieldSchema.normalize
         };
+        if (customTypes.has(fieldSchema.type)) {
+            var customWidget = customTypes.get(fieldSchema.type);
+            return React.createElement("div", {className: "form-group"}, 
+                React.createElement("label", {className: "control-label col-md-2", htmlFor: this.props.form + '-' + fieldSchema.parsedKey}, fieldSchema.label), 
+                React.createElement("div", {className: "col-md-10"}, 
+                    React.createElement(Field, __assign({className: "form-control", name: fieldSchema.parsedKey}, knownProps, {component: customWidget}))
+                ));
+        }
         switch (fieldSchema.type) {
             case "text":
-            case "textarea":
             case "color":
+            case "password":
             case "date":
-            case "datetime":
             case "datetime-local":
             case "number":
             case "file":
@@ -129,6 +156,12 @@ let ReduxSchemaForm = class ReduxSchemaForm extends React.Component {
                     React.createElement("label", {className: "control-label col-md-2", htmlFor: this.props.form + '-' + fieldSchema.parsedKey}, fieldSchema.label), 
                     React.createElement("div", {className: "col-md-10"}, 
                         React.createElement(Field, __assign({className: "form-control", name: fieldSchema.parsedKey}, knownProps, {component: "input"}))
+                    ));
+            case "textarea":
+                return React.createElement("div", {className: "form-group"}, 
+                    React.createElement("label", {className: "control-label col-md-2", htmlFor: this.props.form + '-' + fieldSchema.parsedKey}, fieldSchema.label), 
+                    React.createElement("div", {className: "col-md-10"}, 
+                        React.createElement(Field, __assign({className: "form-control", name: fieldSchema.parsedKey}, knownProps, {component: "textarea"}))
                     ));
             case "checkbox":
                 return React.createElement("div", {className: "form-group"}, 
@@ -142,27 +175,28 @@ let ReduxSchemaForm = class ReduxSchemaForm extends React.Component {
                     React.createElement("div", {className: "col-md-10"}, 
                         React.createElement(Field, __assign({className: "form-control", name: fieldSchema.parsedKey}, knownProps, {component: "select"}), 
                             React.createElement("option", null), 
-                            fieldSchema.options.map((option, i) => React.createElement("option", {key: i, value: option.value}, option.name)))
+                            fieldSchema.options.map(function (option, i) { return React.createElement("option", {key: i, value: option.value}, option.name); }))
                     ));
             case "group":
                 return React.createElement("fieldset", null, 
                     React.createElement("legend", null, fieldSchema.label), 
-                    fieldSchema.children.map(childField => {
-                        return React.createElement("div", {key: childField.key}, this.renderField(childField));
+                    fieldSchema.children.map(function (childField) {
+                        return React.createElement("div", {key: childField.key}, _this.renderField(childField));
                     }));
             default:
                 return React.createElement("span", null, 
                     "不可识别的字段:", 
                     JSON.stringify(fieldSchema));
         }
-    }
-    submitable() {
+    };
+    ReduxSchemaForm.prototype.submitable = function () {
         return !this.props['pristine'] && !this.props['submitting'];
-    }
-    render() {
-        return React.createElement("form", {className: "form-horizontal", onSubmit: this.props["handleSubmit"]}, 
-            this.state.parsedSchema.map(field => {
-                return React.createElement("div", {key: field.key}, this.renderField(field));
+    };
+    ReduxSchemaForm.prototype.render = function () {
+        var _this = this;
+        return React.createElement("form", {className: "form-horizontal", onSubmit: this.props['handleSubmit']}, 
+            this.state.parsedSchema.map(function (field) {
+                return React.createElement("div", {key: field.key}, _this.renderField(field));
             }), 
             React.createElement("div", {className: "text-center"}, 
                 React.createElement("div", {className: "btn-group"}, 
@@ -170,14 +204,15 @@ let ReduxSchemaForm = class ReduxSchemaForm extends React.Component {
                     React.createElement("button", {type: "button", className: "btn btn-default" + (!this.submitable() ? " disabled" : ""), disabled: !this.submitable.apply(this), onClick: this.props['reset']}, "重置"))
             ), 
             this.props.children);
-    }
-};
-ReduxSchemaForm = __decorate([
-    redux_form_1.reduxForm({
-        fields: [],
-        form: "default"
-    }), 
-    __metadata('design:paramtypes', [])
-], ReduxSchemaForm);
+    };
+    ReduxSchemaForm = __decorate([
+        redux_form_1.reduxForm({
+            fields: [],
+            form: "default"
+        }), 
+        __metadata('design:paramtypes', [])
+    ], ReduxSchemaForm);
+    return ReduxSchemaForm;
+}(React.Component));
 exports.ReduxSchemaForm = ReduxSchemaForm;
 //# sourceMappingURL=form.js.map

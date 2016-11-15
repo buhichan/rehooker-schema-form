@@ -2,7 +2,7 @@
   "name": "redux-typescript-webpack",
   "version": "0.0.1",
   "description": "redux-typescript-webpack",
-  "main": "build/form.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git@gitlab.ucloudadmin.com:buhi/redux-typescript-webpack.git"

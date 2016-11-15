@@ -1,43 +1,45 @@
 /**
  * Created by YS on 2016/10/31.
  */
+///<reference path="./declares.d.ts" />
 import * as React from 'react'
 import "./main.css"
 import {reduxForm} from 'redux-form'
 import "whatwg-fetch"
 let Field = require("redux-form").Field;
+import {MyReduxFormConfig} from "./redux-form-config";
 
+export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number";
+
+export type Options = {name:string,value:string}[]
+export type AsyncOptions = {
+    url:string,
+    mapResToOptions?:(res:any)=>Options
+};
 export interface FormFieldSchema{
     key:string,
-    type: string,//"text"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color",
+    type: SupportedFieldType,
     label:string,
     hide?:boolean,
     placeholder?:string,
     value?:any,
     required?:boolean,
     disabled?:boolean,
-    normalize:(value,previousValue,allValues)=>any
-    options?:{
-        name:string,
-        value:any
-    }[] | string,
+    normalize?:(value,previousValue,allValues)=>any
+    options?:Options | AsyncOptions,
     children?:FormFieldSchema[]
 }
 
 export interface ParsedFormFieldSchema{
     key:string,
     parsedKey:string,
-    type: string,//"text"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color",
+    type: SupportedFieldType,
     label:string,
     hide?:boolean,
     placeholder?:string,
-    value?:any,
     required?:boolean,
     disabled?:boolean,
-    options?:{
-        name:string,
-        value:any
-    }[],
+    options?:Options,
     normalize:(value,previousValue,allValues)=>any
     children?:ParsedFormFieldSchema[]
 }
@@ -54,18 +56,23 @@ function changeField(parsedSchema:ParsedFormFieldSchema[],value:ParsedFormFieldS
     return false;
 }
 
+let customTypes = new Map();
+
+export function addType(name,component:React.ComponentClass<any>|React.StatelessComponent<any>){
+    customTypes.set(name,component);
+}
+
 @reduxForm({
     fields:[],
     form:"default"
 })
-export class ReduxSchemaForm extends React.Component<{
-    form:string,
-    data:any,
+export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
+    fields?:string[]
     schema:FormFieldSchema[],
     onSubmit:(...args:any[])=>void,
     dispatch?:(...args:any[])=>any,
-    initialize?:(data:any,keepDirty:boolean)=>any
-}&{[id:string]:any},{
+    initialize?:(data:any,keepDirty:boolean)=>any,
+},{
     parsedSchema?:ParsedFormFieldSchema[]
 }>{
     constructor(){
@@ -74,6 +81,7 @@ export class ReduxSchemaForm extends React.Component<{
             parsedSchema: []
         }
     }
+    isUnmounting:boolean;
     parseField(field:FormFieldSchema,prefix):Promise<ParsedFormFieldSchema>{
         let promises = [];
         let parsedField = (Object.assign({},field)) as ParsedFormFieldSchema;
@@ -95,10 +103,10 @@ export class ReduxSchemaForm extends React.Component<{
                 parsedField['children'] = children as ParsedFormFieldSchema[];
             }))
         }
-        if(typeof field.options === 'string') {
-            let src = field.options as string;
-            promises.push(fetch(src).then(res=>res.json()).then(data=>{
-                parsedField['options'] = data;
+        if(field.options && !(field.options instanceof Array)) {
+            let asyncOptions = field.options as AsyncOptions;
+            promises.push(fetch(asyncOptions.url).then(res=>res.json()).then(data=>{
+                parsedField['options'] = asyncOptions.mapResToOptions?asyncOptions.mapResToOptions(data):data;
                 return parsedField;
             }))
         }else{
@@ -117,39 +125,45 @@ export class ReduxSchemaForm extends React.Component<{
     componentWillReceiveProps(newProps){
         if(newProps.schema!==this.props.schema){
             this.parseSchema(newProps.schema).then(schema=>{
-                this.setState({
+                !this.isUnmounting && this.setState({
                     parsedSchema:schema
                 })
             });
         }
-        if(newProps.data!==this.props.data){
-            this.props.initialize(this.props.data,true)
-        }
     }
     componentDidMount(){
         this.parseSchema(this.props.schema).then(schema=>{
-            this.setState({
+            !this.isUnmounting && this.setState({
                 parsedSchema:schema
             });
-            this.props.initialize(this.props.data,true)
         })
+    }
+    componentWillUnmount(){
+        this.isUnmounting = true;
     }
     renderField(fieldSchema:ParsedFormFieldSchema){
         if(fieldSchema.hide) return <div></div>;
         let knownProps = {
             type:fieldSchema.type,
-            value:fieldSchema.value,
             required:fieldSchema.required,
             disabled:fieldSchema.disabled,
             placeholder:fieldSchema.placeholder,
             normalize:fieldSchema.normalize
         };
+        if(customTypes.has(fieldSchema.type)){
+            let customWidget = customTypes.get(fieldSchema.type);
+            return <div className="form-group">
+                <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
+                <div className="col-md-10">
+                    <Field className="form-control" name={fieldSchema.parsedKey} {...knownProps} component={customWidget}/>
+                </div>
+            </div>;
+        }
         switch(fieldSchema.type){
             case "text":
-            case "textarea":
             case "color":
+            case "password":
             case "date":
-            case "datetime":
             case "datetime-local":
             case "number":
             case "file":
@@ -157,6 +171,13 @@ export class ReduxSchemaForm extends React.Component<{
                     <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
                     <div className="col-md-10">
                         <Field className="form-control" name={fieldSchema.parsedKey} {...knownProps} component="input"/>
+                    </div>
+                </div>;
+            case "textarea":
+                return <div className="form-group">
+                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
+                    <div className="col-md-10">
+                        <Field className="form-control" name={fieldSchema.parsedKey} {...knownProps} component="textarea"/>
                     </div>
                 </div>;
             case "checkbox":
@@ -197,7 +218,7 @@ export class ReduxSchemaForm extends React.Component<{
         return !this.props['pristine'] && !this.props['submitting'];
     }
     render(){
-        return <form className="form-horizontal" onSubmit={this.props["handleSubmit"]}>
+        return <form className="form-horizontal" onSubmit={this.props['handleSubmit']}>
             {
                 this.state.parsedSchema.map(field=>{
                     return <div key={field.key}>

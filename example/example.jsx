@@ -10,6 +10,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+/// <reference path="../src/declares.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 var React = require('react');
 var ReactDOM = require('react-dom');
 var react_redux_1 = require('react-redux');
@@ -256,7 +258,7 @@ var App = (function (_super) {
         _super.apply(this, arguments);
     }
     App.prototype.render = function () {
-        return <form_1.ReduxSchemaForm form="random" schema={this.props.formSchema} data={this.props.data} onSubmit={function (values) {
+        return <form_1.ReduxSchemaForm form="random" schema={this.props['formSchema']} initialValues={this.props['data']} onSubmit={function (values) {
             if (values.text) {
                 return new Promise(function (resolve) {
                     setTimeout(resolve, 3000);
@@ -265,7 +267,7 @@ var App = (function (_super) {
             else
                 return true;
         }}>
-            <pre>data:{this.props.form.random && JSON.stringify(this.props.form.random.values, null, "\t")}</pre>
+            <pre>data:{this.props['form'].random && JSON.stringify(this.props['form'].random.values, null, "\t")}</pre>
         </form_1.ReduxSchemaForm>;
     };
     App = __decorate([
