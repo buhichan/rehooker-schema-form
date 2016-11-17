@@ -41,7 +41,12 @@ export interface ParsedFormFieldSchema {
     normalize: (value, previousValue, allValues) => any;
     children?: ParsedFormFieldSchema[];
 }
-export declare function addType(name: any, component: React.ComponentClass<any> | React.StatelessComponent<any>): void;
+export declare type customWidgetProps = {
+    form: string;
+    fieldSchema: ParsedFormFieldSchema;
+    knownProps: any;
+};
+export declare function addType(name: any, widget: React.ComponentClass<customWidgetProps> | React.StatelessComponent<customWidgetProps>): void;
 export declare class ReduxSchemaForm extends React.Component<MyReduxFormConfig & {
     fields?: string[];
     schema: FormFieldSchema[];

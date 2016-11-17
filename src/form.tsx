@@ -57,9 +57,18 @@ function changeField(parsedSchema:ParsedFormFieldSchema[],value:ParsedFormFieldS
 }
 
 let customTypes = new Map();
+export type customWidgetProps = {
+    form:string,
+    fieldSchema:ParsedFormFieldSchema,
+    knownProps:any
+}
+export function addType(name,widget: React.ComponentClass<customWidgetProps>|React.StatelessComponent<customWidgetProps>) {
+    customTypes.set(name,widget);
+}
 
-export function addType(name,component:React.ComponentClass<any>|React.StatelessComponent<any>){
-    customTypes.set(name,component);
+function decorate(obj,prop,cb){
+    let fn = obj[prop];
+    obj[prop] = cb(fn);
 }
 
 @reduxForm({
@@ -151,21 +160,23 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
             normalize:fieldSchema.normalize
         };
         if(customTypes.has(fieldSchema.type)){
-            let customWidget = customTypes.get(fieldSchema.type);
-            return <div className="form-group">
-                <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
-                <div className="col-md-10">
-                    <Field className="form-control" name={fieldSchema.parsedKey} {...knownProps} component={customWidget}/>
-                </div>
-            </div>;
+            let CustomWidget:React.ComponentClass<customWidgetProps> = customTypes.get(fieldSchema.type) as any;
+            return <CustomWidget form={this.props.form} fieldSchema={fieldSchema} knownProps={knownProps} />
         }
+        //noinspection FallThroughInSwitchStatementJS
         switch(fieldSchema.type){
+            case "number":
+                decorate(knownProps,"normalize",(normalize)=>{
+                    return (...args)=>{
+                        args[0] = Number(args[0]);
+                        return normalize?normalize(...args):args[0];
+                    }
+                });
             case "text":
             case "color":
             case "password":
             case "date":
             case "datetime-local":
-            case "number":
             case "file":
                 return <div className="form-group">
                     <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>

@@ -44,10 +44,14 @@ function changeField(parsedSchema, value) {
     return false;
 }
 var customTypes = new Map();
-function addType(name, component) {
-    customTypes.set(name, component);
+function addType(name, widget) {
+    customTypes.set(name, widget);
 }
 exports.addType = addType;
+function decorate(obj, prop, cb) {
+    var fn = obj[prop];
+    obj[prop] = cb(fn);
+}
 var ReduxSchemaForm = (function (_super) {
     __extends(ReduxSchemaForm, _super);
     function ReduxSchemaForm() {
@@ -137,20 +141,27 @@ var ReduxSchemaForm = (function (_super) {
             normalize: fieldSchema.normalize
         };
         if (customTypes.has(fieldSchema.type)) {
-            var customWidget = customTypes.get(fieldSchema.type);
-            return React.createElement("div", {className: "form-group"}, 
-                React.createElement("label", {className: "control-label col-md-2", htmlFor: this.props.form + '-' + fieldSchema.parsedKey}, fieldSchema.label), 
-                React.createElement("div", {className: "col-md-10"}, 
-                    React.createElement(Field, __assign({className: "form-control", name: fieldSchema.parsedKey}, knownProps, {component: customWidget}))
-                ));
+            var CustomWidget = customTypes.get(fieldSchema.type);
+            return React.createElement(CustomWidget, {form: this.props.form, fieldSchema: fieldSchema, knownProps: knownProps});
         }
+        //noinspection FallThroughInSwitchStatementJS
         switch (fieldSchema.type) {
+            case "number":
+                decorate(knownProps, "normalize", function (normalize) {
+                    return function () {
+                        var args = [];
+                        for (var _i = 0; _i < arguments.length; _i++) {
+                            args[_i - 0] = arguments[_i];
+                        }
+                        args[0] = Number(args[0]);
+                        return normalize ? normalize.apply(void 0, args) : args[0];
+                    };
+                });
             case "text":
             case "color":
             case "password":
             case "date":
             case "datetime-local":
-            case "number":
             case "file":
                 return React.createElement("div", {className: "form-group"}, 
                     React.createElement("label", {className: "control-label col-md-2", htmlFor: this.props.form + '-' + fieldSchema.parsedKey}, fieldSchema.label), 
