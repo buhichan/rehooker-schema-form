@@ -19,15 +19,15 @@
     "deploy": "npm run build && cd dist && rm last -rf && mv current last && mv `date +'%Y-%m-%d'` current",
     "deploy:dev": "npm run build:dev && cd dist && rm last -rf && mv current last && mv `date +'%Y-%m-%d'` current"
   },
-  "dependencies": {
+  "peerDependencies": {
     "bootstrap": "^3.3.7",
     "font-awesome": "^4.7.0",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0",
-    "redux-form": "^6.1.1",
-    "whatwg-fetch": "^1.0.0"
+    "redux-form": "^6.2.0",
+    "whatwg-fetch": "^2.0.0"
   },
   "keywords": [
     "redux-typescript-webpack"

@@ -3,13 +3,12 @@
  */
 ///<reference path="./declares.d.ts" />
 import * as React from 'react'
-import "./main.css"
 import {reduxForm} from 'redux-form'
 import "whatwg-fetch"
-let Field = require("redux-form").Field;
+let {Field,FieldArray} = require("redux-form");
 import {MyReduxFormConfig} from "./redux-form-config";
 
-export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number";
+export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array";
 
 export type Options = {name:string,value:string}[]
 export type AsyncOptions = {
@@ -58,9 +57,9 @@ function changeField(parsedSchema:ParsedFormFieldSchema[],value:ParsedFormFieldS
 
 let customTypes = new Map();
 export type customWidgetProps = {
-    form:string,
     fieldSchema:ParsedFormFieldSchema,
-    knownProps:any
+    knownProps:any,
+    renderField:(fieldSchema:ParsedFormFieldSchema)=>JSX.Element
 }
 export function addType(name,widget: React.ComponentClass<customWidgetProps>|React.StatelessComponent<customWidgetProps>) {
     customTypes.set(name,widget);
@@ -77,9 +76,11 @@ function decorate(obj,prop,cb){
 })
 export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
     fields?:string[]
+    fetch?:typeof window.fetch,
     schema:FormFieldSchema[],
-    onSubmit:(...args:any[])=>void,
+    onSubmit?:(...args:any[])=>void,
     dispatch?:(...args:any[])=>any,
+    noButton?:boolean,
     initialize?:(data:any,keepDirty:boolean)=>any,
 },{
     parsedSchema?:ParsedFormFieldSchema[]
@@ -113,7 +114,8 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
             }))
         }
         if(field.options && !(field.options instanceof Array)) {
-            let asyncOptions = field.options as AsyncOptions;
+            const asyncOptions = field.options as AsyncOptions;
+            const fetch = this.props.fetch || window.fetch;
             promises.push(fetch(asyncOptions.url).then(res=>res.json()).then(data=>{
                 parsedField['options'] = asyncOptions.mapResToOptions?asyncOptions.mapResToOptions(data):data;
                 return parsedField;
@@ -130,6 +132,19 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
         return new Promise(resolve=>{
             Promise.all(promises).then(resolve)
         });
+    }
+    DefaultArrayFieldRenderer(props){
+        return <div>
+            {
+                props.map((name,i)=>{
+                    return <div key={i}>
+                        {this.renderField(props.fieldSchema.children[i])}
+                        <button onClick={props.remove(i)}><i className="fa fa-minus"/></button>
+                    </div>
+                })
+            }
+            <button  onClick={props.push()}><i className="fa fa-plus" /></button>
+        </div>
     }
     componentWillReceiveProps(newProps){
         if(newProps.schema!==this.props.schema){
@@ -161,7 +176,7 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
         };
         if(customTypes.has(fieldSchema.type)){
             let CustomWidget:React.ComponentClass<customWidgetProps> = customTypes.get(fieldSchema.type) as any;
-            return <CustomWidget form={this.props.form} fieldSchema={fieldSchema} knownProps={knownProps} />
+            return <CustomWidget fieldSchema={fieldSchema} knownProps={knownProps} renderField={this.renderField.bind(this)}/>
         }
         //noinspection FallThroughInSwitchStatementJS
         switch(fieldSchema.type){
@@ -210,6 +225,13 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
                         </Field>
                     </div>
                 </div>;
+            case "array":
+                return <div className="form-group">
+                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
+                    <div className="col-md-10">
+                        <FieldArray name={fieldSchema.parsedKey} {...knownProps} fieldSchema={fieldSchema} component={this.DefaultArrayFieldRenderer.bind(this)}/>
+                    </div>
+                </div>;
             case "group":
                 return <fieldset>
                     <legend>{fieldSchema.label}</legend>
@@ -237,12 +259,14 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
                     </div>
                 })
             }
-            <div className="text-center">
-                <div className="btn-group">
-                    <button type="submit" className={"btn btn-primary"+(!this.submitable()?" disabled":"")} disabled={!this.submitable.apply(this)}>提交</button>
-                    <button type="button" className={"btn btn-default"+(!this.submitable()?" disabled":"")} disabled={!this.submitable.apply(this)} onClick={this.props['reset']}>重置</button>
+            {
+                !this.props.noButton && <div className="text-center">
+                    <div className="btn-group">
+                        <button type="submit" className={"btn btn-primary"+(!this.submitable()?" disabled":"")} disabled={!this.submitable.apply(this)}>提交</button>
+                        <button type="button" className={"btn btn-default"+(!this.submitable()?" disabled":"")} disabled={!this.submitable.apply(this)} onClick={this.props['reset']}>重置</button>
+                    </div>
                 </div>
-            </div>
+            }
             {this.props.children}
         </form>
     }

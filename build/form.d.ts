@@ -3,10 +3,9 @@
  * Created by YS on 2016/10/31.
  */
 import * as React from 'react';
-import "./main.css";
 import "whatwg-fetch";
 import { MyReduxFormConfig } from "./redux-form-config";
-export declare type SupportedFieldType = "text" | "password" | "file" | "select" | "date" | 'datetime-local' | "checkbox" | "textarea" | "group" | "color" | "number";
+export declare type SupportedFieldType = "text" | "password" | "file" | "select" | "date" | 'datetime-local' | "checkbox" | "textarea" | "group" | "color" | "number" | "array";
 export declare type Options = {
     name: string;
     value: string;
@@ -42,16 +41,18 @@ export interface ParsedFormFieldSchema {
     children?: ParsedFormFieldSchema[];
 }
 export declare type customWidgetProps = {
-    form: string;
     fieldSchema: ParsedFormFieldSchema;
     knownProps: any;
+    renderField: (fieldSchema: ParsedFormFieldSchema) => JSX.Element;
 };
 export declare function addType(name: any, widget: React.ComponentClass<customWidgetProps> | React.StatelessComponent<customWidgetProps>): void;
 export declare class ReduxSchemaForm extends React.Component<MyReduxFormConfig & {
     fields?: string[];
+    fetch?: typeof window.fetch;
     schema: FormFieldSchema[];
-    onSubmit: (...args: any[]) => void;
+    onSubmit?: (...args: any[]) => void;
     dispatch?: (...args: any[]) => any;
+    noButton?: boolean;
     initialize?: (data: any, keepDirty: boolean) => any;
 }, {
     parsedSchema?: ParsedFormFieldSchema[];
@@ -60,6 +61,7 @@ export declare class ReduxSchemaForm extends React.Component<MyReduxFormConfig &
     isUnmounting: boolean;
     parseField(field: FormFieldSchema, prefix: any): Promise<ParsedFormFieldSchema>;
     parseSchema(newSchema: FormFieldSchema[], prefix?: string): Promise<ParsedFormFieldSchema[]>;
+    DefaultArrayFieldRenderer(props: any): JSX.Element;
     componentWillReceiveProps(newProps: any): void;
     componentDidMount(): void;
     componentWillUnmount(): void;

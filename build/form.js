@@ -26,10 +26,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
  */
 ///<reference path="./declares.d.ts" />
 var React = require('react');
-require("./main.css");
 var redux_form_1 = require('redux-form');
 require("whatwg-fetch");
-var Field = require("redux-form").Field;
+var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 function changeField(parsedSchema, value) {
     for (var i = 0; i < parsedSchema.length; i++) {
         if (parsedSchema[i].key === value.key) {
@@ -88,7 +87,8 @@ var ReduxSchemaForm = (function (_super) {
         }
         if (field.options && !(field.options instanceof Array)) {
             var asyncOptions_1 = field.options;
-            promises.push(fetch(asyncOptions_1.url).then(function (res) { return res.json(); }).then(function (data) {
+            var fetch_1 = this.props.fetch || window.fetch;
+            promises.push(fetch_1(asyncOptions_1.url).then(function (res) { return res.json(); }).then(function (data) {
                 parsedField['options'] = asyncOptions_1.mapResToOptions ? asyncOptions_1.mapResToOptions(data) : data;
                 return parsedField;
             }));
@@ -107,6 +107,20 @@ var ReduxSchemaForm = (function (_super) {
         return new Promise(function (resolve) {
             Promise.all(promises).then(resolve);
         });
+    };
+    ReduxSchemaForm.prototype.DefaultArrayFieldRenderer = function (props) {
+        var _this = this;
+        return React.createElement("div", null, 
+            props.map(function (name, i) {
+                return React.createElement("div", {key: i}, 
+                    _this.renderField(props.fieldSchema.children[i]), 
+                    React.createElement("button", {onClick: props.remove(i)}, 
+                        React.createElement("i", {className: "fa fa-minus"})
+                    ));
+            }), 
+            React.createElement("button", {onClick: props.push()}, 
+                React.createElement("i", {className: "fa fa-plus"})
+            ));
     };
     ReduxSchemaForm.prototype.componentWillReceiveProps = function (newProps) {
         var _this = this;
@@ -142,7 +156,7 @@ var ReduxSchemaForm = (function (_super) {
         };
         if (customTypes.has(fieldSchema.type)) {
             var CustomWidget = customTypes.get(fieldSchema.type);
-            return React.createElement(CustomWidget, {form: this.props.form, fieldSchema: fieldSchema, knownProps: knownProps});
+            return React.createElement(CustomWidget, {fieldSchema: fieldSchema, knownProps: knownProps, renderField: this.renderField.bind(this)});
         }
         //noinspection FallThroughInSwitchStatementJS
         switch (fieldSchema.type) {
@@ -188,6 +202,12 @@ var ReduxSchemaForm = (function (_super) {
                             React.createElement("option", null), 
                             fieldSchema.options.map(function (option, i) { return React.createElement("option", {key: i, value: option.value}, option.name); }))
                     ));
+            case "array":
+                return React.createElement("div", {className: "form-group"}, 
+                    React.createElement("label", {className: "control-label col-md-2", htmlFor: this.props.form + '-' + fieldSchema.parsedKey}, fieldSchema.label), 
+                    React.createElement("div", {className: "col-md-10"}, 
+                        React.createElement(FieldArray, __assign({name: fieldSchema.parsedKey}, knownProps, {fieldSchema: fieldSchema, component: this.DefaultArrayFieldRenderer.bind(this)}))
+                    ));
             case "group":
                 return React.createElement("fieldset", null, 
                     React.createElement("legend", null, fieldSchema.label), 
@@ -209,7 +229,7 @@ var ReduxSchemaForm = (function (_super) {
             this.state.parsedSchema.map(function (field) {
                 return React.createElement("div", {key: field.key}, _this.renderField(field));
             }), 
-            React.createElement("div", {className: "text-center"}, 
+            !this.props.noButton && React.createElement("div", {className: "text-center"}, 
                 React.createElement("div", {className: "btn-group"}, 
                     React.createElement("button", {type: "submit", className: "btn btn-primary" + (!this.submitable() ? " disabled" : ""), disabled: !this.submitable.apply(this)}, "提交"), 
                     React.createElement("button", {type: "button", className: "btn btn-default" + (!this.submitable() ? " disabled" : ""), disabled: !this.submitable.apply(this), onClick: this.props['reset']}, "重置"))
