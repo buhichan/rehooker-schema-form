@@ -85,11 +85,10 @@ var ReduxSchemaForm = (function (_super) {
                 parsedField['children'] = children;
             }));
         }
-        if (field.options && !(field.options instanceof Array)) {
-            var asyncOptions_1 = field.options;
-            var fetch_1 = this.props.fetch || window.fetch;
-            promises.push(fetch_1(asyncOptions_1.url).then(function (res) { return res.json(); }).then(function (data) {
-                parsedField['options'] = asyncOptions_1.mapResToOptions ? asyncOptions_1.mapResToOptions(data) : data;
+        if (field.options && typeof field.options === 'function') {
+            var asyncOptions = field.options;
+            promises.push(asyncOptions().then(function (options) {
+                parsedField['options'] = options;
                 return parsedField;
             }));
         }

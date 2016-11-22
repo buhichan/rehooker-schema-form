@@ -11,10 +11,7 @@ import {MyReduxFormConfig} from "./redux-form-config";
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array";
 
 export type Options = {name:string,value:string}[]
-export type AsyncOptions = {
-    url:string,
-    mapResToOptions?:(res:any)=>Options
-};
+export type AsyncOptions = ()=>Promise<Options>
 export interface FormFieldSchema{
     key:string,
     type: SupportedFieldType,
@@ -76,7 +73,6 @@ function decorate(obj,prop,cb){
 })
 export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
     fields?:string[]
-    fetch?:typeof window.fetch,
     schema:FormFieldSchema[],
     onSubmit?:(...args:any[])=>void,
     dispatch?:(...args:any[])=>any,
@@ -113,13 +109,12 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
                 parsedField['children'] = children as ParsedFormFieldSchema[];
             }))
         }
-        if(field.options && !(field.options instanceof Array)) {
+        if(field.options && typeof field.options ==='function') {
             const asyncOptions = field.options as AsyncOptions;
-            const fetch = this.props.fetch || window.fetch;
-            promises.push(fetch(asyncOptions.url).then(res=>res.json()).then(data=>{
-                parsedField['options'] = asyncOptions.mapResToOptions?asyncOptions.mapResToOptions(data):data;
+            promises.push(asyncOptions().then(options=>{
+                parsedField['options'] = options;
                 return parsedField;
-            }))
+            }));
         }else{
             promises.push(Promise.resolve(field))
         }

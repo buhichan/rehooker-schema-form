@@ -10,10 +10,7 @@ export declare type Options = {
     name: string;
     value: string;
 }[];
-export declare type AsyncOptions = {
-    url: string;
-    mapResToOptions?: (res: any) => Options;
-};
+export declare type AsyncOptions = () => Promise<Options>;
 export interface FormFieldSchema {
     key: string;
     type: SupportedFieldType;
@@ -48,7 +45,6 @@ export declare type customWidgetProps = {
 export declare function addType(name: any, widget: React.ComponentClass<customWidgetProps> | React.StatelessComponent<customWidgetProps>): void;
 export declare class ReduxSchemaForm extends React.Component<MyReduxFormConfig & {
     fields?: string[];
-    fetch?: typeof window.fetch;
     schema: FormFieldSchema[];
     onSubmit?: (...args: any[]) => void;
     dispatch?: (...args: any[]) => any;
