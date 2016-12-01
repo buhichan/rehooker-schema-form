@@ -29,18 +29,26 @@ var React = require('react');
 var redux_form_1 = require('redux-form');
 require("whatwg-fetch");
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
+var immutable_1 = require("immutable");
 function changeField(parsedSchema, value) {
-    for (var i = 0; i < parsedSchema.length; i++) {
-        if (parsedSchema[i].key === value.key) {
-            parsedSchema[i] = Object.assign(parsedSchema[i], value);
-            return true;
+    var index = -1;
+    parsedSchema.every(function (prev, i) {
+        if (prev.key == value.key) {
+            index = i;
+            return false;
         }
-        else if (parsedSchema[i].children) {
-            if (changeField(parsedSchema[i].children, value))
-                return true;
+        if (prev.children) {
+            var nextChildren = changeField(prev.children, value);
+            if (nextChildren !== prev.children)
+                return false;
         }
-    }
-    return false;
+        return true;
+    });
+    if (index >= 0)
+        return parsedSchema.update(index, function (prev) {
+            return Object.assign({}, prev, value);
+        });
+    return parsedSchema;
 }
 var customTypes = new Map();
 function addType(name, widget) {
@@ -56,9 +64,18 @@ var ReduxSchemaForm = (function (_super) {
     function ReduxSchemaForm() {
         _super.call(this);
         this.state = {
-            parsedSchema: []
+            parsedSchema: immutable_1.List([])
         };
     }
+    ReduxSchemaForm.prototype.changeSchema = function (newFields) {
+        var result = newFields.reduce(function (prev, curr) {
+            return changeField(prev, curr);
+        }, this.state.parsedSchema);
+        if (result !== this.state.parsedSchema)
+            this.setState({
+                parsedSchema: result
+            });
+    };
     ReduxSchemaForm.prototype.parseField = function (field, prefix) {
         var _this = this;
         var promises = [];
@@ -71,13 +88,12 @@ var ReduxSchemaForm = (function (_super) {
                     args[_i - 0] = arguments[_i];
                 }
                 var newFields = field.normalize.apply(null, args);
-                var result = newFields.reduce(function (prev, curr) {
-                    return changeField(_this.state.parsedSchema, curr) || prev;
-                }, true);
-                if (result)
-                    _this.setState({
-                        parsedSchema: _this.state.parsedSchema
-                    });
+                if (newFields) {
+                    if (newFields.then)
+                        newFields.then(_this.changeSchema.bind(_this));
+                    else
+                        _this.changeSchema(newFields);
+                }
                 return args[0];
             };
         if (field.children instanceof Array) {
@@ -103,9 +119,7 @@ var ReduxSchemaForm = (function (_super) {
         var _this = this;
         if (prefix === void 0) { prefix = ""; }
         var promises = newSchema.map(function (field) { return _this.parseField(field, prefix); });
-        return new Promise(function (resolve) {
-            Promise.all(promises).then(resolve);
-        });
+        return Promise.all(promises).then(function (parsed) { return immutable_1.List(parsed); });
     };
     ReduxSchemaForm.prototype.DefaultArrayFieldRenderer = function (props) {
         var _this = this;
@@ -151,7 +165,8 @@ var ReduxSchemaForm = (function (_super) {
             required: fieldSchema.required,
             disabled: fieldSchema.disabled,
             placeholder: fieldSchema.placeholder,
-            normalize: fieldSchema.normalize
+            normalize: fieldSchema.normalize,
+            defaultValue: fieldSchema.defaultValue
         };
         if (customTypes.has(fieldSchema.type)) {
             var CustomWidget = customTypes.get(fieldSchema.type);
@@ -243,6 +258,6 @@ var ReduxSchemaForm = (function (_super) {
         __metadata('design:paramtypes', [])
     ], ReduxSchemaForm);
     return ReduxSchemaForm;
-}(React.Component));
+}(React.PureComponent));
 exports.ReduxSchemaForm = ReduxSchemaForm;
 //# sourceMappingURL=form.js.map

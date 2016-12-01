@@ -7,12 +7,14 @@ import {reduxForm} from 'redux-form'
 import "whatwg-fetch"
 let {Field,FieldArray} = require("redux-form");
 import {MyReduxFormConfig} from "./redux-form-config";
+import {List} from "immutable"
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array";
 
 export type Options = {name:string,value:string}[]
 export type AsyncOptions = ()=>Promise<Options>
-export interface FormFieldSchema{
+
+export interface BaseSchema {
     key:string,
     type: SupportedFieldType,
     label:string,
@@ -21,35 +23,43 @@ export interface FormFieldSchema{
     value?:any,
     required?:boolean,
     disabled?:boolean,
-    normalize?:(value,previousValue,allValues)=>any
+    defaultValue?:any,
+    children?:BaseSchema[] | List<BaseSchema>
+    options?:Options | AsyncOptions
+}
+
+export interface FormFieldSchema extends BaseSchema{
+    normalize?:(value,previousValue,allValues)=>ParsedFormFieldSchema[]|Promise<ParsedFormFieldSchema[]>
     options?:Options | AsyncOptions,
     children?:FormFieldSchema[]
 }
 
-export interface ParsedFormFieldSchema{
-    key:string,
-    parsedKey:string,
-    type: SupportedFieldType,
-    label:string,
-    hide?:boolean,
-    placeholder?:string,
-    required?:boolean,
-    disabled?:boolean,
+export interface ParsedFormFieldSchema extends BaseSchema{
     options?:Options,
+    parsedKey:string,
     normalize:(value,previousValue,allValues)=>any
-    children?:ParsedFormFieldSchema[]
+    children?:List<ParsedFormFieldSchema>
 }
 
-function changeField(parsedSchema:ParsedFormFieldSchema[],value:ParsedFormFieldSchema){
-    for(let i=0;i<parsedSchema.length;i++) {
-        if(parsedSchema[i].key === value.key) {
-            parsedSchema[i] = Object.assign(parsedSchema[i],value);
-            return true;
-        }else if(parsedSchema[i].children){
-            if(changeField(parsedSchema[i].children,value)) return true;
+function changeField(parsedSchema:List<ParsedFormFieldSchema>,value:ParsedFormFieldSchema){
+    let index = -1;
+    parsedSchema.every((prev,i)=>{
+        if(prev.key == value.key){
+            index = i;
+            return false
         }
-    }
-    return false;
+        if(prev.children){
+            const nextChildren = changeField(prev.children,value);
+            if(nextChildren!==prev.children)
+                return false;
+        }
+        return true;
+    });
+    if(index>=0)
+        return parsedSchema.update(index,(prev)=>{
+            return Object.assign({},prev,value);
+        });
+    return parsedSchema;
 }
 
 let customTypes = new Map();
@@ -71,7 +81,7 @@ function decorate(obj,prop,cb){
     fields:[],
     form:"default"
 })
-export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
+export class ReduxSchemaForm extends React.PureComponent<MyReduxFormConfig&{
     fields?:string[]
     schema:FormFieldSchema[],
     onSubmit?:(...args:any[])=>void,
@@ -79,34 +89,41 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
     noButton?:boolean,
     initialize?:(data:any,keepDirty:boolean)=>any,
 },{
-    parsedSchema?:ParsedFormFieldSchema[]
+    parsedSchema?:List<ParsedFormFieldSchema>
 }>{
     constructor(){
         super();
         this.state = {
-            parsedSchema: []
+            parsedSchema: List([])
         }
     }
     isUnmounting:boolean;
+    changeSchema(newFields){
+        const result = newFields.reduce((prev,curr)=>{
+            return changeField(prev,curr)
+        },this.state.parsedSchema);
+        if(result!==this.state.parsedSchema)
+            this.setState({
+                parsedSchema:result
+            });
+    }
     parseField(field:FormFieldSchema,prefix):Promise<ParsedFormFieldSchema>{
         let promises = [];
-        let parsedField = (Object.assign({},field)) as ParsedFormFieldSchema;
+        let parsedField:ParsedFormFieldSchema = (Object.assign({},field)) as any;
         parsedField.parsedKey = (prefix?(prefix + "."):"") + parsedField.key;
         if(field.normalize)
             parsedField.normalize = (...args)=>{
-                let newFields = field.normalize.apply(null,args);
-                let result = newFields.reduce((prev,curr)=>{
-                    return changeField(this.state.parsedSchema,curr) || prev
-                },true);
-                if(result)
-                    this.setState({
-                        parsedSchema:this.state.parsedSchema
-                    });
+                const newFields = field.normalize.apply(null,args);
+                if(newFields) {
+                    if (newFields.then)
+                        newFields.then(this.changeSchema.bind(this));
+                    else this.changeSchema(newFields);
+                }
                 return args[0]
             };
         if(field.children instanceof Array){
             promises.push(this.parseSchema(field.children,parsedField.key).then((children)=>{
-                parsedField['children'] = children as ParsedFormFieldSchema[];
+                parsedField['children'] = children as List<ParsedFormFieldSchema>;
             }))
         }
         if(field.options && typeof field.options ==='function') {
@@ -122,11 +139,9 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
             return parsedField
         })
     }
-    parseSchema(newSchema:FormFieldSchema[],prefix=""):Promise<ParsedFormFieldSchema[]>{
+    parseSchema(newSchema:FormFieldSchema[],prefix=""):Promise<List<ParsedFormFieldSchema>>{
         let promises = newSchema.map(field=>this.parseField(field,prefix));
-        return new Promise(resolve=>{
-            Promise.all(promises).then(resolve)
-        });
+        return Promise.all(promises).then(parsed=>List(parsed));
     }
     DefaultArrayFieldRenderer(props){
         return <div>
@@ -167,7 +182,8 @@ export class ReduxSchemaForm extends React.Component<MyReduxFormConfig&{
             required:fieldSchema.required,
             disabled:fieldSchema.disabled,
             placeholder:fieldSchema.placeholder,
-            normalize:fieldSchema.normalize
+            normalize:fieldSchema.normalize,
+            defaultValue:fieldSchema.defaultValue
         };
         if(customTypes.has(fieldSchema.type)){
             let CustomWidget:React.ComponentClass<customWidgetProps> = customTypes.get(fieldSchema.type) as any;

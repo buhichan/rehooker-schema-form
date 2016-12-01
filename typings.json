@@ -2,6 +2,7 @@
   "globalDependencies": {
     "core-js": "registry:dt/core-js#0.0.0+20160914114559",
     "d3": "registry:dt/d3#0.0.0+20160907005744",
+    "immutable": "registry:dt/immutable#3.8.1+20161028131303",
     "lodash": "registry:dt/lodash#4.14.0+20161004174455",
     "node": "registry:dt/node#6.0.0+20160831021119",
     "react": "registry:dt/react#0.14.0+20161008064207",

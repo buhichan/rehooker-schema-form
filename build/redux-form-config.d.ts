@@ -71,6 +71,7 @@ export interface MyReduxFormConfig {
     initialValues?: {
         [field: string]: FieldValue;
     };
+    enableReinitialize?: boolean;
     /**
      * The function to call with the form data when the handleSubmit() is fired
      * from within the form component. If you do not specify it as a prop here,
