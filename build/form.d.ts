@@ -6,10 +6,10 @@ import * as React from 'react';
 import "whatwg-fetch";
 import { MyReduxFormConfig } from "./redux-form-config";
 import { List } from "immutable";
-export declare type SupportedFieldType = "text" | "password" | "file" | "select" | "date" | 'datetime-local' | "checkbox" | "textarea" | "group" | "color" | "number" | "array";
+export declare type SupportedFieldType = "text" | "password" | "file" | "select" | "date" | 'datetime-local' | "checkbox" | "textarea" | "group" | "color" | "number" | "array" | string;
 export declare type Options = {
     name: string;
-    value: string;
+    value: string | number;
 }[];
 export declare type AsyncOptions = () => Promise<Options>;
 export interface BaseSchema {
@@ -24,16 +24,16 @@ export interface BaseSchema {
     defaultValue?: any;
     children?: BaseSchema[] | List<BaseSchema>;
     options?: Options | AsyncOptions;
+    normalize?: (value, previousValue, allValues) => any;
 }
 export interface FormFieldSchema extends BaseSchema {
-    normalize?: (value, previousValue, allValues) => ParsedFormFieldSchema[] | Promise<ParsedFormFieldSchema[]>;
+    onChange?: (value, previousValue, allValues) => ParsedFormFieldSchema[] | Promise<ParsedFormFieldSchema[]>;
     options?: Options | AsyncOptions;
     children?: FormFieldSchema[];
 }
 export interface ParsedFormFieldSchema extends BaseSchema {
     options?: Options;
     parsedKey: string;
-    normalize: (value, previousValue, allValues) => any;
     children?: List<ParsedFormFieldSchema>;
 }
 export declare type customWidgetProps = {
@@ -42,26 +42,35 @@ export declare type customWidgetProps = {
     renderField: (fieldSchema: ParsedFormFieldSchema) => JSX.Element;
 };
 export declare function addType(name: any, widget: React.ComponentClass<customWidgetProps> | React.StatelessComponent<customWidgetProps>): void;
+export declare function setButton(button: React.StatelessComponent<ButtonProps>): void;
+export declare type ButtonProps = {
+    disabled: boolean;
+    type: "submit" | "button";
+    onClick?: any;
+    children: any;
+};
 export declare class ReduxSchemaForm extends React.PureComponent<MyReduxFormConfig & {
     fields?: string[];
     schema: FormFieldSchema[];
     onSubmit?: (...args: any[]) => void;
     dispatch?: (...args: any[]) => any;
-    noButton?: boolean;
+    readonly?: boolean;
     initialize?: (data: any, keepDirty: boolean) => any;
 }, {
     parsedSchema?: List<ParsedFormFieldSchema>;
 }> {
     constructor();
     isUnmounting: boolean;
-    changeSchema(newFields: any): void;
+    changeSchema(newFields: any): any;
     parseField(field: FormFieldSchema, prefix: any): Promise<ParsedFormFieldSchema>;
     parseSchema(newSchema: FormFieldSchema[], prefix?: string): Promise<List<ParsedFormFieldSchema>>;
     DefaultArrayFieldRenderer(props: any): JSX.Element;
     componentWillReceiveProps(newProps: any): void;
-    componentDidMount(): void;
+    onReady(schema: List<ParsedFormFieldSchema>): void;
+    componentWillMount(): void;
     componentWillUnmount(): void;
     renderField(fieldSchema: ParsedFormFieldSchema): any;
     submitable(): boolean;
+    static defaultButton(props: any): JSX.Element;
     render(): JSX.Element;
 }
