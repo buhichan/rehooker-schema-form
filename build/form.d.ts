@@ -25,6 +25,7 @@ export interface BaseSchema {
     children?: BaseSchema[] | List<BaseSchema>;
     options?: Options | AsyncOptions;
     normalize?: (value, previousValue, allValues) => any;
+    data?: any;
 }
 export interface FormFieldSchema extends BaseSchema {
     onChange?: (value, previousValue, allValues) => ParsedFormFieldSchema[] | Promise<ParsedFormFieldSchema[]>;
@@ -71,6 +72,5 @@ export declare class ReduxSchemaForm extends React.PureComponent<MyReduxFormConf
     componentWillUnmount(): void;
     renderField(fieldSchema: ParsedFormFieldSchema): any;
     submitable(): boolean;
-    static defaultButton(props: any): JSX.Element;
     render(): JSX.Element;
 }

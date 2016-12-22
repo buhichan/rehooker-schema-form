@@ -42,6 +42,12 @@ export interface ParsedFormFieldSchema extends BaseSchema{
     children?:List<ParsedFormFieldSchema>
 }
 
+let DefaultButton = (props)=>{
+    return <button type={props.type} className={"btn btn-primary"+(props.disabled?" disabled":"")} disabled={props.disabled} onClick={props.onClick}>
+        {props.children}
+    </button>
+};
+
 function changeField(parsedSchema:List<ParsedFormFieldSchema>,value:ParsedFormFieldSchema){
     let index = -1;
     parsedSchema.every((prev,i)=>{
@@ -74,7 +80,7 @@ export function addType(name,widget: React.ComponentClass<customWidgetProps>|Rea
 }
 
 export function setButton(button: React.StatelessComponent<ButtonProps>){
-    ReduxSchemaForm.defaultButton = button;
+    DefaultButton = button;
 }
 
 function decorate(obj,prop,cb){
@@ -273,11 +279,6 @@ export class ReduxSchemaForm extends React.PureComponent<MyReduxFormConfig&{
     submitable(){
         return !this.props['pristine'] && !this.props['submitting'];
     }
-    static defaultButton(props){
-        return <button type={props.type} className={"btn btn-primary"+(props.disabled?" disabled":"")} disabled={props.disabled} onClick={props.onClick}>
-            {props.children}
-        </button>
-    }
     render(){
         return <form className="redux-schema-form form-horizontal" onSubmit={this.props['handleSubmit']}>
             {
@@ -290,8 +291,8 @@ export class ReduxSchemaForm extends React.PureComponent<MyReduxFormConfig&{
             {
                 !this.props.readonly ? <div className="text-center button">
                     <div className="btn-group">
-                        <ReduxSchemaForm.defaultButton type="submit" disabled={!this.submitable.apply(this)}>提交</ReduxSchemaForm.defaultButton>
-                        <ReduxSchemaForm.defaultButton type="button" disabled={!this.submitable.apply(this)} onClick={this.props.reset}>重置</ReduxSchemaForm.defaultButton>
+                        <DefaultButton type="submit" disabled={!this.submitable.apply(this)}>提交</DefaultButton>
+                        <DefaultButton type="button" disabled={!this.submitable.apply(this)} onClick={this.props.reset}>重置</DefaultButton>
                     </div>
                 </div> : <div></div>
             }

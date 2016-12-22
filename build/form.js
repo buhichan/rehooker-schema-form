@@ -30,6 +30,9 @@ var redux_form_1 = require('redux-form');
 require("whatwg-fetch");
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 var immutable_1 = require("immutable");
+var DefaultButton = function (props) {
+    return React.createElement("button", {type: props.type, className: "btn btn-primary" + (props.disabled ? " disabled" : ""), disabled: props.disabled, onClick: props.onClick}, props.children);
+};
 function changeField(parsedSchema, value) {
     var index = -1;
     parsedSchema.every(function (prev, i) {
@@ -56,7 +59,7 @@ function addType(name, widget) {
 }
 exports.addType = addType;
 function setButton(button) {
-    ReduxSchemaForm.defaultButton = button;
+    DefaultButton = button;
 }
 exports.setButton = setButton;
 function decorate(obj, prop, cb) {
@@ -238,9 +241,6 @@ var ReduxSchemaForm = (function (_super) {
     ReduxSchemaForm.prototype.submitable = function () {
         return !this.props['pristine'] && !this.props['submitting'];
     };
-    ReduxSchemaForm.defaultButton = function (props) {
-        return React.createElement("button", {type: props.type, className: "btn btn-primary" + (props.disabled ? " disabled" : ""), disabled: props.disabled, onClick: props.onClick}, props.children);
-    };
     ReduxSchemaForm.prototype.render = function () {
         var _this = this;
         return React.createElement("form", {className: "redux-schema-form form-horizontal", onSubmit: this.props['handleSubmit']}, 
@@ -249,8 +249,8 @@ var ReduxSchemaForm = (function (_super) {
             }), 
             !this.props.readonly ? React.createElement("div", {className: "text-center button"}, 
                 React.createElement("div", {className: "btn-group"}, 
-                    React.createElement(ReduxSchemaForm.defaultButton, {type: "submit", disabled: !this.submitable.apply(this)}, "提交"), 
-                    React.createElement(ReduxSchemaForm.defaultButton, {type: "button", disabled: !this.submitable.apply(this), onClick: this.props.reset}, "重置"))
+                    React.createElement(DefaultButton, {type: "submit", disabled: !this.submitable.apply(this)}, "提交"), 
+                    React.createElement(DefaultButton, {type: "button", disabled: !this.submitable.apply(this), onClick: this.props.reset}, "重置"))
             ) : React.createElement("div", null), 
             this.props.children);
     };
