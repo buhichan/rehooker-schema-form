@@ -247,7 +247,7 @@ var ReduxSchemaForm = (function (_super) {
             this.state.parsedSchema.map(function (field) {
                 return React.createElement("div", {key: field.key, className: field.type}, _this.renderField(field));
             }), 
-            !this.props.readonly ? React.createElement("div", {className: "text-center button"}, 
+            (!this.props.noButton && !this.props.readonly) ? React.createElement("div", {className: "text-center button"}, 
                 React.createElement("div", {className: "btn-group"}, 
                     React.createElement(DefaultButton, {type: "submit", disabled: !this.submitable.apply(this)}, "提交"), 
                     React.createElement(DefaultButton, {type: "button", disabled: !this.submitable.apply(this), onClick: this.props.reset}, "重置"))

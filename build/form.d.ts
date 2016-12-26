@@ -57,6 +57,7 @@ export declare class ReduxSchemaForm extends React.PureComponent<MyReduxFormConf
     dispatch?: (...args: any[]) => any;
     readonly?: boolean;
     initialize?: (data: any, keepDirty: boolean) => any;
+    noButton?: boolean;
 }, {
     parsedSchema?: List<ParsedFormFieldSchema>;
 }> {

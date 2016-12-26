@@ -106,6 +106,7 @@ export class ReduxSchemaForm extends React.PureComponent<MyReduxFormConfig&{
     dispatch?:(...args:any[])=>any,
     readonly?:boolean,
     initialize?:(data:any,keepDirty:boolean)=>any,
+    noButton?:boolean
 },{
     parsedSchema?:List<ParsedFormFieldSchema>
 }>{
@@ -289,7 +290,7 @@ export class ReduxSchemaForm extends React.PureComponent<MyReduxFormConfig&{
                 })
             }
             {
-                !this.props.readonly ? <div className="text-center button">
+                (!this.props.noButton && !this.props.readonly )? <div className="text-center button">
                     <div className="btn-group">
                         <DefaultButton type="submit" disabled={!this.submitable.apply(this)}>提交</DefaultButton>
                         <DefaultButton type="button" disabled={!this.submitable.apply(this)} onClick={this.props.reset}>重置</DefaultButton>
