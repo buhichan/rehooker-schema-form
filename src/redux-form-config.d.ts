@@ -1,7 +1,6 @@
 /**
  * Created by YS on 2016/11/9.
  */
-import {Dispatch} from "redux"
 import {FieldProp} from "redux-form";
 import {FieldValue} from "redux-form";
 export interface MyReduxFormConfig{
@@ -9,7 +8,7 @@ export interface MyReduxFormConfig{
      * a list of all your fields in your form. You may change these dynamically
      * at runtime.
      */
-    fields?: string[];
+    fields: string[];
 
     /**
      * the name of your form and the key to where your form's state will be
@@ -45,8 +44,7 @@ export interface MyReduxFormConfig{
      *
      * See Asynchronous Blur Validation Example for more details.
      */
-    asyncValidate?(values:FormData, dispatch:Dispatch<any>, props:Object):
-        Promise<any>;
+    asyncValidate?(values: FormData, dispatch: any, props: Object): Promise<any>;
 
     /**
      * Whether or not to automatically destroy your form's state in the Redux
@@ -69,7 +67,7 @@ export interface MyReduxFormConfig{
      * state as something other than plain javascript objects, e.g. an
      * Immutable.Map.
      */
-    getFormState?(state:any, reduxMountPoint:string): any;
+    getFormState?(state: any, reduxMountPoint: string): any;
 
     /**
      * The values with which to initialize your form in componentWillMount().
@@ -77,15 +75,15 @@ export interface MyReduxFormConfig{
      * with single-record forms. The values should be in the form
      * { field1: 'value1', field2: 'value2' }.
      */
-    initialValues?: {[field:string]: FieldValue};
-    enableReinitialize?:boolean;
+    initialValues?: { [field: string]: FieldValue };
+
     /**
      * The function to call with the form data when the handleSubmit() is fired
      * from within the form component. If you do not specify it as a prop here,
      * you must pass it as a parameter to handleSubmit() inside your form
      * component.
      */
-    onSubmit?(values:FormData, dispatch?:Dispatch<any>): any;
+    onSubmit?(values: FormData, dispatch?: any): any;
 
     /**
      * If true, the form values will be overwritten whenever the initialValues
@@ -145,7 +143,6 @@ export interface MyReduxFormConfig{
      * { field1: <String>, field2: <String> }.
      * Defaults to (values, props) => ({}).
      */
-    validate?(values:FormData, props:{[fieldName:string]: FieldProp}):Object;
-
+    validate?(values: FormData, props: { [fieldName: string]: FieldProp<any> }): Object;
     reset?():void
 }

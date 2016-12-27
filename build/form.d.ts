@@ -1,4 +1,6 @@
 /// <reference path="../src/declares.d.ts" />
+/// <reference types="immutable" />
+/// <reference types="react" />
 /**
  * Created by YS on 2016/10/31.
  */
