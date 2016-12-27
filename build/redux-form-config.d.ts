@@ -1,7 +1,6 @@
 /**
  * Created by YS on 2016/11/9.
  */
-import { Dispatch } from "redux";
 import { FieldProp } from "redux-form";
 import { FieldValue } from "redux-form";
 export interface MyReduxFormConfig {
@@ -9,7 +8,7 @@ export interface MyReduxFormConfig {
      * a list of all your fields in your form. You may change these dynamically
      * at runtime.
      */
-    fields?: string[];
+    fields: string[];
     /**
      * the name of your form and the key to where your form's state will be
      * mounted under the redux-form reducer
@@ -41,7 +40,7 @@ export interface MyReduxFormConfig {
      *
      * See Asynchronous Blur Validation Example for more details.
      */
-    asyncValidate?(values: FormData, dispatch: Dispatch<any>, props: Object): Promise<any>;
+    asyncValidate?(values: FormData, dispatch: any, props: Object): Promise<any>;
     /**
      * Whether or not to automatically destroy your form's state in the Redux
      * store when your component is unmounted. Defaults to true.
@@ -71,14 +70,13 @@ export interface MyReduxFormConfig {
     initialValues?: {
         [field: string]: FieldValue;
     };
-    enableReinitialize?: boolean;
     /**
      * The function to call with the form data when the handleSubmit() is fired
      * from within the form component. If you do not specify it as a prop here,
      * you must pass it as a parameter to handleSubmit() inside your form
      * component.
      */
-    onSubmit?(values: FormData, dispatch?: Dispatch<any>): any;
+    onSubmit?(values: FormData, dispatch?: any): any;
     /**
      * If true, the form values will be overwritten whenever the initialValues
      * prop changes. If false, the values will not be overwritten if the form has
@@ -131,7 +129,7 @@ export interface MyReduxFormConfig {
      * Defaults to (values, props) => ({}).
      */
     validate?(values: FormData, props: {
-        [fieldName: string]: FieldProp;
+        [fieldName: string]: FieldProp<any>;
     }): Object;
     reset?(): void;
 }
