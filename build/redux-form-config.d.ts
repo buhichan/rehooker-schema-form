@@ -8,7 +8,7 @@ export interface MyReduxFormConfig {
      * a list of all your fields in your form. You may change these dynamically
      * at runtime.
      */
-    fields: string[];
+    fields?: string[];
     /**
      * the name of your form and the key to where your form's state will be
      * mounted under the redux-form reducer
@@ -70,6 +70,7 @@ export interface MyReduxFormConfig {
     initialValues?: {
         [field: string]: FieldValue;
     };
+    'enableReinitialize': boolean;
     /**
      * The function to call with the form data when the handleSubmit() is fired
      * from within the form component. If you do not specify it as a prop here,
