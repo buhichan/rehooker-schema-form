@@ -1,11 +1,11 @@
 {
-  "name": "redux-typescript-webpack",
+  "name": "redux-schema-form",
   "version": "0.0.1",
-  "description": "redux-typescript-webpack",
+  "description": "redux-schema-form",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git@gitlab.ucloudadmin.com:buhi/redux-typescript-webpack.git"
+    "url": "git@gitlab.ucloudadmin.com:buhi/redux-schema-form.git"
   },
   "scripts": {
     "build": "npm run build:prod && npm run build:dev",
