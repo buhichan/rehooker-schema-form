@@ -3,10 +3,9 @@
  */
 ///<reference path="./declares.d.ts" />
 import * as React from 'react'
-import {reduxForm} from 'redux-form'
+import {reduxForm, ReduxFormConfig} from 'redux-form'
 import "whatwg-fetch"
 let {Field,FieldArray} = require("redux-form");
-import {MyReduxFormConfig} from "./redux-form-config";
 import {List} from "immutable"
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
@@ -99,7 +98,11 @@ export type ButtonProps = {
     fields:[],
     form:"default"
 })
-export class ReduxSchemaForm extends React.PureComponent<MyReduxFormConfig&{
+export class ReduxSchemaForm extends React.PureComponent<{
+    [P in keyof ReduxFormConfig]?: ReduxFormConfig[P]
+}&{
+    'enableReinitialize'?:boolean,
+    reset?():void
     fields?:string[]
     schema:FormFieldSchema[],
     onSubmit?:(...args:any[])=>void,

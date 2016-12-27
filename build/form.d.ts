@@ -5,8 +5,8 @@
  * Created by YS on 2016/10/31.
  */
 import * as React from 'react';
+import { ReduxFormConfig } from 'redux-form';
 import "whatwg-fetch";
-import { MyReduxFormConfig } from "./redux-form-config";
 import { List } from "immutable";
 export declare type SupportedFieldType = "text" | "password" | "file" | "select" | "date" | 'datetime-local' | "checkbox" | "textarea" | "group" | "color" | "number" | "array" | string;
 export declare type Options = {
@@ -52,7 +52,11 @@ export declare type ButtonProps = {
     onClick?: any;
     children: any;
 };
-export declare class ReduxSchemaForm extends React.PureComponent<MyReduxFormConfig & {
+export declare class ReduxSchemaForm extends React.PureComponent<{
+    [P in keyof ReduxFormConfig]?: ReduxFormConfig[P];
+} & {
+    'enableReinitialize'?: boolean;
+    reset?(): void;
     fields?: string[];
     schema: FormFieldSchema[];
     onSubmit?: (...args: any[]) => void;
