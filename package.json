@@ -1,11 +1,11 @@
 {
   "name": "redux-schema-form",
-  "version": "0.1.0",
-  "description": "redux-schema-form",
+  "version": "1.0.0",
+  "description": "use redux-form like angular-formly",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git@gitlab.ucloudadmin.com:buhi/redux-schema-form.git"
+    "url": "git@github.com:buhichan/redux-schema-form.git"
   },
   "scripts": {
     "build": "npm run build:prod && npm run build:dev",
@@ -31,7 +31,8 @@
     "whatwg-fetch": "^2.0.0"
   },
   "keywords": [
-    "redux-typescript-webpack"
+    "redux-form",
+    "angular-formly"
   ],
   "author": "YS",
   "license": "MIT",
