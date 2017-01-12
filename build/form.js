@@ -224,7 +224,7 @@ var ReduxSchemaForm = (function (_super) {
                 return React.createElement("fieldset", null,
                     React.createElement("legend", null, fieldSchema.label),
                     fieldSchema.children.map(function (childField) {
-                        return React.createElement("div", { key: childField.key }, _this.renderField(childField));
+                        return React.createElement("div", { key: childField.key, className: childField.type }, _this.renderField(childField));
                     }));
             default:
                 return React.createElement("span", null,

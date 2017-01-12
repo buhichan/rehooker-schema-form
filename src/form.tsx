@@ -270,7 +270,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
                     <legend>{fieldSchema.label}</legend>
                     {
                         fieldSchema.children.map(childField=>{
-                            return <div key={childField.key}>
+                            return <div key={childField.key} className={childField.type}>
                                 {this.renderField(childField)}
                             </div>
                         })
