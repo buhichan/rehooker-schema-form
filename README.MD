@@ -3,7 +3,7 @@
 
     this is the definition of "schema":
     
-```typescript jsx
+```TypeScript
 import {List} from "immutable"
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
