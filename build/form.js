@@ -24,7 +24,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 /**
  * Created by YS on 2016/10/31.
  */
-///<reference path="./declares.d.ts" />
 var React = require("react");
 var redux_form_1 = require("redux-form");
 require("whatwg-fetch");
@@ -251,7 +250,6 @@ var ReduxSchemaForm = (function (_super) {
 }(React.PureComponent));
 ReduxSchemaForm = __decorate([
     redux_form_1.reduxForm({
-        fields: [],
         form: "default"
     }),
     __metadata("design:paramtypes", [])

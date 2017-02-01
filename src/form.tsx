@@ -1,9 +1,8 @@
 /**
  * Created by YS on 2016/10/31.
  */
-///<reference path="./declares.d.ts" />
 import * as React from 'react'
-import {reduxForm, ReduxFormConfig} from 'redux-form'
+import {reduxForm, Config as ReduxFormConfig} from 'redux-form'
 import "whatwg-fetch"
 let {Field,FieldArray} = require("redux-form");
 import {List} from "immutable"
@@ -95,11 +94,10 @@ export type ButtonProps = {
 }
 
 @reduxForm({
-    fields:[],
     form:"default"
 })
 export class ReduxSchemaForm extends React.PureComponent<{
-    [P in keyof ReduxFormConfig]?: ReduxFormConfig[P]
+    [P in keyof ReduxFormConfig<any,any,any>]?: ReduxFormConfig<any,any,any>[P]
 }&{
     'enableReinitialize'?:boolean,
     reset?():void

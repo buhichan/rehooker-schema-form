@@ -1,11 +1,9 @@
-/// <reference path="../src/declares.d.ts" />
-/// <reference types="immutable" />
 /// <reference types="react" />
 /**
  * Created by YS on 2016/10/31.
  */
 import * as React from 'react';
-import { ReduxFormConfig } from 'redux-form';
+import { Config as ReduxFormConfig } from 'redux-form';
 import "whatwg-fetch";
 import { List } from "immutable";
 export declare type SupportedFieldType = "text" | "password" | "file" | "select" | "date" | 'datetime-local' | "checkbox" | "textarea" | "group" | "color" | "number" | "array" | string;
@@ -53,7 +51,7 @@ export declare type ButtonProps = {
     children: any;
 };
 export declare class ReduxSchemaForm extends React.PureComponent<{
-    [P in keyof ReduxFormConfig]?: ReduxFormConfig[P];
+    [P in keyof ReduxFormConfig<any, any, any>]?: ReduxFormConfig<any, any, any>[P];
 } & {
     'enableReinitialize'?: boolean;
     reset?(): void;
