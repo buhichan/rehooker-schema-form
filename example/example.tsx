@@ -1,6 +1,3 @@
-
-/// <reference path="../src/declares.d.ts" />
-/// <reference path="../typings/index.d.ts" />
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider,connect } from 'react-redux'
@@ -72,7 +69,9 @@ let schema = [
         key:"ajax_select",
         type:"select",
         label:"单选(async)",
-        options:"/example/options.json"
+        options:()=>{
+            return fetch("/example/options.json").then(res=>res.json())
+        }
     },{
         key:"group1",
         type:"group",

@@ -6,14 +6,14 @@
 require("path").isAbsolute = require('path-is-absolute');
 require('es6-promise').polyfill();
 
-var webpack = require("webpack");
-var autoprefixer = require('autoprefixer');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require("webpack");
+const autoprefixer = require('autoprefixer');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-var ENV = process.env.npm_lifecycle_event;
+const ENV = process.env.npm_lifecycle_event;
 
-var config = {
+const config = {
     entry: {
         "main":["./src/index.tsx"]
     },

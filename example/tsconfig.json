@@ -3,16 +3,12 @@
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "declaration":true,
     "sourceMap": true,
+    "jsx":"react",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "jsx":"react",
-    "outDir":"./build",
-    "rootDir": "./src",
     "lib":["es6","scripthost","dom","es2016.array.include","es2015.promise"]
-  },
-  "exclude": ["node_modules","example"]
+  }
 }

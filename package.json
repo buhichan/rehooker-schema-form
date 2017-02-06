@@ -2,7 +2,7 @@
   "name": "redux-schema-form",
   "version": "1.0.3",
   "description": "use redux-form like angular-formly",
-  "main": "index.js",
+  "main": "build/form.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:buhichan/redux-schema-form.git"
@@ -12,8 +12,8 @@
     "build:prod": "webpack --bail --progress --profile",
     "build:dev": "webpack --bail --progress --profile",
     "dev": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9001",
-    "server": "NODE_ENV=prod node server.js",
-    "server:dev": "NODE_ENV=dev node server.js",
+    "start": "NODE_ENV=prod node server.js",
+    "start:dev": "NODE_ENV=dev node server.js",
     "test": "karma start",
     "test:watch": "karma start --auto-watch --no-single-run",
     "deploy": "npm run build && cd dist && rm last -rf && mv current last && mv `date +'%Y-%m-%d'` current",
@@ -21,9 +21,8 @@
   },
   "peerDependencies": {
     "font-awesome": "^4.7.0",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2",
-    "react-redux": "^4.4.5",
+    "react": "^15.4.*",
+    "react-dom": "^15.4.*",
     "redux": "^3.6.0",
     "immutable": "^3.8.1",
     "redux-form": "^6.2.0",
@@ -44,7 +43,7 @@
     "@types/react-redux": "^4.4.35",
     "@types/whatwg-fetch": "0.0.33",
     "autoprefixer": "^6.5.0",
-    "awesome-typescript-loader": "^2.2.4",
+    "awesome-typescript-loader": "^3.0.3",
     "copy-webpack-plugin": "^3.0.1",
     "css-loader": "^0.25.0",
     "es6-promise": "^4.0.3",
@@ -57,10 +56,12 @@
     "raw-loader": "^0.5.1",
     "style-loader": "^0.13.1",
     "typescript": "^2.1.5",
-    "webpack": "^1.13.3",
+    "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
-    "@types/redux-form": "^6.3.2"
+    "@types/redux-form": "^6.3.2",
+    "react-redux": "^4.4.6",
+    "redux-form": "^6.5.0"
   }
 }
