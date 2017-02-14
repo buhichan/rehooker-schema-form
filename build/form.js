@@ -238,7 +238,7 @@ var ReduxSchemaForm = (function (_super) {
         var _this = this;
         return React.createElement("form", { className: "redux-schema-form form-horizontal", onSubmit: this.props['handleSubmit'] },
             this.state.parsedSchema.map(function (field) {
-                return React.createElement("div", { key: field.key, className: field.type }, _this.renderField(field));
+                return React.createElement("div", { key: field.key || field.label, className: field.type }, _this.renderField(field));
             }),
             (!this.props.noButton && !this.props.readonly) ? React.createElement("div", { className: "text-center button" },
                 React.createElement("div", { className: "btn-group" },

@@ -8,16 +8,10 @@
     "url": "git@github.com:buhichan/redux-schema-form.git"
   },
   "scripts": {
-    "build": "npm run build:prod && npm run build:dev",
-    "build:prod": "webpack --bail --progress --profile",
-    "build:dev": "webpack --bail --progress --profile",
-    "dev": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9001",
-    "start": "NODE_ENV=prod node server.js",
-    "start:dev": "NODE_ENV=dev node server.js",
-    "test": "karma start",
-    "test:watch": "karma start --auto-watch --no-single-run",
-    "deploy": "npm run build && cd dist && rm last -rf && mv current last && mv `date +'%Y-%m-%d'` current",
-    "deploy:dev": "npm run build:dev && cd dist && rm last -rf && mv current last && mv `date +'%Y-%m-%d'` current"
+    "build": "tsc -p .",
+    "version": "npm run build && git add -A",
+    "postversion": "git push && git push --tags",
+    "dev": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9001"
   },
   "peerDependencies": {
     "font-awesome": "^4.7.0",

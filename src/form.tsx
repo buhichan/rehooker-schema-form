@@ -285,7 +285,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
         return <form className="redux-schema-form form-horizontal" onSubmit={this.props['handleSubmit']}>
             {
                 this.state.parsedSchema.map(field=>{
-                    return <div key={field.key} className={field.type}>
+                    return <div key={field.key||field.label} className={field.type}>
                         {this.renderField(field)}
                     </div>
                 })

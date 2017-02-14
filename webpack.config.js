@@ -20,7 +20,7 @@ const config = {
     output: {
         path:  __dirname +"/build",
         publicPath: "/",
-        filename: ENV == 'build:prod' ? "[name].min.js" : "[name].js",
+        filename: ENV == 'build' ? "[name].min.js" : "[name].js",
         chunkFilename: ENV=='dev' ? '[name].[hash].js' : '[name].js'
     },
     module: {
@@ -71,18 +71,8 @@ switch(ENV){
         config.entry.main=['./example/example.tsx'];
         break;
     }
-    case "build:dev": {
-        config.devtools = 'eval-source-map';
-        break;
-    }
-    case "build:prod": {
+    case "build": {
         config.plugins.push(new webpack.optimize.UglifyJsPlugin());
-        config.devtools = 'source-map';
-        break;
-    }
-    case "build:example": {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin());
-        config.entry = {"example": ["./example/example"]};
         config.devtools = 'source-map';
         break;
     }
