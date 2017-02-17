@@ -14,13 +14,12 @@
     "dev": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9001"
   },
   "peerDependencies": {
-    "font-awesome": "^4.7.0",
     "immutable": "^3.8.1",
     "react": "^15.4.*",
     "react-dom": "^15.4.*",
     "redux": "^3.6.0",
-    "redux-form": "^6.2.0",
-    "whatwg-fetch": "^2.0.0"
+    "whatwg-fetch": "^2.0.0",
+    "react-redux": "^4.3.*"
   },
   "keywords": [
     "redux-form",
@@ -29,6 +28,7 @@
   "author": "YS",
   "license": "MIT",
   "devDependencies": {
+    "@types/redux-form": "^6.3.2",
     "@types/lodash": "^4.14.44",
     "@types/node": "^6.0.53",
     "@types/react": "^0.14.55",
@@ -56,8 +56,6 @@
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
-    "@types/redux-form": "^6.3.2",
-    "react-redux": "^4.3.*",
     "redux-form": "^6.5.0"
   }
 }
