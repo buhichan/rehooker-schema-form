@@ -25,6 +25,7 @@ export interface BaseSchema {
     children?:BaseSchema[] | List<BaseSchema>
     options?:Options | AsyncOptions,
     normalize?:(value,previousValue, allValues)=>any,
+    validate?:any,
     data?:any
 }
 
@@ -203,7 +204,8 @@ export class ReduxSchemaForm extends React.PureComponent<{
             disabled: this.props.readonly || fieldSchema.disabled,
             placeholder:fieldSchema.placeholder,
             normalize:fieldSchema.normalize,
-            defaultValue:fieldSchema.defaultValue
+            defaultValue:fieldSchema.defaultValue,
+            validatie:fieldSchema.validate
         };
         if(customTypes.has(fieldSchema.type)){
             let CustomWidget:React.ComponentClass<customWidgetProps> = customTypes.get(fieldSchema.type) as any;

@@ -168,7 +168,8 @@ var ReduxSchemaForm = (function (_super) {
             disabled: this.props.readonly || fieldSchema.disabled,
             placeholder: fieldSchema.placeholder,
             normalize: fieldSchema.normalize,
-            defaultValue: fieldSchema.defaultValue
+            defaultValue: fieldSchema.defaultValue,
+            validatie: fieldSchema.validate
         };
         if (customTypes.has(fieldSchema.type)) {
             var CustomWidget = customTypes.get(fieldSchema.type);
