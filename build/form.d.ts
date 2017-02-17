@@ -25,7 +25,7 @@ export interface BaseSchema {
     children?: BaseSchema[] | List<BaseSchema>;
     options?: Options | AsyncOptions;
     normalize?: (value, previousValue, allValues) => any;
-    validate?: any;
+    validate?: (value, formValue) => boolean;
     data?: any;
 }
 export interface FormFieldSchema extends BaseSchema {
