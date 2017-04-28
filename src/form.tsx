@@ -3,16 +3,14 @@
  */
 import * as React from 'react'
 import {reduxForm, Config as ReduxFormConfig} from 'redux-form'
-import "whatwg-fetch"
 let {Field,FieldArray} = require("redux-form");
-import {List} from "immutable"
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
 
 export type Options = {name:string,value:string|number}[]
-export type AsyncOptions = ()=>Promise<Options>
+export type AsyncOptions = ()=>Promise<Options|any>
 
-export interface BaseSchema {
+export interface BaseSchema extends ReduxFormConfig<any,any,any>{
     key:string,
     type: SupportedFieldType,
     label:string,
@@ -22,15 +20,16 @@ export interface BaseSchema {
     required?:boolean,
     disabled?:boolean,
     defaultValue?:any,
-    children?:BaseSchema[] | List<BaseSchema>
+    multiple?:boolean,
+    children?:BaseSchema[]
     options?:Options | AsyncOptions,
     normalize?:(value,previousValue, allValues)=>any,
-    validate?:(value,formValue)=>boolean,
-    data?:any
+    data?:any,
+    [rest:string]:any
 }
 
 export interface FormFieldSchema extends BaseSchema{
-    onChange?:(value, previousValue, allValues)=>ParsedFormFieldSchema[]|Promise<ParsedFormFieldSchema[]>
+    onChange?:(value,previousValue,allValues)=>Partial<ParsedFormFieldSchema>[]|Promise<Partial<ParsedFormFieldSchema>[]>
     options?:Options | AsyncOptions,
     children?:FormFieldSchema[]
 }
@@ -38,7 +37,7 @@ export interface FormFieldSchema extends BaseSchema{
 export interface ParsedFormFieldSchema extends BaseSchema{
     options?:Options,
     parsedKey:string,
-    children?:List<ParsedFormFieldSchema>
+    children?:ParsedFormFieldSchema[]
 }
 
 let DefaultButton = (props)=>{
@@ -47,7 +46,7 @@ let DefaultButton = (props)=>{
     </button>
 };
 
-function changeField(parsedSchema:List<ParsedFormFieldSchema>,value:ParsedFormFieldSchema){
+function changeField(parsedSchema:ParsedFormFieldSchema[],value:ParsedFormFieldSchema){
     let index = -1;
     parsedSchema.every((prev,i)=>{
         if(prev.key == value.key){
@@ -62,19 +61,43 @@ function changeField(parsedSchema:List<ParsedFormFieldSchema>,value:ParsedFormFi
         return true;
     });
     if(index>=0)
-        return parsedSchema.update(index,(prev)=>{
-            return Object.assign({},prev,value);
-        });
+        parsedSchema[index]={...parsedSchema[index],...value};
     return parsedSchema;
 }
 
 let customTypes = new Map();
-export type customWidgetProps = {
-    fieldSchema:ParsedFormFieldSchema,
-    knownProps:any,
-    renderField:(fieldSchema:ParsedFormFieldSchema)=>JSX.Element
+export type CustomWidgetProps = {
+    fieldSchema?:ParsedFormFieldSchema,
+    renderField?:(fieldSchema:ParsedFormFieldSchema)=>JSX.Element,
+    meta?:{
+        active:boolean
+        asyncValidating:boolean
+        autofilled:boolean
+        dirty:boolean
+        dispatch:(a:any)=>void
+        error:any
+        form:string
+        invalid:boolean
+        pristine:boolean
+        submitFailed:boolean
+        submitting:boolean
+        touched:boolean
+        valid:boolean
+        visited:boolean
+        warning:any
+    },
+    input?:{
+        name:string
+        onBlur:(...args:any[])=>void
+        onChange:(...args:any[])=>void
+        onDragStart:(...args:any[])=>void
+        onDrop:(...args:any[])=>void
+        onFocus:(...args:any[])=>void
+        value:any
+    }
+    [rest:string]:any
 }
-export function addType(name,widget: React.ComponentClass<customWidgetProps>|React.StatelessComponent<customWidgetProps>) {
+export function addType(name,widget: React.ComponentClass<CustomWidgetProps>|React.StatelessComponent<CustomWidgetProps>) {
     customTypes.set(name,widget);
 }
 
@@ -110,12 +133,12 @@ export class ReduxSchemaForm extends React.PureComponent<{
     initialize?:(data:any,keepDirty:boolean)=>any,
     noButton?:boolean
 },{
-    parsedSchema?:List<ParsedFormFieldSchema>
+    parsedSchema?:ParsedFormFieldSchema[]
 }>{
     constructor(){
         super();
         this.state = {
-            parsedSchema: List([])
+            parsedSchema: []
         }
     }
     isUnmounting:boolean;
@@ -125,10 +148,9 @@ export class ReduxSchemaForm extends React.PureComponent<{
         const result = newFields.reduce((prev,curr)=>{
             return changeField(prev,curr)
         },this.state.parsedSchema);
-        if(result!==this.state.parsedSchema)
-            this.setState({
-                parsedSchema:result
-            });
+        this.setState({
+            parsedSchema:result.slice()
+        });
     }
     parseField(field:FormFieldSchema,prefix):Promise<ParsedFormFieldSchema>{
         let promises = [];
@@ -145,7 +167,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
         }
         if(field.children instanceof Array){
             promises.push(this.parseSchema(field.children,parsedField.key).then((children)=>{
-                parsedField['children'] = children as List<ParsedFormFieldSchema>;
+                parsedField['children'] = children as ParsedFormFieldSchema[];
             }))
         }
         if(field.options && typeof field.options ==='function') {
@@ -161,9 +183,9 @@ export class ReduxSchemaForm extends React.PureComponent<{
             return parsedField
         })
     }
-    parseSchema(newSchema:FormFieldSchema[],prefix=""):Promise<List<ParsedFormFieldSchema>>{
+    parseSchema(newSchema:FormFieldSchema[],prefix=""):Promise<ParsedFormFieldSchema[]>{
         let promises = newSchema.map(field=>this.parseField(field,prefix));
-        return Promise.all(promises).then(parsed=>List(parsed));
+        return Promise.all(promises);
     }
     DefaultArrayFieldRenderer(props){
         return <div>
@@ -183,38 +205,32 @@ export class ReduxSchemaForm extends React.PureComponent<{
             this.parseSchema(newProps.schema).then(this.onReady.bind(this));
         }
     }
-    onReady(schema:List<ParsedFormFieldSchema>){
-        if(!this.isUnmounting) {
-            this.setState({
-                parsedSchema: schema
-            })
-        }
+    onReady(schema:ParsedFormFieldSchema[]){
+        this.setState({
+            parsedSchema: schema
+        })
     }
     componentWillMount(){
         this.parseSchema(this.props.schema).then(this.onReady.bind(this))
     }
-    componentWillUnmount(){
-        this.isUnmounting = true;
-    }
     renderField(fieldSchema:ParsedFormFieldSchema){
-        if(fieldSchema.hide) return <div></div>;
-        let knownProps = {
-            type:fieldSchema.type,
-            required:fieldSchema.required,
-            disabled: this.props.readonly || fieldSchema.disabled,
-            placeholder:fieldSchema.placeholder,
-            normalize:fieldSchema.normalize,
-            defaultValue:fieldSchema.defaultValue,
-            validate:fieldSchema.validate
-        };
-        if(customTypes.has(fieldSchema.type)){
-            let CustomWidget:React.ComponentClass<customWidgetProps> = customTypes.get(fieldSchema.type) as any;
-            return <CustomWidget fieldSchema={fieldSchema} knownProps={knownProps} renderField={this.renderField.bind(this)}/>
+        if(fieldSchema.hide) return <div />;
+        let {
+            type,
+            parsedKey,
+            label,
+            options,
+            children,
+            ...rest
+        } = fieldSchema;
+        if(customTypes.has(type)){
+            let CustomWidget:React.ComponentClass<CustomWidgetProps> = customTypes.get(type) as any;
+            return <CustomWidget fieldSchema={fieldSchema} {...rest} renderField={this.renderField.bind(this)}/>
         }
         //noinspection FallThroughInSwitchStatementJS
-        switch(fieldSchema.type){
+        switch(type){
             case "number":
-                decorate(knownProps,"onChange",(normalize)=>{
+                decorate(rest,"onChange",(normalize)=>{
                     return (...args)=>{
                         args[0] = Number(args[0]);
                         return normalize?normalize(...args):args[0];
@@ -227,49 +243,49 @@ export class ReduxSchemaForm extends React.PureComponent<{
             case "datetime-local":
             case "file":
                 return <div className="form-group">
-                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
+                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+parsedKey}>{label}</label>
                     <div className="col-md-10">
-                        <Field className="form-control" name={fieldSchema.parsedKey} {...knownProps} component="input"/>
+                        <Field className="form-control" name={parsedKey} {...rest} component="input"/>
                     </div>
                 </div>;
             case "textarea":
                 return <div className="form-group">
-                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
+                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+parsedKey}>{label}</label>
                     <div className="col-md-10">
-                        <Field className="form-control" name={fieldSchema.parsedKey} {...knownProps} component="textarea"/>
+                        <Field className="form-control" name={parsedKey} {...rest} component="textarea"/>
                     </div>
                 </div>;
             case "checkbox":
                 return <div className="form-group">
-                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
+                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+parsedKey}>{label}</label>
                     <div className="col-md-10">
-                        <Field className=" checkbox" name={fieldSchema.parsedKey} {...knownProps} component="input"/>
+                        <Field className=" checkbox" name={parsedKey} {...rest} component="input"/>
                     </div>
                 </div>;
             case "select":
                 return <div className="form-group">
-                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
+                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+parsedKey}>{label}</label>
                     <div className="col-md-10">
-                        <Field className="form-control" name={fieldSchema.parsedKey} {...knownProps} component="select">
+                        <Field className="form-control" name={parsedKey} {...rest} component="select">
                             <option />
                             {
-                                fieldSchema.options.map((option,i)=><option key={i} value={option.value as string}>{option.name}</option>)
+                                options.map((option,i)=><option key={i} value={option.value as string}>{option.name}</option>)
                             }
                         </Field>
                     </div>
                 </div>;
             case "array":
                 return <div className="form-group">
-                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+fieldSchema.parsedKey}>{fieldSchema.label}</label>
+                    <label className="control-label col-md-2" htmlFor={this.props.form+'-'+parsedKey}>{label}</label>
                     <div className="col-md-10">
-                        <FieldArray name={fieldSchema.parsedKey} {...knownProps} fieldSchema={fieldSchema} component={this.DefaultArrayFieldRenderer.bind(this)}/>
+                        <FieldArray name={parsedKey} {...rest} fieldSchema={fieldSchema} component={this.DefaultArrayFieldRenderer.bind(this)}/>
                     </div>
                 </div>;
             case "group":
                 return <fieldset>
-                    <legend>{fieldSchema.label}</legend>
+                    <legend>{label}</legend>
                     {
-                        fieldSchema.children.map(childField=>{
+                        children.map(childField=>{
                             return <div key={childField.key} className={childField.type}>
                                 {this.renderField(childField)}
                             </div>

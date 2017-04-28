@@ -1,1 +1,1 @@
-export * from "./build/form"
+export * from "./src/form"

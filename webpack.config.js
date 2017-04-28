@@ -2,8 +2,8 @@
  * Created by YS on 2016/8/26.
  */
 "use strict";
-
-require("path").isAbsolute = require('path-is-absolute');
+const path=require('path');
+path.isAbsolute = require('path-is-absolute');
 require('es6-promise').polyfill();
 
 const webpack = require("webpack");
@@ -50,11 +50,15 @@ const config = {
     },
     resolve:{
         extensions: ['', '.js', '.ts', '.jsx', '.tsx', '.css', '.html'],
-        modulesDirectories:['node_modules']
-    },
-    externals:{
-        react:"React",
-        "react-dom":"ReactDOM"
+        modulesDirectories:['node_modules'],
+        alias: {
+            react: path.resolve('./node_modules/react'),
+            'react-dom': path.resolve('./node_modules/react-dom'),
+            'redux-form': path.resolve('./node_modules/redux-form'),
+            "redux":path.resolve('./node_modules/redux'),
+            "immutable":path.resolve('./node_modules/immutable'),
+            "react-redux":path.resolve('./node_modules/react-redux')
+        },
     }
 
 };

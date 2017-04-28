@@ -1,12 +1,16 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider,connect } from 'react-redux'
-import { createStore, combineReducers } from 'redux'
+import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import { reducer as reduxFormReducer } from 'redux-form'
+import "../src/material"
+import {FormFieldSchema, ReduxSchemaForm} from "../src/form"
+import {MuiThemeProvider} from "material-ui/styles";
+import getMuiTheme from "material-ui/styles/getMuiTheme";
 
-import {ReduxSchemaForm} from "../src/form"
+require('react-tap-event-plugin')();
 
-let schema = [
+let schema:FormFieldSchema[] = [
     {
         key:"text",
         type:"text",
@@ -27,7 +31,7 @@ let schema = [
                 value:"pear"
             }
         ],
-        normalize:(value,prevValue,formData)=>{
+        onChange:(value,prevValue,formData)=>{
             if(value==='pear')
                 return [
                     {
@@ -35,32 +39,33 @@ let schema = [
                         hide:true
                     }
                 ];
-            else return [
+            else return Promise.resolve([
                 {
                     key:"conditional1",
                     hide:false
                 }
-            ]
+            ])
         }
     },{
         key:"checkbox",
         type:"checkbox",
         label:"勾选",
         required:true
-        // },{
-        //     key:"mulSel",
-        //     type:"multiSelect",
-        //     label:"多选",
-        //     options:[
-        //         {
-        //             name:"苹果",
-        //             value:"apple"
-        //         },
-        //         {
-        //             name:"梨子",
-        //             value:"pear"
-        //         }
-        //     ]
+    },{
+        key:"mulSel",
+        type:"select",
+        multiple:true,
+        label:"多选",
+        options:[
+            {
+                name:"苹果",
+                value:"apple"
+            },
+            {
+                name:"梨子",
+                value:"pear"
+            }
+        ]
     },{
         key:"file",
         type:"file",
@@ -125,100 +130,7 @@ let schema = [
                 name:"动物",
                 value:"animal"
             }
-        ],
-        normalize:(value):any=>{
-            if(value ==='animal'){
-                return [
-                    {
-                        key:"dependant_lv2",
-                        hide:false,
-                        value:null,
-                        options:[
-                            {
-                                name: "狗",
-                                value: "dog"
-                            }, {
-                                name: "猫",
-                                value: "cat"
-                            }
-                        ]
-                    },{
-                        key:"dependant_lv3",
-                        hide:true,
-                        value:null
-                    }
-                ]
-            }else if(value ==='plant'){
-                return [
-                    {
-                        key:"dependant_lv2",
-                        hide:false,
-                        value:null,
-                        options:[
-                            {
-                                name: "苹果",
-                                value: "apple"
-                            },
-                            {
-                                name: "梨子",
-                                value: "pear"
-                            }
-                        ]
-                    },{
-                        key:"dependant_lv3",
-                        hide:true,
-                        value:null
-                    }
-                ]
-            }else{
-                return [
-                    {
-                        key:"dependant_lv2",
-                        hide:true,
-                        value:null
-                    },{
-                        key:"dependant_lv3",
-                        hide:true,
-                        value:null
-                    }
-                ]
-            }
-        }
-    },{
-        key:"dependant_lv2",
-        type:"select",
-        label:"有依赖的单选lv2",
-        normalize:(value):any=>{
-            if(value ==='dog'){
-                return [
-                    {
-                        key:"dependant_lv3",
-                        hide:false,
-                        value:null,
-                        options:[{name:'dogg1',value:"dogg1"}, {name:'doggy',value:'doggy'}, {name:'puppy',value:'puppy'}]
-                    }
-                ]
-            }else if(value ==='cat'){
-                return [
-                    {
-                        key:"dependant_lv3",
-                        hide:false,
-                        value:null,
-                        options:[{name:'kitten',value:'kitten'}, {name:'cat',value:'cat'}, {name:'kitty',value:'kitty'}]
-                    }
-                ]
-            }else{
-                return [
-                    {
-                        key:"dependant_lv3",
-                        hide:true,
-                        value:null
-                    }
-                ]
-            }
-        },
-        options:[],
-        hide:true
+        ]
     },{
         key:"dependant_lv3",
         type:"select",
@@ -241,32 +153,44 @@ const reducer = combineReducers({
     },
     form: function(...args){
         return reduxFormReducer.apply(null,args);
-    } // mounted under "form"
+    }
 });
-const store = createStore(reducer);
+
+const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
+const middleware = composeEnhancers(applyMiddleware());
+const store = createStore(reducer,{},middleware);
 
 @connect(
     store=>store
 )
 class App extends React.Component<any,any>{
     render(){
-        return <ReduxSchemaForm form="random" schema={this.props['formSchema']} initialValues={this.props['data']} onSubmit={(values)=>{
+        return <ReduxSchemaForm form="random" initialValues={this.props.data} schema={this.props['formSchema']} onSubmit={(values)=>{
             if(values.text){
                 return new Promise(resolve=>{
                     setTimeout(resolve,3000)
                 })
             }else return true;
         }}>
-            <pre>data:{
-                this.props['form'].random && JSON.stringify(this.props['form'].random.values,null,"\t")
-            }</pre>
+            <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
+            <pre>
+                <code>
+                data:{
+                    this.props['form'].random && JSON.stringify(this.props['form'].random.values,null,"\t")
+                }
+                </code>
+            </pre>
         </ReduxSchemaForm>
     }
 }
 
+const muiTheme = getMuiTheme({});
+
 ReactDOM.render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
+    <MuiThemeProvider muiTheme={muiTheme}>
+        <Provider store={store}>
+                <App />
+        </Provider>
+    </MuiThemeProvider>,
     document.getElementById('root')
 );
