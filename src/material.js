@@ -76,7 +76,7 @@ var CheckboxInput = (function (_super) {
     return CheckboxInput;
 }(React.Component));
 function SelectInput(props) {
-    return React.createElement(SelectField_1.default, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, value: props.input.value, onChange: function (event, index, value) { return props.input.onChange(value); } }, props.fieldSchema.options.map(function (option) { return React.createElement(MenuItem_1.default, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
+    return React.createElement(SelectField_1.default, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, multiple: props.fieldSchema.multiple, value: props.input.value, onChange: function (event, index, value) { return props.input.onChange(value); } }, props.fieldSchema.options.map(function (option) { return React.createElement(MenuItem_1.default, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
 }
 var AutoCompleteSelect = (function (_super) {
     __extends(AutoCompleteSelect, _super);
