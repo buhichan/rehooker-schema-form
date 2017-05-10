@@ -93,6 +93,7 @@ function SelectInput(props){
         disabled={props.disabled}
         floatingLabelText={props.fieldSchema.label}
         fullWidth={true}
+        multiple={props.fieldSchema.multiple}
         value={props.input.value}
         onChange={(event,index,value)=>props.input.onChange(value)}>
         {
