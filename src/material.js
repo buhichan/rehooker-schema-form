@@ -32,20 +32,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 var React = require("react");
 var form_1 = require("./form");
-var TextField_1 = require("material-ui/TextField");
-var SelectField_1 = require("material-ui/SelectField");
-var Checkbox_1 = require("material-ui/Checkbox");
-var DatePicker_1 = require("material-ui/DatePicker");
-var RaisedButton_1 = require("material-ui/RaisedButton");
-var Paper_1 = require("material-ui/Paper");
-var AutoComplete_1 = require("material-ui/AutoComplete");
+var material_ui_1 = require("material-ui");
 var muiThemeable_1 = require("material-ui/styles/muiThemeable");
-var IconButton_1 = require("material-ui/IconButton");
 var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 function NumberInput(props) {
-    return React.createElement(TextField_1.default, __assign({}, props.input, { type: "number", id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
+    return React.createElement(material_ui_1.TextField, __assign({}, props.input, { type: "number", id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
 function DateInput(props) {
     var DatePickerProps = {
@@ -57,9 +50,9 @@ function DateInput(props) {
     if (isNaN(props.input.value) && !isNaN(parsedDate)) {
         DatePickerProps['value'] = new Date(props.input.value);
     }
-    return React.createElement(DatePicker_1.default, __assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, okLabel: "确认" }, DatePickerProps, { disabled: props.disabled }));
+    return React.createElement(material_ui_1.DatePicker, __assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, okLabel: "确认" }, DatePickerProps, { disabled: props.disabled }));
 }
-var TextFieldWithRequired = TextField_1.default;
+var TextFieldWithRequired = material_ui_1.TextField;
 function TextInput(props) {
     return React.createElement(TextFieldWithRequired, __assign({}, props.input, { required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: props.fieldSchema.multiLine, floatingLabelText: props.fieldSchema.label }));
 }
@@ -72,12 +65,15 @@ var CheckboxInput = (function (_super) {
         this.props.input.onChange(this.props.input.checked);
     };
     CheckboxInput.prototype.render = function () {
-        return React.createElement(Checkbox_1.default, __assign({}, this.props.input, { id: this.props.input.name, style: { width: "100%", margin: "32px 0 16px" }, disabled: this.props.disabled, onChange: undefined, onCheck: this.props.input.onChange, label: this.props.fieldSchema.label, value: this.props.input.value }));
+        return React.createElement(material_ui_1.Checkbox, __assign({}, this.props.input, { id: this.props.input.name, style: { width: "100%", margin: "32px 0 16px" }, disabled: this.props.disabled, onChange: undefined, onCheck: this.props.input.onChange, label: this.props.fieldSchema.label, value: this.props.input.value }));
     };
     return CheckboxInput;
 }(React.Component));
 function SelectInput(props) {
-    return React.createElement(SelectField_1.default, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, multiple: props.fieldSchema.multiple }), props.fieldSchema.options.map(function (option) { return React.createElement(MenuItem_1.default, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
+    return React.createElement(material_ui_1.SelectField, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
+            e.target.value = v;
+            props.input.onChange(e);
+        } }), props.fieldSchema.options.map(function (option) { return React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
 }
 var AutoCompleteSelect = (function (_super) {
     __extends(AutoCompleteSelect, _super);
@@ -90,7 +86,7 @@ var AutoCompleteSelect = (function (_super) {
     AutoCompleteSelect.prototype.render = function () {
         var _this = this;
         var value = this.props.fieldSchema.options.find(function (x) { return x.value === _this.props.input.value; });
-        return React.createElement(AutoComplete_1.default, __assign({}, { id: this.props.input.name }, { maxSearchResults: 5, fullWidth: true, ref: function (ref) { return _this.ac = ref; }, filter: AutoComplete_1.default.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: function (value) {
+        return React.createElement(material_ui_1.AutoComplete, __assign({}, { id: this.props.input.name }, { maxSearchResults: 5, fullWidth: true, ref: function (ref) { return _this.ac = ref; }, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: function (value) {
                 return _this.props.input.onChange(value['value']);
             } }));
     };
@@ -107,7 +103,7 @@ var AutoCompleteText = (function (_super) {
     };
     AutoCompleteText.prototype.render = function () {
         var _this = this;
-        return React.createElement(AutoComplete_1.default, __assign({}, { id: this.props.input.name }, { maxSearchResults: 5, fullWidth: true, ref: function (ref) { return _this.ac = ref; }, filter: AutoComplete_1.default.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteText.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.props.input.value, onUpdateInput: function (name) {
+        return React.createElement(material_ui_1.AutoComplete, __assign({}, { id: this.props.input.name }, { maxSearchResults: 5, fullWidth: true, ref: function (ref) { return _this.ac = ref; }, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteText.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.props.input.value, onUpdateInput: function (name) {
                 var entry = _this.props.fieldSchema.options.find(function (x) { return x.name === name; });
                 return _this.props.input.onChange(entry ? entry.value : name);
             } }));
@@ -116,16 +112,17 @@ var AutoCompleteText = (function (_super) {
 }(React.Component));
 AutoCompleteText.datasourceConfig = { text: "name", value: "value" };
 var ArrayFieldRenderer = muiThemeable_1.default()(function (props) {
+    var muiTheme = props.muiTheme;
     return React.createElement("div", { className: "clearfix" },
         props.fields.map(function (name, i) {
-            return React.createElement(Paper_1.default, { key: i, zDepth: 0, style: {
+            return React.createElement(material_ui_1.Paper, { key: i, zDepth: 0, style: {
                     padding: '15px',
                     margin: '15px 0',
                     borderTop: "2px solid " + props.muiTheme.palette.primary1Color,
                 } },
                 React.createElement("div", { className: "pull-right" },
-                    React.createElement(IconButton_1.default, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "添加" },
-                        React.createElement(add_1.default, null))),
+                    React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
+                        React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
                 React.createElement("div", null, props.fieldSchema.children.map(function (field) {
                     var parsedKey = name + '.' + field.key;
                     return React.createElement("div", { key: parsedKey }, props.renderField(Object.assign({}, field, {
@@ -133,8 +130,9 @@ var ArrayFieldRenderer = muiThemeable_1.default()(function (props) {
                     })));
                 })));
         }),
-        React.createElement(IconButton_1.default, { style: { marginBottom: '15px', width: '100%' }, tooltip: "删除", onTouchTap: function () { return props.fields.push(); } },
-            React.createElement(remove_1.default, null)));
+        React.createElement("div", { style: { textAlign: "center" } },
+            React.createElement(material_ui_1.IconButton, { style: { marginBottom: '15px' }, tooltip: "添加", onTouchTap: function () { return props.fields.push(); } },
+                React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
 });
 form_1.addType('number', function (_a) {
     var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
@@ -187,9 +185,9 @@ form_1.addType('hidden', function (_a) {
 form_1.setButton(muiThemeable_1.default()(function (props) {
     switch (props.type) {
         case 'submit':
-            return React.createElement(RaisedButton_1.default, { className: "raised-button", primary: true, label: props.children, labelStyle: { padding: "0" }, style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type });
+            return React.createElement(material_ui_1.RaisedButton, { className: "raised-button", primary: true, label: props.children, labelStyle: { padding: "0" }, style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type });
         default:
-            return React.createElement(RaisedButton_1.default, { backgroundColor: "transparent", style: {
+            return React.createElement(material_ui_1.RaisedButton, { backgroundColor: "transparent", style: {
                     backgroundColor: "transparent",
                     margin: "15px"
                 }, buttonStyle: {

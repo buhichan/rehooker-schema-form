@@ -54,14 +54,20 @@ function changeField(parsedSchema, value) {
         }
         if (prev.children) {
             var nextChildren = changeField(prev.children, value);
-            if (nextChildren !== prev.children)
+            if (nextChildren !== prev.children) {
+                prev.children = nextChildren;
                 return false;
+            }
         }
         return true;
     });
-    if (index >= 0)
+    if (index >= 0) {
         parsedSchema[index] = __assign({}, parsedSchema[index], value);
-    return parsedSchema;
+        return parsedSchema.slice();
+    }
+    else {
+        return parsedSchema;
+    }
 }
 var customTypes = new Map();
 function addType(name, widget) {
@@ -85,9 +91,9 @@ var ReduxSchemaForm = (function (_super) {
         };
         return _this;
     }
-    ReduxSchemaForm.prototype.changeSchema = function (newFields) {
+    ReduxSchemaForm.prototype.applySchemaChange = function (newFields) {
         if (newFields.then) {
-            return newFields.then(this.changeSchema.bind(this));
+            return newFields.then(this.applySchemaChange.bind(this));
         }
         else if (typeof newFields === 'function') {
             var newSchema = newFields(this.state.parsedSchema);
@@ -95,29 +101,24 @@ var ReduxSchemaForm = (function (_super) {
                 this.setState({ parsedSchema: newSchema });
         }
         else {
+            var result = newFields.reduce(function (prev, curr) {
+                return changeField(prev, curr);
+            }, this.state.parsedSchema).slice();
             this.setState({
-                parsedSchema: newFields.reduce(function (prev, curr) {
-                    return changeField(prev, curr);
-                }, this.state.parsedSchema).slice()
+                parsedSchema: result
             });
         }
     };
     ReduxSchemaForm.prototype.parseField = function (field, prefix) {
         var _this = this;
         var promises = [];
-        var parsedField = (Object.assign({}, field));
+        var parsedField = __assign({}, field);
         parsedField.parsedKey = (prefix ? (prefix + ".") : "") + parsedField.key;
         if (field.onChange) {
-            parsedField.normalize = function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                var newFields = field.onChange.apply(null, args);
-                if (newFields) {
-                    _this.changeSchema(newFields);
-                }
-                return field.normalize ? field.normalize.apply(null, args) : args[0];
+            parsedField.onChange = function (e) {
+                var newFields = field.onChange(e.target['value'], e);
+                if (newFields)
+                    _this.applySchemaChange(newFields);
             };
         }
         if (field.children instanceof Array) {

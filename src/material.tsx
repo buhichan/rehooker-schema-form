@@ -3,20 +3,12 @@
  */
 import * as React from "react"
 import {addType,setButton} from "./form"
-import TextField from "material-ui/TextField"
-import SelectField from "material-ui/SelectField"
-import MenuItem from 'material-ui/MenuItem'
-import Checkbox from 'material-ui/Checkbox'
-import DatePicker from "material-ui/DatePicker";
-import RaisedButton from "material-ui/RaisedButton"
-import FlatButton from "material-ui/FlatButton"
-import Paper from "material-ui/Paper"
-import AutoComplete from "material-ui/AutoComplete"
+import {TextField,SelectField,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
-import IconButton from "material-ui/IconButton";
 
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
+import {MuiTheme} from "material-ui/styles";
 
 let {Field,FieldArray} =require("redux-form");
 
@@ -102,6 +94,10 @@ function SelectInput(props){
         fullWidth={true}
         errorText={props.meta.error}
         multiple={props.fieldSchema.multiple}
+        onChange={(e,i,v)=>{
+            e.target.value = v;
+            props.input.onChange(e)
+        }}
     >
         {
             props.fieldSchema.options.map((option)=><MenuItem className="option" key={option.value} value={option.value} primaryText={option.name} />)
@@ -161,6 +157,7 @@ class AutoCompleteText extends React.Component<any,any>{
 
 const ArrayFieldRenderer = muiThemeable()(
     function (props:any){
+        const muiTheme:MuiTheme = props.muiTheme;
         return <div className="clearfix">
             {
                 props.fields.map((name, i) => {
@@ -170,11 +167,12 @@ const ArrayFieldRenderer = muiThemeable()(
                         borderTop: "2px solid " + props.muiTheme.palette.primary1Color,
                     }}>
                         <div className="pull-right">
-                            <IconButton style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
-                                        onTouchTap={() => props.fields.remove(i)}
-                                        tooltip="添加"
+                            <IconButton
+                                style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
+                                onTouchTap={() => props.fields.remove(i)}
+                                tooltip="删除"
                             >
-                                <Add />
+                                <Remove hoverColor={muiTheme.palette.accent1Color} />
                             </IconButton>
                         </div>
                         <div>
@@ -190,10 +188,14 @@ const ArrayFieldRenderer = muiThemeable()(
                     </Paper>
                 })
             }
-            <IconButton style={{marginBottom: '15px', width: '100%'}} tooltip="删除" onTouchTap={() => props.fields.push()}
-                        >
-                <Remove />
-            </IconButton>
+            <div style={{textAlign:"center"}}>
+                <IconButton
+                    style={{marginBottom: '15px'}}
+                    tooltip="添加" onTouchTap={() => props.fields.push()}
+                >
+                    <Add hoverColor={muiTheme.palette.primary1Color}/>
+                </IconButton>
+            </div>
         </div>
     });
 

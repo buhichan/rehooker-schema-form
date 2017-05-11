@@ -48,6 +48,7 @@
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
+    "immutable": "*",
     "react": "*",
     "react-dom": "*",
     "react-redux": "*",

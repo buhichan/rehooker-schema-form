@@ -31,7 +31,7 @@ let schema:FormFieldSchema[] = [
                 value:"pear"
             }
         ],
-        onChange:(value,prevValue,formData)=>{
+        onChange:(value)=>{
             if(value==='pear')
                 return [
                     {
@@ -131,7 +131,7 @@ let schema:FormFieldSchema[] = [
                 value:"animal"
             }
         ],
-        onChange:(value):any=>{
+        onChange:(value)=>{
             if(value ==='animal'){
                 return [
                     {
@@ -230,6 +230,17 @@ let schema:FormFieldSchema[] = [
         label:"有依赖的单选lv3",
         options:[],
         hide:true
+    },{
+        key:"array",
+        type:"array",
+        label:"Array",
+        children:[
+            {
+                key:"array-child",
+                label:"array-child",
+                type:"text"
+            }
+        ]
     }
 ];
 

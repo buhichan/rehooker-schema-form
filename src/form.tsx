@@ -3,6 +3,7 @@
  */
 import * as React from 'react'
 import {reduxForm, Config as ReduxFormConfig} from 'redux-form'
+import {SyntheticEvent} from "react";
 let {Field,FieldArray} = require("redux-form");
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
@@ -32,7 +33,7 @@ export type ChangeOfSchema = (Partial<ParsedFormFieldSchema>&{key:string})[];
 
 export interface FormFieldSchema extends BaseSchema{
     onChange?:
-        (value,previousValue,allValues)=>ChangeOfSchema|Promise<ChangeOfSchema>|((oldSchema:ParsedFormFieldSchema[])=>ParsedFormFieldSchema[])
+        (newValue?:any,e?:SyntheticEvent<any>)=>ChangeOfSchema|Promise<ChangeOfSchema>|((oldSchema:ParsedFormFieldSchema[])=>ParsedFormFieldSchema[])
     options?:Options | AsyncOptions,
     children?:FormFieldSchema[]
 }
@@ -58,14 +59,19 @@ function changeField(parsedSchema:ParsedFormFieldSchema[],value:ParsedFormFieldS
         }
         if(prev.children){
             const nextChildren = changeField(prev.children,value);
-            if(nextChildren!==prev.children)
+            if(nextChildren!==prev.children) {
+                prev.children = nextChildren;
                 return false;
+            }
         }
         return true;
     });
-    if(index>=0)
-        parsedSchema[index]={...parsedSchema[index],...value};
-    return parsedSchema;
+    if(index>=0) {
+        parsedSchema[index] = {...parsedSchema[index], ...value};
+        return [...parsedSchema];
+    }else{
+        return parsedSchema;
+    }
 }
 
 let customTypes = new Map();
@@ -144,32 +150,31 @@ export class ReduxSchemaForm extends React.PureComponent<{
             parsedSchema: []
         }
     }
-    changeSchema(newFields){
+    applySchemaChange(newFields){
         if(newFields.then){
-            return newFields.then(this.changeSchema.bind(this));
+            return newFields.then(this.applySchemaChange.bind(this));
         }else if (typeof newFields === 'function') {
             const newSchema = newFields(this.state.parsedSchema);
             if(newSchema)
                 this.setState({parsedSchema:newSchema})
         }else {
+            const result = newFields.reduce((prev, curr) => {
+                return changeField(prev, curr)
+            }, this.state.parsedSchema).slice();
             this.setState({
-                parsedSchema:newFields.reduce((prev, curr) => {
-                    return changeField(prev, curr)
-                }, this.state.parsedSchema).slice()
+                parsedSchema:result
             });
         }
     }
     parseField(field:FormFieldSchema,prefix):Promise<ParsedFormFieldSchema>{
         let promises = [];
-        let parsedField:ParsedFormFieldSchema = (Object.assign({},field)) as any;
+        let parsedField:ParsedFormFieldSchema = {...field} as any;
         parsedField.parsedKey = (prefix?(prefix + "."):"") + parsedField.key;
         if(field.onChange) {
-            parsedField.normalize = (...args) => {
-                const newFields = field.onChange.apply(null, args);
-                if (newFields) {
-                    this.changeSchema(newFields);
-                }
-                return field.normalize?field.normalize.apply(null,args):args[0]
+            parsedField.onChange = e => {
+                const newFields = field.onChange(e.target['value'],e);
+                if (newFields)
+                    this.applySchemaChange(newFields);
             };
         }
         if(field.children instanceof Array){

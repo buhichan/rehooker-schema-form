@@ -47,7 +47,7 @@ var schema = [
                 value: "pear"
             }
         ],
-        onChange: function (value, prevValue, formData) {
+        onChange: function (value) {
             if (value === 'pear')
                 return [
                     {
@@ -251,6 +251,17 @@ var schema = [
         label: "有依赖的单选lv3",
         options: [],
         hide: true
+    }, {
+        key: "array",
+        type: "array",
+        label: "Array",
+        children: [
+            {
+                key: "array-child",
+                label: "array-child",
+                type: "text"
+            }
+        ]
     }
 ];
 var reducer = redux_1.combineReducers({

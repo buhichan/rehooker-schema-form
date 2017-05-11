@@ -4,6 +4,7 @@
  */
 import * as React from 'react';
 import { Config as ReduxFormConfig } from 'redux-form';
+import { SyntheticEvent } from "react";
 export declare type SupportedFieldType = "text" | "password" | "file" | "select" | "date" | 'datetime-local' | "checkbox" | "textarea" | "group" | "color" | "number" | "array" | string;
 export declare type Options = {
     name: string;
@@ -31,7 +32,7 @@ export declare type ChangeOfSchema = (Partial<ParsedFormFieldSchema> & {
     key: string;
 })[];
 export interface FormFieldSchema extends BaseSchema {
-    onChange?: (value, previousValue, allValues) => ChangeOfSchema | Promise<ChangeOfSchema> | ((oldSchema: ParsedFormFieldSchema[]) => ParsedFormFieldSchema[]);
+    onChange?: (newValue?: any, e?: SyntheticEvent<any>) => ChangeOfSchema | Promise<ChangeOfSchema> | ((oldSchema: ParsedFormFieldSchema[]) => ParsedFormFieldSchema[]);
     options?: Options | AsyncOptions;
     children?: FormFieldSchema[];
 }
@@ -95,7 +96,7 @@ export declare class ReduxSchemaForm extends React.PureComponent<{
     parsedSchema?: ParsedFormFieldSchema[];
 }> {
     constructor();
-    changeSchema(newFields: any): any;
+    applySchemaChange(newFields: any): any;
     parseField(field: FormFieldSchema, prefix: any): Promise<ParsedFormFieldSchema>;
     parseSchema(newSchema: FormFieldSchema[], prefix?: string): Promise<ParsedFormFieldSchema[]>;
     DefaultArrayFieldRenderer(props: any): JSX.Element;
