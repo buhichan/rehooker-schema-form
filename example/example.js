@@ -147,7 +147,104 @@ var schema = [
                 name: "动物",
                 value: "animal"
             }
-        ]
+        ],
+        onChange: function (value) {
+            if (value === 'animal') {
+                return [
+                    {
+                        key: "dependant_lv2",
+                        hide: false,
+                        value: null,
+                        options: [
+                            {
+                                name: "狗",
+                                value: "dog"
+                            }, {
+                                name: "猫",
+                                value: "cat"
+                            }
+                        ]
+                    }, {
+                        key: "dependant_lv3",
+                        hide: true,
+                        value: null
+                    }
+                ];
+            }
+            else if (value === 'plant') {
+                return [
+                    {
+                        key: "dependant_lv2",
+                        hide: false,
+                        value: null,
+                        options: [
+                            {
+                                name: "苹果",
+                                value: "apple"
+                            },
+                            {
+                                name: "梨子",
+                                value: "pear"
+                            }
+                        ]
+                    }, {
+                        key: "dependant_lv3",
+                        hide: true,
+                        value: null
+                    }
+                ];
+            }
+            else {
+                return [
+                    {
+                        key: "dependant_lv2",
+                        hide: true,
+                        value: null
+                    }, {
+                        key: "dependant_lv3",
+                        hide: true,
+                        value: null
+                    }
+                ];
+            }
+        }
+    }, {
+        key: "dependant_lv2",
+        type: "select",
+        label: "有依赖的单选lv2",
+        onChange: function (value) {
+            if (value === 'dog') {
+                return [
+                    {
+                        key: "dependant_lv3",
+                        hide: false,
+                        value: null,
+                        options: [{ name: 'dogg1', value: "dogg1" }, { name: 'doggy', value: 'doggy' }, { name: 'puppy', value: 'puppy' }]
+                    }
+                ];
+            }
+            else if (value === 'cat') {
+                return [
+                    {
+                        key: "dependant_lv3",
+                        hide: false,
+                        value: null,
+                        options: [{ name: 'kitten', value: 'kitten' }, { name: 'cat', value: 'cat' }, { name: 'kitty', value: 'kitty' }]
+                    }
+                ];
+            }
+            else {
+                return [
+                    {
+                        key: "dependant_lv3",
+                        hide: true,
+                        value: null
+                    }
+                ];
+            }
+        },
+        options: [],
+        hide: true
     }, {
         key: "dependant_lv3",
         type: "select",

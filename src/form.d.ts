@@ -27,8 +27,11 @@ export interface BaseSchema extends ReduxFormConfig<any, any, any> {
     data?: any;
     [rest: string]: any;
 }
+export declare type ChangeOfSchema = (Partial<ParsedFormFieldSchema> & {
+    key: string;
+})[];
 export interface FormFieldSchema extends BaseSchema {
-    onChange?: (value, previousValue, allValues) => Partial<ParsedFormFieldSchema>[] | Promise<Partial<ParsedFormFieldSchema>[]>;
+    onChange?: (value, previousValue, allValues) => ChangeOfSchema | Promise<ChangeOfSchema> | ((oldSchema: ParsedFormFieldSchema[]) => ParsedFormFieldSchema[]);
     options?: Options | AsyncOptions;
     children?: FormFieldSchema[];
 }
@@ -92,7 +95,6 @@ export declare class ReduxSchemaForm extends React.PureComponent<{
     parsedSchema?: ParsedFormFieldSchema[];
 }> {
     constructor();
-    isUnmounting: boolean;
     changeSchema(newFields: any): any;
     parseField(field: FormFieldSchema, prefix: any): Promise<ParsedFormFieldSchema>;
     parseSchema(newSchema: FormFieldSchema[], prefix?: string): Promise<ParsedFormFieldSchema[]>;

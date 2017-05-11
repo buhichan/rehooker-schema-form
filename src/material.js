@@ -34,7 +34,6 @@ var React = require("react");
 var form_1 = require("./form");
 var TextField_1 = require("material-ui/TextField");
 var SelectField_1 = require("material-ui/SelectField");
-var MenuItem_1 = require("material-ui/MenuItem");
 var Checkbox_1 = require("material-ui/Checkbox");
 var DatePicker_1 = require("material-ui/DatePicker");
 var RaisedButton_1 = require("material-ui/RaisedButton");
@@ -46,7 +45,7 @@ var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 function NumberInput(props) {
-    return React.createElement(TextField_1.default, { type: "number", id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, name: props.input.name, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } });
+    return React.createElement(TextField_1.default, __assign({}, props.input, { type: "number", id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
 function DateInput(props) {
     var DatePickerProps = {
@@ -62,7 +61,7 @@ function DateInput(props) {
 }
 var TextFieldWithRequired = TextField_1.default;
 function TextInput(props) {
-    return React.createElement(TextFieldWithRequired, { required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, name: props.input.name, disabled: props.disabled, multiLine: props.fieldSchema.multiLine, floatingLabelText: props.fieldSchema.label, value: props.input.value, onChange: props.input.onChange });
+    return React.createElement(TextFieldWithRequired, __assign({}, props.input, { required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: props.fieldSchema.multiLine, floatingLabelText: props.fieldSchema.label }));
 }
 var CheckboxInput = (function (_super) {
     __extends(CheckboxInput, _super);
@@ -73,12 +72,12 @@ var CheckboxInput = (function (_super) {
         this.props.input.onChange(this.props.input.checked);
     };
     CheckboxInput.prototype.render = function () {
-        return React.createElement(Checkbox_1.default, { id: this.props.input.name, style: { width: "100%", margin: "32px 0 16px" }, disabled: this.props.disabled, onCheck: this.props.input.onChange, label: this.props.fieldSchema.label, value: this.props.input.value });
+        return React.createElement(Checkbox_1.default, __assign({}, this.props.input, { id: this.props.input.name, style: { width: "100%", margin: "32px 0 16px" }, disabled: this.props.disabled, onChange: undefined, onCheck: this.props.input.onChange, label: this.props.fieldSchema.label, value: this.props.input.value }));
     };
     return CheckboxInput;
 }(React.Component));
 function SelectInput(props) {
-    return React.createElement(SelectField_1.default, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, multiple: props.fieldSchema.multiple, value: props.input.value, onChange: function (event, index, value) { return props.input.onChange(value); } }, props.fieldSchema.options.map(function (option) { return React.createElement(MenuItem_1.default, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
+    return React.createElement(SelectField_1.default, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, multiple: props.fieldSchema.multiple }), props.fieldSchema.options.map(function (option) { return React.createElement(MenuItem_1.default, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
 }
 var AutoCompleteSelect = (function (_super) {
     __extends(AutoCompleteSelect, _super);

@@ -86,14 +86,21 @@ var ReduxSchemaForm = (function (_super) {
         return _this;
     }
     ReduxSchemaForm.prototype.changeSchema = function (newFields) {
-        if (newFields.then)
+        if (newFields.then) {
             return newFields.then(this.changeSchema.bind(this));
-        var result = newFields.reduce(function (prev, curr) {
-            return changeField(prev, curr);
-        }, this.state.parsedSchema);
-        this.setState({
-            parsedSchema: result.slice()
-        });
+        }
+        else if (typeof newFields === 'function') {
+            var newSchema = newFields(this.state.parsedSchema);
+            if (newSchema)
+                this.setState({ parsedSchema: newSchema });
+        }
+        else {
+            this.setState({
+                parsedSchema: newFields.reduce(function (prev, curr) {
+                    return changeField(prev, curr);
+                }, this.state.parsedSchema).slice()
+            });
+        }
     };
     ReduxSchemaForm.prototype.parseField = function (field, prefix) {
         var _this = this;
