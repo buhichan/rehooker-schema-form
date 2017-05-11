@@ -13,6 +13,10 @@ import FlatButton from "material-ui/FlatButton"
 import Paper from "material-ui/Paper"
 import AutoComplete from "material-ui/AutoComplete"
 import muiThemeable from "material-ui/styles/muiThemeable";
+import IconButton from "material-ui/IconButton";
+
+import Add from "material-ui/svg-icons/content/add";
+import Remove from "material-ui/svg-icons/content/remove";
 
 let {Field,FieldArray} =require("redux-form");
 
@@ -163,8 +167,12 @@ const ArrayFieldRenderer = muiThemeable()(
                         borderTop: "2px solid " + props.muiTheme.palette.primary1Color,
                     }}>
                         <div className="pull-right">
-                            <FlatButton style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
-                                        onClick={() => props.fields.remove(i)}><i className="fa fa-minus"/></FlatButton>
+                            <IconButton style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
+                                        onTouchTap={() => props.fields.remove(i)}
+                                        tooltip="添加"
+                            >
+                                <Add />
+                            </IconButton>
                         </div>
                         <div>
                             {props.fieldSchema.children.map((field) => {
@@ -179,8 +187,10 @@ const ArrayFieldRenderer = muiThemeable()(
                     </Paper>
                 })
             }
-            <FlatButton style={{marginBottom: '15px', width: '100%'}} onClick={() => props.fields.push()}
-                        primary={true}><i className="fa fa-plus"/></FlatButton>
+            <IconButton style={{marginBottom: '15px', width: '100%'}} tooltip="删除" onTouchTap={() => props.fields.push()}
+                        >
+                <Remove />
+            </IconButton>
         </div>
     });
 
