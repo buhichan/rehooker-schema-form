@@ -38,10 +38,12 @@ var MenuItem_1 = require("material-ui/MenuItem");
 var Checkbox_1 = require("material-ui/Checkbox");
 var DatePicker_1 = require("material-ui/DatePicker");
 var RaisedButton_1 = require("material-ui/RaisedButton");
-var FlatButton_1 = require("material-ui/FlatButton");
 var Paper_1 = require("material-ui/Paper");
 var AutoComplete_1 = require("material-ui/AutoComplete");
 var muiThemeable_1 = require("material-ui/styles/muiThemeable");
+var IconButton_1 = require("material-ui/IconButton");
+var add_1 = require("material-ui/svg-icons/content/add");
+var remove_1 = require("material-ui/svg-icons/content/remove");
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 function NumberInput(props) {
     return React.createElement(TextField_1.default, { type: "number", id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, name: props.input.name, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } });
@@ -123,8 +125,8 @@ var ArrayFieldRenderer = muiThemeable_1.default()(function (props) {
                     borderTop: "2px solid " + props.muiTheme.palette.primary1Color,
                 } },
                 React.createElement("div", { className: "pull-right" },
-                    React.createElement(FlatButton_1.default, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onClick: function () { return props.fields.remove(i); } },
-                        React.createElement("i", { className: "fa fa-minus" }))),
+                    React.createElement(IconButton_1.default, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "添加" },
+                        React.createElement(add_1.default, null))),
                 React.createElement("div", null, props.fieldSchema.children.map(function (field) {
                     var parsedKey = name + '.' + field.key;
                     return React.createElement("div", { key: parsedKey }, props.renderField(Object.assign({}, field, {
@@ -132,8 +134,8 @@ var ArrayFieldRenderer = muiThemeable_1.default()(function (props) {
                     })));
                 })));
         }),
-        React.createElement(FlatButton_1.default, { style: { marginBottom: '15px', width: '100%' }, onClick: function () { return props.fields.push(); }, primary: true },
-            React.createElement("i", { className: "fa fa-plus" })));
+        React.createElement(IconButton_1.default, { style: { marginBottom: '15px', width: '100%' }, tooltip: "删除", onTouchTap: function () { return props.fields.push(); } },
+            React.createElement(remove_1.default, null)));
 });
 form_1.addType('number', function (_a) {
     var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
