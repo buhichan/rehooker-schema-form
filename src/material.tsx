@@ -21,15 +21,17 @@ import Remove from "material-ui/svg-icons/content/remove";
 let {Field,FieldArray} =require("redux-form");
 
 function NumberInput(props){
-    return <TextField type="number"
-                      id={props.input.name}
-                      className="full-width"
-                      disabled={props.disabled}
-                      style={{width:"100%"}}
-                      name={props.input.name}
-                      floatingLabelText={props.fieldSchema.label}
-                      value={Number(props.input.value)}
-                      onChange={(e)=>props.input.onChange(Number(e.target['value']))}/>;
+    return <TextField
+        {...props.input}
+        type="number"
+        id={props.input.name}
+        className="full-width"
+        disabled={props.disabled}
+        style={{width:"100%"}}
+        floatingLabelText={props.fieldSchema.label}
+        value={Number(props.input.value)}
+        onChange={(e)=>props.input.onChange(Number(e.target['value']))}
+    />;
 }
 
 function DateInput(props){
@@ -63,17 +65,15 @@ const TextFieldWithRequired = TextField as any;
 
 function TextInput(props){
     return <TextFieldWithRequired
+        {...props.input}
         required={props.required}
         type={props.type}
         id={props.input.name}
         className="full-width"
         style={{width:"100%"}}
-        name={props.input.name}
         disabled={props.disabled}
         multiLine={props.fieldSchema.multiLine}
-        floatingLabelText={props.fieldSchema.label}
-        value={props.input.value}
-        onChange={props.input.onChange}/>;
+        floatingLabelText={props.fieldSchema.label}/>;
 }
 class CheckboxInput extends React.Component<any,any>{
     componentWillMount(){
@@ -81,9 +81,11 @@ class CheckboxInput extends React.Component<any,any>{
     }
     render() {
         return <Checkbox
+            {...this.props.input}
             id={this.props.input.name}
             style={{width:"100%",margin:"32px 0 16px"}}
             disabled={this.props.disabled}
+            onChange={undefined}
             onCheck={this.props.input.onChange}
             label={this.props.fieldSchema.label}
             value={this.props.input.value}
@@ -93,13 +95,14 @@ class CheckboxInput extends React.Component<any,any>{
 
 function SelectInput(props){
     return <SelectField
+        {...props.input}
         id={props.input.name}
         disabled={props.disabled}
         floatingLabelText={props.fieldSchema.label}
         fullWidth={true}
+        errorText={props.meta.error}
         multiple={props.fieldSchema.multiple}
-        value={props.input.value}
-        onChange={(event,index,value)=>props.input.onChange(value)}>
+    >
         {
             props.fieldSchema.options.map((option)=><MenuItem className="option" key={option.value} value={option.value} primaryText={option.name} />)
         }

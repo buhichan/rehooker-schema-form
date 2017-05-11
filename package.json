@@ -11,10 +11,10 @@
     "build": "tsc -p .",
     "version": "npm run build && git add -A",
     "postversion": "git push && git push --tags",
-    "dev": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9010"
+    "dev": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011"
   },
   "peerDependencies": {
-    "material-ui": "^0.17.4"
+    "material-ui": "0.18.*"
   },
   "keywords": [
     "redux-form",
@@ -23,7 +23,7 @@
   "author": "YS",
   "license": "MIT",
   "devDependencies": {
-    "@types/material-ui": "^0.17.4",
+    "@types/material-ui": "0.18.*",
     "@types/node": "^6.0.53",
     "@types/react-dom": "^0.14.19",
     "@types/react-redux": "^4.4.35",
@@ -37,21 +37,21 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.22.0",
-    "material-ui": "^0.17.4",
+    "material-ui": "0.18.*",
     "null-loader": "^0.1.1",
     "postcss-loader": "^0.13.0",
     "raw-loader": "^0.5.1",
     "react-tap-event-plugin": "^2.0.1",
     "style-loader": "^0.13.1",
-    "typescript": "2.2.*",
+    "typescript": "^2.3.2",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
     "react": "*",
     "react-dom": "*",
-    "react-redux": "^5.0.4",
-    "redux": "^3.6.0",
+    "react-redux": "*",
+    "redux": "*",
     "redux-form": "^6.6.3"
   }
 }

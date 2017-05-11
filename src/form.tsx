@@ -28,8 +28,11 @@ export interface BaseSchema extends ReduxFormConfig<any,any,any>{
     [rest:string]:any
 }
 
+export type ChangeOfSchema = (Partial<ParsedFormFieldSchema>&{key:string})[];
+
 export interface FormFieldSchema extends BaseSchema{
-    onChange?:(value,previousValue,allValues)=>Partial<ParsedFormFieldSchema>[]|Promise<Partial<ParsedFormFieldSchema>[]>
+    onChange?:
+        (value,previousValue,allValues)=>ChangeOfSchema|Promise<ChangeOfSchema>|((oldSchema:ParsedFormFieldSchema[])=>ParsedFormFieldSchema[])
     options?:Options | AsyncOptions,
     children?:FormFieldSchema[]
 }
@@ -141,16 +144,20 @@ export class ReduxSchemaForm extends React.PureComponent<{
             parsedSchema: []
         }
     }
-    isUnmounting:boolean;
     changeSchema(newFields){
-        if(newFields.then)
+        if(newFields.then){
             return newFields.then(this.changeSchema.bind(this));
-        const result = newFields.reduce((prev,curr)=>{
-            return changeField(prev,curr)
-        },this.state.parsedSchema);
-        this.setState({
-            parsedSchema:result.slice()
-        });
+        }else if (typeof newFields === 'function') {
+            const newSchema = newFields(this.state.parsedSchema);
+            if(newSchema)
+                this.setState({parsedSchema:newSchema})
+        }else {
+            this.setState({
+                parsedSchema:newFields.reduce((prev, curr) => {
+                    return changeField(prev, curr)
+                }, this.state.parsedSchema).slice()
+            });
+        }
     }
     parseField(field:FormFieldSchema,prefix):Promise<ParsedFormFieldSchema>{
         let promises = [];

@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@types/material-ui@^0.17.4":
-  version "0.17.4"
-  resolved "http://registry.npm.taobao.org/@types/material-ui/download/@types/material-ui-0.17.4.tgz#6162ecac2ff025ad39a91710b008052f4985d22b"
+"@types/material-ui@0.18.*":
+  version "0.17.6"
+  resolved "http://registry.npm.taobao.org/@types/material-ui/download/@types/material-ui-0.17.6.tgz#7246c68b4c7e4a09ddc7db2fc271366e84f3d2cc"
   dependencies:
     "@types/react" "*"
     "@types/react-addons-linked-state-mixin" "*"
@@ -1607,9 +1607,9 @@ macaddress@^0.2.8:
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/macaddress/-/macaddress-0.2.8.tgz#5904dc537c39ec6dbefeae902327135fa8511f12"
 
-material-ui@^0.17.4:
-  version "0.17.4"
-  resolved "http://registry.npm.taobao.org/material-ui/download/material-ui-0.17.4.tgz#193999ecb49c3ec15ae0abb4e90fdf9a7bd343e0"
+material-ui@0.18.*:
+  version "0.18.0"
+  resolved "http://registry.npm.taobao.org/material-ui/download/material-ui-0.18.0.tgz#fcf5eddfe87d066792bd44f09b4f7c9ca7f620d6"
   dependencies:
     babel-runtime "^6.23.0"
     inline-style-prefixer "^3.0.2"
@@ -2336,7 +2336,7 @@ react-event-listener@^0.4.5:
     prop-types "^15.5.4"
     warning "^3.0.0"
 
-react-redux@^5.0.4:
+react-redux@*:
   version "5.0.4"
   resolved "http://registry.npm.taobao.org/react-redux/download/react-redux-5.0.4.tgz#1563babadcfb2672f57f9ceaa439fb16bf85d55b"
   dependencies:
@@ -2441,7 +2441,7 @@ redux-form@^6.6.3:
     lodash-es "^4.17.3"
     prop-types "^15.5.6"
 
-redux@^3.6.0:
+redux@*, redux@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/redux/-/redux-3.6.0.tgz#887c2b3d0b9bd86eca2be70571c27654c19e188d"
   dependencies:
@@ -2849,9 +2849,9 @@ type-is@~1.6.14:
     media-typer "0.3.0"
     mime-types "~2.1.13"
 
-typescript@2.2.*:
-  version "2.2.2"
-  resolved "http://registry.npm.taobao.org/typescript/download/typescript-2.2.2.tgz#606022508479b55ffa368b58fee963a03dfd7b0c"
+typescript@^2.3.2:
+  version "2.3.2"
+  resolved "http://registry.npm.taobao.org/typescript/download/typescript-2.3.2.tgz#f0f045e196f69a72f06b25fd3bd39d01c3ce9984"
 
 ua-parser-js@^0.7.9:
   version "0.7.12"
