@@ -14,7 +14,8 @@
     "dev": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011"
   },
   "peerDependencies": {
-    "material-ui": "0.18.*"
+    "material-ui": "0.18.*",
+    "react-jss": "6.*"
   },
   "keywords": [
     "redux-form",
@@ -41,6 +42,7 @@
     "null-loader": "^0.1.1",
     "postcss-loader": "^0.13.0",
     "raw-loader": "^0.5.1",
+    "react-jss": "6.*",
     "react-tap-event-plugin": "^2.0.1",
     "style-loader": "^0.13.1",
     "typescript": "^2.3.2",

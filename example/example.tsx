@@ -110,12 +110,15 @@ let schema:FormFieldSchema[] = [
                 type:'date',
                 key:"nested[0]",
                 label:"日期"
+            },{
+                key:"email",
+                type:"email",
+                label:"email with validation",
+                validate(v){
+                    if(!/.*@.*\..*/.test(v))
+                        return "not a valid email"
+                }
             },
-            {
-                type:"datetime-local",
-                key:"nested[1]",
-                label:"日期时间"
-            }
         ]
     },{
         key:"dependant_lv1",
@@ -241,6 +244,24 @@ let schema:FormFieldSchema[] = [
                 type:"text"
             }
         ]
+    },{
+        key:"dynamic-array",
+        type:"array",
+        label:"dynamic-array",
+        getChildren:v=>{
+            return [
+                {
+                    key:"array-child",
+                    label:"array-child",
+                    type:"text"
+                },
+                v&&isFinite(v['array-child'])?{
+                    key:"currency",
+                    label:"currency",
+                    type:"text"
+                }:null
+            ]
+        }
     }
 ];
 
@@ -269,13 +290,15 @@ const store = createStore(reducer,{},middleware);
 )
 class App extends React.Component<any,any>{
     render(){
-        return <ReduxSchemaForm form="random" initialValues={this.props.data} schema={this.props['formSchema']} onSubmit={(values)=>{
-            if(values.text){
-                return new Promise(resolve=>{
-                    setTimeout(resolve,3000)
-                })
-            }else return true;
-        }}>
+        return <div>
+            <ReduxSchemaForm form="random" initialValues={this.props.data} schema={this.props['formSchema']} onSubmit={(values)=>{
+                if(values.text){
+                    return new Promise(resolve=>{
+                        setTimeout(resolve,3000)
+                    })
+                }else return true;
+            }}>
+            </ReduxSchemaForm>
             <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
             <pre>
                 <code>
@@ -284,11 +307,15 @@ class App extends React.Component<any,any>{
                 }
                 </code>
             </pre>
-        </ReduxSchemaForm>
+        </div>
     }
 }
 
-const muiTheme = getMuiTheme({});
+const muiTheme = getMuiTheme({
+    palette:{
+        primary1Color:"#885543"
+    }
+});
 
 ReactDOM.render(
     <MuiThemeProvider muiTheme={muiTheme}>

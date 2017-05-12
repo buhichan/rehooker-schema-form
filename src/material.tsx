@@ -2,20 +2,24 @@
  * Created by buhi on 2017/4/28.
  */
 import * as React from "react"
-import {addType,setButton} from "./form"
+import {addType, CustomWidgetProps, setButton} from "./form"
 import {TextField,SelectField,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
 
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
 import {MuiTheme} from "material-ui/styles";
+import {stylesheet} from "./material.jss";
+import {BaseFieldArrayProps} from "redux-form";
+import {WrappedFieldArrayProps} from "@types/redux-form/lib/FieldArray";
 
 let {Field,FieldArray} =require("redux-form");
 
-function NumberInput(props){
+function NumberInput(props:CustomWidgetProps){
     return <TextField
-        {...props.input}
+        {...props.input as any}
         type="number"
+        errorText={props.meta.error}
         id={props.input.name}
         className="full-width"
         disabled={props.disabled}
@@ -26,7 +30,7 @@ function NumberInput(props){
     />;
 }
 
-function DateInput(props){
+function DateInput(props:CustomWidgetProps){
     const DatePickerProps = {
         onChange:(e,value)=>{
             return props.input.onChange(value.toLocaleDateString().replace(/\//g,'-'));
@@ -41,6 +45,7 @@ function DateInput(props){
     return <DatePicker
         DateTimeFormat={Intl.DateTimeFormat as any}
         locale="zh-CN"
+        errorText={props.meta.error}
         floatingLabelText={props.fieldSchema.label}
         autoOk={true}
         id={props.input.name}
@@ -53,11 +58,10 @@ function DateInput(props){
         disabled={props.disabled}/>
 }
 
-const TextFieldWithRequired = TextField as any;
-
-function TextInput(props){
-    return <TextFieldWithRequired
-        {...props.input}
+function TextInput(props:CustomWidgetProps){
+    return <TextField
+        {...props.input as any}
+        errorText={props.meta.error}
         required={props.required}
         type={props.type}
         id={props.input.name}
@@ -67,9 +71,9 @@ function TextInput(props){
         multiLine={props.fieldSchema.multiLine}
         floatingLabelText={props.fieldSchema.label}/>;
 }
-class CheckboxInput extends React.Component<any,any>{
+class CheckboxInput extends React.Component<CustomWidgetProps,any>{
     componentWillMount(){
-        this.props.input.onChange(this.props.input.checked);
+        this.props.input.onChange(this.props.input.value);
     }
     render() {
         return <Checkbox
@@ -85,9 +89,9 @@ class CheckboxInput extends React.Component<any,any>{
     }
 }
 
-function SelectInput(props){
+function SelectInput(props:CustomWidgetProps){
     return <SelectField
-        {...props.input}
+        {...props.input as any}
         id={props.input.name}
         disabled={props.disabled}
         floatingLabelText={props.fieldSchema.label}
@@ -105,7 +109,7 @@ function SelectInput(props){
     </SelectField>;
 }
 
-class AutoCompleteSelect extends React.Component<any,any>{
+class AutoCompleteSelect extends React.Component<CustomWidgetProps,any>{
     componentDidUpdate() {
         this.ac.focus()
     }
@@ -118,6 +122,7 @@ class AutoCompleteSelect extends React.Component<any,any>{
             maxSearchResults={5}
             fullWidth={true}
             ref={ref=>this.ac=ref}
+            errorText={this.props.meta.error}
             filter={AutoComplete.fuzzyFilter}
             dataSource={this.props.fieldSchema.options}
             dataSourceConfig={AutoCompleteSelect.datasourceConfig}
@@ -130,7 +135,7 @@ class AutoCompleteSelect extends React.Component<any,any>{
     }
 }
 
-class AutoCompleteText extends React.Component<any,any>{
+class AutoCompleteText extends React.Component<CustomWidgetProps,any>{
     componentDidUpdate() {
         this.ac.focus()
     }
@@ -143,6 +148,7 @@ class AutoCompleteText extends React.Component<any,any>{
             fullWidth={true}
             ref={ref=>this.ac=ref}
             filter={AutoComplete.fuzzyFilter}
+            errorText={this.props.meta.error}
             dataSource={this.props.fieldSchema.options}
             dataSourceConfig={AutoCompleteText.datasourceConfig}
             floatingLabelText={this.props.fieldSchema.label}
@@ -156,11 +162,14 @@ class AutoCompleteText extends React.Component<any,any>{
 }
 
 const ArrayFieldRenderer = muiThemeable()(
-    function (props:any){
+    function (props:WrappedFieldArrayProps<any>&CustomWidgetProps){
         const muiTheme:MuiTheme = props.muiTheme;
         return <div className="clearfix">
             {
                 props.fields.map((name, i) => {
+                    let children = props.fieldSchema.children;
+                    if(typeof props.fieldSchema.getChildren === 'function')
+                        children = props.fieldSchema.getChildren(props.fields.get(i)).filter(x=>x);
                     return <Paper key={i} zDepth={0} style={{
                         padding: '15px',
                         margin: '15px 0',
@@ -176,14 +185,16 @@ const ArrayFieldRenderer = muiThemeable()(
                             </IconButton>
                         </div>
                         <div>
-                            {props.fieldSchema.children.map((field) => {
-                                const parsedKey = name + '.' + field.key;
-                                return <div key={parsedKey}>
-                                    {props.renderField(Object.assign({}, field, {
-                                        parsedKey
-                                    }))}
-                                </div>;
-                            })}
+                            {
+                                children&&children.map((field) => {
+                                    const parsedKey = name + '.' + field.key;
+                                    return <div key={parsedKey}>
+                                        {props.renderField(Object.assign({}, field, {
+                                            parsedKey
+                                        }))}
+                                    </div>;
+                                })
+                            }
                         </div>
                     </Paper>
                 })
@@ -191,7 +202,7 @@ const ArrayFieldRenderer = muiThemeable()(
             <div style={{textAlign:"center"}}>
                 <IconButton
                     style={{marginBottom: '15px'}}
-                    tooltip="添加" onTouchTap={() => props.fields.push()}
+                    tooltip="添加" onTouchTap={() => props.fields.push({})}
                 >
                     <Add hoverColor={muiTheme.palette.primary1Color}/>
                 </IconButton>
@@ -288,3 +299,14 @@ setButton(muiThemeable()(function(props:any){
             />
     }
 }) as any);
+
+const formModule = require('./form');
+const injectCSS = require('react-jss').default;
+const JSSForm = formModule.ReduxSchemaForm;
+formModule.ReduxSchemaForm =muiThemeable()
+(injectCSS(stylesheet)(
+    ({classes,sheet,...rest})=>{
+        return <div className={classes.form}>
+            <JSSForm {...rest} />
+        </div>;
+    }));

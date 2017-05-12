@@ -127,12 +127,15 @@ var schema = [
                 type: 'date',
                 key: "nested[0]",
                 label: "日期"
+            }, {
+                key: "email",
+                type: "email",
+                label: "email with validation",
+                validate: function (v) {
+                    if (!/.*@.*\..*/.test(v))
+                        return "not a valid email";
+                }
             },
-            {
-                type: "datetime-local",
-                key: "nested[1]",
-                label: "日期时间"
-            }
         ]
     }, {
         key: "dependant_lv1",
@@ -262,6 +265,24 @@ var schema = [
                 type: "text"
             }
         ]
+    }, {
+        key: "dynamic-array",
+        type: "array",
+        label: "dynamic-array",
+        getChildren: function (v) {
+            return [
+                {
+                    key: "array-child",
+                    label: "array-child",
+                    type: "text"
+                },
+                v && isFinite(v['array-child']) ? {
+                    key: "currency",
+                    label: "currency",
+                    type: "text"
+                } : null
+            ];
+        }
     }
 ];
 var reducer = redux_1.combineReducers({
@@ -296,15 +317,16 @@ var App = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     App.prototype.render = function () {
-        return React.createElement(form_1.ReduxSchemaForm, { form: "random", initialValues: this.props.data, schema: this.props['formSchema'], onSubmit: function (values) {
-                if (values.text) {
-                    return new Promise(function (resolve) {
-                        setTimeout(resolve, 3000);
-                    });
-                }
-                else
-                    return true;
-            } },
+        return React.createElement("div", null,
+            React.createElement(form_1.ReduxSchemaForm, { form: "random", initialValues: this.props.data, schema: this.props['formSchema'], onSubmit: function (values) {
+                    if (values.text) {
+                        return new Promise(function (resolve) {
+                            setTimeout(resolve, 3000);
+                        });
+                    }
+                    else
+                        return true;
+                } }),
             React.createElement("p", null, "\u8BF8\u5982\u6570\u636Eschema\u53D1\u751F\u53D8\u5316\u7684\u9700\u6C42\uFF0C\u4E0D\u5E94\u8BE5\u7531\u8868\u5355\u8FD9\u4E00\u5C42\u6765\u5B9E\u73B0\uFF01\u5E94\u8BE5\u662F\u903B\u8F91\u5C42\u5B9E\u73B0\u7684\u529F\u80FD\uFF0C\u8FD9\u91CC\u7684\u8868\u5355\u53EA\u8981\u7B28\u7B28\u7684\u5C31\u884C\u4E86"),
             React.createElement("pre", null,
                 React.createElement("code", null,
@@ -316,7 +338,11 @@ var App = (function (_super) {
 App = __decorate([
     react_redux_1.connect(function (store) { return store; })
 ], App);
-var muiTheme = getMuiTheme_1.default({});
+var muiTheme = getMuiTheme_1.default({
+    palette: {
+        primary1Color: "#885543"
+    }
+});
 ReactDOM.render(React.createElement(styles_1.MuiThemeProvider, { muiTheme: muiTheme },
     React.createElement(react_redux_1.Provider, { store: store },
         React.createElement(App, null))), document.getElementById('root'));

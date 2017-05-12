@@ -173,8 +173,6 @@ var ReduxSchemaForm = (function (_super) {
     };
     ReduxSchemaForm.prototype.renderField = function (fieldSchema) {
         var _this = this;
-        if (fieldSchema.hide)
-            return React.createElement("div", null);
         var type = fieldSchema.type, parsedKey = fieldSchema.parsedKey, label = fieldSchema.label, options = fieldSchema.options, children = fieldSchema.children, rest = __rest(fieldSchema, ["type", "parsedKey", "label", "options", "children"]);
         if (customTypes.has(type)) {
             var CustomWidget = customTypes.get(type);
@@ -246,7 +244,7 @@ var ReduxSchemaForm = (function (_super) {
             this.state.parsedSchema.map(function (field) {
                 return React.createElement("div", { key: field.key || field.label, className: field.type }, _this.renderField(field));
             }),
-            (!this.props.noButton && !this.props.readonly) ? React.createElement("div", { className: "text-center button" },
+            (!this.props.noButton && !this.props.readonly) ? React.createElement("div", { className: "button" },
                 React.createElement("div", { className: "btn-group" },
                     React.createElement(DefaultButton, { type: "submit", disabled: !this.submitable.apply(this) }, "\u63D0\u4EA4"),
                     React.createElement(DefaultButton, { type: "button", disabled: !this.submitable.apply(this), onClick: this.props.reset }, "\u91CD\u7F6E"))) : React.createElement("div", null),

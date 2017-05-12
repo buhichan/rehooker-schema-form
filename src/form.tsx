@@ -38,6 +38,11 @@ export interface FormFieldSchema extends BaseSchema{
     children?:FormFieldSchema[]
 }
 
+export interface ArrayFieldSchema extends FormFieldSchema{
+    type:"array"
+    getChildren:((childValue:any)=>ParsedFormFieldSchema[])
+}
+
 export interface ParsedFormFieldSchema extends BaseSchema{
     options?:Options,
     parsedKey:string,
@@ -104,6 +109,7 @@ export type CustomWidgetProps = {
         onFocus:(...args:any[])=>void
         value:any
     }
+    hide?:boolean
     [rest:string]:any
 }
 export function addType(name,widget: React.ComponentClass<CustomWidgetProps>|React.StatelessComponent<CustomWidgetProps>) {
@@ -226,7 +232,6 @@ export class ReduxSchemaForm extends React.PureComponent<{
         this.parseSchema(this.props.schema).then(this.onReady.bind(this))
     }
     renderField(fieldSchema:ParsedFormFieldSchema){
-        if(fieldSchema.hide) return <div />;
         let {
             type,
             parsedKey,
@@ -321,7 +326,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
                 })
             }
             {
-                (!this.props.noButton && !this.props.readonly )? <div className="text-center button">
+                (!this.props.noButton && !this.props.readonly )? <div className="button">
                     <div className="btn-group">
                         <DefaultButton type="submit" disabled={!this.submitable.apply(this)}>提交</DefaultButton>
                         <DefaultButton type="button" disabled={!this.submitable.apply(this)} onClick={this.props.reset}>重置</DefaultButton>
