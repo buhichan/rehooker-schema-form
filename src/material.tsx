@@ -216,10 +216,12 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Cus
     }
 }
 
-const ConnectedArrayFieldRenderer = connect((s,p:any)=>({
-    values:s.form[p.meta.form],
-    ...p
-}))(ArrayFieldRenderer);
+const ConnectedArrayFieldRenderer = connect((s,p:any)=>{
+    return {
+        form: s.form[p.meta.form],
+        ...p
+    }
+})(ArrayFieldRenderer);
 
 addType('number',function ({fieldSchema,...rest}){
     return <div>
@@ -311,7 +313,7 @@ setButton(muiThemeable()(function(props:any){
     }
 }) as any);
 
-const formModule = require('./form');
+const formModule = require('../index');
 const injectCSS = require('react-jss').default;
 const JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm =muiThemeable()

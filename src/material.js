@@ -153,7 +153,9 @@ var ArrayFieldRenderer = (function (_super) {
 ArrayFieldRenderer = __decorate([
     muiThemeable_1.default()
 ], ArrayFieldRenderer);
-var ConnectedArrayFieldRenderer = react_redux_1.connect(function (s, p) { return (__assign({ values: s.form[p.meta.form] }, p)); })(ArrayFieldRenderer);
+var ConnectedArrayFieldRenderer = react_redux_1.connect(function (s, p) {
+    return __assign({ form: s.form[p.meta.form] }, p);
+})(ArrayFieldRenderer);
 form_1.addType('number', function (_a) {
     var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
     return React.createElement("div", null,
@@ -215,7 +217,7 @@ form_1.setButton(muiThemeable_1.default()(function (props) {
                 }, labelColor: props.muiTheme.palette.primary1Color, label: props.children, labelStyle: { padding: "0" }, onClick: props.onClick, disabled: props.disabled, type: props.type });
     }
 }));
-var formModule = require('./form');
+var formModule = require('../index');
 var injectCSS = require('react-jss').default;
 var JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm = muiThemeable_1.default()(injectCSS(material_jss_1.stylesheet)(function (_a) {
