@@ -141,10 +141,11 @@ var ReduxSchemaForm = (function (_super) {
         var parsedField = __assign({}, field);
         parsedField.parsedKey = (prefix ? (prefix + ".") : "") + parsedField.key;
         if (field.onChange) {
-            parsedField.onChange = function (e) {
-                var newFields = field.onChange(e.target['value'], e);
+            parsedField.normalize = function (value, previousValue, formValue) {
+                var newFields = field.onChange(value, previousValue, formValue);
                 if (newFields)
                     _this.applySchemaChange(newFields);
+                return field.normalize ? field.normalize(value, previousValue, formValue) : value;
             };
         }
         if (field.children instanceof Array) {
