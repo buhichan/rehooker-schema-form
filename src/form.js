@@ -140,9 +140,9 @@ var ReduxSchemaForm = (function (_super) {
         var promises = [];
         var parsedField = __assign({}, field);
         parsedField.parsedKey = (prefix ? (prefix + ".") : "") + parsedField.key;
-        if (field.onChange) {
+        if (field.onValueChange) {
             parsedField.normalize = function (value, previousValue, formValue) {
-                var newFields = field.onChange(value, previousValue, formValue);
+                var newFields = field.onValueChange(value, previousValue, formValue);
                 if (newFields)
                     _this.applySchemaChange(newFields);
                 return field.normalize ? field.normalize(value, previousValue, formValue) : value;

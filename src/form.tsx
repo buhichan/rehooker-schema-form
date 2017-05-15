@@ -32,7 +32,7 @@ export interface BaseSchema extends ReduxFormConfig<any,any,any>{
 export type ChangeOfSchema = (Partial<ParsedFormFieldSchema>&{key:string})[];
 
 export interface FormFieldSchema extends BaseSchema{
-    onChange?:
+    onValueChange?:
         (newValue:any,previousValue?:any,formValue?:any)=>ChangeOfSchema|Promise<ChangeOfSchema>|((oldSchema:ParsedFormFieldSchema[])=>ParsedFormFieldSchema[])
     options?:Options | AsyncOptions,
     children?:FormFieldSchema[],
@@ -204,9 +204,9 @@ export class ReduxSchemaForm extends React.PureComponent<{
         let promises = [];
         let parsedField:ParsedFormFieldSchema = {...field} as any;
         parsedField.parsedKey = (prefix?(prefix + "."):"") + parsedField.key;
-        if(field.onChange) {
+        if(field.onValueChange) {
             parsedField.normalize = (value,previousValue,formValue) => {
-                const newFields = field.onChange(value,previousValue,formValue);
+                const newFields = field.onValueChange(value,previousValue,formValue);
                 if (newFields)
                     this.applySchemaChange(newFields);
                 return field.normalize?field.normalize(value,previousValue,formValue):value;
