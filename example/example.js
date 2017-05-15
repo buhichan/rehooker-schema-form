@@ -286,20 +286,6 @@ var schema = [
     }
 ];
 var reducer = redux_1.combineReducers({
-    data: function (state, action) {
-        if (!state)
-            return {
-                text: 2
-            };
-        else
-            return state;
-    },
-    formSchema: function (state, action) {
-        if (!state)
-            return schema;
-        else
-            return state;
-    },
     form: function () {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -314,29 +300,36 @@ var store = redux_1.createStore(reducer, {}, middleware);
 var App = (function (_super) {
     __extends(App, _super);
     function App() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = {
+            state: 2
+        };
+        _this.onSubmit = function (values) {
+            if (values.text) {
+                return new Promise(function (resolve) {
+                    setTimeout(resolve, 3000);
+                });
+            }
+            else
+                return true;
+        };
+        return _this;
     }
     App.prototype.render = function () {
         return React.createElement("div", null,
-            React.createElement(form_1.ReduxSchemaForm, { form: "random", initialValues: this.props.data, schema: this.props['formSchema'], onSubmit: function (values) {
-                    if (values.text) {
-                        return new Promise(function (resolve) {
-                            setTimeout(resolve, 3000);
-                        });
-                    }
-                    else
-                        return true;
-                } }),
+            React.createElement(form_1.ReduxSchemaForm, { form: "random", initialValues: this.data, schema: schema, onSubmit: this.onSubmit }),
             React.createElement("p", null, "\u8BF8\u5982\u6570\u636Eschema\u53D1\u751F\u53D8\u5316\u7684\u9700\u6C42\uFF0C\u4E0D\u5E94\u8BE5\u7531\u8868\u5355\u8FD9\u4E00\u5C42\u6765\u5B9E\u73B0\uFF01\u5E94\u8BE5\u662F\u903B\u8F91\u5C42\u5B9E\u73B0\u7684\u529F\u80FD\uFF0C\u8FD9\u91CC\u7684\u8868\u5355\u53EA\u8981\u7B28\u7B28\u7684\u5C31\u884C\u4E86"),
             React.createElement("pre", null,
                 React.createElement("code", null,
                     "data:",
-                    this.props['form'].random && JSON.stringify(this.props['form'].random.values, null, "\t"))));
+                    JSON.stringify(this.props.values, null, "\t"))));
     };
     return App;
-}(React.Component));
+}(React.PureComponent));
 App = __decorate([
-    react_redux_1.connect(function (store) { return store; })
+    react_redux_1.connect(function (store) { return ({
+        values: store.form.random ? store.form.random.values : {}
+    }); })
 ], App);
 var muiTheme = getMuiTheme_1.default({
     palette: {

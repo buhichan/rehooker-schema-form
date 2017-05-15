@@ -266,16 +266,6 @@ let schema:FormFieldSchema[] = [
 ];
 
 const reducer = combineReducers({
-    data:(state,action)=>{
-        if(!state) return {
-            text:2
-        };
-        else return state
-    },
-    formSchema: function(state,action){
-        if(!state) return schema;
-        else return state
-    },
     form: function(...args){
         return reduxFormReducer.apply(null,args);
     }
@@ -285,25 +275,31 @@ const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compo
 const middleware = composeEnhancers(applyMiddleware());
 const store = createStore(reducer,{},middleware);
 
-@connect(
-    store=>store
+@(connect as any)(
+    store=>({
+        values:store.form.random?store.form.random.values:{}
+    })
 )
-class App extends React.Component<any,any>{
+class App extends React.PureComponent<any,any>{
+    data={
+        state:2
+    };
+    onSubmit=(values)=>{
+        if(values.text){
+            return new Promise(resolve=>{
+                setTimeout(resolve,3000)
+            })
+        }else return true;
+    };
     render(){
         return <div>
-            <ReduxSchemaForm form="random" initialValues={this.props.data} schema={this.props['formSchema']} onSubmit={(values)=>{
-                if(values.text){
-                    return new Promise(resolve=>{
-                        setTimeout(resolve,3000)
-                    })
-                }else return true;
-            }}>
+            <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit}>
             </ReduxSchemaForm>
             <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
             <pre>
                 <code>
                 data:{
-                    this.props['form'].random && JSON.stringify(this.props['form'].random.values,null,"\t")
+                    JSON.stringify(this.props.values,null,"\t")
                 }
                 </code>
             </pre>

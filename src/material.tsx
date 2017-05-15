@@ -12,6 +12,7 @@ import {MuiTheme} from "material-ui/styles";
 import {stylesheet} from "./material.jss";
 import {BaseFieldArrayProps} from "redux-form";
 import {WrappedFieldArrayProps} from "@types/redux-form/lib/FieldArray";
+import {connect} from "react-redux";
 
 let {Field,FieldArray} =require("redux-form");
 
@@ -161,14 +162,17 @@ class AutoCompleteText extends React.Component<CustomWidgetProps,any>{
     }
 }
 
-const ArrayFieldRenderer = muiThemeable()(
-    function (props:WrappedFieldArrayProps<any>&CustomWidgetProps){
-        const muiTheme:MuiTheme = props.muiTheme;
+
+@muiThemeable()
+class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&CustomWidgetProps,any>{
+    render() {
+        const props = this.props;
+        const muiTheme: MuiTheme = props.muiTheme;
         return <div className="clearfix">
             {
                 props.fields.map((name, i) => {
                     let children = props.fieldSchema.children;
-                    if(typeof props.fieldSchema.getChildren === 'function')
+                    if(props.fieldSchema.getChildren)
                         children = props.fieldSchema.getChildren(props.fields.get(i)).filter(x=>x);
                     return <Paper key={i} zDepth={0} style={{
                         padding: '15px',
@@ -181,17 +185,18 @@ const ArrayFieldRenderer = muiThemeable()(
                                 onTouchTap={() => props.fields.remove(i)}
                                 tooltip="删除"
                             >
-                                <Remove hoverColor={muiTheme.palette.accent1Color} />
+                                <Remove hoverColor={muiTheme.palette.accent1Color}/>
                             </IconButton>
                         </div>
                         <div>
                             {
-                                children&&children.map((field) => {
+                                children && children.map((field) => {
                                     const parsedKey = name + '.' + field.key;
                                     return <div key={parsedKey}>
-                                        {props.renderField(Object.assign({}, field, {
+                                        {props.renderField({
+                                            ...field,
                                             parsedKey
-                                        }))}
+                                        })}
                                     </div>;
                                 })
                             }
@@ -199,7 +204,7 @@ const ArrayFieldRenderer = muiThemeable()(
                     </Paper>
                 })
             }
-            <div style={{textAlign:"center"}}>
+            <div style={{textAlign: "center"}}>
                 <IconButton
                     style={{marginBottom: '15px'}}
                     tooltip="添加" onTouchTap={() => props.fields.push({})}
@@ -208,7 +213,13 @@ const ArrayFieldRenderer = muiThemeable()(
                 </IconButton>
             </div>
         </div>
-    });
+    }
+}
+
+const ConnectedArrayFieldRenderer = connect((s,p:any)=>({
+    values:s.form[p.meta.form],
+    ...p
+}))(ArrayFieldRenderer);
 
 addType('number',function ({fieldSchema,...rest}){
     return <div>
@@ -257,7 +268,7 @@ addType('date',function({fieldSchema,...rest}){
 addType("array",(props)=>{
     return <div>
         <label className="control-label">{props.fieldSchema.label}</label>
-        <FieldArray name={props.fieldSchema.parsedKey}  component={ArrayFieldRenderer} props={props}/>
+        <FieldArray name={props.fieldSchema.parsedKey}  component={props.fieldSchema.getChildren?ConnectedArrayFieldRenderer:ArrayFieldRenderer} props={props}/>
     </div>
 });
 

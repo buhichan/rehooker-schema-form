@@ -17,6 +17,12 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -37,6 +43,7 @@ var muiThemeable_1 = require("material-ui/styles/muiThemeable");
 var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
 var material_jss_1 = require("./material.jss");
+var react_redux_1 = require("react-redux");
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
@@ -111,32 +118,42 @@ var AutoCompleteText = (function (_super) {
     return AutoCompleteText;
 }(React.Component));
 AutoCompleteText.datasourceConfig = { text: "name", value: "value" };
-var ArrayFieldRenderer = muiThemeable_1.default()(function (props) {
-    var muiTheme = props.muiTheme;
-    return React.createElement("div", { className: "clearfix" },
-        props.fields.map(function (name, i) {
-            var children = props.fieldSchema.children;
-            if (typeof props.fieldSchema.getChildren === 'function')
-                children = props.fieldSchema.getChildren(props.fields.get(i)).filter(function (x) { return x; });
-            return React.createElement(material_ui_1.Paper, { key: i, zDepth: 0, style: {
-                    padding: '15px',
-                    margin: '15px 0',
-                    borderTop: "2px solid " + props.muiTheme.palette.primary1Color,
-                } },
-                React.createElement("div", { className: "pull-right" },
-                    React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
-                        React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
-                React.createElement("div", null, children && children.map(function (field) {
-                    var parsedKey = name + '.' + field.key;
-                    return React.createElement("div", { key: parsedKey }, props.renderField(Object.assign({}, field, {
-                        parsedKey: parsedKey
+var ArrayFieldRenderer = (function (_super) {
+    __extends(ArrayFieldRenderer, _super);
+    function ArrayFieldRenderer() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ArrayFieldRenderer.prototype.render = function () {
+        var props = this.props;
+        var muiTheme = props.muiTheme;
+        return React.createElement("div", { className: "clearfix" },
+            props.fields.map(function (name, i) {
+                var children = props.fieldSchema.children;
+                if (props.fieldSchema.getChildren)
+                    children = props.fieldSchema.getChildren(props.fields.get(i)).filter(function (x) { return x; });
+                return React.createElement(material_ui_1.Paper, { key: i, zDepth: 0, style: {
+                        padding: '15px',
+                        margin: '15px 0',
+                        borderTop: "2px solid " + props.muiTheme.palette.primary1Color,
+                    } },
+                    React.createElement("div", { className: "pull-right" },
+                        React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
+                            React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
+                    React.createElement("div", null, children && children.map(function (field) {
+                        var parsedKey = name + '.' + field.key;
+                        return React.createElement("div", { key: parsedKey }, props.renderField(__assign({}, field, { parsedKey: parsedKey })));
                     })));
-                })));
-        }),
-        React.createElement("div", { style: { textAlign: "center" } },
-            React.createElement(material_ui_1.IconButton, { style: { marginBottom: '15px' }, tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
-                React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
-});
+            }),
+            React.createElement("div", { style: { textAlign: "center" } },
+                React.createElement(material_ui_1.IconButton, { style: { marginBottom: '15px' }, tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
+                    React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
+    };
+    return ArrayFieldRenderer;
+}(React.Component));
+ArrayFieldRenderer = __decorate([
+    muiThemeable_1.default()
+], ArrayFieldRenderer);
+var ConnectedArrayFieldRenderer = react_redux_1.connect(function (s, p) { return (__assign({ values: s.form[p.meta.form] }, p)); })(ArrayFieldRenderer);
 form_1.addType('number', function (_a) {
     var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
     return React.createElement("div", null,
@@ -178,7 +195,7 @@ form_1.addType('date', function (_a) {
 form_1.addType("array", function (props) {
     return React.createElement("div", null,
         React.createElement("label", { className: "control-label" }, props.fieldSchema.label),
-        React.createElement(FieldArray, { name: props.fieldSchema.parsedKey, component: ArrayFieldRenderer, props: props }));
+        React.createElement(FieldArray, { name: props.fieldSchema.parsedKey, component: props.fieldSchema.getChildren ? ConnectedArrayFieldRenderer : ArrayFieldRenderer, props: props }));
 });
 form_1.addType('hidden', function (_a) {
     var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);

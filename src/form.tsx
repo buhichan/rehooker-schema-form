@@ -35,18 +35,15 @@ export interface FormFieldSchema extends BaseSchema{
     onChange?:
         (newValue?:any,e?:SyntheticEvent<any>)=>ChangeOfSchema|Promise<ChangeOfSchema>|((oldSchema:ParsedFormFieldSchema[])=>ParsedFormFieldSchema[])
     options?:Options | AsyncOptions,
-    children?:FormFieldSchema[]
-}
-
-export interface ArrayFieldSchema extends FormFieldSchema{
-    type:"array"
-    getChildren:((childValue:any)=>ParsedFormFieldSchema[])
+    children?:FormFieldSchema[],
+    getChildren?:((childValue:any)=>FormFieldSchema[])
 }
 
 export interface ParsedFormFieldSchema extends BaseSchema{
     options?:Options,
     parsedKey:string,
-    children?:ParsedFormFieldSchema[]
+    children?:ParsedFormFieldSchema[],
+    getChildren?:((childValue:any)=>ParsedFormFieldSchema[])
 }
 
 let DefaultButton = (props)=>{
@@ -120,6 +117,37 @@ export function setButton(button: React.StatelessComponent<ButtonProps>){
     DefaultButton = button;
 }
 
+const listeners = {} as {[key:string]:((...args:any[])=>void)[]};
+
+function registerListener(key,cb){
+    listeners[key] = listeners[key]||[];
+    listeners[key].push(cb);
+    return ()=>{
+        const i = listeners[key].indexOf(cb);
+        listeners[key].splice(i,1);
+    }
+}
+
+export function SchemaFormReducer(prev,action){
+    if(action.type==='@@redux-form/change'){
+
+    }
+}
+
+function DefaultArrayFieldRenderer(props){
+    return <div>
+        {
+            props.map((name,i)=>{
+                return <div key={i}>
+                    {this.renderField(props.fieldSchema.children[i])}
+                    <button onClick={props.remove(i)}><i className="fa fa-minus"/></button>
+                </div>
+            })
+        }
+        <button  onClick={props.push()}><i className="fa fa-plus" /></button>
+    </div>
+}
+
 function decorate(obj,prop,cb){
     let fn = obj[prop];
     obj[prop] = cb(fn);
@@ -185,7 +213,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
         }
         if(field.children instanceof Array){
             promises.push(this.parseSchema(field.children,parsedField.key).then((children)=>{
-                parsedField['children'] = children as ParsedFormFieldSchema[];
+                parsedField.children = children;
             }))
         }
         if(field.options && typeof field.options ==='function') {
@@ -205,19 +233,6 @@ export class ReduxSchemaForm extends React.PureComponent<{
         let promises = newSchema.map(field=>this.parseField(field,prefix));
         return Promise.all(promises);
     }
-    DefaultArrayFieldRenderer(props){
-        return <div>
-            {
-                props.map((name,i)=>{
-                    return <div key={i}>
-                        {this.renderField(props.fieldSchema.children[i])}
-                        <button onClick={props.remove(i)}><i className="fa fa-minus"/></button>
-                    </div>
-                })
-            }
-            <button  onClick={props.push()}><i className="fa fa-plus" /></button>
-        </div>
-    }
     componentWillReceiveProps(newProps){
         if(newProps.schema!==this.props.schema){
             this.parseSchema(newProps.schema).then(this.onReady.bind(this));
@@ -232,12 +247,16 @@ export class ReduxSchemaForm extends React.PureComponent<{
         this.parseSchema(this.props.schema).then(this.onReady.bind(this))
     }
     renderField(fieldSchema:ParsedFormFieldSchema){
+        if(fieldSchema.hide)
+            return <div />;
         let {
+            hide,
             type,
             parsedKey,
             label,
             options,
             children,
+            getChildren,
             ...rest
         } = fieldSchema;
         if(customTypes.has(type)){
@@ -295,7 +314,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
                 return <div className="form-group">
                     <label className="control-label col-md-2" htmlFor={this.props.form+'-'+parsedKey}>{label}</label>
                     <div className="col-md-10">
-                        <FieldArray name={parsedKey} {...rest} fieldSchema={fieldSchema} component={this.DefaultArrayFieldRenderer.bind(this)}/>
+                        <FieldArray name={parsedKey} {...rest} fieldSchema={fieldSchema} component={DefaultArrayFieldRenderer}/>
                     </div>
                 </div>;
             case "group":
@@ -331,7 +350,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
                         <DefaultButton type="submit" disabled={!this.submitable.apply(this)}>提交</DefaultButton>
                         <DefaultButton type="button" disabled={!this.submitable.apply(this)} onClick={this.props.reset}>重置</DefaultButton>
                     </div>
-                </div> : <div></div>
+                </div> : <div />
             }
             {this.props.children}
         </form>

@@ -78,6 +78,32 @@ function setButton(button) {
     DefaultButton = button;
 }
 exports.setButton = setButton;
+var listeners = {};
+function registerListener(key, cb) {
+    listeners[key] = listeners[key] || [];
+    listeners[key].push(cb);
+    return function () {
+        var i = listeners[key].indexOf(cb);
+        listeners[key].splice(i, 1);
+    };
+}
+function SchemaFormReducer(prev, action) {
+    if (action.type === '@@redux-form/change') {
+    }
+}
+exports.SchemaFormReducer = SchemaFormReducer;
+function DefaultArrayFieldRenderer(props) {
+    var _this = this;
+    return React.createElement("div", null,
+        props.map(function (name, i) {
+            return React.createElement("div", { key: i },
+                _this.renderField(props.fieldSchema.children[i]),
+                React.createElement("button", { onClick: props.remove(i) },
+                    React.createElement("i", { className: "fa fa-minus" })));
+        }),
+        React.createElement("button", { onClick: props.push() },
+            React.createElement("i", { className: "fa fa-plus" })));
+}
 function decorate(obj, prop, cb) {
     var fn = obj[prop];
     obj[prop] = cb(fn);
@@ -123,7 +149,7 @@ var ReduxSchemaForm = (function (_super) {
         }
         if (field.children instanceof Array) {
             promises.push(this.parseSchema(field.children, parsedField.key).then(function (children) {
-                parsedField['children'] = children;
+                parsedField.children = children;
             }));
         }
         if (field.options && typeof field.options === 'function') {
@@ -146,18 +172,6 @@ var ReduxSchemaForm = (function (_super) {
         var promises = newSchema.map(function (field) { return _this.parseField(field, prefix); });
         return Promise.all(promises);
     };
-    ReduxSchemaForm.prototype.DefaultArrayFieldRenderer = function (props) {
-        var _this = this;
-        return React.createElement("div", null,
-            props.map(function (name, i) {
-                return React.createElement("div", { key: i },
-                    _this.renderField(props.fieldSchema.children[i]),
-                    React.createElement("button", { onClick: props.remove(i) },
-                        React.createElement("i", { className: "fa fa-minus" })));
-            }),
-            React.createElement("button", { onClick: props.push() },
-                React.createElement("i", { className: "fa fa-plus" })));
-    };
     ReduxSchemaForm.prototype.componentWillReceiveProps = function (newProps) {
         if (newProps.schema !== this.props.schema) {
             this.parseSchema(newProps.schema).then(this.onReady.bind(this));
@@ -173,7 +187,9 @@ var ReduxSchemaForm = (function (_super) {
     };
     ReduxSchemaForm.prototype.renderField = function (fieldSchema) {
         var _this = this;
-        var type = fieldSchema.type, parsedKey = fieldSchema.parsedKey, label = fieldSchema.label, options = fieldSchema.options, children = fieldSchema.children, rest = __rest(fieldSchema, ["type", "parsedKey", "label", "options", "children"]);
+        if (fieldSchema.hide)
+            return React.createElement("div", null);
+        var hide = fieldSchema.hide, type = fieldSchema.type, parsedKey = fieldSchema.parsedKey, label = fieldSchema.label, options = fieldSchema.options, children = fieldSchema.children, getChildren = fieldSchema.getChildren, rest = __rest(fieldSchema, ["hide", "type", "parsedKey", "label", "options", "children", "getChildren"]);
         if (customTypes.has(type)) {
             var CustomWidget = customTypes.get(type);
             return React.createElement(CustomWidget, __assign({ fieldSchema: fieldSchema }, rest, { renderField: this.renderField.bind(this) }));
@@ -222,7 +238,7 @@ var ReduxSchemaForm = (function (_super) {
                 return React.createElement("div", { className: "form-group" },
                     React.createElement("label", { className: "control-label col-md-2", htmlFor: this.props.form + '-' + parsedKey }, label),
                     React.createElement("div", { className: "col-md-10" },
-                        React.createElement(FieldArray, __assign({ name: parsedKey }, rest, { fieldSchema: fieldSchema, component: this.DefaultArrayFieldRenderer.bind(this) }))));
+                        React.createElement(FieldArray, __assign({ name: parsedKey }, rest, { fieldSchema: fieldSchema, component: DefaultArrayFieldRenderer }))));
             case "group":
                 return React.createElement("fieldset", null,
                     React.createElement("legend", null, label),
