@@ -27,6 +27,7 @@ function NumberInput(props:CustomWidgetProps){
         style={{width:"100%"}}
         floatingLabelText={props.fieldSchema.label}
         value={Number(props.input.value)}
+        hintText={props.fieldSchema.placeholder}
         onChange={(e)=>props.input.onChange(Number(e.target['value']))}
     />;
 }
@@ -56,6 +57,7 @@ function DateInput(props:CustomWidgetProps){
         fullWidth={true}
         okLabel="确认"
         {...DatePickerProps}
+        hintText={props.fieldSchema.placeholder}
         disabled={props.disabled}/>
 }
 
@@ -69,6 +71,7 @@ function TextInput(props:CustomWidgetProps){
         className="full-width"
         style={{width:"100%"}}
         disabled={props.disabled}
+        hintText={props.fieldSchema.placeholder}
         multiLine={props.fieldSchema.multiLine}
         floatingLabelText={props.fieldSchema.label}/>;
 }
@@ -98,6 +101,7 @@ function SelectInput(props:CustomWidgetProps){
         floatingLabelText={props.fieldSchema.label}
         fullWidth={true}
         errorText={props.meta.error}
+        hintText={props.fieldSchema.placeholder}
         multiple={props.fieldSchema.multiple}
         onChange={(e,i,v)=>{
             e.target.value = v;
