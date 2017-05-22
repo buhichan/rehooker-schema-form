@@ -335,7 +335,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
         }
     }
     submitable(){
-        return !this.props['pristine'] && !this.props['submitting'];
+        return this.props['valid'] && !this.props['pristine'] && !this.props['submitting'];
     }
     render(){
         return <form className="redux-schema-form form-horizontal" onSubmit={this.props['handleSubmit']}>

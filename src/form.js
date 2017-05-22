@@ -253,7 +253,7 @@ var ReduxSchemaForm = (function (_super) {
         }
     };
     ReduxSchemaForm.prototype.submitable = function () {
-        return !this.props['pristine'] && !this.props['submitting'];
+        return this.props['valid'] && !this.props['pristine'] && !this.props['submitting'];
     };
     ReduxSchemaForm.prototype.render = function () {
         var _this = this;

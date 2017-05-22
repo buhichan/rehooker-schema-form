@@ -36,7 +36,7 @@ exports.stylesheet = {
                 paddingRight: "10%",
                 paddingLeft: "10%",
                 width: "50%",
-                minHeight: 78,
+                minHeight: 99,
             },
             "@media(max-width:768px)": {
                 "&>div": {
