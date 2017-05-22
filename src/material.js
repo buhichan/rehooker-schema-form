@@ -94,7 +94,7 @@ var AutoCompleteSelect = (function (_super) {
     AutoCompleteSelect.prototype.render = function () {
         var _this = this;
         var value = this.props.fieldSchema.options.find(function (x) { return x.value === _this.props.input.value; });
-        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, errorText: this.props.meta.error, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: this.onNewRequest });
+        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, hintText: this.props.fieldSchema.placeholder, errorText: this.props.meta.error, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: this.onNewRequest });
     };
     return AutoCompleteSelect;
 }(React.Component));
@@ -110,7 +110,7 @@ var AutoCompleteText = (function (_super) {
         return _this;
     }
     AutoCompleteText.prototype.render = function () {
-        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteText.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.props.input.value, onUpdateInput: this.onUpdateInput });
+        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, hintText: this.props.fieldSchema.placeholder, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteText.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.props.input.value, onUpdateInput: this.onUpdateInput });
     };
     return AutoCompleteText;
 }(React.Component));
@@ -171,7 +171,7 @@ var AutoCompleteAsync = (function (_super) {
         return entry ? entry.name : "";
     };
     AutoCompleteAsync.prototype.render = function () {
-        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, fullWidth: true, menuStyle: { maxHeight: "300px", overflowY: 'auto' }, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.state.dataSource, dataSourceConfig: AutoCompleteAsync.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.findName(this.props.input.value), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
+        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, fullWidth: true, menuStyle: { maxHeight: "300px", overflowY: 'auto' }, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.state.dataSource, hintText: this.props.fieldSchema.placeholder, dataSourceConfig: AutoCompleteAsync.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.findName(this.props.input.value), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
     };
     return AutoCompleteAsync;
 }(React.PureComponent));

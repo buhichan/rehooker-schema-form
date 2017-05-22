@@ -121,6 +121,7 @@ class AutoCompleteSelect extends React.Component<CustomWidgetProps,any>{
             id={this.props.input.name}
             maxSearchResults={5}
             fullWidth={true}
+            hintText={this.props.fieldSchema.placeholder}
             errorText={this.props.meta.error}
             filter={AutoComplete.fuzzyFilter}
             dataSource={this.props.fieldSchema.options as Options}
@@ -143,6 +144,7 @@ class AutoCompleteText extends React.Component<CustomWidgetProps,any>{
             id={this.props.input.name}
             maxSearchResults={5}
             fullWidth={true}
+            hintText={this.props.fieldSchema.placeholder}
             filter={AutoComplete.fuzzyFilter}
             errorText={this.props.meta.error}
             dataSource={this.props.fieldSchema.options as Options}
@@ -214,6 +216,7 @@ class AutoCompleteAsync extends React.PureComponent<CustomWidgetProps,any>{
             filter={AutoComplete.fuzzyFilter}
             errorText={this.props.meta.error}
             dataSource={this.state.dataSource}
+            hintText={this.props.fieldSchema.placeholder}
             dataSourceConfig={AutoCompleteAsync.datasourceConfig}
             floatingLabelText={this.props.fieldSchema.label}
             searchText={this.findName(this.props.input.value)}
