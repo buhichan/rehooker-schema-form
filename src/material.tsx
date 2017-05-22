@@ -2,7 +2,7 @@
  * Created by buhi on 2017/4/28.
  */
 import * as React from "react"
-import {addType, CustomWidgetProps, setButton} from "./form"
+import {addType, AsyncOption, AsyncOptions, CustomWidgetProps, Options, setButton} from "./form"
 import {TextField,SelectField,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
 
@@ -11,7 +11,7 @@ import Remove from "material-ui/svg-icons/content/remove";
 import {MuiTheme} from "material-ui/styles";
 import {stylesheet} from "./material.jss";
 import {BaseFieldArrayProps} from "redux-form";
-import {WrappedFieldArrayProps} from "@types/redux-form/lib/FieldArray";
+import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {connect} from "react-redux";
 
 let {Field,FieldArray} =require("redux-form");
@@ -111,53 +111,114 @@ function SelectInput(props:CustomWidgetProps){
 }
 
 class AutoCompleteSelect extends React.Component<CustomWidgetProps,any>{
-    componentDidUpdate() {
-        this.ac.focus()
-    }
+    onNewRequest=(value)=>{
+        return this.props.input.onChange(value['value']);
+    };
     static datasourceConfig = {text:"name",value:"value"};
-    ac;
     render() {
-        const value = this.props.fieldSchema.options.find(x=>x.value === this.props.input.value);
+        const value = (this.props.fieldSchema.options as Options).find(x=>x.value === this.props.input.value);
         return <AutoComplete
-            {...{id:this.props.input.name}}
+            id={this.props.input.name}
             maxSearchResults={5}
             fullWidth={true}
-            ref={ref=>this.ac=ref}
             errorText={this.props.meta.error}
             filter={AutoComplete.fuzzyFilter}
-            dataSource={this.props.fieldSchema.options}
+            dataSource={this.props.fieldSchema.options as Options}
             dataSourceConfig={AutoCompleteSelect.datasourceConfig}
             floatingLabelText={this.props.fieldSchema.label}
             searchText={value?value.name:""}
-            onNewRequest={(value)=>{
-                return this.props.input.onChange(value['value']);
-            }}
+            onNewRequest={this.onNewRequest}
         />
     }
 }
 
 class AutoCompleteText extends React.Component<CustomWidgetProps,any>{
-    componentDidUpdate() {
-        this.ac.focus()
-    }
+    onUpdateInput=name=>{
+        const entry = (this.props.fieldSchema.options as Options).find(x=>x.name===name);
+        return this.props.input.onChange(entry?entry.value:name);
+    };
     static datasourceConfig = {text:"name",value:"value"};
-    ac;
     render() {
         return <AutoComplete
-            {...{id:this.props.input.name}}
+            id={this.props.input.name}
             maxSearchResults={5}
             fullWidth={true}
-            ref={ref=>this.ac=ref}
             filter={AutoComplete.fuzzyFilter}
             errorText={this.props.meta.error}
-            dataSource={this.props.fieldSchema.options}
+            dataSource={this.props.fieldSchema.options as Options}
             dataSourceConfig={AutoCompleteText.datasourceConfig}
             floatingLabelText={this.props.fieldSchema.label}
             searchText={this.props.input.value}
-            onUpdateInput={name=>{
-                const entry = this.props.fieldSchema.options.find(x=>x.name===name);
-                return this.props.input.onChange(entry?entry.value:name);
-            }}
+            onUpdateInput={this.onUpdateInput}
+        />
+    }
+}
+
+class AutoCompleteAsync extends React.PureComponent<CustomWidgetProps,any>{
+    pendingUpdate;
+    fetchingQuery;
+    $isMounted;
+    componentWillMount(){
+        this.$isMounted=true;
+    }
+    componentWillUnmount(){
+        this.$isMounted=false;
+    }
+    componentWillReceiveProps(nextProps){
+        if(nextProps.input.value!==this.props.input.value)
+            this.setState({
+                searchText:this.findName(nextProps.input.value)
+            })
+    }
+    findName(value){
+        const entry = (this.state.dataSource as Options).find(x=>x.value === value);
+        return entry?entry.name:"";
+    }
+    onUpdateInput=(name,dataSource,params?)=>{
+        if(!params||params.source !== 'change')
+            return;
+        const throttle = this.props.fieldSchema['throttle']||400;
+        this.setState({
+            searchText:name
+        });
+        if(this.pendingUpdate)
+            clearTimeout(this.pendingUpdate);
+        this.pendingUpdate = setTimeout(()=>{
+            this.fetchingQuery = name;
+            const result = (this.props.fieldSchema.options as AsyncOption)(name);
+            if(result instanceof Promise)
+                result.then(options=>{
+                    if(this.fetchingQuery === name && this.$isMounted)
+                        this.setState({
+                            dataSource:options
+                        })
+                });
+            else this.setState({
+                dataSource:result
+            })
+        },throttle);
+    };
+    onSelected=({value})=>{
+        this.props.input.onChange(value)
+    };
+    state={
+        searchText:"",
+        dataSource:[]
+    };
+    static datasourceConfig = {text:"name",value:"value"};
+    render() {
+        return <AutoComplete
+            id={this.props.input.name}
+            fullWidth={true}
+            menuStyle = {{maxHeight:"300px",overflowY:'auto'}}
+            filter={AutoComplete.fuzzyFilter}
+            errorText={this.props.meta.error}
+            dataSource={this.state.dataSource}
+            dataSourceConfig={AutoCompleteAsync.datasourceConfig}
+            floatingLabelText={this.props.fieldSchema.label}
+            searchText={this.findName(this.props.input.value)}
+            onUpdateInput={this.onUpdateInput}
+            onNewRequest={this.onSelected}
         />
     }
 }
@@ -258,6 +319,11 @@ addType('autocomplete',function({fieldSchema,...rest}){
 addType('autocomplete-text',function({fieldSchema,...rest}){
     return <div>
         <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={AutoCompleteText} />
+    </div>
+});
+addType("autocomplete-async",function({fieldSchema,...rest}){
+    return <div>
+        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={AutoCompleteAsync} />
     </div>
 });
 

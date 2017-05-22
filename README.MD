@@ -1,10 +1,59 @@
 # a component on top of redux-form
-- accept a json as schema to generate forms.
 
-    this is the definition of "schema":
+- accept a json as schema to generate fields for redux-form.
+- predefined material-ui and bootstrap components
+    - Bootstrap widgets(default):
+        - number
+        - text
+        - password
+        - email
+        - checkbox
+        - select
+    - Material UI widgets(need to import material-ui): 
+        - autocomplete 
+        - autocomplete-async 
+        - autocomplete-text
+        - array
+        - group
+        - all other types which bootstrap theme supported
+- you can add more using `addType` api
+    
+# How to use
+
+```
+import {ReduxSchemaForm} from "redux-schema-form"
+
+// use Material widgets
+// import "redux-schema-form/src/material"
+
+const schema=[
+    {
+        key:"name",
+        label:"Company Name",
+        type:"text"
+    }
+]
+
+function Form(){
+    return <ReduxSchemaForm
+        schema={schema}
+        {...other props are passes to underlying redux-form instance}
+    />
+}
+
+```
+
+
+    
+# API
     
 ```TypeScript
 import {List} from "immutable"
+import {Config} from "redux-form"
+
+interface ReduxSchemaFormProps extends Config{
+    schema:FormFieldSchema[]
+} // this is the props of this component
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
 
@@ -39,7 +88,41 @@ export interface ParsedFormFieldSchema extends BaseSchema{
     children?:List<ParsedFormFieldSchema>
 }
 
-//the component itself accepts all props of redux-form, plus this "schema" prop described above
+//Add a 'type' component into registration;
+export function addType(typeName:string,component:React.ComponentClass<CustomWidgetProps>|React.StatelessComponent<CustomWidgetProps>){}
+
+export type CustomWidgetProps = {
+    fieldSchema?:ParsedFormFieldSchema,
+    renderField?:(fieldSchema:ParsedFormFieldSchema)=>JSX.Element,
+    meta?:{
+        active:boolean
+        asyncValidating:boolean
+        autofilled:boolean
+        dirty:boolean
+        dispatch:(a:any)=>void
+        error:any
+        form:string
+        invalid:boolean
+        pristine:boolean
+        submitFailed:boolean
+        submitting:boolean
+        touched:boolean
+        valid:boolean
+        visited:boolean
+        warning:any
+    },
+    input?:{
+        name:string
+        onBlur:(...args:any[])=>void
+        onChange:(...args:any[])=>void
+        onDragStart:(...args:any[])=>void
+        onDrop:(...args:any[])=>void
+        onFocus:(...args:any[])=>void
+        value:any
+    }
+    hide?:boolean
+    [rest:string]:any
+}
 ```
 
 The primary purpose of wrapping redux-form in this component, is:

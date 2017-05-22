@@ -9,7 +9,8 @@ let {Field,FieldArray} = require("redux-form");
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
 
 export type Options = {name:string,value:string|number}[]
-export type AsyncOptions = ()=>Promise<Options|any>
+export type AsyncOptions = ()=>Promise<Options>
+export type AsyncOption = (value:any)=>(Promise<Options>|Options)
 
 export interface BaseSchema extends ReduxFormConfig<any,any,any>{
     key:string,
@@ -23,7 +24,7 @@ export interface BaseSchema extends ReduxFormConfig<any,any,any>{
     defaultValue?:any,
     multiple?:boolean,
     children?:BaseSchema[]
-    options?:Options | AsyncOptions,
+    options?:Options | AsyncOptions | AsyncOption,
     normalize?:(value,previousValue?, allValues?)=>any,
     data?:any,
     [rest:string]:any
@@ -34,13 +35,13 @@ export type ChangeOfSchema = (Partial<ParsedFormFieldSchema>&{key:string})[];
 export interface FormFieldSchema extends BaseSchema{
     onValueChange?:
         (newValue:any,previousValue?:any,formValue?:any)=>ChangeOfSchema|Promise<ChangeOfSchema>|((oldSchema:ParsedFormFieldSchema[])=>ParsedFormFieldSchema[])
-    options?:Options | AsyncOptions,
+    options?:Options | AsyncOptions | AsyncOption,
     children?:FormFieldSchema[],
     getChildren?:((childValue:any)=>FormFieldSchema[])
 }
 
 export interface ParsedFormFieldSchema extends BaseSchema{
-    options?:Options,
+    options?:Options | AsyncOption,
     parsedKey:string,
     children?:ParsedFormFieldSchema[],
     getChildren?:((childValue:any)=>ParsedFormFieldSchema[])
@@ -217,7 +218,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
                 parsedField.children = children;
             }))
         }
-        if(field.options && typeof field.options ==='function') {
+        if(field.options && typeof field.options ==='function' && !field.options.length) {
             const asyncOptions = field.options as AsyncOptions;
             promises.push(asyncOptions().then(options=>{
                 parsedField['options'] = options;
@@ -306,7 +307,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
                         <Field className="form-control" name={parsedKey} {...rest} component="select">
                             <option />
                             {
-                                options.map((option,i)=><option key={i} value={option.value as string}>{option.name}</option>)
+                                (options as Options).map((option,i)=><option key={i} value={option.value as string}>{option.name}</option>)
                             }
                         </Field>
                     </div>

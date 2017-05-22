@@ -153,7 +153,7 @@ var ReduxSchemaForm = (function (_super) {
                 parsedField.children = children;
             }));
         }
-        if (field.options && typeof field.options === 'function') {
+        if (field.options && typeof field.options === 'function' && !field.options.length) {
             var asyncOptions = field.options;
             promises.push(asyncOptions().then(function (options) {
                 parsedField['options'] = options;

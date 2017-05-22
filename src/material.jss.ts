@@ -4,6 +4,11 @@ import {MuiTheme} from "material-ui/styles";
 /**-----------------------------------Form-----------------------------------**/
 export const stylesheet = {
   form: {
+    "&:after":{
+      content:"\" \"",
+      display:"table",
+      clear:"both"
+    },
     "& *":{
       boxSizing:"border-box",
     },

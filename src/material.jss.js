@@ -3,6 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**-----------------------------------Form-----------------------------------**/
 exports.stylesheet = {
     form: {
+        "&:after": {
+            content: "\" \"",
+            display: "table",
+            clear: "both"
+        },
         "& *": {
             boxSizing: "border-box",
         },

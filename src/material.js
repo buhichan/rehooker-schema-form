@@ -85,17 +85,16 @@ function SelectInput(props) {
 var AutoCompleteSelect = (function (_super) {
     __extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.onNewRequest = function (value) {
+            return _this.props.input.onChange(value['value']);
+        };
+        return _this;
     }
-    AutoCompleteSelect.prototype.componentDidUpdate = function () {
-        this.ac.focus();
-    };
     AutoCompleteSelect.prototype.render = function () {
         var _this = this;
         var value = this.props.fieldSchema.options.find(function (x) { return x.value === _this.props.input.value; });
-        return React.createElement(material_ui_1.AutoComplete, __assign({}, { id: this.props.input.name }, { maxSearchResults: 5, fullWidth: true, ref: function (ref) { return _this.ac = ref; }, errorText: this.props.meta.error, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: function (value) {
-                return _this.props.input.onChange(value['value']);
-            } }));
+        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, errorText: this.props.meta.error, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: this.onNewRequest });
     };
     return AutoCompleteSelect;
 }(React.Component));
@@ -103,21 +102,80 @@ AutoCompleteSelect.datasourceConfig = { text: "name", value: "value" };
 var AutoCompleteText = (function (_super) {
     __extends(AutoCompleteText, _super);
     function AutoCompleteText() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.onUpdateInput = function (name) {
+            var entry = _this.props.fieldSchema.options.find(function (x) { return x.name === name; });
+            return _this.props.input.onChange(entry ? entry.value : name);
+        };
+        return _this;
     }
-    AutoCompleteText.prototype.componentDidUpdate = function () {
-        this.ac.focus();
-    };
     AutoCompleteText.prototype.render = function () {
-        var _this = this;
-        return React.createElement(material_ui_1.AutoComplete, __assign({}, { id: this.props.input.name }, { maxSearchResults: 5, fullWidth: true, ref: function (ref) { return _this.ac = ref; }, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteText.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.props.input.value, onUpdateInput: function (name) {
-                var entry = _this.props.fieldSchema.options.find(function (x) { return x.name === name; });
-                return _this.props.input.onChange(entry ? entry.value : name);
-            } }));
+        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteText.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.props.input.value, onUpdateInput: this.onUpdateInput });
     };
     return AutoCompleteText;
 }(React.Component));
 AutoCompleteText.datasourceConfig = { text: "name", value: "value" };
+var AutoCompleteAsync = (function (_super) {
+    __extends(AutoCompleteAsync, _super);
+    function AutoCompleteAsync() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.onUpdateInput = function (name, dataSource, params) {
+            if (!params || params.source !== 'change')
+                return;
+            var throttle = _this.props.fieldSchema['throttle'] || 400;
+            _this.setState({
+                searchText: name
+            });
+            if (_this.pendingUpdate)
+                clearTimeout(_this.pendingUpdate);
+            _this.pendingUpdate = setTimeout(function () {
+                _this.fetchingQuery = name;
+                var result = _this.props.fieldSchema.options(name);
+                if (result instanceof Promise)
+                    result.then(function (options) {
+                        if (_this.fetchingQuery === name && _this.$isMounted)
+                            _this.setState({
+                                dataSource: options
+                            });
+                    });
+                else
+                    _this.setState({
+                        dataSource: result
+                    });
+            }, throttle);
+        };
+        _this.onSelected = function (_a) {
+            var value = _a.value;
+            _this.props.input.onChange(value);
+        };
+        _this.state = {
+            searchText: "",
+            dataSource: []
+        };
+        return _this;
+    }
+    AutoCompleteAsync.prototype.componentWillMount = function () {
+        this.$isMounted = true;
+    };
+    AutoCompleteAsync.prototype.componentWillUnmount = function () {
+        this.$isMounted = false;
+    };
+    AutoCompleteAsync.prototype.componentWillReceiveProps = function (nextProps) {
+        if (nextProps.input.value !== this.props.input.value)
+            this.setState({
+                searchText: this.findName(nextProps.input.value)
+            });
+    };
+    AutoCompleteAsync.prototype.findName = function (value) {
+        var entry = this.state.dataSource.find(function (x) { return x.value === value; });
+        return entry ? entry.name : "";
+    };
+    AutoCompleteAsync.prototype.render = function () {
+        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, fullWidth: true, menuStyle: { maxHeight: "300px", overflowY: 'auto' }, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.state.dataSource, dataSourceConfig: AutoCompleteAsync.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.findName(this.props.input.value), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
+    };
+    return AutoCompleteAsync;
+}(React.PureComponent));
+AutoCompleteAsync.datasourceConfig = { text: "name", value: "value" };
 var ArrayFieldRenderer = (function (_super) {
     __extends(ArrayFieldRenderer, _super);
     function ArrayFieldRenderer() {
@@ -188,6 +246,11 @@ form_1.addType('autocomplete-text', function (_a) {
     var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
     return React.createElement("div", null,
         React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: AutoCompleteText })));
+});
+form_1.addType("autocomplete-async", function (_a) {
+    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+    return React.createElement("div", null,
+        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: AutoCompleteAsync })));
 });
 form_1.addType('date', function (_a) {
     var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);

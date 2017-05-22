@@ -262,6 +262,15 @@ let schema:FormFieldSchema[] = [
                 }:null
             ]
         }
+    },{
+        key:"autocomplete",
+        type:"autocomplete-async",
+        label:"自动完成",
+        options:t=>{
+            if(/^\d+$/.test(t))
+                return Promise.resolve(new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i})));
+            else return [{name:"0",value:0}];
+        }
     }
 ];
 
