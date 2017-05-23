@@ -78,7 +78,7 @@ var CheckboxInput = (function (_super) {
 }(React.Component));
 function SelectInput(props) {
     return React.createElement(material_ui_1.SelectField, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
-            e.target.value = v;
+            e.target['value'] = v;
             props.input.onChange(e);
         } }), props.fieldSchema.options.map(function (option) { return React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
 }

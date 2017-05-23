@@ -104,12 +104,12 @@ function SelectInput(props:CustomWidgetProps){
         hintText={props.fieldSchema.placeholder}
         multiple={props.fieldSchema.multiple}
         onChange={(e,i,v)=>{
-            e.target.value = v;
+            e.target['value'] = v;
             props.input.onChange(e)
         }}
     >
         {
-            props.fieldSchema.options.map((option)=><MenuItem className="option" key={option.value} value={option.value} primaryText={option.name} />)
+            (props.fieldSchema.options as Options).map((option)=><MenuItem className="option" key={option.value} value={option.value} primaryText={option.name} />)
         }
     </SelectField>;
 }
