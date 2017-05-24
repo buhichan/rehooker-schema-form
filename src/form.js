@@ -187,9 +187,6 @@ var ReduxSchemaForm = (function (_super) {
         this.parseSchema(this.props.schema).then(this.onReady.bind(this));
     };
     ReduxSchemaForm.prototype.renderField = function (fieldSchema) {
-        var _this = this;
-        if (fieldSchema.hide)
-            return React.createElement("div", null);
         var hide = fieldSchema.hide, type = fieldSchema.type, parsedKey = fieldSchema.parsedKey, label = fieldSchema.label, options = fieldSchema.options, children = fieldSchema.children, getChildren = fieldSchema.getChildren, rest = __rest(fieldSchema, ["hide", "type", "parsedKey", "label", "options", "children", "getChildren"]);
         if (customTypes.has(type)) {
             var CustomWidget = customTypes.get(type);
@@ -243,9 +240,7 @@ var ReduxSchemaForm = (function (_super) {
             case "group":
                 return React.createElement("fieldset", null,
                     React.createElement("legend", null, label),
-                    children.map(function (childField) {
-                        return React.createElement("div", { key: childField.key, className: childField.type }, _this.renderField(childField));
-                    }));
+                    this.renderSchema(children));
             default:
                 return React.createElement("span", null,
                     "\u4E0D\u53EF\u8BC6\u522B\u7684\u5B57\u6BB5:",
@@ -255,12 +250,17 @@ var ReduxSchemaForm = (function (_super) {
     ReduxSchemaForm.prototype.submitable = function () {
         return this.props['valid'] && !this.props['pristine'] && !this.props['submitting'];
     };
-    ReduxSchemaForm.prototype.render = function () {
+    ReduxSchemaForm.prototype.renderSchema = function (schema) {
         var _this = this;
+        return schema.map(function (field) {
+            if (field.hide)
+                return null;
+            return React.createElement("div", { key: field.key || field.label, className: field.type }, _this.renderField(field));
+        });
+    };
+    ReduxSchemaForm.prototype.render = function () {
         return React.createElement("form", { className: "redux-schema-form form-horizontal", onSubmit: this.props['handleSubmit'] },
-            this.state.parsedSchema.map(function (field) {
-                return React.createElement("div", { key: field.key || field.label, className: field.type }, _this.renderField(field));
-            }),
+            this.renderSchema(this.state.parsedSchema),
             (!this.props.noButton && !this.props.readonly) ? React.createElement("div", { className: "button" },
                 React.createElement("div", { className: "btn-group" },
                     React.createElement(DefaultButton, { type: "submit", disabled: !this.submitable.apply(this) }, "\u63D0\u4EA4"),

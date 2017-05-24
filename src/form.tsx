@@ -249,8 +249,6 @@ export class ReduxSchemaForm extends React.PureComponent<{
         this.parseSchema(this.props.schema).then(this.onReady.bind(this))
     }
     renderField(fieldSchema:ParsedFormFieldSchema){
-        if(fieldSchema.hide)
-            return <div />;
         let {
             hide,
             type,
@@ -323,11 +321,7 @@ export class ReduxSchemaForm extends React.PureComponent<{
                 return <fieldset>
                     <legend>{label}</legend>
                     {
-                        children.map(childField=>{
-                            return <div key={childField.key} className={childField.type}>
-                                {this.renderField(childField)}
-                            </div>
-                        })
+                        this.renderSchema(children)
                     }
                 </fieldset>;
             default:
@@ -337,14 +331,19 @@ export class ReduxSchemaForm extends React.PureComponent<{
     submitable(){
         return this.props['valid'] && !this.props['pristine'] && !this.props['submitting'];
     }
+    renderSchema(schema:ParsedFormFieldSchema[]){
+        return schema.map(field=>{
+            if(field.hide)
+                return null;
+            return <div key={field.key||field.label} className={field.type}>
+                {this.renderField(field)}
+            </div>
+        })
+    }
     render(){
         return <form className="redux-schema-form form-horizontal" onSubmit={this.props['handleSubmit']}>
             {
-                this.state.parsedSchema.map(field=>{
-                    return <div key={field.key||field.label} className={field.type}>
-                        {this.renderField(field)}
-                    </div>
-                })
+                this.renderSchema(this.state.parsedSchema)
             }
             {
                 (!this.props.noButton && !this.props.readonly )? <div className="button">
