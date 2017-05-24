@@ -4,6 +4,7 @@ import {MuiTheme} from "material-ui/styles";
 /**-----------------------------------Form-----------------------------------**/
 export const stylesheet = {
   form: {
+    position:"relative",
     "&:after":{
       content:"\" \"",
       display:"table",
@@ -41,7 +42,7 @@ export const stylesheet = {
           width: "100%"
         },
       },
-      "&>div.button": {
+      "&>div.children, &>div.button": {
         textAlign:"center",
         float: "left",
         paddingRight:"initial",

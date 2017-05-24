@@ -345,6 +345,9 @@ export class ReduxSchemaForm extends React.PureComponent<{
             {
                 this.renderSchema(this.state.parsedSchema)
             }
+            {this.props.children?<div className="children">
+                {this.props.children}
+            </div>:null}
             {
                 (!this.props.noButton && !this.props.readonly )? <div className="button">
                     <div className="btn-group">
@@ -353,7 +356,6 @@ export class ReduxSchemaForm extends React.PureComponent<{
                     </div>
                 </div> : <div />
             }
-            {this.props.children}
         </form>
     }
 }

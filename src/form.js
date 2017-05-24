@@ -261,11 +261,11 @@ var ReduxSchemaForm = (function (_super) {
     ReduxSchemaForm.prototype.render = function () {
         return React.createElement("form", { className: "redux-schema-form form-horizontal", onSubmit: this.props['handleSubmit'] },
             this.renderSchema(this.state.parsedSchema),
+            this.props.children ? React.createElement("div", { className: "children" }, this.props.children) : null,
             (!this.props.noButton && !this.props.readonly) ? React.createElement("div", { className: "button" },
                 React.createElement("div", { className: "btn-group" },
                     React.createElement(DefaultButton, { type: "submit", disabled: !this.submitable.apply(this) }, "\u63D0\u4EA4"),
-                    React.createElement(DefaultButton, { type: "button", disabled: !this.submitable.apply(this), onClick: this.props.reset }, "\u91CD\u7F6E"))) : React.createElement("div", null),
-            this.props.children);
+                    React.createElement(DefaultButton, { type: "button", disabled: !this.submitable.apply(this), onClick: this.props.reset }, "\u91CD\u7F6E"))) : React.createElement("div", null));
     };
     return ReduxSchemaForm;
 }(React.PureComponent));

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**-----------------------------------Form-----------------------------------**/
 exports.stylesheet = {
     form: {
+        position: "relative",
         "&:after": {
             content: "\" \"",
             display: "table",
@@ -43,7 +44,7 @@ exports.stylesheet = {
                     width: "100%"
                 },
             },
-            "&>div.button": {
+            "&>div.children, &>div.button": {
                 textAlign: "center",
                 float: "left",
                 paddingRight: "initial",
