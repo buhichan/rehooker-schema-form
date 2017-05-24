@@ -125,6 +125,7 @@ class AutoCompleteSelect extends React.Component<CustomWidgetProps,any>{
             id={this.props.input.name}
             maxSearchResults={5}
             fullWidth={true}
+            openOnFocus
             hintText={this.props.fieldSchema.placeholder}
             errorText={this.props.meta.error}
             filter={AutoComplete.fuzzyFilter}

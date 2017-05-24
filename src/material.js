@@ -94,7 +94,7 @@ var AutoCompleteSelect = (function (_super) {
     AutoCompleteSelect.prototype.render = function () {
         var _this = this;
         var value = this.props.fieldSchema.options.find(function (x) { return x.value === _this.props.input.value; });
-        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, hintText: this.props.fieldSchema.placeholder, errorText: this.props.meta.error, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: this.onNewRequest });
+        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, openOnFocus: true, hintText: this.props.fieldSchema.placeholder, errorText: this.props.meta.error, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: this.onNewRequest });
     };
     return AutoCompleteSelect;
 }(React.Component));
