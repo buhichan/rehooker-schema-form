@@ -134,9 +134,11 @@ var ReduxSchemaForm = (function (_super) {
                 }
                 return field.normalize ? field.normalize(value, previousValue, formValue) : value;
             };
-            var newFields = field.onValueChange(this.props.initialValues[field.key], undefined, this.props.initialValues);
-            if (newFields)
-                this.pendSchemaChange(newFields);
+            if (this.props.initialValues) {
+                var newFields = field.onValueChange(this.props.initialValues[field.key], undefined, this.props.initialValues);
+                if (newFields)
+                    this.pendSchemaChange(newFields);
+            }
         }
         if (field.children instanceof Array) {
             promises.push(this.parseSchema(field.children, parsedField.key).then(function (children) {
