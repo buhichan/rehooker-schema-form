@@ -47,7 +47,7 @@ var schema = [
                 value: "pear"
             }
         ],
-        onChange: function (value) {
+        onValueChange: function (value) {
             if (value === 'pear')
                 return [
                     {
@@ -151,7 +151,7 @@ var schema = [
                 value: "animal"
             }
         ],
-        onChange: function (value) {
+        onValueChange: function (value) {
             if (value === 'animal') {
                 return [
                     {
@@ -215,7 +215,7 @@ var schema = [
         key: "dependant_lv2",
         type: "select",
         label: "有依赖的单选lv2",
-        onChange: function (value) {
+        onValueChange: function (value) {
             if (value === 'dog') {
                 return [
                     {
@@ -312,7 +312,10 @@ var App = (function (_super) {
     function App() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = {
-            state: 2
+            state: 2,
+            "dependant_lv1": "animal",
+            "dependant_lv2": "dog",
+            "select": "pear"
         };
         _this.onSubmit = function (values) {
             if (values.text) {

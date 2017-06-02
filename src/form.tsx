@@ -4,6 +4,7 @@
 import * as React from 'react'
 import {reduxForm, Config as ReduxFormConfig} from 'redux-form'
 import {SyntheticEvent} from "react";
+import {connect} from "react-redux";
 let {Field,FieldArray} = require("redux-form");
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
@@ -34,7 +35,7 @@ export type ChangeOfSchema = (Partial<ParsedFormFieldSchema>&{key:string})[];
 
 export interface FormFieldSchema extends BaseSchema{
     onValueChange?:
-        (newValue:any,previousValue?:any,formValue?:any)=>ChangeOfSchema|Promise<ChangeOfSchema>|((oldSchema:ParsedFormFieldSchema[])=>ParsedFormFieldSchema[])
+        (newValue:any,previousValue?:any,formValue?:any)=>ChangeOfSchema|Promise<ChangeOfSchema>
     options?:Options | AsyncOptions | AsyncOption,
     children?:FormFieldSchema[],
     getChildren?:((childValue:any)=>FormFieldSchema[])
@@ -71,7 +72,7 @@ function changeField(parsedSchema:ParsedFormFieldSchema[],value:ParsedFormFieldS
     });
     if(index>=0) {
         parsedSchema[index] = {...parsedSchema[index], ...value};
-        return [...parsedSchema];
+        return parsedSchema;
     }else{
         return parsedSchema;
     }
@@ -118,23 +119,6 @@ export function setButton(button: React.StatelessComponent<ButtonProps>){
     DefaultButton = button;
 }
 
-const listeners = {} as {[key:string]:((...args:any[])=>void)[]};
-
-function registerListener(key,cb){
-    listeners[key] = listeners[key]||[];
-    listeners[key].push(cb);
-    return ()=>{
-        const i = listeners[key].indexOf(cb);
-        listeners[key].splice(i,1);
-    }
-}
-
-export function SchemaFormReducer(prev,action){
-    if(action.type==='@@redux-form/change'){
-
-    }
-}
-
 function DefaultArrayFieldRenderer(props){
     return <div>
         {
@@ -147,11 +131,6 @@ function DefaultArrayFieldRenderer(props){
         }
         <button  onClick={props.push()}><i className="fa fa-plus" /></button>
     </div>
-}
-
-function decorate(obj,prop,cb){
-    let fn = obj[prop];
-    obj[prop] = cb(fn);
 }
 
 export type ButtonProps = {
@@ -185,21 +164,22 @@ export class ReduxSchemaForm extends React.PureComponent<{
             parsedSchema: []
         }
     }
-    applySchemaChange(newFields){
-        if(newFields.then){
-            return newFields.then(this.applySchemaChange.bind(this));
-        }else if (typeof newFields === 'function') {
-            const newSchema = newFields(this.state.parsedSchema);
-            if(newSchema)
-                this.setState({parsedSchema:newSchema})
-        }else {
-            const result = newFields.reduce((prev, curr) => {
-                return changeField(prev, curr)
-            }, this.state.parsedSchema).slice();
-            this.setState({
-                parsedSchema:result
-            });
-        }
+    pendingSchemaChanges=[];
+    pendSchemaChange(newFields){
+        if(!(newFields instanceof Promise))
+            newFields = Promise.resolve(newFields);
+        this.pendingSchemaChanges.push(newFields);
+    }
+    getChangedSchema(oldSchema){
+        const res = Promise.all(this.pendingSchemaChanges).then((changes)=>{
+            return changes.reduce((oldSchema,newFields)=>{
+                return newFields.reduce((prev, curr) => {
+                    return changeField(prev, curr)
+                }, oldSchema);
+            },oldSchema.slice(0));
+        });
+        this.pendingSchemaChanges = [];
+        return res;
     }
     parseField(field:FormFieldSchema,prefix):Promise<ParsedFormFieldSchema>{
         let promises = [];
@@ -208,10 +188,19 @@ export class ReduxSchemaForm extends React.PureComponent<{
         if(field.onValueChange) {
             parsedField.normalize = (value,previousValue,formValue) => {
                 const newFields = field.onValueChange(value,previousValue,formValue);
-                if (newFields)
-                    this.applySchemaChange(newFields);
+                if (newFields) {
+                    this.pendSchemaChange(newFields);
+                    this.getChangedSchema(this.state.parsedSchema).then(newSchema=>{
+                        this.setState({
+                            parsedSchema:newSchema
+                        })
+                    });
+                }
                 return field.normalize?field.normalize(value,previousValue,formValue):value;
             };
+            const newFields = field.onValueChange(this.props.initialValues[field.key],undefined,this.props.initialValues);
+            if (newFields)
+                this.pendSchemaChange(newFields);
         }
         if(field.children instanceof Array){
             promises.push(this.parseSchema(field.children,parsedField.key).then((children)=>{
@@ -241,8 +230,10 @@ export class ReduxSchemaForm extends React.PureComponent<{
         }
     }
     onReady(schema:ParsedFormFieldSchema[]){
-        this.setState({
-            parsedSchema: schema
+        this.getChangedSchema(schema).then(schema=>{
+            this.setState({
+                parsedSchema:schema
+            });
         })
     }
     componentWillMount(){
@@ -266,12 +257,6 @@ export class ReduxSchemaForm extends React.PureComponent<{
         //noinspection FallThroughInSwitchStatementJS
         switch(type){
             case "number":
-                decorate(rest,"onChange",(normalize)=>{
-                    return (...args)=>{
-                        args[0] = Number(args[0]);
-                        return normalize?normalize(...args):args[0];
-                    }
-                });
             case "text":
             case "color":
             case "password":

@@ -63,7 +63,7 @@ function changeField(parsedSchema, value) {
     });
     if (index >= 0) {
         parsedSchema[index] = __assign({}, parsedSchema[index], value);
-        return parsedSchema.slice();
+        return parsedSchema;
     }
     else {
         return parsedSchema;
@@ -78,20 +78,6 @@ function setButton(button) {
     DefaultButton = button;
 }
 exports.setButton = setButton;
-var listeners = {};
-function registerListener(key, cb) {
-    listeners[key] = listeners[key] || [];
-    listeners[key].push(cb);
-    return function () {
-        var i = listeners[key].indexOf(cb);
-        listeners[key].splice(i, 1);
-    };
-}
-function SchemaFormReducer(prev, action) {
-    if (action.type === '@@redux-form/change') {
-    }
-}
-exports.SchemaFormReducer = SchemaFormReducer;
 function DefaultArrayFieldRenderer(props) {
     var _this = this;
     return React.createElement("div", null,
@@ -104,36 +90,31 @@ function DefaultArrayFieldRenderer(props) {
         React.createElement("button", { onClick: props.push() },
             React.createElement("i", { className: "fa fa-plus" })));
 }
-function decorate(obj, prop, cb) {
-    var fn = obj[prop];
-    obj[prop] = cb(fn);
-}
 var ReduxSchemaForm = (function (_super) {
     __extends(ReduxSchemaForm, _super);
     function ReduxSchemaForm() {
         var _this = _super.call(this) || this;
+        _this.pendingSchemaChanges = [];
         _this.state = {
             parsedSchema: []
         };
         return _this;
     }
-    ReduxSchemaForm.prototype.applySchemaChange = function (newFields) {
-        if (newFields.then) {
-            return newFields.then(this.applySchemaChange.bind(this));
-        }
-        else if (typeof newFields === 'function') {
-            var newSchema = newFields(this.state.parsedSchema);
-            if (newSchema)
-                this.setState({ parsedSchema: newSchema });
-        }
-        else {
-            var result = newFields.reduce(function (prev, curr) {
-                return changeField(prev, curr);
-            }, this.state.parsedSchema).slice();
-            this.setState({
-                parsedSchema: result
-            });
-        }
+    ReduxSchemaForm.prototype.pendSchemaChange = function (newFields) {
+        if (!(newFields instanceof Promise))
+            newFields = Promise.resolve(newFields);
+        this.pendingSchemaChanges.push(newFields);
+    };
+    ReduxSchemaForm.prototype.getChangedSchema = function (oldSchema) {
+        var res = Promise.all(this.pendingSchemaChanges).then(function (changes) {
+            return changes.reduce(function (oldSchema, newFields) {
+                return newFields.reduce(function (prev, curr) {
+                    return changeField(prev, curr);
+                }, oldSchema);
+            }, oldSchema.slice(0));
+        });
+        this.pendingSchemaChanges = [];
+        return res;
     };
     ReduxSchemaForm.prototype.parseField = function (field, prefix) {
         var _this = this;
@@ -143,10 +124,19 @@ var ReduxSchemaForm = (function (_super) {
         if (field.onValueChange) {
             parsedField.normalize = function (value, previousValue, formValue) {
                 var newFields = field.onValueChange(value, previousValue, formValue);
-                if (newFields)
-                    _this.applySchemaChange(newFields);
+                if (newFields) {
+                    _this.pendSchemaChange(newFields);
+                    _this.getChangedSchema(_this.state.parsedSchema).then(function (newSchema) {
+                        _this.setState({
+                            parsedSchema: newSchema
+                        });
+                    });
+                }
                 return field.normalize ? field.normalize(value, previousValue, formValue) : value;
             };
+            var newFields = field.onValueChange(this.props.initialValues[field.key], undefined, this.props.initialValues);
+            if (newFields)
+                this.pendSchemaChange(newFields);
         }
         if (field.children instanceof Array) {
             promises.push(this.parseSchema(field.children, parsedField.key).then(function (children) {
@@ -179,8 +169,11 @@ var ReduxSchemaForm = (function (_super) {
         }
     };
     ReduxSchemaForm.prototype.onReady = function (schema) {
-        this.setState({
-            parsedSchema: schema
+        var _this = this;
+        this.getChangedSchema(schema).then(function (schema) {
+            _this.setState({
+                parsedSchema: schema
+            });
         });
     };
     ReduxSchemaForm.prototype.componentWillMount = function () {
@@ -195,16 +188,6 @@ var ReduxSchemaForm = (function (_super) {
         //noinspection FallThroughInSwitchStatementJS
         switch (type) {
             case "number":
-                decorate(rest, "onChange", function (normalize) {
-                    return function () {
-                        var args = [];
-                        for (var _i = 0; _i < arguments.length; _i++) {
-                            args[_i] = arguments[_i];
-                        }
-                        args[0] = Number(args[0]);
-                        return normalize ? normalize.apply(void 0, args) : args[0];
-                    };
-                });
             case "text":
             case "color":
             case "password":

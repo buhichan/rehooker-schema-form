@@ -31,7 +31,7 @@ let schema:FormFieldSchema[] = [
                 value:"pear"
             }
         ],
-        onChange:(value)=>{
+        onValueChange:(value)=>{
             if(value==='pear')
                 return [
                     {
@@ -134,7 +134,7 @@ let schema:FormFieldSchema[] = [
                 value:"animal"
             }
         ],
-        onChange:(value)=>{
+        onValueChange:(value)=>{
             if(value ==='animal'){
                 return [
                     {
@@ -196,7 +196,7 @@ let schema:FormFieldSchema[] = [
         key:"dependant_lv2",
         type:"select",
         label:"有依赖的单选lv2",
-        onChange:(value):any=>{
+        onValueChange:(value):any=>{
             if(value ==='dog'){
                 return [
                     {
@@ -291,7 +291,10 @@ const store = createStore(reducer,{},middleware);
 )
 class App extends React.PureComponent<any,any>{
     data={
-        state:2
+        state:2,
+        "dependant_lv1": "animal",
+        "dependant_lv2": "dog",
+        "select": "pear"
     };
     onSubmit=(values)=>{
         if(values.text){

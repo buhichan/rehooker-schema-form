@@ -63,20 +63,10 @@ function DateInput(props) {
 function TextInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, hintText: props.fieldSchema.placeholder, multiLine: props.fieldSchema.multiLine, floatingLabelText: props.fieldSchema.label }));
 }
-var CheckboxInput = (function (_super) {
-    __extends(CheckboxInput, _super);
-    function CheckboxInput() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    CheckboxInput.prototype.componentWillMount = function () {
-        this.props.input.onChange(this.props.input.value);
-    };
-    CheckboxInput.prototype.render = function () {
-        var _a = this.props.input, onChange = _a.onChange, value = _a.value, rest = __rest(_a, ["onChange", "value"]);
-        return React.createElement(material_ui_1.Checkbox, __assign({}, rest, { style: { width: "100%", margin: "32px 0 16px" }, disabled: this.props.disabled, onChange: undefined, onCheck: onChange, label: this.props.fieldSchema.label, checked: value }));
-    };
-    return CheckboxInput;
-}(React.Component));
+function CheckboxInput(props) {
+    var _a = props.input, onChange = _a.onChange, value = _a.value, rest = __rest(_a, ["onChange", "value"]);
+    return React.createElement(material_ui_1.Checkbox, __assign({}, rest, { style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: onChange, label: props.fieldSchema.label, checked: Boolean(value) }));
+}
 function SelectInput(props) {
     return React.createElement(material_ui_1.SelectField, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
             e.target['value'] = v;

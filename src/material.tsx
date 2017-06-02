@@ -75,22 +75,17 @@ function TextInput(props:CustomWidgetProps){
         multiLine={props.fieldSchema.multiLine}
         floatingLabelText={props.fieldSchema.label}/>;
 }
-class CheckboxInput extends React.Component<CustomWidgetProps,any>{
-    componentWillMount(){
-        this.props.input.onChange(this.props.input.value);
-    }
-    render() {
-        const {onChange,value,...rest} = this.props.input;
-        return <Checkbox
-            {...rest}
-            style={{width:"100%",margin:"32px 0 16px"}}
-            disabled={this.props.disabled}
-            onChange={undefined}
-            onCheck={onChange}
-            label={this.props.fieldSchema.label}
-            checked={value}
-        />
-    }
+function CheckboxInput (props:CustomWidgetProps){
+    const {onChange,value,...rest} = props.input;
+    return <Checkbox
+        {...rest}
+        style={{width:"100%",margin:"32px 0 16px"}}
+        disabled={props.disabled}
+        onChange={undefined}
+        onCheck={onChange}
+        label={props.fieldSchema.label}
+        checked={Boolean(value)}
+    />
 }
 
 function SelectInput(props:CustomWidgetProps){
