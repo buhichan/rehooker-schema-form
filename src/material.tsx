@@ -80,15 +80,15 @@ class CheckboxInput extends React.Component<CustomWidgetProps,any>{
         this.props.input.onChange(this.props.input.value);
     }
     render() {
+        const {onChange,value,...rest} = this.props.input;
         return <Checkbox
-            {...this.props.input}
-            id={this.props.input.name}
+            {...rest}
             style={{width:"100%",margin:"32px 0 16px"}}
             disabled={this.props.disabled}
             onChange={undefined}
-            onCheck={this.props.input.onChange}
+            onCheck={onChange}
             label={this.props.fieldSchema.label}
-            value={this.props.input.value}
+            checked={value}
         />
     }
 }

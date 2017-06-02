@@ -72,7 +72,8 @@ var CheckboxInput = (function (_super) {
         this.props.input.onChange(this.props.input.value);
     };
     CheckboxInput.prototype.render = function () {
-        return React.createElement(material_ui_1.Checkbox, __assign({}, this.props.input, { id: this.props.input.name, style: { width: "100%", margin: "32px 0 16px" }, disabled: this.props.disabled, onChange: undefined, onCheck: this.props.input.onChange, label: this.props.fieldSchema.label, value: this.props.input.value }));
+        var _a = this.props.input, onChange = _a.onChange, value = _a.value, rest = __rest(_a, ["onChange", "value"]);
+        return React.createElement(material_ui_1.Checkbox, __assign({}, rest, { style: { width: "100%", margin: "32px 0 16px" }, disabled: this.props.disabled, onChange: undefined, onCheck: onChange, label: this.props.fieldSchema.label, checked: value }));
     };
     return CheckboxInput;
 }(React.Component));
