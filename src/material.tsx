@@ -82,7 +82,7 @@ function CheckboxInput (props:CustomWidgetProps){
         style={{width:"100%",margin:"32px 0 16px"}}
         disabled={props.disabled}
         onChange={undefined}
-        onCheck={onChange}
+        onCheck={(e,v)=>onChange(v)}
         label={props.fieldSchema.label}
         checked={Boolean(value)}
     />

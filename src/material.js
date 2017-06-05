@@ -65,7 +65,7 @@ function TextInput(props) {
 }
 function CheckboxInput(props) {
     var _a = props.input, onChange = _a.onChange, value = _a.value, rest = __rest(_a, ["onChange", "value"]);
-    return React.createElement(material_ui_1.Checkbox, __assign({}, rest, { style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: onChange, label: props.fieldSchema.label, checked: Boolean(value) }));
+    return React.createElement(material_ui_1.Checkbox, __assign({}, rest, { style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: function (e, v) { return onChange(v); }, label: props.fieldSchema.label, checked: Boolean(value) }));
 }
 function SelectInput(props) {
     return React.createElement(material_ui_1.SelectField, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
