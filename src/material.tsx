@@ -76,9 +76,10 @@ function TextInput(props:CustomWidgetProps){
         floatingLabelText={props.fieldSchema.label}/>;
 }
 function CheckboxInput (props:CustomWidgetProps){
-    const {onChange,value,...rest} = props.input;
+    const {onChange,onBlur,value,...rest} = props.input;
     return <Checkbox
         {...rest}
+        onBlur={e=>onBlur(value)}
         style={{width:"100%",margin:"32px 0 16px"}}
         disabled={props.disabled}
         onChange={undefined}
