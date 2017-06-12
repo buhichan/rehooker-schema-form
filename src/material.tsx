@@ -5,7 +5,6 @@ import * as React from "react"
 import {addType, AsyncOption, AsyncOptions, CustomWidgetProps, Options, setButton} from "./form"
 import {TextField,SelectField,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
-
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
 import {MuiTheme} from "material-ui/styles";
@@ -13,6 +12,8 @@ import {stylesheet} from "./material.jss";
 import {BaseFieldArrayProps} from "redux-form";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {connect} from "react-redux";
+import {ContentClear} from "material-ui/svg-icons";
+const injectCSS = require('react-jss').default;
 
 let {Field,FieldArray} =require("redux-form");
 
@@ -110,25 +111,69 @@ function SelectInput(props:CustomWidgetProps){
     </SelectField>;
 }
 
+const dataSourceConfig = {text:"name",value:"value"};
+
+@injectCSS({
+    autocomplete:{
+        position:"relative",
+        "&>.autocomplete-clear-button":{
+            position:"absolute",
+            bottom:"10px",
+            right:0,
+            opacity:0,
+        },
+        "&:hover>.autocomplete-clear-button":{
+            opacity:1
+        }
+    }
+})
+class BaseAutoComplete extends React.PureComponent<{fieldSchema,fullResult?,input,meta,openOnFocus?,searchText,dataSource,onNewRequest?,onUpdateInput?,classes?},any>{
+    render() {
+        const {fieldSchema, input, meta, fullResult, openOnFocus, searchText, dataSource, onNewRequest, onUpdateInput,classes} = this.props;
+        return <div className={classes.autocomplete}>
+            <AutoComplete
+                id={fieldSchema.name}
+                maxSearchResults={fullResult ? undefined : 5}
+                menuStyle={fullResult ? {maxHeight: "300px", overflowY: 'auto'} : undefined}
+                fullWidth={true}
+                openOnFocus={openOnFocus}
+                hintText={fieldSchema.placeholder}
+                errorText={meta.error}
+                filter={AutoComplete.fuzzyFilter}
+                dataSource={dataSource}
+                dataSourceConfig={dataSourceConfig}
+                floatingLabelText={fieldSchema.label}
+                searchText={searchText}
+                onNewRequest={onNewRequest}
+                onUpdateInput={onUpdateInput}
+            />
+            {
+                input.value!==null&&input.value!==undefined&&input.value!=="" ? <IconButton
+                    style={{position:"absolute"}}
+                    className="autocomplete-clear-button"
+                    onTouchTap={() => input.onChange(fieldSchema.defaultValue || null)}
+                >
+                    <ContentClear />
+                </IconButton> : null
+            }
+        </div>
+    }
+}
+
 class AutoCompleteSelect extends React.Component<CustomWidgetProps,any>{
     onNewRequest=(value)=>{
         return this.props.input.onChange(value['value']);
     };
-    static datasourceConfig = {text:"name",value:"value"};
     render() {
-        const value = (this.props.fieldSchema.options as Options).find(x=>x.value === this.props.input.value);
-        return <AutoComplete
-            id={this.props.input.name}
-            maxSearchResults={5}
-            fullWidth={true}
+        const {meta,input,fieldSchema} = this.props;
+        const value = (fieldSchema.options as Options).find(x=>x.value === input.value);
+        return <BaseAutoComplete
+            fieldSchema={fieldSchema}
+            input={input}
+            meta={meta}
             openOnFocus
-            hintText={this.props.fieldSchema.placeholder}
-            errorText={this.props.meta.error}
-            filter={AutoComplete.fuzzyFilter}
-            dataSource={this.props.fieldSchema.options as Options}
-            dataSourceConfig={AutoCompleteSelect.datasourceConfig}
-            floatingLabelText={this.props.fieldSchema.label}
             searchText={value?value.name:""}
+            dataSource={fieldSchema.options}
             onNewRequest={this.onNewRequest}
         />
     }
@@ -139,21 +184,16 @@ class AutoCompleteText extends React.Component<CustomWidgetProps,any>{
         const entry = (this.props.fieldSchema.options as Options).find(x=>x.name===name);
         return this.props.input.onChange(entry?entry.value:name);
     };
-    static datasourceConfig = {text:"name",value:"value"};
     render() {
-        return <AutoComplete
-            id={this.props.input.name}
-            maxSearchResults={5}
-            fullWidth={true}
-            hintText={this.props.fieldSchema.placeholder}
-            filter={AutoComplete.fuzzyFilter}
-            errorText={this.props.meta.error}
-            dataSource={this.props.fieldSchema.options as Options}
-            dataSourceConfig={AutoCompleteText.datasourceConfig}
-            floatingLabelText={this.props.fieldSchema.label}
-            searchText={this.props.input.value}
+        const {meta,input,fieldSchema} = this.props;
+        return <BaseAutoComplete
+            input={input}
+            meta={meta}
+            fieldSchema={fieldSchema}
+            dataSource={fieldSchema.options}
+            searchText={input.value}
             onUpdateInput={this.onUpdateInput}
-        />
+        />;
     }
 }
 
@@ -208,22 +248,18 @@ class AutoCompleteAsync extends React.PureComponent<CustomWidgetProps,any>{
         searchText:"",
         dataSource:[]
     };
-    static datasourceConfig = {text:"name",value:"value"};
     render() {
-        return <AutoComplete
-            id={this.props.input.name}
-            fullWidth={true}
-            menuStyle = {{maxHeight:"300px",overflowY:'auto'}}
-            filter={AutoComplete.fuzzyFilter}
-            errorText={this.props.meta.error}
+        const {meta,input,fieldSchema} = this.props;
+        return <BaseAutoComplete
+            input={input}
+            meta={meta}
+            fullResult
+            fieldSchema={fieldSchema}
             dataSource={this.state.dataSource}
-            hintText={this.props.fieldSchema.placeholder}
-            dataSourceConfig={AutoCompleteAsync.datasourceConfig}
-            floatingLabelText={this.props.fieldSchema.label}
-            searchText={this.findName(this.props.input.value)}
+            searchText={this.findName(input.value)}
             onUpdateInput={this.onUpdateInput}
             onNewRequest={this.onSelected}
-        />
+        />;
     }
 }
 
@@ -384,7 +420,6 @@ setButton(muiThemeable()(function(props:any){
 }) as any);
 
 const formModule = require('../index');
-const injectCSS = require('react-jss').default;
 const JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm =muiThemeable()
 (injectCSS(stylesheet)(

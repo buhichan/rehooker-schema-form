@@ -44,6 +44,8 @@ var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
 var material_jss_1 = require("./material.jss");
 var react_redux_1 = require("react-redux");
+var svg_icons_1 = require("material-ui/svg-icons");
+var injectCSS = require('react-jss').default;
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
@@ -73,6 +75,37 @@ function SelectInput(props) {
             props.input.onChange(e);
         } }), props.fieldSchema.options.map(function (option) { return React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
 }
+var dataSourceConfig = { text: "name", value: "value" };
+var BaseAutoComplete = (function (_super) {
+    __extends(BaseAutoComplete, _super);
+    function BaseAutoComplete() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    BaseAutoComplete.prototype.render = function () {
+        var _a = this.props, fieldSchema = _a.fieldSchema, input = _a.input, meta = _a.meta, fullResult = _a.fullResult, openOnFocus = _a.openOnFocus, searchText = _a.searchText, dataSource = _a.dataSource, onNewRequest = _a.onNewRequest, onUpdateInput = _a.onUpdateInput, classes = _a.classes;
+        return React.createElement("div", { className: classes.autocomplete },
+            React.createElement(material_ui_1.AutoComplete, { id: fieldSchema.name, maxSearchResults: fullResult ? undefined : 5, menuStyle: fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, fullWidth: true, openOnFocus: openOnFocus, hintText: fieldSchema.placeholder, errorText: meta.error, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: dataSource, dataSourceConfig: dataSourceConfig, floatingLabelText: fieldSchema.label, searchText: searchText, onNewRequest: onNewRequest, onUpdateInput: onUpdateInput }),
+            input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: "autocomplete-clear-button", onTouchTap: function () { return input.onChange(fieldSchema.defaultValue || null); } },
+                React.createElement(svg_icons_1.ContentClear, null)) : null);
+    };
+    return BaseAutoComplete;
+}(React.PureComponent));
+BaseAutoComplete = __decorate([
+    injectCSS({
+        autocomplete: {
+            position: "relative",
+            "&>.autocomplete-clear-button": {
+                position: "absolute",
+                bottom: "10px",
+                right: 0,
+                opacity: 0,
+            },
+            "&:hover>.autocomplete-clear-button": {
+                opacity: 1
+            }
+        }
+    })
+], BaseAutoComplete);
 var AutoCompleteSelect = (function (_super) {
     __extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
@@ -83,13 +116,12 @@ var AutoCompleteSelect = (function (_super) {
         return _this;
     }
     AutoCompleteSelect.prototype.render = function () {
-        var _this = this;
-        var value = this.props.fieldSchema.options.find(function (x) { return x.value === _this.props.input.value; });
-        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, openOnFocus: true, hintText: this.props.fieldSchema.placeholder, errorText: this.props.meta.error, filter: material_ui_1.AutoComplete.fuzzyFilter, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteSelect.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: value ? value.name : "", onNewRequest: this.onNewRequest });
+        var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
+        var value = fieldSchema.options.find(function (x) { return x.value === input.value; });
+        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, searchText: value ? value.name : "", dataSource: fieldSchema.options, onNewRequest: this.onNewRequest });
     };
     return AutoCompleteSelect;
 }(React.Component));
-AutoCompleteSelect.datasourceConfig = { text: "name", value: "value" };
 var AutoCompleteText = (function (_super) {
     __extends(AutoCompleteText, _super);
     function AutoCompleteText() {
@@ -101,11 +133,11 @@ var AutoCompleteText = (function (_super) {
         return _this;
     }
     AutoCompleteText.prototype.render = function () {
-        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, maxSearchResults: 5, fullWidth: true, hintText: this.props.fieldSchema.placeholder, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.props.fieldSchema.options, dataSourceConfig: AutoCompleteText.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.props.input.value, onUpdateInput: this.onUpdateInput });
+        var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fieldSchema: fieldSchema, dataSource: fieldSchema.options, searchText: input.value, onUpdateInput: this.onUpdateInput });
     };
     return AutoCompleteText;
 }(React.Component));
-AutoCompleteText.datasourceConfig = { text: "name", value: "value" };
 var AutoCompleteAsync = (function (_super) {
     __extends(AutoCompleteAsync, _super);
     function AutoCompleteAsync() {
@@ -162,11 +194,11 @@ var AutoCompleteAsync = (function (_super) {
         return entry ? entry.name : "";
     };
     AutoCompleteAsync.prototype.render = function () {
-        return React.createElement(material_ui_1.AutoComplete, { id: this.props.input.name, fullWidth: true, menuStyle: { maxHeight: "300px", overflowY: 'auto' }, filter: material_ui_1.AutoComplete.fuzzyFilter, errorText: this.props.meta.error, dataSource: this.state.dataSource, hintText: this.props.fieldSchema.placeholder, dataSourceConfig: AutoCompleteAsync.datasourceConfig, floatingLabelText: this.props.fieldSchema.label, searchText: this.findName(this.props.input.value), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
+        var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
     };
     return AutoCompleteAsync;
 }(React.PureComponent));
-AutoCompleteAsync.datasourceConfig = { text: "name", value: "value" };
 var ArrayFieldRenderer = (function (_super) {
     __extends(ArrayFieldRenderer, _super);
     function ArrayFieldRenderer() {
@@ -272,7 +304,6 @@ form_1.setButton(muiThemeable_1.default()(function (props) {
     }
 }));
 var formModule = require('../index');
-var injectCSS = require('react-jss').default;
 var JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm = muiThemeable_1.default()(injectCSS(material_jss_1.stylesheet)(function (_a) {
     var classes = _a.classes, sheet = _a.sheet, rest = __rest(_a, ["classes", "sheet"]);
