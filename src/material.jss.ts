@@ -35,7 +35,7 @@ export const stylesheet = {
         paddingRight: "10%",
         paddingLeft: "10%",
         width: "50%",
-        height:72,
+        height:85,
         "&.hidden":{
           display:"none"
         },
