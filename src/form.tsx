@@ -19,10 +19,8 @@ export interface BaseSchema extends ReduxFormConfig<any,any,any>{
     label:string,
     hide?:boolean,
     placeholder?:string,
-    value?:any,
     required?:boolean,
     disabled?:boolean,
-    defaultValue?:any,
     multiple?:boolean,
     children?:BaseSchema[]
     options?:Options | AsyncOptions | AsyncOption,
