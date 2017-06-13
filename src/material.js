@@ -96,7 +96,7 @@ BaseAutoComplete = __decorate([
             position: "relative",
             "&>.autocomplete-clear-button": {
                 position: "absolute",
-                bottom: "10px",
+                top: "15px",
                 right: 0,
                 opacity: 0,
             },
