@@ -234,6 +234,50 @@ var ArrayFieldRenderer = (function (_super) {
 ArrayFieldRenderer = __decorate([
     muiThemeable_1.default()
 ], ArrayFieldRenderer);
+function TextAreaInput(props) {
+    return React.createElement(material_ui_1.TextField, __assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
+}
+form_1.addType('textarea', function (_a) {
+    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+    return React.createElement("div", null,
+        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: TextAreaInput })));
+});
+form_1.addType("file", function (_a) {
+    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+    return React.createElement("div", null,
+        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: FileInput })));
+});
+var FileInput = (function (_super) {
+    __extends(FileInput, _super);
+    function FileInput() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            filename: _this.props.fieldSchema.label
+        };
+        _this.onChange = function (e) {
+            var file = e.target.files[0];
+            _this.setState({
+                filename: file.name
+            });
+            _this.props.input.onChange(file);
+        };
+        return _this;
+    }
+    FileInput.prototype.render = function () {
+        var _a = this.props, meta = _a.meta, muiTheme = _a.muiTheme;
+        var hasError = Boolean(meta.error);
+        return React.createElement(material_ui_1.RaisedButton, { backgroundColor: hasError ? muiTheme.textField.errorColor : muiTheme.palette.primary1Color, style: { marginTop: 28 }, label: meta.error || this.state.filename, labelColor: "#FFFFFF", containerElement: "label", labelStyle: {
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden"
+            } },
+            React.createElement("input", { type: "file", style: { display: "none" }, onChange: this.onChange }));
+    };
+    return FileInput;
+}(React.PureComponent));
+FileInput = __decorate([
+    muiThemeable_1.default()
+], FileInput);
 var ConnectedArrayFieldRenderer = react_redux_1.connect(function (s, p) {
     return __assign({ form: s.form[p.meta.form] }, p);
 })(ArrayFieldRenderer);
@@ -286,7 +330,7 @@ form_1.addType("array", function (props) {
         React.createElement(FieldArray, { name: props.fieldSchema.parsedKey, component: props.fieldSchema.getChildren ? ConnectedArrayFieldRenderer : ArrayFieldRenderer, props: props }));
 });
 form_1.addType('hidden', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+    var fieldSchema = _a.fieldSchema, renderField = _a.renderField, rest = __rest(_a, ["fieldSchema", "renderField"]);
     return React.createElement("div", null,
         React.createElement(Field, __assign({ id: 'rich-editor' + fieldSchema.label, name: fieldSchema.parsedKey }, rest, { component: 'input' })));
 });

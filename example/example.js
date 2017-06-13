@@ -22,7 +22,7 @@ var react_redux_1 = require("react-redux");
 var redux_1 = require("redux");
 var redux_form_1 = require("redux-form");
 require("../src/material");
-var form_1 = require("../src/form");
+var _1 = require("../");
 var styles_1 = require("material-ui/styles");
 var getMuiTheme_1 = require("material-ui/styles/getMuiTheme");
 require('react-tap-event-plugin')();
@@ -30,6 +30,15 @@ var schema = [
     {
         key: "text",
         type: "text",
+        placeholder: "input something",
+        label: "文本属性",
+        validate: function (v) {
+            if (v !== "a")
+                return "必须是a";
+        }
+    }, {
+        key: "hidden",
+        type: "hidden",
         placeholder: "input something",
         label: "文本属性"
     },
@@ -86,7 +95,11 @@ var schema = [
     }, {
         key: "file",
         type: "file",
-        label: "文件"
+        label: "文件",
+        validate: function (v) {
+            if (!v || !v.type.startsWith('image/'))
+                return "只能上传图片";
+        }
     }, {
         key: "ajax_select",
         type: "select",
@@ -330,7 +343,7 @@ var App = (function (_super) {
     }
     App.prototype.render = function () {
         return React.createElement("div", null,
-            React.createElement(form_1.ReduxSchemaForm, { form: "random", initialValues: this.data, schema: schema, onSubmit: this.onSubmit }),
+            React.createElement(_1.ReduxSchemaForm, { form: "random", initialValues: this.data, schema: schema, onSubmit: this.onSubmit }),
             React.createElement("p", null, "\u8BF8\u5982\u6570\u636Eschema\u53D1\u751F\u53D8\u5316\u7684\u9700\u6C42\uFF0C\u4E0D\u5E94\u8BE5\u7531\u8868\u5355\u8FD9\u4E00\u5C42\u6765\u5B9E\u73B0\uFF01\u5E94\u8BE5\u662F\u903B\u8F91\u5C42\u5B9E\u73B0\u7684\u529F\u80FD\uFF0C\u8FD9\u91CC\u7684\u8868\u5355\u53EA\u8981\u7B28\u7B28\u7684\u5C31\u884C\u4E86"),
             React.createElement("pre", null,
                 React.createElement("code", null,

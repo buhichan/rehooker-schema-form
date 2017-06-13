@@ -1,6 +1,7 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**-----------------------------------Form-----------------------------------**/
+Object.defineProperty(exports, "__esModule", { value: true });
+var FullWidthInputs = "& div.group,& div.array,& div.rich-editor, & div.textarea";
 exports.stylesheet = {
     form: {
         position: "relative",
@@ -12,39 +13,47 @@ exports.stylesheet = {
         "& *": {
             boxSizing: "border-box",
         },
-        "&>.redux-schema-form": {
-            "& .btn-group": {
-                "&>button": {
-                    border: 0,
-                    borderRadius: 0,
-                    backgroundColor: function (_a) {
-                        var muiTheme = _a.muiTheme;
-                        return muiTheme.palette.primary1Color;
-                    },
-                    color: "white",
-                    "&:not(:first-child)": {
-                        marginLeft: 2
+        "&>.redux-schema-form": (_a = {
+                "& .btn-group": {
+                    "&>button": {
+                        border: 0,
+                        borderRadius: 0,
+                        backgroundColor: function (_a) {
+                            var muiTheme = _a.muiTheme;
+                            return muiTheme.palette.primary1Color;
+                        },
+                        color: "white",
+                        "&:not(:first-child)": {
+                            marginLeft: 2
+                        }
                     }
+                },
+                "&:after": {
+                    display: "table",
+                    content: "",
+                    clear: "both"
+                },
+                "&>div": {
+                    float: "left",
+                    paddingRight: "10%",
+                    paddingLeft: "10%",
+                    width: "50%",
+                    height: 72,
+                    "&.hidden": {
+                        display: "none"
+                    },
                 }
             },
-            "&:after": {
-                display: "table",
-                content: "",
-                clear: "both"
+            _a[FullWidthInputs] = {
+                width: "100%",
+                height: "auto"
             },
-            "&>div": {
-                float: "left",
-                paddingRight: "10%",
-                paddingLeft: "10%",
-                width: "50%",
-                minHeight: 100,
-            },
-            "@media(max-width:768px)": {
+            _a["@media(max-width:768px)"] = {
                 "&>div": {
                     width: "100%"
                 },
             },
-            "&>div.children, &>div.button": {
+            _a["&>div.children, &>div.button"] = {
                 textAlign: "center",
                 float: "left",
                 paddingRight: "initial",
@@ -53,44 +62,40 @@ exports.stylesheet = {
                 margin: "20px 0 0",
                 minHeight: "initial"
             },
-            "&div.checkbox": {
-                height: "78px",
-            },
-            "& div.group, & div.array, & div.rich-editor": {
-                width: "100%",
-            },
-            "& fieldset>div:nth-child(2n+1)": {
+            _a["& fieldset>div:nth-child(2n+1)"] = {
                 float: "right",
                 width: "50%",
                 padding: " 0 5% 0 calc(10% + 15px)",
             },
-            "& fieldset>div:nth-child(2n)": {
+            _a["& fieldset>div:nth-child(2n)"] = {
                 float: "left",
                 width: "50%",
                 padding: " 0 calc(10% + 15px) 0 5%",
             },
-            "&>div>fieldset": {
-                "&>legend": {
-                    position: "relative",
-                    top: "11px",
-                    marginLeft: " 5%",
-                    borderBottom: "none",
-                    display: "inline-block",
-                    width: "auto",
-                    borderTop: function (_a) {
-                        var muiTheme = _a.muiTheme;
-                        return "3px solid " + muiTheme.palette.primary1Color;
-                    }
+            _a["&>div>fieldset"] = (_b = {
+                    "&>legend": {
+                        position: "relative",
+                        top: "11px",
+                        marginLeft: " 5%",
+                        borderBottom: "none",
+                        display: "inline-block",
+                        width: "auto",
+                        borderTop: function (_a) {
+                            var muiTheme = _a.muiTheme;
+                            return "3px solid " + muiTheme.palette.primary1Color;
+                        }
+                    },
+                    margin: " 40px calc(5% - 7.5px)",
+                    padding: " 0 7.5px",
+                    background: "#f9f9fa",
+                    border: "none"
                 },
-                margin: " 40px calc(5% - 7.5px)",
-                padding: " 0 7.5px",
-                background: "#f9f9fa",
-                border: "none",
-                "& div.group,& div.array,& div.rich-editor": {
+                _b[FullWidthInputs] = {
                     padding: " 0 5%",
-                }
-            },
-        }
+                },
+                _b),
+            _a)
     }
 };
+var _a, _b;
 //# sourceMappingURL=material.jss.js.map

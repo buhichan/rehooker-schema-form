@@ -1,7 +1,7 @@
-
-import {MuiTheme} from "material-ui/styles";
-
 /**-----------------------------------Form-----------------------------------**/
+
+const FullWidthInputs = "& div.group,& div.array,& div.rich-editor, & div.textarea";
+
 export const stylesheet = {
   form: {
     position:"relative",
@@ -35,7 +35,14 @@ export const stylesheet = {
         paddingRight: "10%",
         paddingLeft: "10%",
         width: "50%",
-        minHeight: 100,
+        height:72,
+        "&.hidden":{
+          display:"none"
+        },
+      },
+      [FullWidthInputs]: {
+        width: "100%",
+        height:"auto"
       },
       "@media(max-width:768px)": {
         "&>div":{
@@ -50,12 +57,6 @@ export const stylesheet = {
         width: "100%",
         margin: "20px 0 0",
         minHeight: "initial"
-      },
-      "&div.checkbox": {
-        height: "78px",
-      },
-      "& div.group, & div.array, & div.rich-editor": {
-        width: "100%",
       },
       "& fieldset>div:nth-child(2n+1)": {
         float: "right",
@@ -81,7 +82,7 @@ export const stylesheet = {
         padding: " 0 7.5px",
         background: "#f9f9fa",
         border: "none",
-        "& div.group,& div.array,& div.rich-editor": {
+        [FullWidthInputs]: {
           padding: " 0 5%",
         }
       },

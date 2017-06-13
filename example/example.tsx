@@ -4,16 +4,24 @@ import { Provider,connect } from 'react-redux'
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import { reducer as reduxFormReducer } from 'redux-form'
 import "../src/material"
-import {FormFieldSchema, ReduxSchemaForm} from "../src/form"
+import {FormFieldSchema, ReduxSchemaForm} from "../"
 import {MuiThemeProvider} from "material-ui/styles";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
-
 require('react-tap-event-plugin')();
 
 let schema:FormFieldSchema[] = [
     {
         key:"text",
         type:"text",
+        placeholder:"input something",
+        label:"文本属性",
+        validate:v=>{
+            if(v!=="a")
+                return "必须是a"
+        }
+    },{
+        key:"hidden",
+        type:"hidden",
         placeholder:"input something",
         label:"文本属性"
     },
@@ -69,7 +77,11 @@ let schema:FormFieldSchema[] = [
     },{
         key:"file",
         type:"file",
-        label:"文件"
+        label:"文件",
+        validate:(v:File)=>{
+            if(!v||!v.type.startsWith('image/'))
+                return "只能上传图片"
+        }
     },{
         key:"ajax_select",
         type:"select",

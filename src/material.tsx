@@ -13,6 +13,7 @@ import {BaseFieldArrayProps} from "redux-form";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {connect} from "react-redux";
 import {ContentClear} from "material-ui/svg-icons";
+import {SyntheticEvent} from "react";
 const injectCSS = require('react-jss').default;
 
 let {Field,FieldArray} =require("redux-form");
@@ -317,6 +318,66 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Cus
     }
 }
 
+function TextAreaInput(props:CustomWidgetProps){
+    return <TextField
+        {...props.input as any}
+        errorText={props.meta.error}
+        required={props.required}
+        type={props.type}
+        id={props.input.name}
+        className="full-width"
+        style={{width:"100%"}}
+        disabled={props.disabled}
+        multiLine
+        floatingLabelText={props.fieldSchema.label}/>;
+}
+
+addType('textarea',function({fieldSchema,...rest}){
+    return <div>
+        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={TextAreaInput} />
+    </div>
+});
+
+addType("file",function({fieldSchema,...rest}){
+    return <div>
+        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={FileInput} />
+    </div>
+});
+
+@muiThemeable()
+class FileInput extends React.PureComponent<CustomWidgetProps&{
+    muiTheme:MuiTheme
+},any>{
+    state={
+        filename:this.props.fieldSchema.label
+    };
+    onChange=(e:SyntheticEvent<HTMLInputElement>)=>{
+        const file = (e.target as HTMLInputElement).files[0];
+        this.setState({
+            filename:file.name
+        });
+        this.props.input.onChange(file);
+    };
+    render(){
+        const {meta,muiTheme} = this.props;
+        const hasError = Boolean(meta.error);
+        return <RaisedButton
+            backgroundColor={hasError?muiTheme.textField.errorColor:muiTheme.palette.primary1Color}
+            style={{marginTop:28}}
+            label={meta.error||this.state.filename}
+            labelColor={"#FFFFFF"}
+            containerElement="label"
+            labelStyle={{
+                whiteSpace:"nowrap",
+                textOverflow:"ellipsis",
+                overflow:"hidden"
+            }}
+        >
+            <input type="file" style={{display:"none"}} onChange={this.onChange} />
+        </RaisedButton>
+    }
+}
+
 const ConnectedArrayFieldRenderer = connect((s,p:any)=>{
     return {
         form: s.form[p.meta.form],
@@ -380,7 +441,7 @@ addType("array",(props)=>{
     </div>
 });
 
-addType('hidden',({fieldSchema,...rest})=>{
+addType('hidden',({fieldSchema,renderField,...rest})=>{
     return <div>
         <Field id={'rich-editor'+fieldSchema.label} name={fieldSchema.parsedKey} {...rest}  component={'input'} />
     </div>
