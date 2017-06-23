@@ -54,6 +54,7 @@ export const stylesheet = {
         float: "left",
         paddingRight:"initial",
         paddingLeft:"initial",
+        height:"auto",
         width: "100%",
         margin: "20px 0 0",
         minHeight: "initial"
