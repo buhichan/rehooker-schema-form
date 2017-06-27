@@ -1,7 +1,7 @@
 /**-----------------------------------Form-----------------------------------**/
 
 const FullWidthInputs = "& div.group,& div.array,& div.rich-editor, & div.textarea";
-
+const widgetHeight = 85;
 export const stylesheet = {
   form: {
     position:"relative",
@@ -35,14 +35,15 @@ export const stylesheet = {
         paddingRight: "10%",
         paddingLeft: "10%",
         width: "50%",
-        height:85,
+        height:widgetHeight,
         "&.hidden":{
           display:"none"
         },
       },
       [FullWidthInputs]: {
         width: "100%",
-        height:"auto"
+        height:"auto",
+        minHeight:widgetHeight
       },
       "@media(max-width:768px)": {
         "&>div":{

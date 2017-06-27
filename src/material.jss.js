@@ -2,6 +2,7 @@
 /**-----------------------------------Form-----------------------------------**/
 Object.defineProperty(exports, "__esModule", { value: true });
 var FullWidthInputs = "& div.group,& div.array,& div.rich-editor, & div.textarea";
+var widgetHeight = 85;
 exports.stylesheet = {
     form: {
         position: "relative",
@@ -38,7 +39,7 @@ exports.stylesheet = {
                     paddingRight: "10%",
                     paddingLeft: "10%",
                     width: "50%",
-                    height: 85,
+                    height: widgetHeight,
                     "&.hidden": {
                         display: "none"
                     },
@@ -46,7 +47,8 @@ exports.stylesheet = {
             },
             _a[FullWidthInputs] = {
                 width: "100%",
-                height: "auto"
+                height: "auto",
+                minHeight: widgetHeight
             },
             _a["@media(max-width:768px)"] = {
                 "&>div": {
