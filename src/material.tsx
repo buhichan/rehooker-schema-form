@@ -79,13 +79,14 @@ function TextInput(props:CustomWidgetProps){
 }
 function CheckboxInput (props:CustomWidgetProps){
     const {onChange,onBlur,value,...rest} = props.input;
+    rest['label']=props.fieldSchema.label;
     return <Checkbox
+        {...rest as any}
         onBlur={e=>onBlur(value)}
         style={{width:"100%",margin:"32px 0 16px"}}
         disabled={props.disabled}
         onChange={undefined}
         onCheck={(e,v)=>onChange(v)}
-        label={props.fieldSchema.label}
         checked={Boolean(value)}
     />
 }
