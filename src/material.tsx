@@ -128,9 +128,9 @@ const dataSourceConfig = {text:"name",value:"value"};
         }
     }
 })
-class BaseAutoComplete extends React.PureComponent<{fieldSchema,fullResult?,input,meta,openOnFocus?,searchText,dataSource,onNewRequest?,onUpdateInput?,classes?},any>{
+class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,fullResult?,input,meta,openOnFocus?,searchText,dataSource,onNewRequest?,onUpdateInput?,classes?},any>{
     render() {
-        const {fieldSchema, input, meta, fullResult, openOnFocus, searchText, dataSource, onNewRequest, onUpdateInput,classes} = this.props;
+        const {fieldSchema, input, meta, fullResult, filter,openOnFocus, searchText, dataSource, onNewRequest, onUpdateInput,classes} = this.props;
         return <div className={classes.autocomplete}>
             <AutoComplete
                 id={fieldSchema.name}
@@ -140,7 +140,7 @@ class BaseAutoComplete extends React.PureComponent<{fieldSchema,fullResult?,inpu
                 openOnFocus={openOnFocus}
                 hintText={fieldSchema.placeholder}
                 errorText={meta.error}
-                filter={AutoComplete.fuzzyFilter}
+                filter={filter||AutoComplete.fuzzyFilter}
                 dataSource={dataSource}
                 dataSourceConfig={dataSourceConfig}
                 floatingLabelText={fieldSchema.label}
@@ -255,6 +255,7 @@ class AutoCompleteAsync extends React.PureComponent<CustomWidgetProps,any>{
             input={input}
             meta={meta}
             fullResult
+            filter={AutoComplete.noFilter}
             fieldSchema={fieldSchema}
             dataSource={this.state.dataSource}
             searchText={this.findName(input.value)}
