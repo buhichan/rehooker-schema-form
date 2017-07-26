@@ -25,6 +25,11 @@ export interface BaseSchema extends ReduxFormConfig<any,any,any>{
     children?:BaseSchema[]
     options?:Options | AsyncOptions | AsyncOption,
     normalize?:(value,previousValue?, allValues?)=>any,
+    /**
+     * 返回url
+     * @param file 要上传的文件
+     */
+    onFileChange?:(file:File)=>Promise<string>,
     data?:any,
     [rest:string]:any
 }

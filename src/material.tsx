@@ -3,7 +3,7 @@
  */
 import * as React from "react"
 import {addType, AsyncOption, AsyncOptions, CustomWidgetProps, Options, setButton} from "./form"
-import {TextField,SelectField,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
+import {TextField,SelectField,TimePicker,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
@@ -32,6 +32,64 @@ function NumberInput(props:CustomWidgetProps){
         hintText={props.fieldSchema.placeholder}
         onChange={(e)=>props.input.onChange(Number(e.target['value']))}
     />;
+}
+
+const defaultDateTimeInputFormat = {
+    year:"numeric",
+    day:"2-digit",
+    month:"2-digit",
+    hour12:false,
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit"
+};
+function DateTimeInput(props:CustomWidgetProps){
+    const {meta,input,fieldSchema} = props;
+    const value = input.value?
+            new Date(input.value):
+            undefined;
+    return <div>
+        <div style={{width:"50%",display:"inline-block"}}>
+            <DatePicker
+                id={fieldSchema.key+"date"}
+                DateTimeFormat={Intl.DateTimeFormat as any}
+                value={value}
+                fullWidth
+                onChange={(e,date)=>{
+                    if(value) {
+                        date.setHours(value.getHours());
+                        date.setMinutes(value.getMinutes());
+                        date.setSeconds(value.getSeconds());
+                    }
+                    input.onChange(date.toLocaleString([navigator.language],defaultDateTimeInputFormat))
+                }}
+                floatingLabelText={fieldSchema.label}
+                errorText={meta.error}
+                hintText={fieldSchema.placeholder}
+                cancelLabel="取消"
+                locale="zh-Hans"
+                autoOk
+            />
+        </div>
+        <div style={{width:"50%",display:"inline-block"}}>
+            <TimePicker
+                id={fieldSchema.key+"time"}
+                value={value}
+                fullWidth
+                autoOk
+                cancelLabel="取消"
+                underlineStyle={{bottom:10}}
+                format="24hr"
+                onChange={(_,time:Date)=>{
+                    const newValue = value?new Date(value):new Date();
+                    newValue.setHours(time.getHours());
+                    newValue.setMinutes(time.getMinutes());
+                    newValue.setSeconds(time.getSeconds());
+                    input.onChange(newValue.toLocaleString([navigator.language],defaultDateTimeInputFormat))
+                }}
+            />
+        </div>
+    </div>
 }
 
 function DateInput(props:CustomWidgetProps){
@@ -354,10 +412,22 @@ class FileInput extends React.PureComponent<CustomWidgetProps&{
     };
     onChange=(e:SyntheticEvent<HTMLInputElement>)=>{
         const file = (e.target as HTMLInputElement).files[0];
-        this.setState({
-            filename:file.name
-        });
-        this.props.input.onChange(file);
+        if(!this.props.fieldSchema.onFileChange){
+            this.setState({
+                filename:file.name
+            });
+            this.props.input.onChange(file);
+        }else{
+            this.setState({
+                filename:"上传中"
+            });
+            this.props.fieldSchema.onFileChange(file).then((url)=>{
+                this.props.input.onChange(url);
+                this.setState({
+                    filename:file.name
+                });
+            });
+        }
     };
     render(){
         const {meta,muiTheme} = this.props;
@@ -432,6 +502,12 @@ addType("autocomplete-async",function({fieldSchema,...rest}){
 addType('date',function({fieldSchema,...rest}){
     return <div>
         <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={DateInput} />
+    </div>
+});
+
+addType('datetime',function({fieldSchema,...rest}){
+    return <div>
+        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={DateTimeInput} />
     </div>
 });
 

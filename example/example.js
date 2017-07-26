@@ -93,12 +93,27 @@ var schema = [
             }
         ]
     }, {
+        key: "date",
+        type: "date",
+        label: "date",
+    }, {
+        key: "datetime",
+        type: "datetime",
+        label: "datetime"
+    }, {
         key: "file",
         type: "file",
         label: "文件",
         validate: function (v) {
-            if (!v || !v.type.startsWith('image/'))
+            if (v instanceof File && !v.type.startsWith('image/'))
                 return "只能上传图片";
+        },
+        onFileChange: function (file) {
+            return new Promise(function (r) {
+                setTimeout(function () {
+                    r("/fake/url");
+                }, 3000);
+            });
         }
     }, {
         key: "ajax_select",

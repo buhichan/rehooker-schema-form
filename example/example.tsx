@@ -75,12 +75,27 @@ let schema:FormFieldSchema[] = [
             }
         ]
     },{
+        key:"date",
+        type:"date",
+        label:"date",
+    },{
+        key:"datetime",
+        type:"datetime",
+        label:"datetime"
+    },{
         key:"file",
         type:"file",
         label:"文件",
-        validate:(v:File)=>{
-            if(!v||!v.type.startsWith('image/'))
+        validate:(v:File|string)=>{
+            if(v instanceof File && !v.type.startsWith('image/'))
                 return "只能上传图片"
+        },
+        onFileChange(file){
+            return new Promise(r=>{
+                setTimeout(()=>{
+                    r("/fake/url")
+                },3000)
+            });
         }
     },{
         key:"ajax_select",

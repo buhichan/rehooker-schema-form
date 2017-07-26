@@ -50,6 +50,39 @@ var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
+var defaultDateTimeInputFormat = {
+    year: "numeric",
+    day: "2-digit",
+    month: "2-digit",
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+};
+function DateTimeInput(props) {
+    var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
+    var value = input.value ?
+        new Date(input.value) :
+        undefined;
+    return React.createElement("div", null,
+        React.createElement("div", { style: { width: "50%", display: "inline-block" } },
+            React.createElement(material_ui_1.DatePicker, { id: fieldSchema.key + "date", DateTimeFormat: Intl.DateTimeFormat, value: value, fullWidth: true, onChange: function (e, date) {
+                    if (value) {
+                        date.setHours(value.getHours());
+                        date.setMinutes(value.getMinutes());
+                        date.setSeconds(value.getSeconds());
+                    }
+                    input.onChange(date.toLocaleString([navigator.language], defaultDateTimeInputFormat));
+                }, floatingLabelText: fieldSchema.label, errorText: meta.error, hintText: fieldSchema.placeholder, cancelLabel: "取消", locale: "zh-Hans", autoOk: true })),
+        React.createElement("div", { style: { width: "50%", display: "inline-block" } },
+            React.createElement(material_ui_1.TimePicker, { id: fieldSchema.key + "time", value: value, fullWidth: true, autoOk: true, cancelLabel: "取消", underlineStyle: { bottom: 10 }, format: "24hr", onChange: function (_, time) {
+                    var newValue = value ? new Date(value) : new Date();
+                    newValue.setHours(time.getHours());
+                    newValue.setMinutes(time.getMinutes());
+                    newValue.setSeconds(time.getSeconds());
+                    input.onChange(newValue.toLocaleString([navigator.language], defaultDateTimeInputFormat));
+                } })));
+}
 function DateInput(props) {
     var DatePickerProps = {
         onChange: function (e, value) {
@@ -257,10 +290,23 @@ var FileInput = (function (_super) {
         };
         _this.onChange = function (e) {
             var file = e.target.files[0];
-            _this.setState({
-                filename: file.name
-            });
-            _this.props.input.onChange(file);
+            if (!_this.props.fieldSchema.onFileChange) {
+                _this.setState({
+                    filename: file.name
+                });
+                _this.props.input.onChange(file);
+            }
+            else {
+                _this.setState({
+                    filename: "上传中"
+                });
+                _this.props.fieldSchema.onFileChange(file).then(function (url) {
+                    _this.props.input.onChange(url);
+                    _this.setState({
+                        filename: file.name
+                    });
+                });
+            }
         };
         return _this;
     }
@@ -324,6 +370,11 @@ form_1.addType('date', function (_a) {
     var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
     return React.createElement("div", null,
         React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: DateInput })));
+});
+form_1.addType('datetime', function (_a) {
+    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+    return React.createElement("div", null,
+        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: DateTimeInput })));
 });
 form_1.addType("array", function (props) {
     return React.createElement("div", null,
