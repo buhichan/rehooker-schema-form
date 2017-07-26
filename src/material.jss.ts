@@ -2,6 +2,7 @@
 
 const FullWidthInputs = "& div.group,& div.array,& div.rich-editor, & div.textarea";
 const widgetHeight = 85;
+const mobileMedia = "@media(max-width:768px)";
 export const stylesheet = {
   form: {
     position:"relative",
@@ -25,6 +26,29 @@ export const stylesheet = {
           }
         }
       },
+      "& .array-field-container":{
+        display:"flex",
+        flexWrap:"wrap",
+        alignItems:"flex-start",
+        "& .array-field-child": {
+          padding: '10px 0',
+          margin: '10px',
+          borderTop: ({muiTheme}) => "2px solid " + muiTheme.palette.primary1Color,
+          width:"calc(50% - 20px)",
+          [mobileMedia]:{
+            width:"100%",
+            margin:0
+          }
+        },
+        "& .add-button":{
+          textAlign:"center",
+          marginBottom:10,
+          width:"100%"
+        },
+        "& .delete-button":{
+          float:"right"
+        }
+      },
       "&:after": {
         display: "table",
         content: "",
@@ -45,8 +69,8 @@ export const stylesheet = {
         height:"auto",
         minHeight:widgetHeight
       },
-      "@media(max-width:768px)": {
-        "&>div":{
+      [mobileMedia]: {
+        ">div":{
           width: "100%"
         },
       },

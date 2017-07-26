@@ -241,17 +241,13 @@ var ArrayFieldRenderer = (function (_super) {
     ArrayFieldRenderer.prototype.render = function () {
         var props = this.props;
         var muiTheme = props.muiTheme;
-        return React.createElement("div", { className: "clearfix" },
+        return React.createElement("div", { className: "clearfix array-field-container" },
             props.fields.map(function (name, i) {
                 var children = props.fieldSchema.children;
                 if (props.fieldSchema.getChildren)
                     children = props.fieldSchema.getChildren(props.fields.get(i)).filter(function (x) { return x; });
-                return React.createElement(material_ui_1.Paper, { key: i, zDepth: 0, style: {
-                        padding: '15px',
-                        margin: '15px 0',
-                        borderTop: "2px solid " + props.muiTheme.palette.primary1Color,
-                    } },
-                    React.createElement("div", { className: "pull-right" },
+                return React.createElement("div", { key: i, className: "array-field-child" },
+                    React.createElement("div", { className: "delete-button" },
                         React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
                             React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
                     React.createElement("div", null, children && children.map(function (field) {
@@ -259,8 +255,8 @@ var ArrayFieldRenderer = (function (_super) {
                         return React.createElement("div", { key: parsedKey }, props.renderField(__assign({}, field, { parsedKey: parsedKey })));
                     })));
             }),
-            React.createElement("div", { style: { textAlign: "center" } },
-                React.createElement(material_ui_1.IconButton, { style: { marginBottom: '15px' }, tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
+            React.createElement("div", { className: "add-button" },
+                React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
                     React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
     };
     return ArrayFieldRenderer;

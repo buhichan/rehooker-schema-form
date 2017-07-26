@@ -329,18 +329,14 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Cus
     render() {
         const props = this.props;
         const muiTheme: MuiTheme = props.muiTheme;
-        return <div className="clearfix">
+        return <div className="clearfix array-field-container">
             {
                 props.fields.map((name, i) => {
                     let children = props.fieldSchema.children;
                     if(props.fieldSchema.getChildren)
                         children = props.fieldSchema.getChildren(props.fields.get(i)).filter(x=>x);
-                    return <Paper key={i} zDepth={0} style={{
-                        padding: '15px',
-                        margin: '15px 0',
-                        borderTop: "2px solid " + props.muiTheme.palette.primary1Color,
-                    }}>
-                        <div className="pull-right">
+                    return <div key={i} className="array-field-child">
+                        <div className="delete-button">
                             <IconButton
                                 style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
                                 onTouchTap={() => props.fields.remove(i)}
@@ -362,12 +358,11 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Cus
                                 })
                             }
                         </div>
-                    </Paper>
+                    </div>
                 })
             }
-            <div style={{textAlign: "center"}}>
+            <div className="add-button">
                 <IconButton
-                    style={{marginBottom: '15px'}}
                     tooltip="添加" onTouchTap={() => props.fields.push({})}
                 >
                     <Add hoverColor={muiTheme.palette.primary1Color}/>

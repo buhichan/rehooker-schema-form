@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var FullWidthInputs = "& div.group,& div.array,& div.rich-editor, & div.textarea";
 var widgetHeight = 85;
+var mobileMedia = "@media(max-width:768px)";
 exports.stylesheet = {
     form: {
         position: "relative",
@@ -29,6 +30,33 @@ exports.stylesheet = {
                         }
                     }
                 },
+                "& .array-field-container": {
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "flex-start",
+                    "& .array-field-child": (_b = {
+                            padding: '10px 0',
+                            margin: '10px',
+                            borderTop: function (_a) {
+                                var muiTheme = _a.muiTheme;
+                                return "2px solid " + muiTheme.palette.primary1Color;
+                            },
+                            width: "calc(50% - 20px)"
+                        },
+                        _b[mobileMedia] = {
+                            width: "100%",
+                            margin: 0
+                        },
+                        _b),
+                    "& .add-button": {
+                        textAlign: "center",
+                        marginBottom: 10,
+                        width: "100%"
+                    },
+                    "& .delete-button": {
+                        float: "right"
+                    }
+                },
                 "&:after": {
                     display: "table",
                     content: "",
@@ -50,8 +78,8 @@ exports.stylesheet = {
                 height: "auto",
                 minHeight: widgetHeight
             },
-            _a["@media(max-width:768px)"] = {
-                "&>div": {
+            _a[mobileMedia] = {
+                ">div": {
                     width: "100%"
                 },
             },
@@ -75,7 +103,7 @@ exports.stylesheet = {
                 width: "50%",
                 padding: " 0 calc(10% + 15px) 0 5%",
             },
-            _a["&>div>fieldset"] = (_b = {
+            _a["&>div>fieldset"] = (_c = {
                     "&>legend": {
                         position: "relative",
                         top: "11px",
@@ -93,12 +121,12 @@ exports.stylesheet = {
                     background: "#f9f9fa",
                     border: "none"
                 },
-                _b[FullWidthInputs] = {
+                _c[FullWidthInputs] = {
                     padding: " 0 5%",
                 },
-                _b),
+                _c),
             _a)
     }
 };
-var _a, _b;
+var _a, _b, _c;
 //# sourceMappingURL=material.jss.js.map
