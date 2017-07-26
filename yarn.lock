@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@types/material-ui@0.18.*":
-  version "0.16.59"
-  resolved "http://registry.npm.taobao.org/@types/material-ui/download/@types/material-ui-0.16.59.tgz#fb0aed9911737ea77fa9560a203d783c1603fae2"
+"@types/material-ui@0.17.*":
+  version "0.17.18"
+  resolved "http://registry.npm.taobao.org/@types/material-ui/download/@types/material-ui-0.17.18.tgz#9bba8dcaf4b6466ae698c5d06083ab9a2af00ba9"
   dependencies:
     "@types/react" "*"
     "@types/react-addons-linked-state-mixin" "*"
@@ -19,9 +19,9 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@^0.14.19":
-  version "0.14.23"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-0.14.23.tgz#cecfcfad754b4c2765fe5d29b81b301889ad6c2e"
+"@types/react-dom@^15.5.1":
+  version "15.5.1"
+  resolved "http://registry.npm.taobao.org/@types/react-dom/download/@types/react-dom-15.5.1.tgz#f3c3e14c682785923c7d64583537df319442dec1"
   dependencies:
     "@types/react" "*"
 
@@ -33,12 +33,12 @@
     redux "^3.6.0"
 
 "@types/react@*":
-  version "0.14.57"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-0.14.57.tgz#1878a8654fafdd1d381b8457292b6433498c5b62"
+  version "15.0.39"
+  resolved "http://registry.npm.taobao.org/@types/react/download/@types/react-15.0.39.tgz#5a820c75cabf4cbfa177a3ab5a9a0634c46b14d1"
 
-"@types/redux-form@6.3.*":
-  version "6.3.6"
-  resolved "http://registry.npm.taobao.org/@types/redux-form/download/@types/redux-form-6.3.6.tgz#73fdb76a02555e79c7a8e4337daf847d8978a98a"
+"@types/redux-form@7.*":
+  version "7.0.1"
+  resolved "http://registry.npm.taobao.org/@types/redux-form/download/@types/redux-form-7.0.1.tgz#abcc890227854928221259eb8e3a1bc1c411fd16"
   dependencies:
     "@types/react" "*"
     redux "^3.6.0"
@@ -548,14 +548,7 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
-create-react-class@^15.5.1:
-  version "15.5.2"
-  resolved "http://registry.npm.taobao.org/create-react-class/download/create-react-class-15.5.2.tgz#6a8758348df660b88326a0e764d569f274aad681"
-  dependencies:
-    fbjs "^0.8.9"
-    object-assign "^4.1.1"
-
-create-react-class@^15.6.0:
+create-react-class@^15.5.1, create-react-class@^15.6.0:
   version "15.6.0"
   resolved "http://registry.npm.taobao.org/create-react-class/download/create-react-class-15.6.0.tgz#ab448497c26566e1e29413e883207d57cfe7bed4"
   dependencies:
@@ -1192,6 +1185,10 @@ hoek@2.x.x:
 hoist-non-react-statics@^1.0.0, hoist-non-react-statics@^1.0.3, hoist-non-react-statics@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-1.2.0.tgz#aa448cf0986d55cc40773b17174b7dd066cb7cfb"
+
+hoist-non-react-statics@^2.2.0:
+  version "2.2.1"
+  resolved "http://registry.npm.taobao.org/hoist-non-react-statics/download/hoist-non-react-statics-2.2.1.tgz#a7e41c760121d0abfc7a2339b331d29a26389e52"
 
 html-comment-regex@^1.1.0:
   version "1.1.1"
@@ -2307,13 +2304,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.0.0, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@~15.5.7:
-  version "15.5.8"
-  resolved "http://registry.npm.taobao.org/prop-types/download/prop-types-15.5.8.tgz#6b7b2e141083be38c8595aa51fc55775c7199394"
-  dependencies:
-    fbjs "^0.8.9"
-
-prop-types@^15.5.10:
+prop-types@^15.0.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@~15.5.7:
   version "15.5.10"
   resolved "http://registry.npm.taobao.org/prop-types/download/prop-types-15.5.10.tgz#2797dfc3126182e3a95e3dfbb2e893ddd7456154"
   dependencies:
@@ -2528,18 +2519,18 @@ reduce-function-call@^1.0.1:
   dependencies:
     balanced-match "^0.4.2"
 
-redux-form@^6.6.3:
-  version "6.6.3"
-  resolved "http://registry.npm.taobao.org/redux-form/download/redux-form-6.6.3.tgz#62362654f2214c83a8f9fcb8313702bb46f92205"
+redux-form@7.*:
+  version "7.0.2"
+  resolved "http://registry.npm.taobao.org/redux-form/download/redux-form-7.0.2.tgz#6fcc3e847ee95e1eca6af46da34c949458c6e950"
   dependencies:
     deep-equal "^1.0.1"
     es6-error "^4.0.0"
-    hoist-non-react-statics "^1.2.0"
+    hoist-non-react-statics "^2.2.0"
     invariant "^2.2.2"
     is-promise "^2.1.0"
     lodash "^4.17.3"
     lodash-es "^4.17.3"
-    prop-types "^15.5.6"
+    prop-types "^15.5.9"
 
 redux@*, redux@^3.6.0:
   version "3.6.0"
@@ -2949,9 +2940,9 @@ type-is@~1.6.14:
     media-typer "0.3.0"
     mime-types "~2.1.13"
 
-typescript@^2.3.2:
-  version "2.3.2"
-  resolved "http://registry.npm.taobao.org/typescript/download/typescript-2.3.2.tgz#f0f045e196f69a72f06b25fd3bd39d01c3ce9984"
+typescript@2.4.*:
+  version "2.4.2"
+  resolved "http://registry.npm.taobao.org/typescript/download/typescript-2.4.2.tgz#f8395f85d459276067c988aa41837a8f82870844"
 
 ua-parser-js@^0.7.9:
   version "0.7.12"

@@ -1,6 +1,6 @@
 /**-----------------------------------Form-----------------------------------**/
 
-const FullWidthInputs = "& div.group,& div.array,& div.rich-editor, & div.textarea";
+const FullWidthInputs = "& .field.group,& .field.array,& .field.rich-editor, & .field.textarea";
 const widgetHeight = 85;
 const mobileMedia = "@media(max-width:768px)";
 export const stylesheet = {
@@ -54,27 +54,27 @@ export const stylesheet = {
         content: "",
         clear: "both"
       },
-      "&>div": {
-        float: "left",
-        paddingRight: "10%",
-        paddingLeft: "10%",
-        width: "50%",
-        height:widgetHeight,
-        "&.hidden":{
-          display:"none"
+      "&>.schema-node": {
+        "&>.field": {
+          float: "left",
+          paddingRight: "10%",
+          paddingLeft: "10%",
+          width: "50%",
+          height: widgetHeight,
+          "&.hidden": {
+            display: "none"
+          },
+          [mobileMedia]: { //fixme: todo: jss but! https://github.com/cssinjs/jss/issues/446
+            width: "100%"
+          },
+        },
+        [FullWidthInputs]: {
+          width: "100%",
+          height:"auto",
+          minHeight:widgetHeight
         },
       },
-      [FullWidthInputs]: {
-        width: "100%",
-        height:"auto",
-        minHeight:widgetHeight
-      },
-      [mobileMedia]: {
-        ">div":{
-          width: "100%"
-        },
-      },
-      "&>div.children, &>div.button": {
+      "&>.children, &>div.button": {
         textAlign:"center",
         float: "left",
         paddingRight:"initial",
@@ -84,17 +84,17 @@ export const stylesheet = {
         margin: "20px 0 0",
         minHeight: "initial"
       },
-      "& fieldset>div:nth-child(2n+1)": {
+      "& fieldset>.schema-node>div:nth-child(2n)": {
         float: "right",
         width: "50%",
         padding: " 0 5% 0 calc(10% + 15px)",
       },
-      "& fieldset>div:nth-child(2n)": {
+      "& fieldset>.schema-node>div:nth-child(2n+1)": {
         float: "left",
         width: "50%",
         padding: " 0 calc(10% + 15px) 0 5%",
       },
-      "&>div>fieldset": {
+      "&>.schema-node>.field>fieldset": {
         "&>legend": {
           position: "relative",
           top: "11px",

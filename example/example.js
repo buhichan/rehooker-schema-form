@@ -76,7 +76,12 @@ var schema = [
         key: "checkbox",
         type: "checkbox",
         label: "勾选",
-        required: true
+        required: true,
+        onValueChange: function (v) {
+            return [
+                { key: "phone", hide: Boolean(v) }
+            ];
+        }
     }, {
         key: "mulSel",
         type: "select",
@@ -129,7 +134,7 @@ var schema = [
         children: [
             {
                 type: "number",
-                key: "width",
+                key: "phone",
                 validators: {
                     minLength: 11,
                     maxLength: 14,
@@ -294,9 +299,40 @@ var schema = [
             }
         ]
     }, {
+        key: "dynamic-array-alter",
+        type: "array",
+        label: "dynamic-array(使用onValueChange)",
+        children: [
+            {
+                key: "array-child",
+                label: "array-child",
+                type: "text",
+                onValueChange: function (v) {
+                    console.log(arguments);
+                    return v && isFinite(v) ? [
+                        {
+                            key: "currency",
+                            hide: false
+                        }
+                    ] : [
+                        {
+                            key: "currency",
+                            hide: true
+                        }
+                    ];
+                }
+            },
+            {
+                key: "currency",
+                label: "currency",
+                type: "text",
+                hide: true
+            }
+        ]
+    }, {
         key: "dynamic-array",
         type: "array",
-        label: "dynamic-array",
+        label: "dynamic-array（使用getChildren）",
         getChildren: function (v) {
             return [
                 {

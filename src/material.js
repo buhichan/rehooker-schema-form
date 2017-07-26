@@ -43,8 +43,9 @@ var muiThemeable_1 = require("material-ui/styles/muiThemeable");
 var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
 var material_jss_1 = require("./material.jss");
-var react_redux_1 = require("react-redux");
 var svg_icons_1 = require("material-ui/svg-icons");
+var field_1 = require("./field");
+var schema_node_1 = require("./schema-node");
 var injectCSS = require('react-jss').default;
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 function NumberInput(props) {
@@ -103,12 +104,22 @@ function CheckboxInput(props) {
     rest['label'] = props.fieldSchema.label;
     return React.createElement(material_ui_1.Checkbox, __assign({}, rest, { onBlur: function (e) { return onBlur(value); }, style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: function (e, v) { return onChange(v); }, checked: Boolean(value) }));
 }
-function SelectInput(props) {
-    return React.createElement(material_ui_1.SelectField, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
-            e.target['value'] = v;
-            props.input.onChange(e);
-        } }), props.fieldSchema.options.map(function (option) { return React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
-}
+var SelectInput = (function (_super) {
+    __extends(SelectInput, _super);
+    function SelectInput() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SelectInput.prototype.componentWillMount = function () {
+    };
+    SelectInput.prototype.render = function () {
+        var props = this.props;
+        return React.createElement(material_ui_1.SelectField, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
+                e.target['value'] = v;
+                props.input.onChange(e);
+            } }), props.fieldSchema.options.map(function (option) { return React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
+    };
+    return SelectInput;
+}(React.PureComponent));
 var dataSourceConfig = { text: "name", value: "value" };
 var BaseAutoComplete = (function (_super) {
     __extends(BaseAutoComplete, _super);
@@ -250,10 +261,7 @@ var ArrayFieldRenderer = (function (_super) {
                     React.createElement("div", { className: "delete-button" },
                         React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
                             React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
-                    React.createElement("div", null, children && children.map(function (field) {
-                        var parsedKey = name + '.' + field.key;
-                        return React.createElement("div", { key: parsedKey }, props.renderField(__assign({}, field, { parsedKey: parsedKey })));
-                    })));
+                    React.createElement(schema_node_1.SchemaNode, { form: props.meta.form, keyPath: props.keyPath + "." + i, schema: children }));
             }),
             React.createElement("div", { className: "add-button" },
                 React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
@@ -267,15 +275,15 @@ ArrayFieldRenderer = __decorate([
 function TextAreaInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
 }
-form_1.addType('textarea', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType('textarea', function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: TextAreaInput })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: TextAreaInput })));
 });
-form_1.addType("file", function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType("file", function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: FileInput })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: FileInput })));
 });
 var FileInput = (function (_super) {
     __extends(FileInput, _super);
@@ -329,66 +337,61 @@ var FileInput = (function (_super) {
 FileInput = __decorate([
     muiThemeable_1.default()
 ], FileInput);
-var ConnectedArrayFieldRenderer = react_redux_1.connect(function (s, p) {
-    return __assign({ form: s.form[p.meta.form] }, p);
-})(ArrayFieldRenderer);
-form_1.addType('number', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType('number', function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: NumberInput })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: NumberInput })));
 });
 var DefaultInput = function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: TextInput })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: TextInput })));
 };
-form_1.addType("password", DefaultInput);
-form_1.addType("email", DefaultInput);
-form_1.addType('text', DefaultInput);
-form_1.addType('checkbox', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType("password", DefaultInput);
+field_1.addType("email", DefaultInput);
+field_1.addType('text', DefaultInput);
+field_1.addType('checkbox', function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: CheckboxInput })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: CheckboxInput })));
 });
-form_1.addType('select', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType('select', function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: SelectInput })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: SelectInput })));
 });
-form_1.addType('autocomplete', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType('autocomplete', function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: AutoCompleteSelect })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: AutoCompleteSelect })));
 });
-form_1.addType('autocomplete-text', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType('autocomplete-text', function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: AutoCompleteText })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: AutoCompleteText })));
 });
-form_1.addType("autocomplete-async", function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType("autocomplete-async", function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: AutoCompleteAsync })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: AutoCompleteAsync })));
 });
-form_1.addType('date', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType('date', function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: DateInput })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: DateInput })));
 });
-form_1.addType('datetime', function (_a) {
-    var fieldSchema = _a.fieldSchema, rest = __rest(_a, ["fieldSchema"]);
+field_1.addType('datetime', function (_a) {
+    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: fieldSchema.parsedKey }, rest, { fieldSchema: fieldSchema, component: DateTimeInput })));
+        React.createElement(Field, __assign({ name: keyPath }, rest, { component: DateTimeInput })));
 });
-form_1.addType("array", function (props) {
+field_1.addType("array", function (props) {
     return React.createElement("div", null,
         React.createElement("label", { className: "control-label" }, props.fieldSchema.label),
-        React.createElement(FieldArray, { name: props.fieldSchema.parsedKey, component: props.fieldSchema.getChildren ? ConnectedArrayFieldRenderer : ArrayFieldRenderer, props: props }));
+        React.createElement(FieldArray, { name: props.keyPath, rerenderOnEveryChange: Boolean(props.fieldSchema.getChildren), component: ArrayFieldRenderer, props: props }));
 });
-form_1.addType('hidden', function (_a) {
-    var fieldSchema = _a.fieldSchema, renderField = _a.renderField, rest = __rest(_a, ["fieldSchema", "renderField"]);
-    return React.createElement("div", null,
-        React.createElement(Field, __assign({ id: 'rich-editor' + fieldSchema.label, name: fieldSchema.parsedKey }, rest, { component: 'input' })));
+field_1.addType('hidden', function (props) {
+    return React.createElement("div", null);
 });
 form_1.setButton(muiThemeable_1.default()(function (props) {
     switch (props.type) {

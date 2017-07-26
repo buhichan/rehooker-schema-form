@@ -2,7 +2,7 @@
  * Created by buhi on 2017/4/28.
  */
 import * as React from "react"
-import {addType, AsyncOption, AsyncOptions, CustomWidgetProps, Options, setButton} from "./form"
+import {AsyncOption, AsyncOptions, Options, setButton} from "./form"
 import {TextField,SelectField,TimePicker,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
 import Add from "material-ui/svg-icons/content/add";
@@ -14,6 +14,8 @@ import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {connect} from "react-redux";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
+import {addType, CustomWidgetProps} from "./field";
+import {SchemaNode} from "./schema-node";
 const injectCSS = require('react-jss').default;
 
 let {Field,FieldArray} =require("redux-form");
@@ -149,25 +151,33 @@ function CheckboxInput (props:CustomWidgetProps){
     />
 }
 
-function SelectInput(props:CustomWidgetProps){
-    return <SelectField
-        {...props.input as any}
-        id={props.input.name}
-        disabled={props.disabled}
-        floatingLabelText={props.fieldSchema.label}
-        fullWidth={true}
-        errorText={props.meta.error}
-        hintText={props.fieldSchema.placeholder}
-        multiple={props.fieldSchema.multiple}
-        onChange={(e,i,v)=>{
-            e.target['value'] = v;
-            props.input.onChange(e)
-        }}
-    >
-        {
-            (props.fieldSchema.options as Options).map((option)=><MenuItem className="option" key={option.value} value={option.value} primaryText={option.name} />)
-        }
-    </SelectField>;
+class SelectInput extends React.PureComponent<CustomWidgetProps,any>{
+    componentWillMount(){
+
+    }
+    render() {
+        const props = this.props;
+        return <SelectField
+            {...props.input as any}
+            id={props.input.name}
+            disabled={props.disabled}
+            floatingLabelText={props.fieldSchema.label}
+            fullWidth={true}
+            errorText={props.meta.error}
+            hintText={props.fieldSchema.placeholder}
+            multiple={props.fieldSchema.multiple}
+            onChange={(e, i, v) => {
+                e.target['value'] = v;
+                props.input.onChange(e)
+            }}
+        >
+            {
+                (props.fieldSchema.options as Options).map((option) => <MenuItem className="option" key={option.value}
+                                                                                 value={option.value}
+                                                                                 primaryText={option.name}/>)
+            }
+        </SelectField>;
+    }
 }
 
 const dataSourceConfig = {text:"name",value:"value"};
@@ -345,19 +355,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Cus
                                 <Remove hoverColor={muiTheme.palette.accent1Color}/>
                             </IconButton>
                         </div>
-                        <div>
-                            {
-                                children && children.map((field) => {
-                                    const parsedKey = name + '.' + field.key;
-                                    return <div key={parsedKey}>
-                                        {props.renderField({
-                                            ...field,
-                                            parsedKey
-                                        })}
-                                    </div>;
-                                })
-                            }
-                        </div>
+                        <SchemaNode form={props.meta.form} keyPath={props.keyPath+"."+i} schema={children} />
                     </div>
                 })
             }
@@ -386,15 +384,15 @@ function TextAreaInput(props:CustomWidgetProps){
         floatingLabelText={props.fieldSchema.label}/>;
 }
 
-addType('textarea',function({fieldSchema,...rest}){
+addType('textarea',function({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={TextAreaInput} />
+        <Field name={keyPath} {...rest} component={TextAreaInput} />
     </div>
 });
 
-addType("file",function({fieldSchema,...rest}){
+addType("file",function({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={FileInput} />
+        <Field name={keyPath} {...rest} component={FileInput} />
     </div>
 });
 
@@ -453,22 +451,15 @@ class FileInput extends React.PureComponent<CustomWidgetProps&{
     }
 }
 
-const ConnectedArrayFieldRenderer = connect((s,p:any)=>{
-    return {
-        form: s.form[p.meta.form],
-        ...p
-    }
-})(ArrayFieldRenderer);
-
-addType('number',function ({fieldSchema,...rest}){
+addType('number',function ({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={NumberInput} />
+        <Field name={keyPath} {...rest} component={NumberInput} />
     </div>
 });
 
-const DefaultInput = function ({fieldSchema,...rest}){
+const DefaultInput = function ({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={TextInput}/>
+        <Field name={keyPath} {...rest} component={TextInput}/>
     </div>
 };
 
@@ -476,55 +467,55 @@ addType("password",DefaultInput);
 addType("email",DefaultInput);
 addType('text',DefaultInput);
 
-addType('checkbox',function ({fieldSchema,...rest}){
+addType('checkbox',function ({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={CheckboxInput} />
+        <Field name={keyPath} {...rest} component={CheckboxInput} />
     </div>
 });
 
-addType('select',function ({fieldSchema,...rest}){
+addType('select',function ({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={SelectInput} />
+        <Field name={keyPath} {...rest} component={SelectInput} />
     </div>
 });
-addType('autocomplete',function({fieldSchema,...rest}){
+addType('autocomplete',function({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={AutoCompleteSelect} />
+        <Field name={keyPath} {...rest} component={AutoCompleteSelect} />
     </div>
 });
-addType('autocomplete-text',function({fieldSchema,...rest}){
+addType('autocomplete-text',function({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={AutoCompleteText} />
+        <Field name={keyPath} {...rest} component={AutoCompleteText} />
     </div>
 });
-addType("autocomplete-async",function({fieldSchema,...rest}){
+addType("autocomplete-async",function({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={AutoCompleteAsync} />
-    </div>
-});
-
-addType('date',function({fieldSchema,...rest}){
-    return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={DateInput} />
+        <Field name={keyPath} {...rest} component={AutoCompleteAsync} />
     </div>
 });
 
-addType('datetime',function({fieldSchema,...rest}){
+addType('date',function({keyPath,...rest}){
     return <div>
-        <Field name={fieldSchema.parsedKey} {...rest} fieldSchema={fieldSchema}  component={DateTimeInput} />
+        <Field name={keyPath} {...rest} component={DateInput} />
+    </div>
+});
+
+addType('datetime',function({keyPath,...rest}){
+    return <div>
+        <Field name={keyPath} {...rest} component={DateTimeInput} />
     </div>
 });
 
 addType("array",(props)=>{
     return <div>
         <label className="control-label">{props.fieldSchema.label}</label>
-        <FieldArray name={props.fieldSchema.parsedKey}  component={props.fieldSchema.getChildren?ConnectedArrayFieldRenderer:ArrayFieldRenderer} props={props}/>
+        <FieldArray name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.getChildren)} component={ArrayFieldRenderer} props={props}/>
     </div>
 });
 
-addType('hidden',({fieldSchema,renderField,...rest})=>{
+addType('hidden',(props)=>{
     return <div>
-        <Field id={'rich-editor'+fieldSchema.label} name={fieldSchema.parsedKey} {...rest}  component={'input'} />
+
     </div>
 });
 

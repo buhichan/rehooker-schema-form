@@ -24,11 +24,11 @@
   "author": "YS",
   "license": "MIT",
   "devDependencies": {
-    "@types/material-ui": "0.18.*",
+    "@types/material-ui": "0.17.*",
     "@types/node": "^6.0.53",
-    "@types/react-dom": "^0.14.19",
+    "@types/react-dom": "^15.5.1",
     "@types/react-redux": "^4.4.35",
-    "@types/redux-form": "6.3.*",
+    "@types/redux-form": "7.*",
     "autoprefixer": "^6.5.0",
     "awesome-typescript-loader": "^3.0.3",
     "copy-webpack-plugin": "^3.0.1",
@@ -45,7 +45,7 @@
     "react-jss": "6.*",
     "react-tap-event-plugin": "^2.0.1",
     "style-loader": "^0.13.1",
-    "typescript": "^2.3.2",
+    "typescript": "2.4.*",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   },
@@ -54,6 +54,6 @@
     "react-dom": "*",
     "react-redux": "*",
     "redux": "*",
-    "redux-form": "^6.6.3"
+    "redux-form": "7.*"
   }
 }

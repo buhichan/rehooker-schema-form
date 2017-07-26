@@ -58,7 +58,12 @@ let schema:FormFieldSchema[] = [
         key:"checkbox",
         type:"checkbox",
         label:"勾选",
-        required:true
+        required:true,
+        onValueChange(v){
+            return [
+                {key:"phone",hide:Boolean(v)}
+            ]
+        }
     },{
         key:"mulSel",
         type:"select",
@@ -111,7 +116,7 @@ let schema:FormFieldSchema[] = [
         children:[
             {
                 type:"number",
-                key:"width",
+                key:"phone",
                 validators:{
                     minLength:11,
                     maxLength:14,
@@ -272,9 +277,40 @@ let schema:FormFieldSchema[] = [
             }
         ]
     },{
+        key:"dynamic-array-alter",
+        type:"array",
+        label:"dynamic-array(使用onValueChange)",
+        children:[
+            {
+                key:"array-child",
+                label:"array-child",
+                type:"text",
+                onValueChange(v){
+                    console.log(arguments);
+                    return v&&isFinite(v)?[
+                        {
+                            key:"currency",
+                            hide:false
+                        }
+                    ]:[
+                        {
+                            key:"currency",
+                            hide:true
+                        }
+                    ]
+                }
+            },
+            {
+                key:"currency",
+                label:"currency",
+                type:"text",
+                hide:true
+            }
+        ]
+    },{
         key:"dynamic-array",
         type:"array",
-        label:"dynamic-array",
+        label:"dynamic-array（使用getChildren）",
         getChildren:v=>{
             return [
                 {
