@@ -286,24 +286,32 @@ var FileInput = (function (_super) {
     function FileInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
-            filename: _this.props.fieldSchema.label
+            filename: _this.props.fieldSchema.label,
+            uploading: false
         };
         _this.onChange = function (e) {
             var file = e.target.files[0];
             if (!_this.props.fieldSchema.onFileChange) {
                 _this.setState({
-                    filename: file.name
+                    filename: file.name.length > 15 ? ("..." + file.name.slice(-12)) : file.name
                 });
                 _this.props.input.onChange(file);
             }
             else {
                 _this.setState({
-                    filename: "上传中"
+                    filename: "上传中",
+                    uploading: true
                 });
                 _this.props.fieldSchema.onFileChange(file).then(function (url) {
                     _this.props.input.onChange(url);
                     _this.setState({
-                        filename: file.name
+                        filename: file.name.length > 15 ? ("..." + file.name.slice(-12)) : file.name,
+                        uploading: false
+                    });
+                }).catch(function (e) {
+                    _this.setState({
+                        filename: "上传出错",
+                        uploading: false
                     });
                 });
             }
@@ -313,7 +321,7 @@ var FileInput = (function (_super) {
     FileInput.prototype.render = function () {
         var _a = this.props, meta = _a.meta, muiTheme = _a.muiTheme;
         var hasError = Boolean(meta.error);
-        return React.createElement(material_ui_1.RaisedButton, { backgroundColor: hasError ? muiTheme.textField.errorColor : muiTheme.palette.primary1Color, style: { marginTop: 28 }, label: meta.error || this.state.filename, labelColor: "#FFFFFF", containerElement: "label", labelStyle: {
+        return React.createElement(material_ui_1.RaisedButton, { backgroundColor: hasError ? muiTheme.textField.errorColor : muiTheme.palette.primary1Color, style: { marginTop: 28 }, disabled: this.state.uploading, label: meta.error || this.state.filename, labelColor: "#FFFFFF", containerElement: "label", labelStyle: {
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",
                 overflow: "hidden"

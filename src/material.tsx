@@ -408,24 +408,32 @@ class FileInput extends React.PureComponent<CustomWidgetProps&{
     muiTheme:MuiTheme
 },any>{
     state={
-        filename:this.props.fieldSchema.label
+        filename:this.props.fieldSchema.label,
+        uploading:false
     };
     onChange=(e:SyntheticEvent<HTMLInputElement>)=>{
         const file = (e.target as HTMLInputElement).files[0];
         if(!this.props.fieldSchema.onFileChange){
             this.setState({
-                filename:file.name
+                filename:file.name.length>15?("..."+file.name.slice(-12)):file.name
             });
             this.props.input.onChange(file);
         }else{
             this.setState({
-                filename:"上传中"
+                filename:"上传中",
+                uploading:true
             });
             this.props.fieldSchema.onFileChange(file).then((url)=>{
                 this.props.input.onChange(url);
                 this.setState({
-                    filename:file.name
+                    filename:file.name.length>15?("..."+file.name.slice(-12)):file.name,
+                    uploading:false
                 });
+            }).catch((e)=>{
+                this.setState({
+                    filename:"上传出错",
+                    uploading:false
+                })
             });
         }
     };
@@ -435,6 +443,7 @@ class FileInput extends React.PureComponent<CustomWidgetProps&{
         return <RaisedButton
             backgroundColor={hasError?muiTheme.textField.errorColor:muiTheme.palette.primary1Color}
             style={{marginTop:28}}
+            disabled={this.state.uploading}
             label={meta.error||this.state.filename}
             labelColor={"#FFFFFF"}
             containerElement="label"
