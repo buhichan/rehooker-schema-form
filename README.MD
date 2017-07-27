@@ -1,17 +1,16 @@
 # Why
 
-So I don't have to write a component for every single form, instead just change the 'schema' prop of this component. And it can automatically rerender if you change 'schema' prop.
-
-The primary purpose of wrapping redux-form in this component, is to mimic the behaviour of [angular-formly](https://github.com/formly-js/angular-formly) which is so easy to use.
+So that I don't have to write a component for every single `redux-form`.
 
 # Demo
 
 [Demo](http://demo.buhichan.xyz)
 
-# A json configured component on top of redux-form
+# Intro
 
-- accept a json as schema to generate fields for redux-form.
-- predefined material-ui widget components so you don't have to write in every form.
+- Accept a `schema` prop to generate form.
+- The state of the form is mained by `redux-form` in `redux` state.
+- Predefined material-ui widget components so you don't have to write in every form.
     - number
     - text
     - password
@@ -26,7 +25,7 @@ The primary purpose of wrapping redux-form in this component, is to mimic the be
     - array
     - group
         
-- you can add more widgets using `addType` api
+- You can add more widgets using `addType`.
     
 # How to use
 
@@ -61,15 +60,17 @@ function Form(){
     
 # API(props)
 
+All props are passed to the underlying `redux-form` instance, except the `schema` prop.
 ## schema
 
-Accepts an array of type:
+Accepts an array of type `FormFieldSchema[]`:
 ```typescript
+import {ConfigProps} from "redux-form"
 export type Options = {name:string,value:string|number}[]
 export type AsyncOptions = ()=>Promise<Options>
 export type AsyncOption = (value:any)=>(Promise<Options>|Options)
 export type ChangeOfSchema = (Partial<FormFieldSchema>&{key:string})[];
-export interface FormFieldSchema {
+export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
     key:string,
     type: string,
     label:string,
@@ -91,23 +92,29 @@ export interface FormFieldSchema {
 }
 ```
 
-### key
-the key of the field in the date, e.g. 'email'
+- key
+The key of the field in the data, e.g. 'email'
 
-### label
-the display name of this field. e.g. 'Your Email:'
+- label
+The displayed name of this field. e.g. 'Your Email:'
 
-### type
-the type of this field. e.g. 'select' or "text" or "email"
+- type
+The type of this field. e.g. 'select' or "text" or "email"
 
-### options
-only meaningful if the type is "select" or "autocomplete-xxx", it must be an array of the type {name:string,value:any}, it defines the options of the selection component.
+- options
+Only meaningful if the type is "select" or "autocomplete-xxx", it must be an array of the type {name:string,value:any}, it defines the options of the selection component.
 
-### placeholder
-the hint text.
+- placeholder
+The hint text.
 
-### children
-only meaningful if the type is "group" or "array". The resulted date will have an object as a property value. e.g.
+- required
+As the name suggest.
+
+- disabled
+As the name suggest.
+
+- children
+Only meaningful if the type is "group" or "array". The resulted date will have an object as a property value. e.g.
 ```typescript
 const schema = [
     {
@@ -126,13 +133,13 @@ const schema = [
 //The value passed to onSubmit will be like: {g:{name:"john"}}
 ```
 
-### onValueChange
+- onValueChange
 
-called when the value of this field is changed or initialized. if it returns anything, it should be an array of type `{key:"name",[changedFieldSchema:string]:any}`, and the schema will be merged by this value, henced a reformat of the form.
+Called when the value of this field is changed or initialized. if it returns anything, it should be an array of type `Partial<FormFieldSchema>[]`, which will merged into existing `schema` using the `key` field.
 
-### getChildren
+- getChildren
 
-only meaningful if the type is "array", to provide a way to have dynamic children form per child specific. It will be called with the value of a child of the array field, and should return a `FormFieldSchema[]` as the child form of this child. Sorry for my English if you can't understand this :3. e.g.
+Only meaningful if the type is "array", to provide a way to have dynamic children form per child specific. It will be called with the value of a child of the array field, and should return a `FormFieldSchema[]` as the child form of this child. e.g.
 ```typescript
 const schema = [
     {
@@ -150,9 +157,5 @@ const schema = [
 ]
 //The label of the array child will be the same as its value.
 ```
-
-## onSubmit
-this is actually a redux-form's prop, in this method, the value of the form will be passed as the first argument. e.g. {name:"john",password:"mybirthday"}
-
-## others
-All other props are passed to the underlying redux-form instance
+- others
+All other fields in `FormFieldSchema` are passed to the underlying `redux-form`'s `Field` component. See their [docs](http://redux-form.com/).
