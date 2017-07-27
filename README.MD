@@ -77,7 +77,7 @@ Accepts an array of type `FormFieldSchema[]`:
 import {ConfigProps} from "redux-form"
 export type Options = {name:string,value:string|number}[]
 export type AsyncOptions = ()=>Promise<Options>
-export type AsyncOption = (value:any)=>(Promise<Options>|Options)
+export type RuntimeAsyncOptions = (value:any)=>(Promise<Options>|Options)
 export type ChangeOfSchema = (Partial<FormFieldSchema>&{key:string})[];
 export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
     key:string,
@@ -89,7 +89,7 @@ export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
     disabled?:boolean,
     multiple?:boolean,
     children?:FormFieldSchema[]
-    options?:Options | AsyncOptions | AsyncOption,
+    options?:Options | AsyncOptions | RuntimeAsyncOptions,
     onValueChange?:(newValue:any,previousValue?:any,formValue?:any)=>ChangeOfSchema|Promise<ChangeOfSchema>,
     getChildren?:((childValue:any)=>FormFieldSchema[])
     [reduxFormFieldProps:string]:any 

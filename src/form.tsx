@@ -4,13 +4,13 @@
 import * as React from 'react'
 import {reduxForm, ConfigProps, InjectedFormProps} from 'redux-form'
 import {SchemaNode} from "./schema-node";
-import {CustomWidgetProps} from "./field";
+import {WidgetProps} from "./field";
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
 
 export type Options = {name:string,value:string|number}[]
 export type AsyncOptions = ()=>Promise<Options>
-export type AsyncOption = (value:any,props:CustomWidgetProps)=>(Promise<Options>|Options)
+export type RuntimeAsyncOptions = (value:any, props?:WidgetProps)=>(Promise<Options>|Options)
 
 export interface BaseSchema extends Partial<ConfigProps<any,any>>{
     key:string,
@@ -22,7 +22,7 @@ export interface BaseSchema extends Partial<ConfigProps<any,any>>{
     disabled?:boolean,
     multiple?:boolean,
     children?:BaseSchema[]
-    options?:Options | AsyncOptions | AsyncOption,
+    options?:Options | AsyncOptions | RuntimeAsyncOptions,
     normalize?:(value,previousValue?, allValues?)=>any,
     /**
      * 返回url
@@ -43,13 +43,13 @@ export interface FormFieldSchema extends BaseSchema{
      * @param valuesPath 当这个字段属于嵌套字段时，除了第三个参数是整个表单的值之外，还会有第四个、第五个等等参数，形成的路径指向字段所在位置，例如：key='nest.1.a'，表单的值是{nest:[{a:1},{a:2}]}，则onValueChange的第四个参数为[{a:1},{a:2}]，第五个参数为{a:1}
      */
     onValueChange?: (newValue:any,previousValue?:any,...valuesPath:any[])=>ChangeOfSchema|Promise<ChangeOfSchema>
-    options?:Options | AsyncOptions | AsyncOption,
+    options?:Options | AsyncOptions | RuntimeAsyncOptions,
     children?:FormFieldSchema[],
     getChildren?:((childValue:any)=>FormFieldSchema[])
 }
 
 export interface ParsedFormFieldSchema extends BaseSchema{
-    options?:Options | AsyncOption,
+    options?:Options | RuntimeAsyncOptions,
 }
 
 let DefaultButton = (props)=>{
@@ -72,7 +72,7 @@ export type ButtonProps = {
 @(reduxForm({
     form:"default"
 }) as any)
-export class ReduxSchemaForm extends React.PureComponent<Partial<InjectedFormProps<any,any>>&{
+export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&InjectedFormProps<any,any>>&{
     schema:FormFieldSchema[],
     dispatch?:(...args:any[])=>any,
     noButton?:boolean,

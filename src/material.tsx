@@ -2,7 +2,7 @@
  * Created by buhi on 2017/4/28.
  */
 import * as React from "react"
-import {AsyncOption, AsyncOptions, Options, setButton} from "./form"
+import {RuntimeAsyncOptions, AsyncOptions, Options, setButton} from "./form"
 import {TextField,SelectField,TimePicker,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
 import Add from "material-ui/svg-icons/content/add";
@@ -14,13 +14,13 @@ import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {connect} from "react-redux";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
-import {addType, CustomWidgetProps} from "./field";
+import {addType, WidgetProps} from "./field";
 import {SchemaNode} from "./schema-node";
 const injectCSS = require('react-jss').default;
 
 let {Field,FieldArray} =require("redux-form");
 
-function NumberInput(props:CustomWidgetProps){
+function NumberInput(props:WidgetProps){
     return <TextField
         {...props.input as any}
         type="number"
@@ -45,7 +45,7 @@ const defaultDateTimeInputFormat = {
     minute:"2-digit",
     second:"2-digit"
 };
-function DateTimeInput(props:CustomWidgetProps){
+function DateTimeInput(props:WidgetProps){
     const {meta,input,fieldSchema} = props;
     const value = input.value?
             new Date(input.value):
@@ -94,7 +94,7 @@ function DateTimeInput(props:CustomWidgetProps){
     </div>
 }
 
-function DateInput(props:CustomWidgetProps){
+function DateInput(props:WidgetProps){
     const DatePickerProps = {
         onChange:(e,value)=>{
             return props.input.onChange(value.toLocaleDateString().replace(/\//g,'-'));
@@ -123,7 +123,7 @@ function DateInput(props:CustomWidgetProps){
         disabled={props.disabled}/>
 }
 
-function TextInput(props:CustomWidgetProps){
+function TextInput(props:WidgetProps){
     return <TextField
         {...props.input as any}
         errorText={props.meta.error}
@@ -137,7 +137,7 @@ function TextInput(props:CustomWidgetProps){
         multiLine={props.fieldSchema.multiLine}
         floatingLabelText={props.fieldSchema.label}/>;
 }
-function CheckboxInput (props:CustomWidgetProps){
+function CheckboxInput (props:WidgetProps){
     const {onChange,onBlur,value,...rest} = props.input;
     rest['label']=props.fieldSchema.label;
     return <Checkbox
@@ -151,7 +151,7 @@ function CheckboxInput (props:CustomWidgetProps){
     />
 }
 
-class SelectInput extends React.PureComponent<CustomWidgetProps,any>{
+class SelectInput extends React.PureComponent<WidgetProps,any>{
     componentWillMount(){
 
     }
@@ -229,7 +229,7 @@ class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,fullResu
     }
 }
 
-class AutoCompleteSelect extends React.Component<CustomWidgetProps,any>{
+class AutoCompleteSelect extends React.Component<WidgetProps,any>{
     onNewRequest=(value)=>{
         return this.props.input.onChange(value['value']);
     };
@@ -248,7 +248,7 @@ class AutoCompleteSelect extends React.Component<CustomWidgetProps,any>{
     }
 }
 
-class AutoCompleteText extends React.Component<CustomWidgetProps,any>{
+class AutoCompleteText extends React.Component<WidgetProps,any>{
     onUpdateInput=name=>{
         const entry = (this.props.fieldSchema.options as Options).find(x=>x.name===name);
         return this.props.input.onChange(entry?entry.value:name);
@@ -266,7 +266,7 @@ class AutoCompleteText extends React.Component<CustomWidgetProps,any>{
     }
 }
 
-class AutoCompleteAsync extends React.PureComponent<CustomWidgetProps,any>{
+class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
     pendingUpdate;
     fetchingQuery;
     $isMounted;
@@ -297,7 +297,7 @@ class AutoCompleteAsync extends React.PureComponent<CustomWidgetProps,any>{
             clearTimeout(this.pendingUpdate);
         this.pendingUpdate = setTimeout(()=>{
             this.fetchingQuery = name;
-            const result = (this.props.fieldSchema.options as AsyncOption)(name,this.props);
+            const result = (this.props.fieldSchema.options as RuntimeAsyncOptions)(name,this.props);
             if(result instanceof Promise)
                 result.then(options=>{
                     if(this.fetchingQuery === name && this.$isMounted)
@@ -335,7 +335,7 @@ class AutoCompleteAsync extends React.PureComponent<CustomWidgetProps,any>{
 
 
 @muiThemeable()
-class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&CustomWidgetProps,any>{
+class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&WidgetProps,any>{
     render() {
         const props = this.props;
         const muiTheme: MuiTheme = props.muiTheme;
@@ -370,7 +370,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Cus
     }
 }
 
-function TextAreaInput(props:CustomWidgetProps){
+function TextAreaInput(props:WidgetProps){
     return <TextField
         {...props.input as any}
         errorText={props.meta.error}
@@ -397,7 +397,7 @@ addType("file",function({keyPath,...rest}){
 });
 
 @muiThemeable()
-class FileInput extends React.PureComponent<CustomWidgetProps&{
+class FileInput extends React.PureComponent<WidgetProps&{
     muiTheme:MuiTheme
 },any>{
     state={

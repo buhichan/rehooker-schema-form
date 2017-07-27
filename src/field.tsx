@@ -6,7 +6,8 @@ import {Options, ParsedFormFieldSchema} from "./form";
 import {Field, FieldArray, initialize, WrappedFieldArrayProps} from "redux-form"
 import {SchemaNode} from "./schema-node";
 
-export type CustomWidgetProps = {
+export type CustomWidgetProps = WidgetProps;
+export type WidgetProps = {
     fieldSchema?:ParsedFormFieldSchema,
     renderField?:typeof renderField
     keyPath:string
@@ -41,7 +42,7 @@ export type CustomWidgetProps = {
     onSchemaChange:(changes:Partial<ParsedFormFieldSchema>[]|Promise<Partial<ParsedFormFieldSchema>[]>)=>void
 }
 
-export function addType(name,widget: React.ComponentClass<CustomWidgetProps>|React.StatelessComponent<CustomWidgetProps>) {
+export function addType(name,widget: React.ComponentClass<WidgetProps>|React.StatelessComponent<WidgetProps>) {
     customTypes.set(name,widget);
 }
 
@@ -59,7 +60,7 @@ export function renderField(field:ParsedFormFieldSchema,form:string,keyPath:stri
         ...rest
     } = field;
     if(customTypes.has(type)){
-        let CustomWidget:React.ComponentClass<CustomWidgetProps> = customTypes.get(type) as any;
+        let CustomWidget:React.ComponentClass<WidgetProps> = customTypes.get(type) as any;
         return <CustomWidget keyPath={keyPath} fieldSchema={field} onSchemaChange={onSchemaChange} {...rest} renderField={renderField}/>
     }
     //noinspection FallThroughInSwitchStatementJS
@@ -127,7 +128,7 @@ export function renderField(field:ParsedFormFieldSchema,form:string,keyPath:stri
 }
 
 
-function DefaultArrayFieldRenderer(props:WrappedFieldArrayProps<any>&CustomWidgetProps){
+function DefaultArrayFieldRenderer(props:WrappedFieldArrayProps<any>&WidgetProps){
     const fields = props.fields;
     return <div>
         {
