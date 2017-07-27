@@ -60,9 +60,18 @@ function Form(){
     
 # API(props)
 
-All props are passed to the underlying `redux-form` instance, except the `schema` prop.
-## schema
+All props are passed to the underlying `redux-form` instance, except these props:
 
+## disableResubmit
+Form become not submittable if submit succeeded.
+
+## noButton
+Hide submit and cancel buttons.
+
+## children
+Children will be placed between form fields and buttons.
+
+## schema
 Accepts an array of type `FormFieldSchema[]`:
 ```typescript
 import {ConfigProps} from "redux-form"

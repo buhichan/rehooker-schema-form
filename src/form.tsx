@@ -2,13 +2,10 @@
  * Created by YS on 2016/10/31.
  */
 import * as React from 'react'
-import {reduxForm, ConfigProps} from 'redux-form'
-import {SyntheticEvent} from "react";
-import {connect} from "react-redux";
+import {reduxForm, ConfigProps, InjectedFormProps} from 'redux-form'
 import {SchemaNode} from "./schema-node";
-let {Field,FieldArray} = require("redux-form");
 
-export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime-local'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
+export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
 
 export type Options = {name:string,value:string|number}[]
 export type AsyncOptions = ()=>Promise<Options>
@@ -74,28 +71,23 @@ export type ButtonProps = {
 @(reduxForm({
     form:"default"
 }) as any)
-export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps<any,any>>&{
-    'enableReinitialize'?:boolean,
-    reset?():void
-    fields?:string[]
+export class ReduxSchemaForm extends React.PureComponent<Partial<InjectedFormProps<any,any>>&{
     schema:FormFieldSchema[],
-    onSubmit?:(...args:any[])=>void,
     dispatch?:(...args:any[])=>any,
-    readonly?:boolean,
-    initialize?:(data:any,keepDirty:boolean)=>any,
-    noButton?:boolean
+    noButton?:boolean,
+    disableResubmit?:boolean
 },{}>{
     submitable(){
-        return this.props['valid'] && !this.props['pristine'] && !this.props['submitting'];
+        return this.props.valid && !this.props.pristine && !this.props.submitting && !(this.props.disableResubmit && this.props.submitSucceeded);
     }
     render(){
-        return <form className="redux-schema-form form-horizontal" onSubmit={this.props['handleSubmit']}>
+        return <form className="redux-schema-form form-horizontal" onSubmit={this.props.handleSubmit}>
             <SchemaNode schema={this.props.schema} form={this.props.form} initialValues={this.props.initialValues}/>
             {this.props.children?<div className="children">
                 {this.props.children}
             </div>:null}
             {
-                (!this.props.noButton && !this.props.readonly )? <div className="button">
+                (!this.props.noButton)? <div className="button">
                     <div className="btn-group">
                         <DefaultButton type="submit" disabled={!this.submitable.apply(this)}>提交</DefaultButton>
                         <DefaultButton type="button" disabled={!this.submitable.apply(this)} onClick={this.props.reset}>重置</DefaultButton>
