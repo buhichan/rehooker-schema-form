@@ -4,3 +4,6 @@ tsconfig.json
 webpack.config.js
 README.MD
 yarn.lock
+**/*.tsx
+**/*.ts
+!**/*.d.ts
