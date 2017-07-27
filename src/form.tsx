@@ -4,12 +4,13 @@
 import * as React from 'react'
 import {reduxForm, ConfigProps, InjectedFormProps} from 'redux-form'
 import {SchemaNode} from "./schema-node";
+import {CustomWidgetProps} from "./field";
 
 export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
 
 export type Options = {name:string,value:string|number}[]
 export type AsyncOptions = ()=>Promise<Options>
-export type AsyncOption = (value:any)=>(Promise<Options>|Options)
+export type AsyncOption = (value:any,props:CustomWidgetProps)=>(Promise<Options>|Options)
 
 export interface BaseSchema extends Partial<ConfigProps<any,any>>{
     key:string,

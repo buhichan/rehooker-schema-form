@@ -297,7 +297,7 @@ class AutoCompleteAsync extends React.PureComponent<CustomWidgetProps,any>{
             clearTimeout(this.pendingUpdate);
         this.pendingUpdate = setTimeout(()=>{
             this.fetchingQuery = name;
-            const result = (this.props.fieldSchema.options as AsyncOption)(name);
+            const result = (this.props.fieldSchema.options as AsyncOption)(name,this.props);
             if(result instanceof Promise)
                 result.then(options=>{
                     if(this.fetchingQuery === name && this.$isMounted)

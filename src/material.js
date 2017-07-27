@@ -198,7 +198,7 @@ var AutoCompleteAsync = (function (_super) {
                 clearTimeout(_this.pendingUpdate);
             _this.pendingUpdate = setTimeout(function () {
                 _this.fetchingQuery = name;
-                var result = _this.props.fieldSchema.options(name);
+                var result = _this.props.fieldSchema.options(name, _this.props);
                 if (result instanceof Promise)
                     result.then(function (options) {
                         if (_this.fetchingQuery === name && _this.$isMounted)
