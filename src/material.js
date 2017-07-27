@@ -46,8 +46,8 @@ var material_jss_1 = require("./material.jss");
 var svg_icons_1 = require("material-ui/svg-icons");
 var field_1 = require("./field");
 var schema_node_1 = require("./schema-node");
-var injectCSS = require('react-jss').default;
-var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
+var react_jss_1 = require("react-jss");
+var redux_form_1 = require("redux-form");
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
@@ -136,7 +136,7 @@ var BaseAutoComplete = (function (_super) {
     return BaseAutoComplete;
 }(React.PureComponent));
 BaseAutoComplete = __decorate([
-    injectCSS({
+    react_jss_1.default({
         autocomplete: {
             position: "relative",
             "&>.autocomplete-clear-button": {
@@ -275,16 +275,6 @@ ArrayFieldRenderer = __decorate([
 function TextAreaInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
 }
-field_1.addType('textarea', function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
-    return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: TextAreaInput })));
-});
-field_1.addType("file", function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
-    return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: FileInput })));
-});
 var FileInput = (function (_super) {
     __extends(FileInput, _super);
     function FileInput() {
@@ -337,53 +327,52 @@ var FileInput = (function (_super) {
 FileInput = __decorate([
     muiThemeable_1.default()
 ], FileInput);
-field_1.addType('number', function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
+var DefaultInput = function (props) {
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: NumberInput })));
-});
-var DefaultInput = function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
-    return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: TextInput })));
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: TextInput })));
 };
 field_1.addType("password", DefaultInput);
 field_1.addType("email", DefaultInput);
 field_1.addType('text', DefaultInput);
-field_1.addType('checkbox', function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
+field_1.addType('textarea', function (props) {
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: CheckboxInput })));
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: TextAreaInput })));
 });
-field_1.addType('select', function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
+field_1.addType("file", function (props) {
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: SelectInput })));
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: FileInput })));
 });
-field_1.addType('autocomplete', function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
+field_1.addType('number', function (props) {
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: AutoCompleteSelect })));
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: NumberInput })));
 });
-field_1.addType('autocomplete-text', function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
+field_1.addType('checkbox', function (props) {
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: AutoCompleteText })));
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: CheckboxInput })));
 });
-field_1.addType("autocomplete-async", function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
+field_1.addType('select', function (props) {
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: AutoCompleteAsync })));
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: SelectInput })));
 });
-field_1.addType('date', function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
+field_1.addType('autocomplete', function (props) {
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: DateInput })));
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: AutoCompleteSelect })));
 });
-field_1.addType('datetime', function (_a) {
-    var keyPath = _a.keyPath, rest = __rest(_a, ["keyPath"]);
+field_1.addType('autocomplete-text', function (props) {
     return React.createElement("div", null,
-        React.createElement(Field, __assign({ name: keyPath }, rest, { component: DateTimeInput })));
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: AutoCompleteText })));
+});
+field_1.addType("autocomplete-async", function (props) {
+    return React.createElement("div", null,
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: AutoCompleteAsync })));
+});
+field_1.addType('date', function (props) {
+    return React.createElement("div", null,
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: DateInput })));
+});
+field_1.addType('datetime', function (props) {
+    return React.createElement("div", null,
+        React.createElement(Field, __assign({ name: props.keyPath }, props, { component: DateTimeInput })));
 });
 field_1.addType("array", function (props) {
     return React.createElement("div", null,
@@ -393,6 +382,8 @@ field_1.addType("array", function (props) {
 field_1.addType('hidden', function (props) {
     return React.createElement("div", null);
 });
+var Field = redux_form_1.Field;
+var FieldArray = redux_form_1.FieldArray;
 form_1.setButton(muiThemeable_1.default()(function (props) {
     switch (props.type) {
         case 'submit':
@@ -408,9 +399,9 @@ form_1.setButton(muiThemeable_1.default()(function (props) {
 }));
 var formModule = require('../index');
 var JSSForm = formModule.ReduxSchemaForm;
-formModule.ReduxSchemaForm = muiThemeable_1.default()(injectCSS(material_jss_1.stylesheet)(function (_a) {
-    var classes = _a.classes, sheet = _a.sheet, rest = __rest(_a, ["classes", "sheet"]);
+formModule.ReduxSchemaForm = muiThemeable_1.default()(react_jss_1.default(material_jss_1.stylesheet)(function (_a) {
+    var classes = _a.classes, sheet = _a.sheet, props = __rest(_a, ["classes", "sheet"]);
     return React.createElement("div", { className: classes.form },
-        React.createElement(JSSForm, __assign({}, rest)));
+        React.createElement(JSSForm, __assign({}, props)));
 }));
 //# sourceMappingURL=material.js.map

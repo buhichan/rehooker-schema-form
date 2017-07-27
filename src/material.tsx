@@ -9,16 +9,13 @@ import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
 import {MuiTheme} from "material-ui/styles";
 import {stylesheet} from "./material.jss";
-import {BaseFieldArrayProps} from "redux-form";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
-import {connect} from "react-redux";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
 import {addType, WidgetProps} from "./field";
 import {SchemaNode} from "./schema-node";
-const injectCSS = require('react-jss').default;
-
-let {Field,FieldArray} =require("redux-form");
+import injectCSS from 'react-jss';
+import {Field as RFField,FieldArray as RFFieldArray} from "redux-form";
 
 function NumberInput(props:WidgetProps){
     return <TextField
@@ -384,18 +381,6 @@ function TextAreaInput(props:WidgetProps){
         floatingLabelText={props.fieldSchema.label}/>;
 }
 
-addType('textarea',function({keyPath,...rest}){
-    return <div>
-        <Field name={keyPath} {...rest} component={TextAreaInput} />
-    </div>
-});
-
-addType("file",function({keyPath,...rest}){
-    return <div>
-        <Field name={keyPath} {...rest} component={FileInput} />
-    </div>
-});
-
 @muiThemeable()
 class FileInput extends React.PureComponent<WidgetProps&{
     muiTheme:MuiTheme
@@ -451,15 +436,9 @@ class FileInput extends React.PureComponent<WidgetProps&{
     }
 }
 
-addType('number',function ({keyPath,...rest}){
+const DefaultInput = function (props){
     return <div>
-        <Field name={keyPath} {...rest} component={NumberInput} />
-    </div>
-});
-
-const DefaultInput = function ({keyPath,...rest}){
-    return <div>
-        <Field name={keyPath} {...rest} component={TextInput}/>
+        <Field name={props.keyPath} {...props} component={TextInput}/>
     </div>
 };
 
@@ -467,42 +446,60 @@ addType("password",DefaultInput);
 addType("email",DefaultInput);
 addType('text',DefaultInput);
 
-addType('checkbox',function ({keyPath,...rest}){
+addType('textarea',function(props){
     return <div>
-        <Field name={keyPath} {...rest} component={CheckboxInput} />
+        <Field name={props.keyPath} {...props} component={TextAreaInput} />
     </div>
 });
 
-addType('select',function ({keyPath,...rest}){
+addType("file",function(props){
     return <div>
-        <Field name={keyPath} {...rest} component={SelectInput} />
-    </div>
-});
-addType('autocomplete',function({keyPath,...rest}){
-    return <div>
-        <Field name={keyPath} {...rest} component={AutoCompleteSelect} />
-    </div>
-});
-addType('autocomplete-text',function({keyPath,...rest}){
-    return <div>
-        <Field name={keyPath} {...rest} component={AutoCompleteText} />
-    </div>
-});
-addType("autocomplete-async",function({keyPath,...rest}){
-    return <div>
-        <Field name={keyPath} {...rest} component={AutoCompleteAsync} />
+        <Field name={props.keyPath} {...props} component={FileInput} />
     </div>
 });
 
-addType('date',function({keyPath,...rest}){
+addType('number',function (props){
     return <div>
-        <Field name={keyPath} {...rest} component={DateInput} />
+        <Field name={props.keyPath} {...props} component={NumberInput} />
     </div>
 });
 
-addType('datetime',function({keyPath,...rest}){
+addType('checkbox',function (props){
     return <div>
-        <Field name={keyPath} {...rest} component={DateTimeInput} />
+        <Field name={props.keyPath} {...props} component={CheckboxInput} />
+    </div>
+});
+
+addType('select',function (props){
+    return <div>
+        <Field name={props.keyPath} {...props} component={SelectInput} />
+    </div>
+});
+addType('autocomplete',function(props){
+    return <div>
+        <Field name={props.keyPath} {...props} component={AutoCompleteSelect} />
+    </div>
+});
+addType('autocomplete-text',function(props){
+    return <div>
+        <Field name={props.keyPath} {...props} component={AutoCompleteText} />
+    </div>
+});
+addType("autocomplete-async",function(props){
+    return <div>
+        <Field name={props.keyPath} {...props} component={AutoCompleteAsync} />
+    </div>
+});
+
+addType('date',function(props){
+    return <div>
+        <Field name={props.keyPath} {...props} component={DateInput} />
+    </div>
+});
+
+addType('datetime',function(props){
+    return <div>
+        <Field name={props.keyPath} {...props} component={DateTimeInput} />
     </div>
 });
 
@@ -518,6 +515,9 @@ addType('hidden',(props)=>{
 
     </div>
 });
+
+const Field = RFField as new()=>RFField<any>;
+const FieldArray = RFFieldArray as new()=>RFFieldArray<any>;
 
 setButton(muiThemeable()(function(props:any){
     switch (props.type) {
@@ -556,8 +556,8 @@ const formModule = require('../index');
 const JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm =muiThemeable()
 (injectCSS(stylesheet)(
-    ({classes,sheet,...rest})=>{
+    ({classes,sheet,...props})=>{
         return <div className={classes.form}>
-            <JSSForm {...rest} />
+            <JSSForm {...props} />
         </div>;
     }));
