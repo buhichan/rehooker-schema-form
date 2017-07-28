@@ -14,104 +14,100 @@ export const stylesheet = {
     "& *":{
       boxSizing:"border-box",
     },
-    "&>.redux-schema-form": {
-      "& .btn-group": {
-        "&>button": {
-          border: 0,
-          borderRadius: 0,
-          backgroundColor: ({muiTheme})=>muiTheme.palette.primary1Color,
-          color: "white",
-          "&:not(:first-child)": {
-            marginLeft: 2
-          }
+    "& .btn-group": {
+      "&>button": {
+        border: 0,
+        borderRadius: 0,
+        backgroundColor: ({muiTheme})=>muiTheme.palette.primary1Color,
+        color: "white",
+        "&:not(:first-child)": {
+          marginLeft: 2
         }
+      }
+    },
+    "& .array-field-container":{
+      display:"flex",
+      flexWrap:"wrap",
+      alignItems:"flex-start",
+      "& .array-field-child": {
+        padding: '10px 0',
+        margin: '10px',
+        borderTop: ({muiTheme}) => "2px solid " + muiTheme.palette.primary1Color,
+        width:"calc(50% - 20px)"
       },
-      "& .array-field-container":{
-        display:"flex",
-        flexWrap:"wrap",
-        alignItems:"flex-start",
-        "& .array-field-child": {
-          padding: '10px 0',
-          margin: '10px',
-          borderTop: ({muiTheme}) => "2px solid " + muiTheme.palette.primary1Color,
-          width:"calc(50% - 20px)",
-          [mobileMedia]:{
-            width:"100%",
-            margin:0
-          }
-        },
-        "& .add-button":{
-          textAlign:"center",
-          marginBottom:10,
-          width:"100%"
-        },
-        "& .delete-button":{
-          float:"right"
-        }
-      },
-      "&:after": {
-        display: "table",
-        content: "",
-        clear: "both"
-      },
-      "&>.schema-node": {
-        "&>.field": {
-          float: "left",
-          paddingRight: "10%",
-          paddingLeft: "10%",
-          width: "50%",
-          height: widgetHeight,
-          "&.hidden": {
-            display: "none"
-          },
-          [mobileMedia]: { //fixme: todo: jss but! https://github.com/cssinjs/jss/issues/446
-            width: "100%"
-          },
-        },
-        [FullWidthInputs]: {
-          width: "100%",
-          height:"auto",
-          minHeight:widgetHeight
-        },
-      },
-      "&>.children, &>div.button": {
+      "& .add-button":{
         textAlign:"center",
-        float: "left",
-        paddingRight:"initial",
-        paddingLeft:"initial",
-        height:"auto",
-        width: "100%",
-        margin: "20px 0 0",
-        minHeight: "initial"
+        marginBottom:10,
+        width:"100%"
       },
-      "& fieldset>.schema-node>div:nth-child(2n)": {
-        float: "right",
-        width: "50%",
-        padding: " 0 5% 0 calc(10% + 15px)",
+      "& .delete-button":{
+        float:"right"
+      }
+    },
+    "&>div:after": {
+      display: "table",
+      content: "",
+      clear: "both"
+    },
+    "& .field": {
+      float: "left",
+      paddingRight: "10%",
+      paddingLeft: "10%",
+      width: "50%",
+      height: widgetHeight,
+      "&.hidden": {
+        display: "none"
       },
-      "& fieldset>.schema-node>div:nth-child(2n+1)": {
-        float: "left",
-        width: "50%",
-        padding: " 0 calc(10% + 15px) 0 5%",
+    },
+    [FullWidthInputs]: {
+      width: "100%",
+      height:"auto",
+      minHeight:widgetHeight
+    },
+    "& div.children, & div.button": {
+      textAlign:"center",
+      float: "left",
+      paddingRight:"initial",
+      paddingLeft:"initial",
+      height:"auto",
+      width: "100%",
+      margin: "20px 0 0",
+      minHeight: "initial"
+    },
+    "& fieldset>.schema-node>div:nth-child(2n)": {
+      float: "right",
+      width: "50%",
+      padding: " 0 5% 0 calc(10% + 15px)",
+    },
+    "& fieldset>.schema-node>div:nth-child(2n+1)": {
+      float: "left",
+      width: "50%",
+      padding: " 0 calc(10% + 15px) 0 5%",
+    },
+    "&>form>.schema-node>.field>fieldset": {
+      "&>legend": {
+        position: "relative",
+        top: "11px",
+        marginLeft: " 5%",
+        borderBottom: "none",
+        display: "inline-block",
+        width: "auto",
+        borderTop: ({muiTheme})=>`3px solid ${muiTheme.palette.primary1Color}`
       },
-      "&>.schema-node>.field>fieldset": {
-        "&>legend": {
-          position: "relative",
-          top: "11px",
-          marginLeft: " 5%",
-          borderBottom: "none",
-          display: "inline-block",
-          width: "auto",
-          borderTop: ({muiTheme})=>`3px solid ${muiTheme.palette.primary1Color}`
-        },
-        margin: " 40px calc(5% - 7.5px)",
-        padding: " 0 7.5px",
-        background: "#f9f9fa",
-        border: "none",
-        [FullWidthInputs]: {
-          padding: " 0 5%",
-        }
-      },
+      margin: " 40px calc(5% - 7.5px)",
+      padding: " 0 7.5px",
+      background: "#f9f9fa",
+      border: "none",
+      [FullWidthInputs]: {
+        padding: " 0 5%",
+      }
     }
-  }
+  },
+  [mobileMedia]: { //fixme: todo: jss but! https://github.com/cssinjs/jss/issues/446
+    "form": {
+      "& .field, & .array-field-container .array-field-child": {
+        width: "100%"
+      }
+    }
+  },
 };
