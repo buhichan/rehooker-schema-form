@@ -1,3 +1,6 @@
+# 1.5.1
+- 修复小屏幕下某些样式不生效问题
+
 # 1.5.0-beta.1
 
 - `onValueChange` now works for array type
