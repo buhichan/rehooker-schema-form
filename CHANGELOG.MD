@@ -1,3 +1,6 @@
+# 1.5.1-beta.1
+- fix style issue of field array child"
+
 # 1.5.0
 - 修复小屏幕下某些样式不生效问题
 - `onValueChange` now works for array type

@@ -29,6 +29,9 @@ export declare const stylesheet: {
                     muiTheme: any;
                 }) => string;
                 width: string;
+                "& .field": {
+                    width: string;
+                };
             };
             "& .add-button": {
                 textAlign: string;
@@ -127,6 +130,9 @@ export declare const stylesheet: {
                     muiTheme: any;
                 }) => string;
                 width: string;
+                "& .field": {
+                    width: string;
+                };
             };
             "& .add-button": {
                 textAlign: string;
@@ -239,6 +245,9 @@ export declare const stylesheet: {
                     muiTheme: any;
                 }) => string;
                 width: string;
+                "& .field": {
+                    width: string;
+                };
             };
             "& .add-button": {
                 textAlign: string;
@@ -337,6 +346,9 @@ export declare const stylesheet: {
                     muiTheme: any;
                 }) => string;
                 width: string;
+                "& .field": {
+                    width: string;
+                };
             };
             "& .add-button": {
                 textAlign: string;

@@ -33,7 +33,10 @@ export const stylesheet = {
         padding: '10px 0',
         margin: '10px',
         borderTop: ({muiTheme}) => "2px solid " + muiTheme.palette.primary1Color,
-        width:"calc(50% - 20px)"
+        width:"calc(50% - 20px)",
+        "& .field":{
+          width:"100%"
+        }
       },
       "& .add-button":{
         textAlign:"center",

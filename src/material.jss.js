@@ -40,7 +40,10 @@ exports.stylesheet = (_a = {
                             var muiTheme = _a.muiTheme;
                             return "2px solid " + muiTheme.palette.primary1Color;
                         },
-                        width: "calc(50% - 20px)"
+                        width: "calc(50% - 20px)",
+                        "& .field": {
+                            width: "100%"
+                        }
                     },
                     "& .add-button": {
                         textAlign: "center",
