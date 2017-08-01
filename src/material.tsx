@@ -3,7 +3,7 @@
  */
 import * as React from "react"
 import {RuntimeAsyncOptions, AsyncOptions, Options, setButton} from "./form"
-import {TextField,SelectField,TimePicker,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
+import {TextField,TimePicker,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
@@ -16,6 +16,7 @@ import {addType, WidgetProps} from "./field";
 import {SchemaNode} from "./schema-node";
 import injectCSS from 'react-jss';
 import {Field as RFField,FieldArray as RFFieldArray} from "redux-form";
+import {SelectField} from "./my-select-field"
 
 function NumberInput(props:WidgetProps){
     return <TextField
@@ -91,33 +92,44 @@ function DateTimeInput(props:WidgetProps){
     </div>
 }
 
-function DateInput(props:WidgetProps){
-    const DatePickerProps = {
-        onChange:(e,value)=>{
-            return props.input.onChange(value.toLocaleDateString().replace(/\//g,'-'));
+class DateInput extends React.PureComponent<WidgetProps>{
+    datepicker;
+    onFocus=(e:React.SyntheticEvent<any>)=>{
+        if (e.target !== null) {
+            this.datepicker.openDialog();
         }
     };
-    const parsedDate = Date.parse(props.input.value);
+    render() {
+        const props = this.props;
+        const DatePickerProps = {
+            onChange: (e, value) => {
+                return props.input.onChange(value.toLocaleDateString().replace(/\//g, '-'));
+            }
+        };
+        const parsedDate = Date.parse(props.input.value);
 
-    if (isNaN(props.input.value) && !isNaN(parsedDate)) {
-        DatePickerProps['value']=new Date(props.input.value);
+        if (isNaN(props.input.value) && !isNaN(parsedDate)) {
+            DatePickerProps['value'] = new Date(props.input.value);
+        }
+
+        return <DatePicker
+            DateTimeFormat={Intl.DateTimeFormat as any}
+            locale="zh-CN"
+            errorText={props.meta.error}
+            floatingLabelText={props.fieldSchema.label}
+            autoOk={true}
+            id={props.input.name}
+            container="inline"
+            mode="portrait"
+            cancelLabel="取消"
+            fullWidth={true}
+            onFocus={this.onFocus}
+            okLabel="确认"
+            ref={ref=>this.datepicker=ref}
+            {...DatePickerProps}
+            hintText={props.fieldSchema.placeholder}
+            disabled={props.disabled}/>
     }
-
-    return <DatePicker
-        DateTimeFormat={Intl.DateTimeFormat as any}
-        locale="zh-CN"
-        errorText={props.meta.error}
-        floatingLabelText={props.fieldSchema.label}
-        autoOk={true}
-        id={props.input.name}
-        container="inline"
-        mode="portrait"
-        cancelLabel="取消"
-        fullWidth={true}
-        okLabel="确认"
-        {...DatePickerProps}
-        hintText={props.fieldSchema.placeholder}
-        disabled={props.disabled}/>
 }
 
 function TextInput(props:WidgetProps){
@@ -148,32 +160,31 @@ function CheckboxInput (props:WidgetProps){
     />
 }
 
+//fixme: todo: https://github.com/callemall/material-ui/issues/6080
 class SelectInput extends React.PureComponent<WidgetProps,any>{
-    componentWillMount(){
-
-    }
     render() {
         const props = this.props;
         return <SelectField
-            {...props.input as any}
-            id={props.input.name}
-            disabled={props.disabled}
-            floatingLabelText={props.fieldSchema.label}
-            fullWidth={true}
-            errorText={props.meta.error}
-            hintText={props.fieldSchema.placeholder}
-            multiple={props.fieldSchema.multiple}
-            onChange={(e, i, v) => {
-                e.target['value'] = v;
-                props.input.onChange(e)
-            }}
-        >
+                {...props.input as any}
+                onBlur={()=>props.input.onBlur(props.input.value)}
+                id={props.input.name}
+                disabled={props.disabled}
+                floatingLabelText={props.fieldSchema.label}
+                fullWidth={true}
+                errorText={props.meta.error}
+                hintText={props.fieldSchema.placeholder}
+                multiple={props.fieldSchema.multiple}
+                onChange={(e, i, v) => {
+                    e.target['value'] = v;
+                    props.input.onChange(e);
+                }}
+            >
             {
-                (props.fieldSchema.options as Options).map((option) => <MenuItem className="option" key={option.value}
-                                                                                 value={option.value}
-                                                                                 primaryText={option.name}/>)
+                (props.fieldSchema.options as Options).map((option) => (
+                    <MenuItem className="option" key={option.value} value={option.value} primaryText={option.name}/>
+                ))
             }
-        </SelectField>;
+        </SelectField>
     }
 }
 

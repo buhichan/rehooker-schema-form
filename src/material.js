@@ -48,6 +48,7 @@ var field_1 = require("./field");
 var schema_node_1 = require("./schema-node");
 var react_jss_1 = require("react-jss");
 var redux_form_1 = require("redux-form");
+var my_select_field_1 = require("./my-select-field");
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
@@ -84,18 +85,33 @@ function DateTimeInput(props) {
                     input.onChange(newValue.toLocaleString([navigator.language], defaultDateTimeInputFormat));
                 } })));
 }
-function DateInput(props) {
-    var DatePickerProps = {
-        onChange: function (e, value) {
-            return props.input.onChange(value.toLocaleDateString().replace(/\//g, '-'));
-        }
-    };
-    var parsedDate = Date.parse(props.input.value);
-    if (isNaN(props.input.value) && !isNaN(parsedDate)) {
-        DatePickerProps['value'] = new Date(props.input.value);
+var DateInput = (function (_super) {
+    __extends(DateInput, _super);
+    function DateInput() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.onFocus = function (e) {
+            if (e.target !== null) {
+                _this.datepicker.openDialog();
+            }
+        };
+        return _this;
     }
-    return React.createElement(material_ui_1.DatePicker, __assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", errorText: props.meta.error, floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, okLabel: "确认" }, DatePickerProps, { hintText: props.fieldSchema.placeholder, disabled: props.disabled }));
-}
+    DateInput.prototype.render = function () {
+        var _this = this;
+        var props = this.props;
+        var DatePickerProps = {
+            onChange: function (e, value) {
+                return props.input.onChange(value.toLocaleDateString().replace(/\//g, '-'));
+            }
+        };
+        var parsedDate = Date.parse(props.input.value);
+        if (isNaN(props.input.value) && !isNaN(parsedDate)) {
+            DatePickerProps['value'] = new Date(props.input.value);
+        }
+        return React.createElement(material_ui_1.DatePicker, __assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", errorText: props.meta.error, floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, onFocus: this.onFocus, okLabel: "确认", ref: function (ref) { return _this.datepicker = ref; } }, DatePickerProps, { hintText: props.fieldSchema.placeholder, disabled: props.disabled }));
+    };
+    return DateInput;
+}(React.PureComponent));
 function TextInput(props) {
     return React.createElement(material_ui_1.TextField, __assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, hintText: props.fieldSchema.placeholder, multiLine: props.fieldSchema.multiLine, floatingLabelText: props.fieldSchema.label }));
 }
@@ -104,19 +120,18 @@ function CheckboxInput(props) {
     rest['label'] = props.fieldSchema.label;
     return React.createElement(material_ui_1.Checkbox, __assign({}, rest, { onBlur: function (e) { return onBlur(value); }, style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: function (e, v) { return onChange(v); }, checked: Boolean(value) }));
 }
+//fixme: todo: https://github.com/callemall/material-ui/issues/6080
 var SelectInput = (function (_super) {
     __extends(SelectInput, _super);
     function SelectInput() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    SelectInput.prototype.componentWillMount = function () {
-    };
     SelectInput.prototype.render = function () {
         var props = this.props;
-        return React.createElement(material_ui_1.SelectField, __assign({}, props.input, { id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
+        return React.createElement(my_select_field_1.SelectField, __assign({}, props.input, { onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
                 e.target['value'] = v;
                 props.input.onChange(e);
-            } }), props.fieldSchema.options.map(function (option) { return React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name }); }));
+            } }), props.fieldSchema.options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }));
     };
     return SelectInput;
 }(React.PureComponent));
