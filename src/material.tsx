@@ -292,7 +292,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
     }
     findName(value){
         const entry = (this.state.dataSource as Options).find(x=>x.value === value);
-        return entry?entry.name:"";
+        return entry?entry.name:value;
     }
     onUpdateInput=(name,dataSource,params?)=>{
         if(!params||params.source !== 'change')

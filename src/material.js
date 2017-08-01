@@ -251,7 +251,7 @@ var AutoCompleteAsync = (function (_super) {
     };
     AutoCompleteAsync.prototype.findName = function (value) {
         var entry = this.state.dataSource.find(function (x) { return x.value === value; });
-        return entry ? entry.name : "";
+        return entry ? entry.name : value;
     };
     AutoCompleteAsync.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
