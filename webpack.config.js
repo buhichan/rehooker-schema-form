@@ -60,7 +60,6 @@ const config = {
             "react-redux":path.resolve('./node_modules/react-redux')
         },
     }
-
 };
 
 config.plugins.push(

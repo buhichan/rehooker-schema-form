@@ -30,6 +30,11 @@ export interface BaseSchema extends Partial<ConfigProps<any, any>> {
      */
     onFileChange?: (file: File) => Promise<string>;
     data?: any;
+    /**
+     * @deprecated
+     * 使用onValueChange代替.
+     */
+    getChildren?: (any: any) => FormFieldSchema[];
     [rest: string]: any;
 }
 export declare type ChangeOfSchema = (Partial<ParsedFormFieldSchema> & {

@@ -329,25 +329,27 @@ var schema = [
                 hide: true
             }
         ]
-    }, {
-        key: "dynamic-array",
-        type: "array",
-        label: "dynamic-array（使用getChildren）",
-        getChildren: function (v) {
-            return [
-                {
-                    key: "array-child",
-                    label: "array-child",
-                    type: "text"
-                },
-                v && isFinite(v['array-child']) ? {
-                    key: "currency",
-                    label: "currency",
-                    type: "text"
-                } : null
-            ];
-        }
-    }, {
+    },
+    // {
+    //     key:"dynamic-array",
+    //     type:"array",
+    //     label:"dynamic-array（使用getChildren）",
+    //     getChildren:v=>{
+    //         return [
+    //             {
+    //                 key:"array-child",
+    //                 label:"array-child",
+    //                 type:"text"
+    //             },
+    //             v&&isFinite(v['array-child'])?{
+    //                 key:"currency",
+    //                 label:"currency",
+    //                 type:"text"
+    //             }:null
+    //         ]
+    //     }
+    // },
+    {
         key: "autocomplete",
         type: "autocomplete-async",
         label: "自动完成",
@@ -379,7 +381,14 @@ var App = (function (_super) {
             state: 2,
             "dependant_lv1": "animal",
             "dependant_lv2": "dog",
-            "select": "pear"
+            "select": "pear",
+            "dynamic-array-alter": [
+                {
+                    "array-child": 1
+                }, {
+                    "array-child": ""
+                }
+            ]
         };
         _this.onSubmit = function (values) {
             if (values.text) {

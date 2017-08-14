@@ -259,6 +259,10 @@ var AutoCompleteAsync = (function (_super) {
     };
     return AutoCompleteAsync;
 }(React.PureComponent));
+/**
+ * 这个组件比较复杂,必须考虑
+ * getChildren存在的情况
+ */
 var ArrayFieldRenderer = (function (_super) {
     __extends(ArrayFieldRenderer, _super);
     function ArrayFieldRenderer() {
@@ -269,14 +273,15 @@ var ArrayFieldRenderer = (function (_super) {
         var muiTheme = props.muiTheme;
         return React.createElement("div", { className: "clearfix array-field-container" },
             props.fields.map(function (name, i) {
+                var childValue = props.fields.get(i);
                 var children = props.fieldSchema.children;
                 if (props.fieldSchema.getChildren)
-                    children = props.fieldSchema.getChildren(props.fields.get(i)).filter(function (x) { return x; });
+                    children = props.fieldSchema.getChildren(childValue).filter(function (x) { return x; });
                 return React.createElement("div", { key: i, className: "array-field-child" },
                     React.createElement("div", { className: "delete-button" },
                         React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
                             React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
-                    React.createElement(schema_node_1.SchemaNode, { form: props.meta.form, keyPath: props.keyPath + "." + i, schema: children }));
+                    React.createElement(schema_node_1.SchemaNode, { form: props.meta.form, keyPath: props.keyPath + "." + i, schema: children, initialValues: childValue }));
             }),
             React.createElement("div", { className: "add-button" },
                 React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },

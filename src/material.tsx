@@ -342,6 +342,10 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
 }
 
 
+/**
+ * 这个组件比较复杂,必须考虑
+ * getChildren存在的情况
+ */
 @muiThemeable()
 class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&WidgetProps,any>{
     render() {
@@ -350,9 +354,10 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
         return <div className="clearfix array-field-container">
             {
                 props.fields.map((name, i) => {
+                    const childValue = props.fields.get(i);
                     let children = props.fieldSchema.children;
                     if(props.fieldSchema.getChildren)
-                        children = props.fieldSchema.getChildren(props.fields.get(i)).filter(x=>x);
+                        children = props.fieldSchema.getChildren(childValue).filter(x=>x);
                     return <div key={i} className="array-field-child">
                         <div className="delete-button">
                             <IconButton
@@ -363,7 +368,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
                                 <Remove hoverColor={muiTheme.palette.accent1Color}/>
                             </IconButton>
                         </div>
-                        <SchemaNode form={props.meta.form} keyPath={props.keyPath+"."+i} schema={children} />
+                        <SchemaNode form={props.meta.form} keyPath={props.keyPath+"."+i} schema={children} initialValues={childValue} />
                     </div>
                 })
             }

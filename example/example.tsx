@@ -307,25 +307,27 @@ let schema:FormFieldSchema[] = [
                 hide:true
             }
         ]
-    },{
-        key:"dynamic-array",
-        type:"array",
-        label:"dynamic-array（使用getChildren）",
-        getChildren:v=>{
-            return [
-                {
-                    key:"array-child",
-                    label:"array-child",
-                    type:"text"
-                },
-                v&&isFinite(v['array-child'])?{
-                    key:"currency",
-                    label:"currency",
-                    type:"text"
-                }:null
-            ]
-        }
-    },{
+    },
+    // {
+    //     key:"dynamic-array",
+    //     type:"array",
+    //     label:"dynamic-array（使用getChildren）",
+    //     getChildren:v=>{
+    //         return [
+    //             {
+    //                 key:"array-child",
+    //                 label:"array-child",
+    //                 type:"text"
+    //             },
+    //             v&&isFinite(v['array-child'])?{
+    //                 key:"currency",
+    //                 label:"currency",
+    //                 type:"text"
+    //             }:null
+    //         ]
+    //     }
+    // },
+    {
         key:"autocomplete",
         type:"autocomplete-async",
         label:"自动完成",
@@ -357,7 +359,14 @@ class App extends React.PureComponent<any,any>{
         state:2,
         "dependant_lv1": "animal",
         "dependant_lv2": "dog",
-        "select": "pear"
+        "select": "pear",
+        "dynamic-array-alter":[
+            {
+                "array-child":1
+            },{
+                "array-child":""
+            }
+        ]
     };
     onSubmit=(values)=>{
         if(values.text){
@@ -368,8 +377,7 @@ class App extends React.PureComponent<any,any>{
     };
     render(){
         return <div>
-            <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit}>
-            </ReduxSchemaForm>
+            <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit} />
             <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
             <pre>
                 <code>
