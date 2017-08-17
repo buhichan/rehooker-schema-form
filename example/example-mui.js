@@ -410,4 +410,4 @@ var muiTheme = getMuiTheme_1.default({
 ReactDOM.render(React.createElement(styles_1.MuiThemeProvider, { muiTheme: muiTheme },
     React.createElement(react_redux_1.Provider, { store: store },
         React.createElement(App, null))), document.getElementById('root'));
-//# sourceMappingURL=example.js.map
+//# sourceMappingURL=example-mui.js.map

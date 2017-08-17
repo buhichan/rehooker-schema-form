@@ -11,9 +11,12 @@
     "build": "tsc -p .",
     "version": "npm run build && git add -A",
     "postversion": "git push && git push --tags",
-    "dev": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011"
+    "dev":"npm run dev:mui",
+    "dev:mui": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme mui",
+    "dev:antd": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme antd"
   },
   "peerDependencies": {
+    "antd": "^2.*",
     "material-ui": "0.18.*",
     "react-jss": "6.*"
   },
@@ -29,7 +32,7 @@
     "@types/react-dom": "^15.5.1",
     "@types/react-redux": "^4.4.35",
     "@types/redux-form": "7.*",
-    "autoprefixer": "^6.5.0",
+    "antd": "^2.*",
     "awesome-typescript-loader": "^3.0.3",
     "copy-webpack-plugin": "^3.0.1",
     "css-loader": "^0.25.0",

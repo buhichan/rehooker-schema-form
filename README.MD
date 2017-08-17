@@ -8,7 +8,7 @@ So that I don't have to write a component for every single `redux-form`.
 
 # Intro
 
-- Accept a `schema` prop to generate form.
+- Accept a `schema` prop to generate form. *Not* json schema but a self-invented one. :P
 - The state of the form is mained by `redux-form` in `redux` state.
 - Predefined material-ui widget components so you don't have to write in every form.
     - number

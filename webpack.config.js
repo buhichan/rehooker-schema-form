@@ -7,11 +7,16 @@ path.isAbsolute = require('path-is-absolute');
 require('es6-promise').polyfill();
 
 const webpack = require("webpack");
-const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const ENV = process.env.npm_lifecycle_event;
+const i = process.argv.findIndex(x=>x === "--theme");
+const theme = i&&i<process.argv.length?process.argv[i+1]:"mui";
+
+let ENV = process.env.npm_lifecycle_event;
+
+if(ENV.includes(":"))
+    ENV=ENV.replace(/:.*/,"");
 
 const config = {
     entry: {
@@ -71,7 +76,7 @@ config.plugins.push(
 switch(ENV){
     case "dev": {
         config.devtools = 'inline-source-map';
-        config.entry.main=['./example/example.tsx'];
+        config.entry.main=[`./example/example-${theme}.tsx`];
         break;
     }
     case "build": {
