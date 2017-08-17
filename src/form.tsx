@@ -34,7 +34,7 @@ export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
      * 返回url
      * @param file 要上传的文件
      */
-    onFileChange?:(file:File)=>Promise<string>,
+    onFileChange?:(file:File|FileList)=>Promise<string>,
     data?:any,
     style?:React.CSSProperties,
     /**

@@ -24,6 +24,7 @@ So that I don't have to write a component for every single `redux-form`.
     - autocomplete-text
     - array
     - group
+- Also has a set of ant-design theme widgets.
         
 - You can add more widgets using `addType`.
     

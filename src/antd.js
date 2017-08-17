@@ -171,17 +171,24 @@ var FileInput = (function (_super) {
             });
             fileList = fileList.filter(function (file) {
                 if (file.response) {
-                    return file.response.status === "success";
+                    return file.status === "done";
                 }
                 return true;
             });
             _this.props.input.onChange(fileList);
         };
+        _this.customRequest = function (_a) {
+            var onSuccess = _a.onSuccess, onError = _a.onError, onProgress = _a.onProgress, data = _a.data, file = _a.file, filename = _a.filename;
+            _this.props.fieldSchema.onFileChange(_this.props.input.value).then(function (previewUrl) {
+                onProgress({ percent: 100 });
+                onSuccess(previewUrl, null);
+            }, function (err) { return onError(err); });
+        };
         return _this;
     }
     FileInput.prototype.render = function () {
         return React.createElement("div", { style: { width: "100%" } },
-            React.createElement(antd_8.Upload, { fileList: this.props.input.value, multiple: true, onChange: this.onChange, action: this.props.fieldSchema.action },
+            React.createElement(antd_8.Upload, { multiple: true, onChange: this.onChange, action: this.props.fieldSchema.action, customRequest: this.props.fieldSchema.onFileChange ? this.customRequest : undefined },
                 React.createElement(antd_8.Button, null,
                     React.createElement(antd_8.Icon, { type: "upload" }),
                     " ",

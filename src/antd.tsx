@@ -235,7 +235,7 @@ class AutoCompleteSelect extends React.Component<WidgetProps,any>{
 }
 
 
-class FileInput extends React.Component<any,any>{
+class FileInput extends React.Component<WidgetProps,any>{
     onChange=(info)=>{
         let fileList = info.fileList;
         fileList = fileList.map(file=>{
@@ -247,19 +247,25 @@ class FileInput extends React.Component<any,any>{
 
         fileList=fileList.filter(file=>{
             if(file.response){
-                return file.response.status==="success";
+                return file.status==="done";
             }
             return true;
         });
         this.props.input.onChange(fileList)
-    }
+    };
+    customRequest=({onSuccess,onError,onProgress,data,file,filename})=>{
+        this.props.fieldSchema.onFileChange(this.props.input.value).then(previewUrl=>{
+            onProgress({percent:100});
+            onSuccess(previewUrl,null);
+        },(err)=>onError(err))
+    };
     render(){
         return <div style={{width:"100%"}}>
             <Upload
-                fileList={this.props.input.value}
                 multiple={true}
                 onChange={this.onChange}
                 action={this.props.fieldSchema.action}
+                customRequest={this.props.fieldSchema.onFileChange?this.customRequest:undefined}
             >
                 <Button>
                     <Icon type="upload" /> {this.props.fieldSchema.label}
