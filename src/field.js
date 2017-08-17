@@ -11,9 +11,15 @@ var react_redux_1 = require("react-redux");
 var reselect_1 = require("reselect");
 var PropTypes = require("prop-types");
 function addType(name, widget) {
-    customTypes.set(name, widget);
+    customTypes.set(name, function (props) { return React.createElement("div", null,
+        React.createElement(redux_form_1.Field, tslib_1.__assign({ name: props.keyPath }, props, { component: widget }))); });
+    return widget;
 }
 exports.addType = addType;
+function addTypeWithWrapper(name, widget) {
+    customTypes.set(name, widget);
+}
+exports.addTypeWithWrapper = addTypeWithWrapper;
 var customTypes = new Map();
 function preRenderField(field, form, keyPath) {
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
@@ -29,7 +35,6 @@ var StatelessField = (function (_super) {
     }
     StatelessField.prototype.render = function () {
         var _a = this.props, field = _a.field, form = _a.form, keyPath = _a.keyPath;
-        console.log("render " + field.key);
         var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, style = field.style, children = field.children, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "style", "children"]);
         if (field.hide)
             return null;

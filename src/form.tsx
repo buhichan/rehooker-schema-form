@@ -75,7 +75,6 @@ export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&Inj
         return this.props.valid && !this.props.pristine && !this.props.submitting && !(this.props.disableResubmit && this.props.submitSucceeded);
     }
     render(){
-        console.log(`render Main Form`);
         return <form className="redux-schema-form form-horizontal" onSubmit={this.props.handleSubmit}>
             {renderFields(
                 this.props.form,

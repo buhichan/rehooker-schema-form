@@ -23,7 +23,6 @@ var ReduxSchemaForm = (function (_super) {
         return this.props.valid && !this.props.pristine && !this.props.submitting && !(this.props.disableResubmit && this.props.submitSucceeded);
     };
     ReduxSchemaForm.prototype.render = function () {
-        console.log("render Main Form");
         return React.createElement("form", { className: "redux-schema-form form-horizontal", onSubmit: this.props.handleSubmit },
             render_fields_1.renderFields(this.props.form, this.props.schema),
             this.props.children ? React.createElement("div", { className: "children" }, this.props.children) : null,

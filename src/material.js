@@ -341,54 +341,20 @@ var FileInput = (function (_super) {
     ], FileInput);
     return FileInput;
 }(React.PureComponent));
-var DefaultInput = function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: TextInput })));
-};
-field_1.addType("password", DefaultInput);
-field_1.addType("email", DefaultInput);
-field_1.addType('text', DefaultInput);
-field_1.addType('textarea', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: TextAreaInput })));
-});
-field_1.addType("file", function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: FileInput })));
-});
-field_1.addType('number', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: NumberInput })));
-});
-field_1.addType('checkbox', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: CheckboxInput })));
-});
-field_1.addType('select', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: SelectInput })));
-});
-field_1.addType('autocomplete', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: AutoCompleteSelect })));
-});
-field_1.addType('autocomplete-text', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: AutoCompleteText })));
-});
-field_1.addType("autocomplete-async", function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: AutoCompleteAsync })));
-});
-field_1.addType('date', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: DateInput })));
-});
-field_1.addType('datetime', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: DateTimeInput })));
-});
-field_1.addType("array", function (props) {
+field_1.addType("password", TextInput);
+field_1.addType("email", TextInput);
+field_1.addType('text', TextInput);
+field_1.addType('textarea', TextAreaInput);
+field_1.addType("file", FileInput);
+field_1.addType('number', NumberInput);
+field_1.addType('checkbox', CheckboxInput);
+field_1.addType('select', SelectInput);
+field_1.addType('autocomplete', AutoCompleteSelect);
+field_1.addType('autocomplete-text', AutoCompleteText);
+field_1.addType("autocomplete-async", AutoCompleteAsync);
+field_1.addType('date', DateInput);
+field_1.addType('datetime', DateTimeInput);
+field_1.addTypeWithWrapper("array", function (props) {
     return React.createElement("div", null,
         React.createElement("label", { className: "control-label" }, props.fieldSchema.label),
         React.createElement(FieldArray, { name: props.keyPath, rerenderOnEveryChange: Boolean(props.fieldSchema.getChildren), component: ArrayFieldRenderer, props: props }));

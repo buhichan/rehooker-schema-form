@@ -47,6 +47,13 @@ export type WidgetProps = {
 }
 
 export function addType(name,widget: React.ComponentClass<WidgetProps>|React.StatelessComponent<WidgetProps>) {
+    customTypes.set(name,props=><div>
+        <Field name={props.keyPath} {...props} component={widget} />
+    </div>);
+    return widget;
+}
+
+export function addTypeWithWrapper(name,widget){
     customTypes.set(name,widget);
 }
 
@@ -62,7 +69,6 @@ export function preRenderField(field:FormFieldSchema, form:string, keyPath:strin
 export class StatelessField extends React.PureComponent<{field:FormFieldSchema, form:string, keyPath:string}>{
     render() {
         const {field, form, keyPath} = this.props;
-        console.log(`render ${field.key}`);
         let {
             hide,
             type,

@@ -12,7 +12,7 @@ import {stylesheet} from "./material.jss";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
-import {addType, preRenderField, WidgetProps} from "./field";
+import {addType, addTypeWithWrapper, preRenderField, WidgetProps} from "./field";
 import injectCSS from 'react-jss';
 import {Field as RFField,FieldArray as RFFieldArray} from "redux-form";
 import {SelectField} from "./my-select-field"
@@ -477,74 +477,20 @@ class FileInput extends React.PureComponent<WidgetProps&{
     }
 }
 
-const DefaultInput = function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={TextInput}/>
-    </div>
-};
-
-addType("password",DefaultInput);
-addType("email",DefaultInput);
-addType('text',DefaultInput);
-
-addType('textarea',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={TextAreaInput} />
-    </div>
-});
-
-addType("file",function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={FileInput} />
-    </div>
-});
-
-addType('number',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={NumberInput} />
-    </div>
-});
-
-addType('checkbox',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={CheckboxInput} />
-    </div>
-});
-
-addType('select',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={SelectInput} />
-    </div>
-});
-addType('autocomplete',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteSelect} />
-    </div>
-});
-addType('autocomplete-text',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteText} />
-    </div>
-});
-addType("autocomplete-async",function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteAsync} />
-    </div>
-});
-
-addType('date',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={DateInput} />
-    </div>
-});
-
-addType('datetime',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={DateTimeInput} />
-    </div>
-});
-
-addType("array",(props)=>{
+addType("password",TextInput);
+addType("email",TextInput);
+addType('text',TextInput);
+addType('textarea',TextAreaInput);
+addType("file",FileInput);
+addType('number',NumberInput);
+addType('checkbox',CheckboxInput);
+addType('select',SelectInput);
+addType('autocomplete',AutoCompleteSelect);
+addType('autocomplete-text',AutoCompleteText);
+addType("autocomplete-async",AutoCompleteAsync);
+addType('date',DateInput);
+addType('datetime',DateTimeInput);
+addTypeWithWrapper("array",(props)=>{
     return <div>
         <label className="control-label">{props.fieldSchema.label}</label>
         <FieldArray name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.getChildren)} component={ArrayFieldRenderer} props={props}/>
