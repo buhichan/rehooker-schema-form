@@ -368,7 +368,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
                                 <Remove hoverColor={muiTheme.palette.accent1Color}/>
                             </IconButton>
                         </div>
-                        <SchemaNode form={props.meta.form} keyPath={props.keyPath+"."+i} schema={children} initialValues={childValue} />
+                        <SchemaNode form={props.meta.form} keyPath={props.keyPath+"["+i+"]c"} schema={children} initialValues={childValue} />
                     </div>
                 })
             }

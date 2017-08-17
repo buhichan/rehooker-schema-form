@@ -1,22 +1,6 @@
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 /**
  * Created by buhi on 2017/7/26.
  */
@@ -29,10 +13,10 @@ function addType(name, widget) {
 exports.addType = addType;
 var customTypes = new Map();
 function renderField(field, form, keyPath, initialValues, onSchemaChange, refChildNode) {
-    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, children = field.children, getChildren = field.getChildren, rest = __rest(field, ["hide", "type", "key", "label", "options", "children", "getChildren"]);
+    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, children = field.children, getChildren = field.getChildren, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "children", "getChildren"]);
     if (customTypes.has(type)) {
         var CustomWidget = customTypes.get(type);
-        return React.createElement(CustomWidget, __assign({ keyPath: keyPath, fieldSchema: field, onSchemaChange: onSchemaChange }, rest, { renderField: renderField }));
+        return React.createElement(CustomWidget, tslib_1.__assign({ keyPath: keyPath, fieldSchema: field, onSchemaChange: onSchemaChange }, rest, { renderField: renderField }));
     }
     //noinspection FallThroughInSwitchStatementJS
     switch (type) {
@@ -49,29 +33,29 @@ function renderField(field, form, keyPath, initialValues, onSchemaChange, refChi
             return React.createElement("div", { className: "form-group" },
                 React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
                 React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.Field, __assign({ className: "form-control", name: keyPath }, rest, { component: "input" }))));
+                    React.createElement(redux_form_1.Field, tslib_1.__assign({ className: "form-control", name: keyPath }, rest, { component: "input" }))));
         case "textarea":
             return React.createElement("div", { className: "form-group" },
                 React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
                 React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.Field, __assign({ className: "form-control", name: keyPath }, rest, { component: "textarea" }))));
+                    React.createElement(redux_form_1.Field, tslib_1.__assign({ className: "form-control", name: keyPath }, rest, { component: "textarea" }))));
         case "checkbox":
             return React.createElement("div", { className: "form-group" },
                 React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
                 React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.Field, __assign({ className: " checkbox", name: keyPath }, rest, { component: "input" }))));
+                    React.createElement(redux_form_1.Field, tslib_1.__assign({ className: " checkbox", name: keyPath }, rest, { component: "input" }))));
         case "select":
             return React.createElement("div", { className: "form-group" },
                 React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
                 React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.Field, __assign({ className: "form-control", name: keyPath }, rest, { component: "select" }),
+                    React.createElement(redux_form_1.Field, tslib_1.__assign({ className: "form-control", name: keyPath }, rest, { component: "select" }),
                         React.createElement("option", null),
                         options.map(function (option, i) { return React.createElement("option", { key: i, value: option.value }, option.name); }))));
         case "array":
             return React.createElement("div", { className: "form-group" },
                 React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
                 React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.FieldArray, __assign({ name: keyPath }, rest, { fieldSchema: field, keyPath: keyPath, renderField: renderField, component: DefaultArrayFieldRenderer }))));
+                    React.createElement(redux_form_1.FieldArray, tslib_1.__assign({ name: keyPath }, rest, { fieldSchema: field, keyPath: keyPath, renderField: renderField, component: DefaultArrayFieldRenderer }))));
         case "group":
             //这里不可能存在getChildren还没有被执行的情况
             return React.createElement("fieldset", null,
