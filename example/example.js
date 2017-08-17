@@ -1,21 +1,6 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var React = require("react");
 var ReactDOM = require("react-dom");
 var react_redux_1 = require("react-redux");
@@ -37,12 +22,6 @@ var schema = [
                 return "必须是a";
         }
     }, {
-        key: "hidden",
-        type: "hidden",
-        placeholder: "input something",
-        label: "文本属性"
-    },
-    {
         key: 'select',
         type: "select",
         label: "单选",
@@ -55,33 +34,12 @@ var schema = [
                 name: "梨子",
                 value: "pear"
             }
-        ],
-        onValueChange: function (value) {
-            if (value === 'pear')
-                return [
-                    {
-                        key: "conditional1",
-                        hide: true
-                    }
-                ];
-            else
-                return Promise.resolve([
-                    {
-                        key: "conditional1",
-                        hide: false
-                    }
-                ]);
-        }
+        ]
     }, {
         key: "checkbox",
         type: "checkbox",
         label: "勾选",
-        required: true,
-        onValueChange: function (v) {
-            return [
-                { key: "phone", hide: Boolean(v) }
-            ];
-        }
+        required: true
     }, {
         key: "mulSel",
         type: "select",
@@ -140,17 +98,26 @@ var schema = [
                     maxLength: 14,
                     pattern: /[0-9]+/
                 },
-                label: "手机号"
+                label: "手机号",
+                listens: {
+                    checkbox: function (v) { return ({ hide: v }); }
+                }
             }
         ]
     }, {
         key: "conditional1",
         type: "text",
-        label: "当单选框为梨子的时候，隐藏"
+        label: "当单选框为梨子的时候，隐藏",
+        listens: {
+            select: function (v) { return ({ hide: v === 'pear' }); }
+        }
     }, {
         key: "nest.1",
         type: "text",
-        label: "nest"
+        label: "nest",
+        style: {
+            border: "1px dotted #23f0ff"
+        }
     }, {
         key: "nest.2",
         type: "group",
@@ -183,100 +150,34 @@ var schema = [
                 name: "动物",
                 value: "animal"
             }
-        ],
-        onValueChange: function (value) {
-            if (value === 'animal') {
-                return [
-                    {
-                        key: "dependant_lv2",
-                        hide: false,
-                        value: null,
-                        options: [
-                            {
-                                name: "狗",
-                                value: "dog"
-                            }, {
-                                name: "猫",
-                                value: "cat"
-                            }
-                        ]
-                    }, {
-                        key: "dependant_lv3",
-                        hide: true,
-                        value: null
-                    }
-                ];
-            }
-            else if (value === 'plant') {
-                return [
-                    {
-                        key: "dependant_lv2",
-                        hide: false,
-                        value: null,
-                        options: [
-                            {
-                                name: "苹果",
-                                value: "apple"
-                            },
-                            {
-                                name: "梨子",
-                                value: "pear"
-                            }
-                        ]
-                    }, {
-                        key: "dependant_lv3",
-                        hide: true,
-                        value: null
-                    }
-                ];
-            }
-            else {
-                return [
-                    {
-                        key: "dependant_lv2",
-                        hide: true,
-                        value: null
-                    }, {
-                        key: "dependant_lv3",
-                        hide: true,
-                        value: null
-                    }
-                ];
-            }
-        }
+        ]
     }, {
         key: "dependant_lv2",
         type: "select",
         label: "有依赖的单选lv2",
-        onValueChange: function (value) {
-            if (value === 'dog') {
-                return [
-                    {
-                        key: "dependant_lv3",
-                        hide: false,
-                        value: null,
-                        options: [{ name: 'dogg1', value: "dogg1" }, { name: 'doggy', value: 'doggy' }, { name: 'puppy', value: 'puppy' }]
-                    }
-                ];
-            }
-            else if (value === 'cat') {
-                return [
-                    {
-                        key: "dependant_lv3",
-                        hide: false,
-                        value: null,
-                        options: [{ name: 'kitten', value: 'kitten' }, { name: 'cat', value: 'cat' }, { name: 'kitty', value: 'kitty' }]
-                    }
-                ];
-            }
-            else {
-                return [
-                    {
-                        key: "dependant_lv3",
-                        hide: true,
-                        value: null
-                    }
-                ];
+        listens: {
+            dependant_lv1: function (v) {
+                return {
+                    hide: !v,
+                    options: v === 'animal' ? [
+                        {
+                            name: "狗",
+                            value: "dog"
+                        }, {
+                            name: "猫",
+                            value: "cat"
+                        }
+                    ] : v === 'plant' ? [
+                        {
+                            name: "苹果",
+                            value: "apple"
+                        },
+                        {
+                            name: "梨子",
+                            value: "pear"
+                        }
+                    ] : []
+                };
             }
         },
         options: [],
@@ -286,69 +187,86 @@ var schema = [
         type: "select",
         label: "有依赖的单选lv3",
         options: [],
-        hide: true
+        hide: true,
+        listens: {
+            dependant_lv2: function (v) { return ({
+                options: v === 'cat' ? [
+                    { name: 'kitten', value: 'kitten' }, { name: 'cat', value: 'cat' }, { name: 'kitty', value: 'kitty' }
+                ] :
+                    v === 'dog' ?
+                        [{ name: 'dogg1', value: "dogg1" }, { name: 'doggy', value: 'doggy' }, { name: 'puppy', value: 'puppy' }] :
+                        [],
+                value: null,
+                hide: !(v === 'cat' || v === 'dog')
+            }); }
+        }
     }, {
         key: "array",
         type: "array",
-        label: "Array",
+        label: "Array(当select是梨子的时候会少一个child)",
+        listens: {
+            select: function (v) {
+                return {
+                    children: v === 'pear' ? [
+                        {
+                            key: "array-child",
+                            label: "array-child",
+                            type: "text"
+                        }
+                    ] : [
+                        {
+                            key: "array-child",
+                            label: "array-child",
+                            type: "text"
+                        }, {
+                            key: "haha",
+                            label: "dynamic-child",
+                            type: "text"
+                        }
+                    ]
+                };
+            }
+        },
+        children: []
+    }, {
+        key: "dynamic-array-alter",
+        type: "array",
+        label: "dynamic-array(使用listens)",
         children: [
             {
                 key: "array-child",
                 label: "array-child",
                 type: "text"
-            }
-        ]
-    }, {
-        key: "dynamic-array-alter",
-        type: "array",
-        label: "dynamic-array(使用onValueChange)",
-        children: [
-            {
-                key: "array-child",
-                label: "array-child",
-                type: "text",
-                onValueChange: function (v) {
-                    console.log(arguments);
-                    return v && isFinite(v) ? [
-                        {
-                            key: "currency",
-                            hide: false
-                        }
-                    ] : [
-                        {
-                            key: "currency",
-                            hide: true
-                        }
-                    ];
-                }
             },
             {
                 key: "currency",
                 label: "currency",
                 type: "text",
-                hide: true
+                hide: true,
+                listens: function (keyPath) {
+                    return _a = {},
+                        _a[keyPath + ".array-child"] = function (v, child) {
+                            console.log(arguments);
+                            return {
+                                hide: !v
+                            };
+                        },
+                        _a;
+                    var _a;
+                }
             }
         ]
+    }, {
+        key: "test-component",
+        type: function (props) {
+            var input = props.input, fieldSchema = props.fieldSchema, renderField = props.renderField, meta = props.meta;
+            return React.createElement("div", null,
+                React.createElement("label", { htmlFor: input.name },
+                    fieldSchema.label,
+                    React.createElement("input", tslib_1.__assign({ type: "color" }, input))));
+        },
+        label: "type也可以是组件"
     },
-    // {
-    //     key:"dynamic-array",
-    //     type:"array",
-    //     label:"dynamic-array（使用getChildren）",
-    //     getChildren:v=>{
-    //         return [
-    //             {
-    //                 key:"array-child",
-    //                 label:"array-child",
-    //                 type:"text"
-    //             },
-    //             v&&isFinite(v['array-child'])?{
-    //                 key:"currency",
-    //                 label:"currency",
-    //                 type:"text"
-    //             }:null
-    //         ]
-    //     }
-    // },
     {
         key: "autocomplete",
         type: "autocomplete-async",
@@ -374,7 +292,7 @@ var composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || redux_1
 var middleware = composeEnhancers(redux_1.applyMiddleware());
 var store = redux_1.createStore(reducer, {}, middleware);
 var App = (function (_super) {
-    __extends(App, _super);
+    tslib_1.__extends(App, _super);
     function App() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = {
@@ -404,19 +322,19 @@ var App = (function (_super) {
     App.prototype.render = function () {
         return React.createElement("div", null,
             React.createElement(_1.ReduxSchemaForm, { form: "random", initialValues: this.data, schema: schema, onSubmit: this.onSubmit }),
-            React.createElement("p", null, "\u8BF8\u5982\u6570\u636Eschema\u53D1\u751F\u53D8\u5316\u7684\u9700\u6C42\uFF0C\u4E0D\u5E94\u8BE5\u7531\u8868\u5355\u8FD9\u4E00\u5C42\u6765\u5B9E\u73B0\uFF01\u5E94\u8BE5\u662F\u903B\u8F91\u5C42\u5B9E\u73B0\u7684\u529F\u80FD\uFF0C\u8FD9\u91CC\u7684\u8868\u5355\u53EA\u8981\u7B28\u7B28\u7684\u5C31\u884C\u4E86"),
+            React.createElement("p", null, "\u8BF8\u5982\u6570\u636Eschema\u53D1\u751F\u53D8\u5316\u7684\u9700\u6C42\uFF0C\u6700\u597D\u4E0D\u7531\u8868\u5355\u8FD9\u4E00\u5C42\u6765\u5B9E\u73B0.\u5E94\u8BE5\u662F\u903B\u8F91\u5C42\u5B9E\u73B0\u7684\u529F\u80FD\uFF0C\u8FD9\u91CC\u7684\u8868\u5355\u53EA\u8981\u7B28\u7B28\u7684\u5C31\u884C\u4E86.\u4F46\u662F\u4E3A\u4E86\u65B9\u4FBF,\u8FD8\u662F\u52A0\u4E86listens\u8FD9\u4E2AAPI."),
             React.createElement("pre", null,
                 React.createElement("code", null,
                     "data:",
                     JSON.stringify(this.props.values, null, "\t"))));
     };
+    App = tslib_1.__decorate([
+        react_redux_1.connect(function (store) { return ({
+            values: store.form.random ? store.form.random.values : {}
+        }); })
+    ], App);
     return App;
 }(React.PureComponent));
-App = __decorate([
-    react_redux_1.connect(function (store) { return ({
-        values: store.form.random ? store.form.random.values : {}
-    }); })
-], App);
 var muiTheme = getMuiTheme_1.default({
     palette: {
         primary1Color: "#885543"

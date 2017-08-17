@@ -12,11 +12,11 @@ import {stylesheet} from "./material.jss";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
-import {addType, WidgetProps} from "./field";
-import {SchemaNode} from "./schema-node";
+import {addType, preRenderField, WidgetProps} from "./field";
 import injectCSS from 'react-jss';
 import {Field as RFField,FieldArray as RFFieldArray} from "redux-form";
 import {SelectField} from "./my-select-field"
+import {renderFields} from "./render-fields";
 
 function NumberInput(props:WidgetProps){
     return <TextField
@@ -161,7 +161,30 @@ function CheckboxInput (props:WidgetProps){
 }
 
 //fixme: todo: https://github.com/callemall/material-ui/issues/6080
-class SelectInput extends React.PureComponent<WidgetProps,any>{
+export class SelectInput extends React.PureComponent<WidgetProps,any>{
+    state={
+        options:null
+    };
+    reload(props:WidgetProps){
+        const rawOptions =  props.fieldSchema.options;
+        if(typeof rawOptions=== 'function'){
+            if(!rawOptions.length)
+                (rawOptions as AsyncOptions)().then(options=>this.setState({
+                    options
+                }))
+
+        }else if (rawOptions instanceof Array)
+            this.setState({
+                options:props.fieldSchema.options
+            })
+    }
+    componentWillReceiveProps(nextProps:WidgetProps){
+        if(nextProps.fieldSchema.options!==this.props.fieldSchema.options)
+            this.reload(nextProps);
+    }
+    componentWillMount(){
+        this.reload(this.props);
+    }
     render() {
         const props = this.props;
         return <SelectField
@@ -180,9 +203,9 @@ class SelectInput extends React.PureComponent<WidgetProps,any>{
                 }}
             >
             {
-                (props.fieldSchema.options as Options).map((option) => (
+                this.state.options?this.state.options.map((option) => (
                     <MenuItem className="option" key={option.value} value={option.value} primaryText={option.name}/>
-                ))
+                )):<MenuItem className="option" value={null} primaryText={this.props.fieldSchema.loadingText||"载入中"}/>
             }
         </SelectField>
     }
@@ -368,7 +391,9 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
                                 <Remove hoverColor={muiTheme.palette.accent1Color}/>
                             </IconButton>
                         </div>
-                        <SchemaNode form={props.meta.form} keyPath={props.keyPath+"."+i} schema={children} initialValues={childValue} />
+                        {
+                            renderFields(props.meta.form,children,props.keyPath+"."+i)
+                        }
                     </div>
                 })
             }
@@ -523,12 +548,6 @@ addType("array",(props)=>{
     return <div>
         <label className="control-label">{props.fieldSchema.label}</label>
         <FieldArray name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.getChildren)} component={ArrayFieldRenderer} props={props}/>
-    </div>
-});
-
-addType('hidden',(props)=>{
-    return <div>
-
     </div>
 });
 

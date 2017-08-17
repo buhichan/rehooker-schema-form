@@ -54,6 +54,8 @@
     "react-dom": "*",
     "react-redux": "*",
     "redux": "*",
-    "redux-form": "7.*"
+    "redux-form": "7.*",
+    "reselect": "*",
+    "tslib": "*"
   }
 }

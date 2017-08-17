@@ -3,59 +3,46 @@
  */
 import * as React from 'react'
 import {reduxForm, ConfigProps, InjectedFormProps} from 'redux-form'
-import {SchemaNode} from "./schema-node";
 import {WidgetProps} from "./field";
-
-export type SupportedFieldType = "text"|"password"|"file"|"select"|"date"|'datetime'|"checkbox"|"textarea"|"group"|"color"|"number"|"array"|string;
+import {renderFields} from "./render-fields";
 
 export type Options = {name:string,value:string|number}[]
 export type AsyncOptions = ()=>Promise<Options>
 export type RuntimeAsyncOptions = (value:any, props?:WidgetProps)=>(Promise<Options>|Options)
+export type FieldSchamaChangeListeners={
+    /**
+     * q:what is valuePath here?
+     * a:
+     * If your formValue is {"foo":{"haha":[{"bar":10032}]}}, then the callback here will receive these arguments:
+     * 10032, {bar:10032}, [{bar:10032}], {haha:[{bar:10032}]}, {foo:...}
+     */
+    [fieldKey:string]: (value:any,formValue:any)=>Partial<FormFieldSchema>|Promise<Partial<FormFieldSchema>>;
+};
 
-export interface BaseSchema extends Partial<ConfigProps<any,any>>{
+export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
     key:string,
-    type: SupportedFieldType,
+    type: string | React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>,
     label:string,
     hide?:boolean,
     placeholder?:string,
     required?:boolean,
     disabled?:boolean,
     multiple?:boolean,
-    children?:BaseSchema[]
+    children?:FormFieldSchema[]
     options?:Options | AsyncOptions | RuntimeAsyncOptions,
-    normalize?:(value,previousValue?, allValues?)=>any,
     /**
      * 返回url
      * @param file 要上传的文件
      */
     onFileChange?:(file:File)=>Promise<string>,
     data?:any,
-
+    style?:React.CSSProperties,
     /**
-     * @deprecated
-     * 使用onValueChange代替.
+     * keyPath will be the array of keys from the root of the form to your deeply nested field.
      */
-    getChildren?:(any:any)=>FormFieldSchema[]
+    listens?:FieldSchamaChangeListeners| ((keyPath:string[])=>FieldSchamaChangeListeners),
+    loadingText?:string
     [rest:string]:any
-}
-
-export type ChangeOfSchema = (Partial<ParsedFormFieldSchema>&{key:string})[];
-
-export interface FormFieldSchema extends BaseSchema{
-    /**
-     * 当字段值发生改变时如何影响整个表单
-     * @param newValue
-     * @param previousValue
-     * @param valuesPath 当这个字段属于嵌套字段时，除了第三个参数是整个表单的值之外，还会有第四个、第五个等等参数，形成的路径指向字段所在位置，例如：key='nest.1.a'，表单的值是{nest:[{a:1},{a:2}]}，则onValueChange的第四个参数为[{a:1},{a:2}]，第五个参数为{a:1}
-     */
-    onValueChange?: (newValue:any,previousValue?:any,...valuesPath:any[])=>ChangeOfSchema|Promise<ChangeOfSchema>
-    options?:Options | AsyncOptions | RuntimeAsyncOptions,
-    children?:FormFieldSchema[],
-    getChildren?:((childValue:any)=>FormFieldSchema[])
-}
-
-export interface ParsedFormFieldSchema extends BaseSchema{
-    options?:Options | RuntimeAsyncOptions,
 }
 
 let DefaultButton = (props)=>{
@@ -88,8 +75,12 @@ export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&Inj
         return this.props.valid && !this.props.pristine && !this.props.submitting && !(this.props.disableResubmit && this.props.submitSucceeded);
     }
     render(){
+        console.log(`render Main Form`);
         return <form className="redux-schema-form form-horizontal" onSubmit={this.props.handleSubmit}>
-            <SchemaNode schema={this.props.schema} form={this.props.form} initialValues={this.props.initialValues}/>
+            {renderFields(
+                this.props.form,
+                this.props.schema
+            )}
             {this.props.children?<div className="children">
                 {this.props.children}
             </div>:null}

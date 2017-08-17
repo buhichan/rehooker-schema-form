@@ -7,6 +7,7 @@ import "../src/material"
 import {FormFieldSchema, ReduxSchemaForm} from "../"
 import {MuiThemeProvider} from "material-ui/styles";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
+import {WidgetProps} from "../src/field";
 require('react-tap-event-plugin')();
 
 let schema:FormFieldSchema[] = [
@@ -20,12 +21,6 @@ let schema:FormFieldSchema[] = [
                 return "必须是a"
         }
     },{
-        key:"hidden",
-        type:"hidden",
-        placeholder:"input something",
-        label:"文本属性"
-    },
-    {
         key:'select',
         type:"select",
         label:"单选",
@@ -38,32 +33,12 @@ let schema:FormFieldSchema[] = [
                 name:"梨子",
                 value:"pear"
             }
-        ],
-        onValueChange:(value)=>{
-            if(value==='pear')
-                return [
-                    {
-                        key:"conditional1",
-                        hide:true
-                    }
-                ];
-            else return Promise.resolve([
-                {
-                    key:"conditional1",
-                    hide:false
-                }
-            ])
-        }
+        ]
     },{
         key:"checkbox",
         type:"checkbox",
         label:"勾选",
-        required:true,
-        onValueChange(v){
-            return [
-                {key:"phone",hide:Boolean(v)}
-            ]
-        }
+        required:true
     },{
         key:"mulSel",
         type:"select",
@@ -122,17 +97,26 @@ let schema:FormFieldSchema[] = [
                     maxLength:14,
                     pattern:/[0-9]+/
                 },
-                label:"手机号"
+                label:"手机号",
+                listens:{
+                    checkbox:v=>({hide:v})
+                }
             }
         ]
     },{
         key:"conditional1",
         type:"text",
-        label:"当单选框为梨子的时候，隐藏"
+        label:"当单选框为梨子的时候，隐藏",
+        listens:{
+            select:(v)=>({hide:v==='pear'})
+        }
     },{
         key:"nest.1",
         type:"text",
-        label:"nest"
+        label:"nest",
+        style:{
+            border:"1px dotted #23f0ff"
+        }
     },{
         key:"nest.2",
         type:"group",
@@ -165,96 +149,34 @@ let schema:FormFieldSchema[] = [
                 name:"动物",
                 value:"animal"
             }
-        ],
-        onValueChange:(value)=>{
-            if(value ==='animal'){
-                return [
-                    {
-                        key:"dependant_lv2",
-                        hide:false,
-                        value:null,
-                        options:[
-                            {
-                                name: "狗",
-                                value: "dog"
-                            }, {
-                                name: "猫",
-                                value: "cat"
-                            }
-                        ]
-                    },{
-                        key:"dependant_lv3",
-                        hide:true,
-                        value:null
-                    }
-                ]
-            }else if(value ==='plant'){
-                return [
-                    {
-                        key:"dependant_lv2",
-                        hide:false,
-                        value:null,
-                        options:[
-                            {
-                                name: "苹果",
-                                value: "apple"
-                            },
-                            {
-                                name: "梨子",
-                                value: "pear"
-                            }
-                        ]
-                    },{
-                        key:"dependant_lv3",
-                        hide:true,
-                        value:null
-                    }
-                ]
-            }else{
-                return [
-                    {
-                        key:"dependant_lv2",
-                        hide:true,
-                        value:null
-                    },{
-                        key:"dependant_lv3",
-                        hide:true,
-                        value:null
-                    }
-                ]
-            }
-        }
+        ]
     },{
         key:"dependant_lv2",
         type:"select",
         label:"有依赖的单选lv2",
-        onValueChange:(value):any=>{
-            if(value ==='dog'){
-                return [
-                    {
-                        key:"dependant_lv3",
-                        hide:false,
-                        value:null,
-                        options:[{name:'dogg1',value:"dogg1"}, {name:'doggy',value:'doggy'}, {name:'puppy',value:'puppy'}]
-                    }
-                ]
-            }else if(value ==='cat'){
-                return [
-                    {
-                        key:"dependant_lv3",
-                        hide:false,
-                        value:null,
-                        options:[{name:'kitten',value:'kitten'}, {name:'cat',value:'cat'}, {name:'kitty',value:'kitty'}]
-                    }
-                ]
-            }else{
-                return [
-                    {
-                        key:"dependant_lv3",
-                        hide:true,
-                        value:null
-                    }
-                ]
+        listens:{
+            dependant_lv1:v=>{
+                return{
+                    hide:!v,
+                    options: v==='animal'?[
+                        {
+                            name: "狗",
+                            value: "dog"
+                        }, {
+                            name: "猫",
+                            value: "cat"
+                        }
+                    ]:v==='plant'?[
+                        {
+                            name: "苹果",
+                            value: "apple"
+                        },
+                        {
+                            name: "梨子",
+                            value: "pear"
+                        }
+                    ]:[]
+                }
             }
         },
         options:[],
@@ -264,69 +186,86 @@ let schema:FormFieldSchema[] = [
         type:"select",
         label:"有依赖的单选lv3",
         options:[],
-        hide:true
+        hide:true,
+        listens:{
+            dependant_lv2:(v)=>({
+                options:v==='cat'?[
+                    {name:'kitten',value:'kitten'}, {name:'cat',value:'cat'}, {name:'kitty',value:'kitty'}]:
+                    v==='dog'?
+                        [{name:'dogg1',value:"dogg1"}, {name:'doggy',value:'doggy'}, {name:'puppy',value:'puppy'}]:
+                        [],
+                value:null,
+                hide:!(v==='cat'||v==='dog')
+            })
+        }
     },{
         key:"array",
         type:"array",
-        label:"Array",
+        label:"Array(当select是梨子的时候会少一个child)",
+        listens:{
+            select:v=>{
+                return {
+                    children:v==='pear'?[
+                        {
+                            key:"array-child",
+                            label:"array-child",
+                            type:"text"
+                        }
+                    ]:[
+                        {
+                            key:"array-child",
+                            label:"array-child",
+                            type:"text"
+                        },{
+                            key:"haha",
+                            label:"dynamic-child",
+                            type:"text"
+                        }
+                    ]
+                }
+            }
+        },
+        children:[]
+    },{
+        key:"dynamic-array-alter",
+        type:"array",
+        label:"dynamic-array(使用listens)",
         children:[
             {
                 key:"array-child",
                 label:"array-child",
                 type:"text"
-            }
-        ]
-    },{
-        key:"dynamic-array-alter",
-        type:"array",
-        label:"dynamic-array(使用onValueChange)",
-        children:[
-            {
-                key:"array-child",
-                label:"array-child",
-                type:"text",
-                onValueChange(v){
-                    console.log(arguments);
-                    return v&&isFinite(v)?[
-                        {
-                            key:"currency",
-                            hide:false
-                        }
-                    ]:[
-                        {
-                            key:"currency",
-                            hide:true
-                        }
-                    ]
-                }
             },
             {
                 key:"currency",
                 label:"currency",
                 type:"text",
-                hide:true
+                hide:true,
+                listens:(keyPath)=>{
+                    return {
+                        [keyPath+".array-child"]: function (v, child) {
+                            console.log(arguments);
+                            return {
+                                hide:!v
+                            }
+                        }
+                    }
+                }
             }
         ]
+    },{
+        key:"test-component",
+        type:function(props:WidgetProps){
+            const {input,fieldSchema,renderField,meta} = props;
+            return <div>
+                <label htmlFor={input.name} >
+                    {fieldSchema.label}
+                    <input type="color" {...input} />
+                </label>
+            </div>
+        },
+        label:"type也可以是组件"
     },
-    // {
-    //     key:"dynamic-array",
-    //     type:"array",
-    //     label:"dynamic-array（使用getChildren）",
-    //     getChildren:v=>{
-    //         return [
-    //             {
-    //                 key:"array-child",
-    //                 label:"array-child",
-    //                 type:"text"
-    //             },
-    //             v&&isFinite(v['array-child'])?{
-    //                 key:"currency",
-    //                 label:"currency",
-    //                 type:"text"
-    //             }:null
-    //         ]
-    //     }
-    // },
     {
         key:"autocomplete",
         type:"autocomplete-async",
@@ -378,7 +317,7 @@ class App extends React.PureComponent<any,any>{
     render(){
         return <div>
             <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit} />
-            <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
+            <p>诸如数据schema发生变化的需求，最好不由表单这一层来实现.应该是逻辑层实现的功能，这里的表单只要笨笨的就行了.但是为了方便,还是加了listens这个API.</p>
             <pre>
                 <code>
                 data:{

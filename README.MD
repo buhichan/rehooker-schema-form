@@ -92,7 +92,7 @@ export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
     multiple?:boolean,
     children?:FormFieldSchema[]
     options?:Options | AsyncOptions | RuntimeAsyncOptions,
-    onValueChange?:(newValue:any,previousValue?:any,formValue?:any)=>ChangeOfSchema|Promise<ChangeOfSchema>,
+    sideEffect?:(newValue:any,previousValue?:any,formValue?:any)=>ChangeOfSchema|Promise<ChangeOfSchema>,
     getChildren?:((childValue:any)=>FormFieldSchema[])
     [reduxFormFieldProps:string]:any 
     [materialUIComponentProps:string]:any 
@@ -144,9 +144,9 @@ const schema = [
 //The value passed to onSubmit will be like: {g:{name:"john"}}
 ```
 
-- onValueChange
+- sideEffect
 
-Called when the value of this field is changed or initialized. if it returns anything, it should be an array of type `Partial<FormFieldSchema>[]`, which will merged into existing `schema` using the `key` field.
+Called when the value of this field is changed or initialized. If it returns anything, it should be an array of type `Partial<FormFieldSchema>[]`, which will merged into existing `schema` using the `key` field.
 
 - getChildren
 
