@@ -151,8 +151,9 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
         this.reload(this.props)
     }
     reload(props:FieldNodeProps){
+        const state = this.context.store.getState();
         Promise.all(Object.keys(props.listeners).map((fieldKey,i)=>{
-            const formValue = getFormValues(props.form)(this.context.store);
+            const formValue = getFormValues(props.form)(state);
             const res = props.listeners[fieldKey](props.values[i],formValue);
             if(!(res instanceof Promise))
                 return Promise.resolve(res||{});

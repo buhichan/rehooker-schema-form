@@ -392,7 +392,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
                             </IconButton>
                         </div>
                         {
-                            renderFields(props.meta.form,children,props.keyPath+"."+i)
+                            renderFields(props.meta.form,children,props.keyPath+"["+i+"]")
                         }
                     </div>
                 })

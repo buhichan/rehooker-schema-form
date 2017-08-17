@@ -79,8 +79,9 @@ var StatefulField = (function (_super) {
     };
     StatefulField.prototype.reload = function (props) {
         var _this = this;
+        var state = this.context.store.getState();
         Promise.all(Object.keys(props.listeners).map(function (fieldKey, i) {
-            var formValue = redux_form_1.getFormValues(props.form)(_this.context.store);
+            var formValue = redux_form_1.getFormValues(props.form)(state);
             var res = props.listeners[fieldKey](props.values[i], formValue);
             if (!(res instanceof Promise))
                 return Promise.resolve(res || {});
