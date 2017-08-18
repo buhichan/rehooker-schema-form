@@ -266,14 +266,15 @@ class AutoCompleteSelect extends SelectInput{
     };
     render() {
         const {meta,input,fieldSchema} = this.props;
-        const value = (this.state.options as Options).find(x=>x.value === input.value);
+        const options = (this.state.options || []) as Options;
+        const value = options.find(x=>x.value === input.value);
         return <BaseAutoComplete
             fieldSchema={fieldSchema}
             input={input}
             meta={meta}
             openOnFocus
             searchText={value?value.name:""}
-            dataSource={fieldSchema.options || []}
+            dataSource={options}
             onNewRequest={this.onNewRequest}
         />
     }
@@ -281,16 +282,18 @@ class AutoCompleteSelect extends SelectInput{
 
 class AutoCompleteText extends SelectInput{
     onUpdateInput=name=>{
-        const entry = (this.props.fieldSchema.options as Options).find(x=>x.name===name);
+        const options = (this.state.options || []) as Options;
+        const entry = options.find(x=>x.name===name);
         return this.props.input.onChange(entry?entry.value:name);
     };
     render() {
         const {meta,input,fieldSchema} = this.props;
+        const options = (this.state.options || []) as Options;
         return <BaseAutoComplete
             input={input}
             meta={meta}
             fieldSchema={fieldSchema}
-            dataSource={this.state.options || []}
+            dataSource={options}
             searchText={input.value}
             onUpdateInput={this.onUpdateInput}
         />;

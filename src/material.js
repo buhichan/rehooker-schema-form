@@ -171,8 +171,9 @@ var AutoCompleteSelect = (function (_super) {
     }
     AutoCompleteSelect.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        var value = this.state.options.find(function (x) { return x.value === input.value; });
-        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, searchText: value ? value.name : "", dataSource: fieldSchema.options || [], onNewRequest: this.onNewRequest });
+        var options = (this.state.options || []);
+        var value = options.find(function (x) { return x.value === input.value; });
+        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, searchText: value ? value.name : "", dataSource: options, onNewRequest: this.onNewRequest });
     };
     return AutoCompleteSelect;
 }(SelectInput));
@@ -181,14 +182,16 @@ var AutoCompleteText = (function (_super) {
     function AutoCompleteText() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onUpdateInput = function (name) {
-            var entry = _this.props.fieldSchema.options.find(function (x) { return x.name === name; });
+            var options = (_this.state.options || []);
+            var entry = options.find(function (x) { return x.name === name; });
             return _this.props.input.onChange(entry ? entry.value : name);
         };
         return _this;
     }
     AutoCompleteText.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fieldSchema: fieldSchema, dataSource: this.state.options || [], searchText: input.value, onUpdateInput: this.onUpdateInput });
+        var options = (this.state.options || []);
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fieldSchema: fieldSchema, dataSource: options, searchText: input.value, onUpdateInput: this.onUpdateInput });
     };
     return AutoCompleteText;
 }(SelectInput));
