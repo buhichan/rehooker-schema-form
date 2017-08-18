@@ -260,13 +260,13 @@ class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,fullResu
     }
 }
 
-class AutoCompleteSelect extends React.Component<WidgetProps,any>{
+class AutoCompleteSelect extends SelectInput{
     onNewRequest=(value)=>{
         return this.props.input.onChange(value['value']);
     };
     render() {
         const {meta,input,fieldSchema} = this.props;
-        const value = (fieldSchema.options as Options).find(x=>x.value === input.value);
+        const value = (this.state.options as Options).find(x=>x.value === input.value);
         return <BaseAutoComplete
             fieldSchema={fieldSchema}
             input={input}
@@ -279,7 +279,7 @@ class AutoCompleteSelect extends React.Component<WidgetProps,any>{
     }
 }
 
-class AutoCompleteText extends React.Component<WidgetProps,any>{
+class AutoCompleteText extends SelectInput{
     onUpdateInput=name=>{
         const entry = (this.props.fieldSchema.options as Options).find(x=>x.name===name);
         return this.props.input.onChange(entry?entry.value:name);
@@ -290,7 +290,7 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
             input={input}
             meta={meta}
             fieldSchema={fieldSchema}
-            dataSource={fieldSchema.options}
+            dataSource={this.state.options}
             searchText={input.value}
             onUpdateInput={this.onUpdateInput}
         />;

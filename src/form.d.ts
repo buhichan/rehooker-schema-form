@@ -54,8 +54,8 @@ export declare type ButtonProps = {
 };
 export declare class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps & InjectedFormProps<any, any>> & {
     schema: FormFieldSchema[];
-    dispatch?: (...args: any[]) => any;
     noButton?: boolean;
+    dispatch?: (...args: any[]) => any;
     disableResubmit?: boolean;
 }, {}> {
     submitable(): boolean;

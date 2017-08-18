@@ -6,13 +6,15 @@ export let schema:FormFieldSchema[] = [
         key:"text",
         type:"text",
         placeholder:"input something",
+        parse:v=>(v||"")+"0",
+        format:(v="")=>v.substr(0,v.length-1),
         label:"文本属性",
         validate:v=>{
             if(v!=="a")
                 return "必须是a"
         }
     },{
-        key:'select',
+        key:'select1',
         type:"select",
         label:"单选",
         options:[
@@ -61,7 +63,7 @@ export let schema:FormFieldSchema[] = [
             if(v instanceof File && !v.type.startsWith('image/'))
                 return "只能上传图片"
         },
-        onFileChange(file){
+        onFileChange(file:File|FileList){
             return new Promise(r=>{
                 setTimeout(()=>{
                     r("/fake/url")
@@ -99,7 +101,7 @@ export let schema:FormFieldSchema[] = [
         type:"text",
         label:"当单选框为梨子的时候，隐藏",
         listens:{
-            select:(v)=>({hide:v==='pear'})
+            select1:(v,formValue)=>({hide:v==='pear',value:null})
         }
     },{
         key:"nest.1",
@@ -194,7 +196,7 @@ export let schema:FormFieldSchema[] = [
         type:"array",
         label:"Array(当select是梨子的时候会少一个child)",
         listens:{
-            select:v=>{
+            select1:v=>{
                 return {
                     children:v==='pear'?[
                         {
@@ -234,6 +236,7 @@ export let schema:FormFieldSchema[] = [
                 hide:true,
                 listens:(keyPath)=>{
                     return {
+                        //keyPaht = 'dynamic-array-alter[0,1,2,....]'
                         [keyPath+".array-child"]: function (v, child) {
                             console.log(arguments);
                             return {

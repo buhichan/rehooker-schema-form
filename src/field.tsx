@@ -102,7 +102,7 @@ export class StatelessField extends React.PureComponent<{field:FormFieldSchema, 
                     <fieldset key={field.key}>
                         <legend>{label}</legend>
                         {
-                            renderFields(form, children, keyPath + "." + key)
+                            renderFields(form, children, keyPath)
                         }
                     </fieldset>
                 </div>;

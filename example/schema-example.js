@@ -7,13 +7,18 @@ exports.schema = [
         key: "text",
         type: "text",
         placeholder: "input something",
+        parse: function (v) { return (v || "") + "0"; },
+        format: function (v) {
+            if (v === void 0) { v = ""; }
+            return v.substr(0, v.length - 1);
+        },
         label: "文本属性",
         validate: function (v) {
             if (v !== "a")
                 return "必须是a";
         }
     }, {
-        key: 'select',
+        key: 'select1',
         type: "select",
         label: "单选",
         options: [
@@ -100,7 +105,7 @@ exports.schema = [
         type: "text",
         label: "当单选框为梨子的时候，隐藏",
         listens: {
-            select: function (v) { return ({ hide: v === 'pear' }); }
+            select1: function (v, formValue) { return ({ hide: v === 'pear', value: null }); }
         }
     }, {
         key: "nest.1",
@@ -196,7 +201,7 @@ exports.schema = [
         type: "array",
         label: "Array(当select是梨子的时候会少一个child)",
         listens: {
-            select: function (v) {
+            select1: function (v) {
                 return {
                     children: v === 'pear' ? [
                         {
@@ -236,6 +241,7 @@ exports.schema = [
                 hide: true,
                 listens: function (keyPath) {
                     return _a = {},
+                        //keyPaht = 'dynamic-array-alter[0,1,2,....]'
                         _a[keyPath + ".array-child"] = function (v, child) {
                             console.log(arguments);
                             return {

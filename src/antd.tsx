@@ -51,7 +51,7 @@ function TextInput(props){
 }
 
 
-class  AntdSelectInput extends React.Component<any,any>{
+class AntdSelectInput extends React.Component<any,any>{
     state={
         options:null
     };
@@ -217,15 +217,13 @@ function NumberInput(props){
 }
 
 
-class AutoCompleteSelect extends React.Component<WidgetProps,any>{
-
+class AutoCompleteSelect extends AntdSelectInput{
     render() {
         const {meta,input,fieldSchema} = this.props;
         const value = (fieldSchema.options as Options).find(x=>x.value === input.value);
-        return <div   style={{ width:"100%" }}>
-
+        return <div style={{ width:"100%" }}>
             <AutoComplete
-                dataSource={(fieldSchema.options as any).map(itm=>({value:itm.value,text:itm.name}))}
+                dataSource={(this.state.options as any).map(itm=>({value:itm.value,text:itm.name}))}
                 style={{ width:"100%" }}
                 onSelect={(value)=>input.onChange(value)}
             />

@@ -152,11 +152,11 @@ var AutoCompleteSelect = (function (_super) {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
         var value = fieldSchema.options.find(function (x) { return x.value === input.value; });
         return React.createElement("div", { style: { width: "100%" } },
-            React.createElement(antd_1.AutoComplete, { dataSource: fieldSchema.options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }), style: { width: "100%" }, onSelect: function (value) { return input.onChange(value); } }),
+            React.createElement(antd_1.AutoComplete, { dataSource: this.state.options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }), style: { width: "100%" }, onSelect: function (value) { return input.onChange(value); } }),
             React.createElement("div", { style: errorStyle }, this.props.meta.error));
     };
     return AutoCompleteSelect;
-}(React.Component));
+}(AntdSelectInput));
 var FileInput = (function (_super) {
     tslib_1.__extends(FileInput, _super);
     function FileInput() {

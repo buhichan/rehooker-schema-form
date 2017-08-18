@@ -39,8 +39,8 @@ class App extends React.PureComponent<any,any>{
     };
     render(){
         return <div>
-            <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit}>
-            </ReduxSchemaForm>
+            {/*{# redux-form #}*/}
+            <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit} />
             <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
             <pre>
                 <code>

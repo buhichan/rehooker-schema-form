@@ -56,7 +56,7 @@ var StatelessField = (function (_super) {
                 return React.createElement("div", { className: "field " + typeName, style: field.style },
                     React.createElement("fieldset", { key: field.key },
                         React.createElement("legend", null, label),
-                        render_fields_1.renderFields(form, children, keyPath + "." + key)));
+                        render_fields_1.renderFields(form, children, keyPath)));
             default:
                 return React.createElement("div", { className: "field" },
                     React.createElement("span", null,
