@@ -172,7 +172,7 @@ var AutoCompleteSelect = (function (_super) {
     AutoCompleteSelect.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
         var value = this.state.options.find(function (x) { return x.value === input.value; });
-        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, searchText: value ? value.name : "", dataSource: fieldSchema.options, onNewRequest: this.onNewRequest });
+        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, searchText: value ? value.name : "", dataSource: fieldSchema.options || [], onNewRequest: this.onNewRequest });
     };
     return AutoCompleteSelect;
 }(SelectInput));
@@ -188,7 +188,7 @@ var AutoCompleteText = (function (_super) {
     }
     AutoCompleteText.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fieldSchema: fieldSchema, dataSource: this.state.options, searchText: input.value, onUpdateInput: this.onUpdateInput });
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fieldSchema: fieldSchema, dataSource: this.state.options || [], searchText: input.value, onUpdateInput: this.onUpdateInput });
     };
     return AutoCompleteText;
 }(SelectInput));

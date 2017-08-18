@@ -273,7 +273,7 @@ class AutoCompleteSelect extends SelectInput{
             meta={meta}
             openOnFocus
             searchText={value?value.name:""}
-            dataSource={fieldSchema.options}
+            dataSource={fieldSchema.options || []}
             onNewRequest={this.onNewRequest}
         />
     }
@@ -290,7 +290,7 @@ class AutoCompleteText extends SelectInput{
             input={input}
             meta={meta}
             fieldSchema={fieldSchema}
-            dataSource={this.state.options}
+            dataSource={this.state.options || []}
             searchText={input.value}
             onUpdateInput={this.onUpdateInput}
         />;

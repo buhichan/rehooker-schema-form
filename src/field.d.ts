@@ -38,7 +38,7 @@ export declare type WidgetProps = {
     [rest: string]: any;
     onSchemaChange: (changes: Partial<FormFieldSchema>[] | Promise<Partial<FormFieldSchema>[]>) => void;
 };
-export declare function addType(name: any, widget: React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>): React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>;
+export declare function addType(name: any, widget?: React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>): any;
 export declare function addTypeWithWrapper(name: any, widget: any): void;
 export declare function preRenderField(field: FormFieldSchema, form: string, keyPath: string): any;
 export declare class StatelessField extends React.PureComponent<{

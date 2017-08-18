@@ -11,9 +11,12 @@ var react_redux_1 = require("react-redux");
 var reselect_1 = require("reselect");
 var PropTypes = require("prop-types");
 function addType(name, widget) {
-    customTypes.set(name, function (props) { return React.createElement("div", null,
-        React.createElement(redux_form_1.Field, tslib_1.__assign({ name: props.keyPath }, props, { component: widget }))); });
-    return widget;
+    function addWidgetTypeToRegistration(widget) {
+        customTypes.set(name, function (props) { return React.createElement("div", null,
+            React.createElement(redux_form_1.Field, tslib_1.__assign({ name: props.keyPath }, props, { component: widget }))); });
+        return widget;
+    }
+    return widget ? addWidgetTypeToRegistration(widget) : addWidgetTypeToRegistration;
 }
 exports.addType = addType;
 function addTypeWithWrapper(name, widget) {

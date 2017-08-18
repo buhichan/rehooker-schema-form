@@ -223,7 +223,7 @@ class AutoCompleteSelect extends AntdSelectInput{
         const value = (fieldSchema.options as Options).find(x=>x.value === input.value);
         return <div style={{ width:"100%" }}>
             <AutoComplete
-                dataSource={(this.state.options as any).map(itm=>({value:itm.value,text:itm.name}))}
+                dataSource={(this.state.options as any || []).map(itm=>({value:itm.value,text:itm.name}))}
                 style={{ width:"100%" }}
                 onSelect={(value)=>input.onChange(value)}
             />
