@@ -120,7 +120,7 @@ export function renderField(field:ParsedFormFieldSchema,form:string,keyPath:stri
                 <legend>{label}</legend>
                 <SchemaNode ref={(ref)=>{
                     refChildNode(ref,key)
-                }} keyPath={keyPath+"."+field.key} initialValues={initialValues} form={form} schema={field.children} />
+                }} keyPath={(keyPath?(keyPath + "."):"")+field.key} initialValues={initialValues} form={form} schema={field.children} />
             </fieldset>;
         default:
             return <span>不可识别的字段:{JSON.stringify(field)}</span>

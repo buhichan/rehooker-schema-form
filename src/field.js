@@ -62,7 +62,7 @@ function renderField(field, form, keyPath, initialValues, onSchemaChange, refChi
                 React.createElement("legend", null, label),
                 React.createElement(schema_node_1.SchemaNode, { ref: function (ref) {
                         refChildNode(ref, key);
-                    }, keyPath: keyPath + "." + field.key, initialValues: initialValues, form: form, schema: field.children }));
+                    }, keyPath: (keyPath ? (keyPath + ".") : "") + field.key, initialValues: initialValues, form: form, schema: field.children }));
         default:
             return React.createElement("span", null,
                 "\u4E0D\u53EF\u8BC6\u522B\u7684\u5B57\u6BB5:",
