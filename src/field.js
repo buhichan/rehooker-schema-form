@@ -26,9 +26,9 @@ exports.addTypeWithWrapper = addTypeWithWrapper;
 var customTypes = new Map();
 function preRenderField(field, form, keyPath) {
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return React.createElement(StatefulField, { key: field.key, fieldSchema: field, keyPath: keyPath, form: form });
+        return React.createElement(StatefulField, { key: field.key || field.label, fieldSchema: field, keyPath: keyPath, form: form });
     else
-        return React.createElement(StatelessField, { key: field.key, field: field, form: form, keyPath: keyPath });
+        return React.createElement(StatelessField, { key: field.key || field.label, field: field, form: form, keyPath: keyPath });
 }
 exports.preRenderField = preRenderField;
 var StatelessField = (function (_super) {
@@ -57,7 +57,7 @@ var StatelessField = (function (_super) {
             case "group":
                 //这里不可能存在getChildren还没有被执行的情况
                 return React.createElement("div", { className: "field " + typeName, style: field.style },
-                    React.createElement("fieldset", { key: field.key },
+                    React.createElement("fieldset", { key: field.key || field.label },
                         React.createElement("legend", null, label),
                         render_fields_1.renderFields(form, children, keyPath)));
             default:

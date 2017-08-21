@@ -64,9 +64,9 @@ let customTypes = new Map();
 
 export function preRenderField(field:FormFieldSchema, form:string, keyPath:string){ //keyPath is the old keyPath
     if(field.listens && ( typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return <StatefulField key={field.key} fieldSchema={field} keyPath={keyPath} form={form}/>;
+        return <StatefulField key={field.key||field.label} fieldSchema={field} keyPath={keyPath} form={form}/>;
     else
-        return <StatelessField key={field.key}  field={field} form={form} keyPath={keyPath} />;
+        return <StatelessField key={field.key||field.label}  field={field} form={form} keyPath={keyPath} />;
 }
 
 export class StatelessField extends React.PureComponent<{field:FormFieldSchema, form:string, keyPath:string}>{
@@ -102,7 +102,7 @@ export class StatelessField extends React.PureComponent<{field:FormFieldSchema, 
             case "group":
                 //这里不可能存在getChildren还没有被执行的情况
                 return <div className={"field " + typeName} style={field.style}>
-                    <fieldset key={field.key}>
+                    <fieldset key={field.key||field.label}>
                         <legend>{label}</legend>
                         {
                             renderFields(form, children, keyPath)
