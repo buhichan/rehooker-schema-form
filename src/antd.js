@@ -355,12 +355,12 @@ field_1.addType("autocomplete-async", AutoCompleteAsync);
 form_1.setButton(function (props) {
     switch (props.type) {
         case 'submit':
-            return React.createElement(antd_8.Button, { className: "raised-button", style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type }, props.children);
+            return React.createElement(antd_8.Button, { className: "raised-button", style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);
         default:
             return React.createElement(antd_8.Button, { style: {
                     backgroundColor: "transparent",
                     margin: "15px"
-                }, onClick: props.onClick, disabled: props.disabled, type: props.type }, props.children);
+                }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);
     }
 });
 var formModule = require('../index');

@@ -476,6 +476,7 @@ setButton(function(props:any){
                 onClick={props.onClick}
                 disabled={props.disabled}
                 type={props.type}
+                htmlType={props.type}
             >
                 {props.children}
             </Button>;
@@ -488,6 +489,7 @@ setButton(function(props:any){
                 onClick={props.onClick}
                 disabled={props.disabled}
                 type={props.type}
+                htmlType={props.type}
             >
                 {props.children}
             </Button>
