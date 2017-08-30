@@ -160,6 +160,7 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
             const res = props.listeners[fieldKey](props.values[i],formValue);
             if(!(res instanceof Promise))
                 return Promise.resolve(res||{});
+            else return res;
         })).then(newSchemas=> {
             const newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema}),props.fieldSchema);
             if(newSchema.value)

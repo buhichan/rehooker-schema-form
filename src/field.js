@@ -88,6 +88,8 @@ var StatefulField = (function (_super) {
             var res = props.listeners[fieldKey](props.values[i], formValue);
             if (!(res instanceof Promise))
                 return Promise.resolve(res || {});
+            else
+                return res;
         })).then(function (newSchemas) {
             var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema)); }, props.fieldSchema);
             if (newSchema.value)
