@@ -12,11 +12,11 @@ import {stylesheet} from "./material.jss";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
-import {addType, WidgetProps} from "./field";
-import {SchemaNode} from "./schema-node";
+import {addType, addTypeWithWrapper, preRenderField, WidgetProps} from "./field";
 import injectCSS from 'react-jss';
 import {Field as RFField,FieldArray as RFFieldArray} from "redux-form";
 import {SelectField} from "./my-select-field"
+import {renderFields} from "./render-fields";
 
 function NumberInput(props:WidgetProps){
     return <TextField
@@ -161,7 +161,30 @@ function CheckboxInput (props:WidgetProps){
 }
 
 //fixme: todo: https://github.com/callemall/material-ui/issues/6080
-class SelectInput extends React.PureComponent<WidgetProps,any>{
+export class SelectInput extends React.PureComponent<WidgetProps,any>{
+    state={
+        options:null
+    };
+    reload(props:WidgetProps){
+        const rawOptions =  props.fieldSchema.options;
+        if(typeof rawOptions=== 'function'){
+            if(!rawOptions.length)
+                (rawOptions as AsyncOptions)().then(options=>this.setState({
+                    options
+                }))
+
+        }else if (rawOptions instanceof Array)
+            this.setState({
+                options:props.fieldSchema.options
+            })
+    }
+    componentWillReceiveProps(nextProps:WidgetProps){
+        if(nextProps.fieldSchema.options!==this.props.fieldSchema.options)
+            this.reload(nextProps);
+    }
+    componentWillMount(){
+        this.reload(this.props);
+    }
     render() {
         const props = this.props;
         return <SelectField
@@ -180,9 +203,9 @@ class SelectInput extends React.PureComponent<WidgetProps,any>{
                 }}
             >
             {
-                (props.fieldSchema.options as Options).map((option) => (
+                this.state.options?this.state.options.map((option) => (
                     <MenuItem className="option" key={option.value} value={option.value} primaryText={option.name}/>
-                ))
+                )):<MenuItem className="option" value={null} primaryText={this.props.fieldSchema.loadingText||"载入中"}/>
             }
         </SelectField>
     }
@@ -237,37 +260,40 @@ class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,fullResu
     }
 }
 
-class AutoCompleteSelect extends React.Component<WidgetProps,any>{
+class AutoCompleteSelect extends SelectInput{
     onNewRequest=(value)=>{
         return this.props.input.onChange(value['value']);
     };
     render() {
         const {meta,input,fieldSchema} = this.props;
-        const value = (fieldSchema.options as Options).find(x=>x.value === input.value);
+        const options = (this.state.options || []) as Options;
+        const value = options.find(x=>x.value === input.value);
         return <BaseAutoComplete
             fieldSchema={fieldSchema}
             input={input}
             meta={meta}
             openOnFocus
             searchText={value?value.name:""}
-            dataSource={fieldSchema.options}
+            dataSource={options}
             onNewRequest={this.onNewRequest}
         />
     }
 }
 
-class AutoCompleteText extends React.Component<WidgetProps,any>{
+class AutoCompleteText extends SelectInput{
     onUpdateInput=name=>{
-        const entry = (this.props.fieldSchema.options as Options).find(x=>x.name===name);
+        const options = (this.state.options || []) as Options;
+        const entry = options.find(x=>x.name===name);
         return this.props.input.onChange(entry?entry.value:name);
     };
     render() {
         const {meta,input,fieldSchema} = this.props;
+        const options = (this.state.options || []) as Options;
         return <BaseAutoComplete
             input={input}
             meta={meta}
             fieldSchema={fieldSchema}
-            dataSource={fieldSchema.options}
+            dataSource={options}
             searchText={input.value}
             onUpdateInput={this.onUpdateInput}
         />;
@@ -368,7 +394,9 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
                                 <Remove hoverColor={muiTheme.palette.accent1Color}/>
                             </IconButton>
                         </div>
-                        <SchemaNode form={props.meta.form} keyPath={props.keyPath+"["+i+"]c"} schema={children} initialValues={childValue} />
+                        {
+                            renderFields(props.meta.form,children,props.keyPath+"["+i+"]")
+                        }
                     </div>
                 })
             }
@@ -452,83 +480,23 @@ class FileInput extends React.PureComponent<WidgetProps&{
     }
 }
 
-const DefaultInput = function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={TextInput}/>
-    </div>
-};
-
-addType("password",DefaultInput);
-addType("email",DefaultInput);
-addType('text',DefaultInput);
-
-addType('textarea',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={TextAreaInput} />
-    </div>
-});
-
-addType("file",function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={FileInput} />
-    </div>
-});
-
-addType('number',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={NumberInput} />
-    </div>
-});
-
-addType('checkbox',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={CheckboxInput} />
-    </div>
-});
-
-addType('select',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={SelectInput} />
-    </div>
-});
-addType('autocomplete',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteSelect} />
-    </div>
-});
-addType('autocomplete-text',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteText} />
-    </div>
-});
-addType("autocomplete-async",function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteAsync} />
-    </div>
-});
-
-addType('date',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={DateInput} />
-    </div>
-});
-
-addType('datetime',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={DateTimeInput} />
-    </div>
-});
-
-addType("array",(props)=>{
+addType("password",TextInput);
+addType("email",TextInput);
+addType('text',TextInput);
+addType('textarea',TextAreaInput);
+addType("file",FileInput);
+addType('number',NumberInput);
+addType('checkbox',CheckboxInput);
+addType('select',SelectInput);
+addType('autocomplete',AutoCompleteSelect);
+addType('autocomplete-text',AutoCompleteText);
+addType("autocomplete-async",AutoCompleteAsync);
+addType('date',DateInput);
+addType('datetime',DateTimeInput);
+addTypeWithWrapper("array",(props)=>{
     return <div>
         <label className="control-label">{props.fieldSchema.label}</label>
         <FieldArray name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.getChildren)} component={ArrayFieldRenderer} props={props}/>
-    </div>
-});
-
-addType('hidden',(props)=>{
-    return <div>
-
     </div>
 });
 

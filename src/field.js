@@ -6,80 +6,129 @@ var tslib_1 = require("tslib");
  */
 var React = require("react");
 var redux_form_1 = require("redux-form");
-var schema_node_1 = require("./schema-node");
+var render_fields_1 = require("./render-fields");
+var react_redux_1 = require("react-redux");
+var reselect_1 = require("reselect");
+var PropTypes = require("prop-types");
 function addType(name, widget) {
-    customTypes.set(name, widget);
+    function addWidgetTypeToRegistration(widget) {
+        customTypes.set(name, function (props) { return React.createElement("div", null,
+            React.createElement(redux_form_1.Field, tslib_1.__assign({ name: props.keyPath }, props, { component: widget }))); });
+        return widget;
+    }
+    return widget ? addWidgetTypeToRegistration(widget) : addWidgetTypeToRegistration;
 }
 exports.addType = addType;
+function addTypeWithWrapper(name, widget) {
+    customTypes.set(name, widget);
+}
+exports.addTypeWithWrapper = addTypeWithWrapper;
 var customTypes = new Map();
-function renderField(field, form, keyPath, initialValues, onSchemaChange, refChildNode) {
-    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, children = field.children, getChildren = field.getChildren, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "children", "getChildren"]);
-    if (customTypes.has(type)) {
-        var CustomWidget = customTypes.get(type);
-        return React.createElement(CustomWidget, tslib_1.__assign({ keyPath: keyPath, fieldSchema: field, onSchemaChange: onSchemaChange }, rest, { renderField: renderField }));
-    }
-    //noinspection FallThroughInSwitchStatementJS
-    switch (type) {
-        /**
-         * @deprecated 不再维护bootstrap版本
-         */
-        case "number":
-        case "text":
-        case "color":
-        case "password":
-        case "date":
-        case "datetime-local":
-        case "file":
-            return React.createElement("div", { className: "form-group" },
-                React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
-                React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.Field, tslib_1.__assign({ className: "form-control", name: keyPath }, rest, { component: "input" }))));
-        case "textarea":
-            return React.createElement("div", { className: "form-group" },
-                React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
-                React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.Field, tslib_1.__assign({ className: "form-control", name: keyPath }, rest, { component: "textarea" }))));
-        case "checkbox":
-            return React.createElement("div", { className: "form-group" },
-                React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
-                React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.Field, tslib_1.__assign({ className: " checkbox", name: keyPath }, rest, { component: "input" }))));
-        case "select":
-            return React.createElement("div", { className: "form-group" },
-                React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
-                React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.Field, tslib_1.__assign({ className: "form-control", name: keyPath }, rest, { component: "select" }),
-                        React.createElement("option", null),
-                        options.map(function (option, i) { return React.createElement("option", { key: i, value: option.value }, option.name); }))));
-        case "array":
-            return React.createElement("div", { className: "form-group" },
-                React.createElement("label", { className: "control-label col-md-2", htmlFor: form + '-' + keyPath }, label),
-                React.createElement("div", { className: "col-md-10" },
-                    React.createElement(redux_form_1.FieldArray, tslib_1.__assign({ name: keyPath }, rest, { fieldSchema: field, keyPath: keyPath, renderField: renderField, component: DefaultArrayFieldRenderer }))));
-        case "group":
-            //这里不可能存在getChildren还没有被执行的情况
-            return React.createElement("fieldset", null,
-                React.createElement("legend", null, label),
-                React.createElement(schema_node_1.SchemaNode, { ref: function (ref) {
-                        refChildNode(ref, key);
-                    }, keyPath: (keyPath ? (keyPath + ".") : "") + field.key, initialValues: initialValues, form: form, schema: field.children }));
-        default:
-            return React.createElement("span", null,
-                "\u4E0D\u53EF\u8BC6\u522B\u7684\u5B57\u6BB5:",
-                JSON.stringify(field));
-    }
+function preRenderField(field, form, keyPath) {
+    if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
+        return React.createElement(StatefulField, { key: field.key || field.label, fieldSchema: field, keyPath: keyPath, form: form });
+    else
+        return React.createElement(StatelessField, { key: field.key || field.label, field: field, form: form, keyPath: keyPath });
 }
-exports.renderField = renderField;
-function DefaultArrayFieldRenderer(props) {
-    var fields = props.fields;
-    return React.createElement("div", null,
-        props.fields.map(function (name, i) {
-            return React.createElement("div", { key: i },
-                React.createElement(schema_node_1.SchemaNode, { onSchemaChange: props.onSchemaChange, keyPath: props.keyPath + "." + i, initialValues: fields.get(i), form: props.meta.form, schema: props.fieldSchema.children }),
-                React.createElement("button", { onClick: function () { return fields.remove(i); } },
-                    React.createElement("i", { className: "fa fa-minus" })));
-        }),
-        React.createElement("button", { onClick: function () { return fields.push({}); } },
-            React.createElement("i", { className: "fa fa-plus" })));
-}
+exports.preRenderField = preRenderField;
+var StatelessField = (function (_super) {
+    tslib_1.__extends(StatelessField, _super);
+    function StatelessField() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    StatelessField.prototype.render = function () {
+        var _a = this.props, field = _a.field, form = _a.form, keyPath = _a.keyPath;
+        var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, style = field.style, children = field.children, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "style", "children"]);
+        if (field.hide)
+            return null;
+        var typeName = field.type;
+        if (typeof field.type !== 'string')
+            typeName = "";
+        if (customTypes.has(type)) {
+            var CustomWidget = customTypes.get(type);
+            return React.createElement("div", { className: "field " + typeName, style: field.style },
+                React.createElement(CustomWidget, tslib_1.__assign({ keyPath: keyPath, fieldSchema: field }, rest, { renderField: preRenderField })));
+        }
+        else if (typeof type === 'function')
+            return React.createElement("div", { className: "field " + typeName, style: field.style },
+                React.createElement(redux_form_1.Field, tslib_1.__assign({ name: keyPath, keyPath: keyPath, fieldSchema: field, renderField: preRenderField }, rest, { component: type })));
+        //noinspection FallThroughInSwitchStatementJS
+        switch (type) {
+            case "group":
+                //这里不可能存在getChildren还没有被执行的情况
+                return React.createElement("div", { className: "field " + typeName, style: field.style },
+                    React.createElement("fieldset", { key: field.key || field.label },
+                        React.createElement("legend", null, label),
+                        render_fields_1.renderFields(form, children, keyPath)));
+            default:
+                return React.createElement("div", { className: "field" },
+                    React.createElement("span", null,
+                        "\u4E0D\u652F\u6301\u7684\u5B57\u6BB5\u7C7B\u578B:",
+                        JSON.stringify(field)));
+        }
+    };
+    return StatelessField;
+}(React.PureComponent));
+exports.StatelessField = StatelessField;
+var StatefulField = (function (_super) {
+    tslib_1.__extends(StatefulField, _super);
+    function StatefulField() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = _this.props.fieldSchema;
+        return _this;
+    }
+    StatefulField.prototype.componentWillMount = function () {
+        this.reload(this.props);
+    };
+    StatefulField.prototype.reload = function (props) {
+        var _this = this;
+        var state = this.context.store.getState();
+        Promise.all(Object.keys(props.listeners).map(function (fieldKey, i) {
+            var formValue = redux_form_1.getFormValues(props.form)(state);
+            var res = props.listeners[fieldKey](props.values[i], formValue);
+            if (!(res instanceof Promise))
+                return Promise.resolve(res || {});
+            else
+                return res;
+        })).then(function (newSchemas) {
+            var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema)); }, props.fieldSchema);
+            if (newSchema.hasOwnProperty("value"))
+                props.dispatch(redux_form_1.change(props.form, props.keyPath, newSchema.value));
+            _this.setState(newSchema);
+        });
+    };
+    StatefulField.prototype.componentWillReceiveProps = function (nextProps) {
+        if (nextProps.values === this.props.values &&
+            nextProps.form === this.props.form &&
+            nextProps.fieldSchema === this.props.fieldSchema)
+            return;
+        this.reload(nextProps);
+    };
+    StatefulField.prototype.render = function () {
+        var _a = this.props, form = _a.form, keyPath = _a.keyPath;
+        return React.createElement(StatelessField, { field: this.state, form: form, keyPath: keyPath });
+    };
+    return StatefulField;
+}(React.PureComponent));
+StatefulField.contextTypes = {
+    store: PropTypes.object
+};
+StatefulField = tslib_1.__decorate([
+    react_redux_1.connect(function (_, p) {
+        var listeners = p.fieldSchema.listens;
+        if (typeof listeners === 'function')
+            listeners = listeners(p.keyPath.split(".").slice(0, -1).join("."));
+        var formSelector = redux_form_1.formValueSelector(p.form);
+        return reselect_1.createSelector(Object.keys(listeners).map(function (x) { return function (s) { return formSelector(s, x); }; }), function () {
+            var values = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                values[_i] = arguments[_i];
+            }
+            return {
+                values: values,
+                listeners: listeners
+            };
+        });
+    }, function (dispatch) { return ({ dispatch: dispatch }); })
+], StatefulField);
 //# sourceMappingURL=field.js.map

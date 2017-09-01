@@ -13,10 +13,10 @@ var remove_1 = require("material-ui/svg-icons/content/remove");
 var material_jss_1 = require("./material.jss");
 var svg_icons_1 = require("material-ui/svg-icons");
 var field_1 = require("./field");
-var schema_node_1 = require("./schema-node");
 var react_jss_1 = require("react-jss");
 var redux_form_1 = require("redux-form");
 var my_select_field_1 = require("./my-select-field");
+var render_fields_1 = require("./render-fields");
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
@@ -92,17 +92,43 @@ function CheckboxInput(props) {
 var SelectInput = (function (_super) {
     tslib_1.__extends(SelectInput, _super);
     function SelectInput() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            options: null
+        };
+        return _this;
     }
+    SelectInput.prototype.reload = function (props) {
+        var _this = this;
+        var rawOptions = props.fieldSchema.options;
+        if (typeof rawOptions === 'function') {
+            if (!rawOptions.length)
+                rawOptions().then(function (options) { return _this.setState({
+                    options: options
+                }); });
+        }
+        else if (rawOptions instanceof Array)
+            this.setState({
+                options: props.fieldSchema.options
+            });
+    };
+    SelectInput.prototype.componentWillReceiveProps = function (nextProps) {
+        if (nextProps.fieldSchema.options !== this.props.fieldSchema.options)
+            this.reload(nextProps);
+    };
+    SelectInput.prototype.componentWillMount = function () {
+        this.reload(this.props);
+    };
     SelectInput.prototype.render = function () {
         var props = this.props;
         return React.createElement(my_select_field_1.SelectField, tslib_1.__assign({}, props.input, { onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
                 e.target['value'] = v;
                 props.input.onChange(e);
-            } }), props.fieldSchema.options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }));
+            } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }) : React.createElement(material_ui_1.MenuItem, { className: "option", value: null, primaryText: this.props.fieldSchema.loadingText || "载入中" }));
     };
     return SelectInput;
 }(React.PureComponent));
+exports.SelectInput = SelectInput;
 var dataSourceConfig = { text: "name", value: "value" };
 var BaseAutoComplete = (function (_super) {
     tslib_1.__extends(BaseAutoComplete, _super);
@@ -116,24 +142,24 @@ var BaseAutoComplete = (function (_super) {
             input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: "autocomplete-clear-button", onTouchTap: function () { return input.onChange(fieldSchema.defaultValue || null); } },
                 React.createElement(svg_icons_1.ContentClear, null)) : null);
     };
-    BaseAutoComplete = tslib_1.__decorate([
-        react_jss_1.default({
-            autocomplete: {
-                position: "relative",
-                "&>.autocomplete-clear-button": {
-                    position: "absolute",
-                    top: "15px",
-                    right: 0,
-                    opacity: 0,
-                },
-                "&:hover>.autocomplete-clear-button": {
-                    opacity: 1
-                }
-            }
-        })
-    ], BaseAutoComplete);
     return BaseAutoComplete;
 }(React.PureComponent));
+BaseAutoComplete = tslib_1.__decorate([
+    react_jss_1.default({
+        autocomplete: {
+            position: "relative",
+            "&>.autocomplete-clear-button": {
+                position: "absolute",
+                top: "15px",
+                right: 0,
+                opacity: 0,
+            },
+            "&:hover>.autocomplete-clear-button": {
+                opacity: 1
+            }
+        }
+    })
+], BaseAutoComplete);
 var AutoCompleteSelect = (function (_super) {
     tslib_1.__extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
@@ -145,27 +171,30 @@ var AutoCompleteSelect = (function (_super) {
     }
     AutoCompleteSelect.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        var value = fieldSchema.options.find(function (x) { return x.value === input.value; });
-        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, searchText: value ? value.name : "", dataSource: fieldSchema.options, onNewRequest: this.onNewRequest });
+        var options = (this.state.options || []);
+        var value = options.find(function (x) { return x.value === input.value; });
+        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, searchText: value ? value.name : "", dataSource: options, onNewRequest: this.onNewRequest });
     };
     return AutoCompleteSelect;
-}(React.Component));
+}(SelectInput));
 var AutoCompleteText = (function (_super) {
     tslib_1.__extends(AutoCompleteText, _super);
     function AutoCompleteText() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onUpdateInput = function (name) {
-            var entry = _this.props.fieldSchema.options.find(function (x) { return x.name === name; });
+            var options = (_this.state.options || []);
+            var entry = options.find(function (x) { return x.name === name; });
             return _this.props.input.onChange(entry ? entry.value : name);
         };
         return _this;
     }
     AutoCompleteText.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fieldSchema: fieldSchema, dataSource: fieldSchema.options, searchText: input.value, onUpdateInput: this.onUpdateInput });
+        var options = (this.state.options || []);
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fieldSchema: fieldSchema, dataSource: options, searchText: input.value, onUpdateInput: this.onUpdateInput });
     };
     return AutoCompleteText;
-}(React.Component));
+}(SelectInput));
 var AutoCompleteAsync = (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
     function AutoCompleteAsync() {
@@ -249,17 +278,17 @@ var ArrayFieldRenderer = (function (_super) {
                     React.createElement("div", { className: "delete-button" },
                         React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
                             React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
-                    React.createElement(schema_node_1.SchemaNode, { form: props.meta.form, keyPath: props.keyPath + "[" + i + "]c", schema: children, initialValues: childValue }));
+                    render_fields_1.renderFields(props.meta.form, children, props.keyPath + "[" + i + "]"));
             }),
             React.createElement("div", { className: "add-button" },
                 React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
                     React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
     };
-    ArrayFieldRenderer = tslib_1.__decorate([
-        muiThemeable_1.default()
-    ], ArrayFieldRenderer);
     return ArrayFieldRenderer;
 }(React.Component));
+ArrayFieldRenderer = tslib_1.__decorate([
+    muiThemeable_1.default()
+], ArrayFieldRenderer);
 function TextAreaInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
 }
@@ -310,65 +339,28 @@ var FileInput = (function (_super) {
             } },
             React.createElement("input", { type: "file", style: { display: "none" }, onChange: this.onChange }));
     };
-    FileInput = tslib_1.__decorate([
-        muiThemeable_1.default()
-    ], FileInput);
     return FileInput;
 }(React.PureComponent));
-var DefaultInput = function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: TextInput })));
-};
-field_1.addType("password", DefaultInput);
-field_1.addType("email", DefaultInput);
-field_1.addType('text', DefaultInput);
-field_1.addType('textarea', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: TextAreaInput })));
-});
-field_1.addType("file", function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: FileInput })));
-});
-field_1.addType('number', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: NumberInput })));
-});
-field_1.addType('checkbox', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: CheckboxInput })));
-});
-field_1.addType('select', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: SelectInput })));
-});
-field_1.addType('autocomplete', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: AutoCompleteSelect })));
-});
-field_1.addType('autocomplete-text', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: AutoCompleteText })));
-});
-field_1.addType("autocomplete-async", function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: AutoCompleteAsync })));
-});
-field_1.addType('date', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: DateInput })));
-});
-field_1.addType('datetime', function (props) {
-    return React.createElement("div", null,
-        React.createElement(Field, tslib_1.__assign({ name: props.keyPath }, props, { component: DateTimeInput })));
-});
-field_1.addType("array", function (props) {
+FileInput = tslib_1.__decorate([
+    muiThemeable_1.default()
+], FileInput);
+field_1.addType("password", TextInput);
+field_1.addType("email", TextInput);
+field_1.addType('text', TextInput);
+field_1.addType('textarea', TextAreaInput);
+field_1.addType("file", FileInput);
+field_1.addType('number', NumberInput);
+field_1.addType('checkbox', CheckboxInput);
+field_1.addType('select', SelectInput);
+field_1.addType('autocomplete', AutoCompleteSelect);
+field_1.addType('autocomplete-text', AutoCompleteText);
+field_1.addType("autocomplete-async", AutoCompleteAsync);
+field_1.addType('date', DateInput);
+field_1.addType('datetime', DateTimeInput);
+field_1.addTypeWithWrapper("array", function (props) {
     return React.createElement("div", null,
         React.createElement("label", { className: "control-label" }, props.fieldSchema.label),
         React.createElement(FieldArray, { name: props.keyPath, rerenderOnEveryChange: Boolean(props.fieldSchema.getChildren), component: ArrayFieldRenderer, props: props }));
-});
-field_1.addType('hidden', function (props) {
-    return React.createElement("div", null);
 });
 var Field = redux_form_1.Field;
 var FieldArray = redux_form_1.FieldArray;

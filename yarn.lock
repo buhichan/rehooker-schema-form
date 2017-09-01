@@ -88,7 +88,7 @@ ansi-styles@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-2.2.1.tgz#b432dd3358b634cf75e1e4664368240533c1ddbe"
 
-antd@^2.12.6:
+antd@^2.*:
   version "2.12.6"
   resolved "http://registry.npm.taobao.org/antd/download/antd-2.12.6.tgz#3dd21a8c46ef11ada555ac7dc9ded9ff96387830"
   dependencies:
@@ -3136,6 +3136,10 @@ request@^2.79.0:
 requires-port@1.0.x, requires-port@1.x.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
+
+reselect@*:
+  version "3.0.1"
+  resolved "http://registry.npm.taobao.org/reselect/download/reselect-3.0.1.tgz#efdaa98ea7451324d092b2b2163a6a1d7a9a2147"
 
 right-align@^0.1.1:
   version "0.1.3"

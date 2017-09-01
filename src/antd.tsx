@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import {addType} from "./field";
+import {addType, addTypeWithWrapper} from "./field";
 const {Field,FieldArray} =require("redux-form");
 const {Radio} = require("antd/lib");
 const RadioGroup = Radio.Group;
@@ -20,12 +20,12 @@ import {WidgetProps} from "./field";
 import {InputNumber} from "antd";
 import {Tooltip} from "antd";
 const moment = require("moment");
-import {Options, setButton} from "./form";
+import {AsyncOptions, Options, setButton} from "./form";
 import { Upload, Button, Icon } from 'antd';
-import {SchemaNode} from "./schema-node";
 import {RuntimeAsyncOptions} from "./form";
 import injectCSS from 'react-jss';
 import {stylesheet} from "./antd.jss";
+import {renderFields} from "./render-fields";
 
 const errorStyle={color:"red"};
 function TextInput(props){
@@ -51,8 +51,30 @@ function TextInput(props){
 }
 
 
-class  AntdSelectInput extends React.Component<any,any>{
+class AntdSelectInput extends React.Component<any,any>{
+    state={
+        options:null
+    };
+    reload(props:WidgetProps){
+        const rawOptions =  props.fieldSchema.options;
+        if(typeof rawOptions=== 'function'){
+            if(!rawOptions.length)
+                (rawOptions as AsyncOptions)().then(options=>this.setState({
+                    options
+                }))
 
+        }else if (rawOptions instanceof Array)
+            this.setState({
+                options:props.fieldSchema.options
+            })
+    }
+    componentWillReceiveProps(nextProps:WidgetProps){
+        if(nextProps.fieldSchema.options!==this.props.fieldSchema.options)
+            this.reload(nextProps);
+    }
+    componentWillMount(){
+        this.reload(this.props);
+    }
     render(){
         return<div
             style={this.props.fieldSchema.hide?{}:{height:"50px"}}
@@ -71,9 +93,9 @@ class  AntdSelectInput extends React.Component<any,any>{
 
             >
 
-                {this.props.fieldSchema.options.map(option=>(
+                {this.state.options?this.state.options.map(option=>(
                     <Option key={option.name} value={option.value}>{option.name}</Option>
-                ))}
+                )):null}
             </Select>
             <div style={errorStyle}>
                 {this.props.meta.error}
@@ -195,15 +217,13 @@ function NumberInput(props){
 }
 
 
-class AutoCompleteSelect extends React.Component<WidgetProps,any>{
-
+class AutoCompleteSelect extends AntdSelectInput{
     render() {
         const {meta,input,fieldSchema} = this.props;
         const value = (fieldSchema.options as Options).find(x=>x.value === input.value);
-        return <div   style={{ width:"100%" }}>
-
+        return <div style={{ width:"100%" }}>
             <AutoComplete
-                dataSource={(fieldSchema.options as any).map(itm=>({value:itm.value,text:itm.name}))}
+                dataSource={(this.state.options as any || []).map(itm=>({value:itm.value,text:itm.name}))}
                 style={{ width:"100%" }}
                 onSelect={(value)=>input.onChange(value)}
             />
@@ -213,7 +233,7 @@ class AutoCompleteSelect extends React.Component<WidgetProps,any>{
 }
 
 
-class FileInput extends React.Component<any,any>{
+class FileInput extends React.Component<WidgetProps,any>{
     onChange=(info)=>{
         let fileList = info.fileList;
         fileList = fileList.map(file=>{
@@ -225,19 +245,25 @@ class FileInput extends React.Component<any,any>{
 
         fileList=fileList.filter(file=>{
             if(file.response){
-                return file.response.status==="success";
+                return file.status==="done";
             }
             return true;
         });
         this.props.input.onChange(fileList)
-    }
+    };
+    customRequest=({onSuccess,onError,onProgress,data,file,filename})=>{
+        this.props.fieldSchema.onFileChange(this.props.input.value).then(previewUrl=>{
+            onProgress({percent:100});
+            onSuccess(previewUrl,null);
+        },(err)=>onError(err))
+    };
     render(){
         return <div style={{width:"100%"}}>
             <Upload
-                fileList={this.props.input.value}
                 multiple={true}
                 onChange={this.onChange}
                 action={this.props.fieldSchema.action}
+                customRequest={this.props.fieldSchema.onFileChange?this.customRequest:undefined}
             >
                 <Button>
                     <Icon type="upload" /> {this.props.fieldSchema.label}
@@ -388,7 +414,9 @@ class ArrayFieldRenderer extends React.Component<any,any>{
                             </Tooltip>
 
                         </div>
-                        <SchemaNode form={props.meta.form} keyPath={props.keyPath+"."+i} schema={children} />
+                        {
+                            renderFields(props.meta.form,children,props.keyPath+"["+i+"]")
+                        }
                     </div>
                 })
             }
@@ -401,101 +429,43 @@ class ArrayFieldRenderer extends React.Component<any,any>{
     }
 }
 
-const DefaultInput = function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={TextInput}/>
-    </div>
-};
+
+addType('text',TextInput);
+addType('select',AntdSelectInput);
 
 
-addType('text',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={TextInput} />
-    </div>
-});
-addType('select',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AntdSelectInput} />
-    </div>
-});
+addType('checkbox',CheckboxInput);
+
+addType('date',DateInput);
+
+addType('autocomplete-text',AutoCompleteText);
+
+addType('datetime',DateTimeInput);
+
+addType('datetimeRange',DateTimeRangeInput);
+
+addType('number',NumberInput);
+
+addType('autocomplete',AutoCompleteSelect);
+
+addType("file",FileInput);
+
+addType("dateRange",DateRangeInput);
+
+addType("textarea",TextareaInput);
 
 
-addType('checkbox',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={CheckboxInput} />
-    </div>
-});
-
-addType('date',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={DateInput} />
-    </div>
-});
-
-addType('autocomplete-text',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteText} />
-    </div>
-});
-
-addType('datetime',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={DateTimeInput} />
-    </div>
-});
-
-addType('datetimeRange',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={DateTimeRangeInput} />
-    </div>
-});
-
-addType('number',function (props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={NumberInput} />
-    </div>
-});
-
-addType('autocomplete',function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteSelect} />
-    </div>
-});
-
-addType("file",function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={FileInput} />
-    </div>
-});
-
-addType("dateRange",function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={DateRangeInput} />
-    </div>
-});
-
-addType("textarea",function(props){
-    return <div>
-        <Field name={props.keyPath} {...props} component={TextareaInput} />
-    </div>
-});
-
-
-addType("password",DefaultInput);
-addType("email",DefaultInput);
-addType('text',DefaultInput);
-addType("array",(props)=>{
+addType("password",TextInput);
+addType("email",TextInput);
+addType('text',TextInput);
+addTypeWithWrapper("array",(props)=>{
     return <div>
         <label className="control-label">{props.fieldSchema.label}</label>
         <FieldArray name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.getChildren)} component={ArrayFieldRenderer} props={props}/>
     </div>
 });
 
-addType("autocomplete-async",(props)=>{
-    return <div>
-        <Field name={props.keyPath} {...props} component={AutoCompleteAsync} />
-    </div>
-});
+addType("autocomplete-async",AutoCompleteAsync);
 
 setButton(function(props:any){
     switch (props.type) {
@@ -519,6 +489,7 @@ setButton(function(props:any){
                 onClick={props.onClick}
                 disabled={props.disabled}
                 type={props.type}
+                htmlType={props.type}
             >
                 {props.children}
             </Button>

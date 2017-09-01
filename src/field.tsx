@@ -2,14 +2,18 @@
  * Created by buhi on 2017/7/26.
  */
 import * as React from "react"
-import {Options, ParsedFormFieldSchema} from "./form";
-import {Field, FieldArray, initialize, WrappedFieldArrayProps} from "redux-form"
-import {SchemaNode} from "./schema-node";
+import {Options, FormFieldSchema, FieldSchamaChangeListeners} from "./form";
+import {
+    change, Field, FieldArray, formValueSelector, getFormValues, initialize
+} from "redux-form"
+import {renderFields} from "./render-fields";
+import {connect} from "react-redux";
+import {createSelector} from "reselect";
+import * as PropTypes from "prop-types";
 
-export type CustomWidgetProps = WidgetProps;
 export type WidgetProps = {
-    fieldSchema?:ParsedFormFieldSchema,
-    renderField?:typeof renderField
+    fieldSchema?:FormFieldSchema,
+    renderField?:typeof StatelessField
     keyPath:string
     meta?:{
         active:boolean
@@ -39,106 +43,140 @@ export type WidgetProps = {
     }
     hide?:boolean
     [rest:string]:any
-    onSchemaChange:(changes:Partial<ParsedFormFieldSchema>[]|Promise<Partial<ParsedFormFieldSchema>[]>)=>void
+    onSchemaChange:(changes:Partial<FormFieldSchema>[]|Promise<Partial<FormFieldSchema>[]>)=>void
 }
 
-export function addType(name,widget: React.ComponentClass<WidgetProps>|React.StatelessComponent<WidgetProps>) {
+export function addType(name,widget?: React.ComponentClass<WidgetProps>|React.StatelessComponent<WidgetProps>) {
+    function addWidgetTypeToRegistration(widget) {
+        customTypes.set(name, props => <div>
+            <Field name={props.keyPath} {...props} component={widget}/>
+        </div>);
+        return widget;
+    }
+    return widget?addWidgetTypeToRegistration(widget):addWidgetTypeToRegistration;
+}
+
+export function addTypeWithWrapper(name,widget){
     customTypes.set(name,widget);
 }
 
 let customTypes = new Map();
 
-export function renderField(field:ParsedFormFieldSchema,form:string,keyPath:string,initialValues:any,onSchemaChange,refChildNode){ //keyPath is the old keyPath
-    let {
-        hide,
-        type,
-        key,
-        label,
-        options,
-        children,
-        getChildren,
-        ...rest
-    } = field;
-    if(customTypes.has(type)){
-        let CustomWidget:React.ComponentClass<WidgetProps> = customTypes.get(type) as any;
-        return <CustomWidget keyPath={keyPath} fieldSchema={field} onSchemaChange={onSchemaChange} {...rest} renderField={renderField}/>
-    }
-    //noinspection FallThroughInSwitchStatementJS
-    switch(type){
-        /**
-         * @deprecated 不再维护bootstrap版本
-         */
-        case "number":
-        case "text":
-        case "color":
-        case "password":
-        case "date":
-        case "datetime-local":
-        case "file":
-            return <div className="form-group">
-                <label className="control-label col-md-2" htmlFor={form+'-'+keyPath}>{label}</label>
-                <div className="col-md-10">
-                    <Field className="form-control" name={keyPath} {...rest as any} component="input"/>
-                </div>
+export function preRenderField(field:FormFieldSchema, form:string, keyPath:string){ //keyPath is the old keyPath
+    if(field.listens && ( typeof field.listens === 'function' || Object.keys(field.listens).length))
+        return <StatefulField key={field.key||field.label} fieldSchema={field} keyPath={keyPath} form={form}/>;
+    else
+        return <StatelessField key={field.key||field.label}  field={field} form={form} keyPath={keyPath} />;
+}
+
+export class StatelessField extends React.PureComponent<{field:FormFieldSchema, form:string, keyPath:string}>{
+    render() {
+        const {field, form, keyPath} = this.props;
+        let {
+            hide,
+            type,
+            key,
+            label,
+            options,
+            style,
+            children,
+            ...rest
+        } = field;
+        if (field.hide)
+            return null;
+        let typeName = field.type;
+        if (typeof field.type !== 'string')
+            typeName = "";
+        if (customTypes.has(type)) {
+            const CustomWidget = customTypes.get(type);
+            return <div className={"field " + typeName} style={field.style}>
+                <CustomWidget keyPath={keyPath} fieldSchema={field} {...rest} renderField={preRenderField}/>
+            </div>
+        } else if (typeof type === 'function')
+            return <div className={"field " + typeName} style={field.style}>
+                <Field name={keyPath} keyPath={keyPath} fieldSchema={field}
+                       renderField={preRenderField} {...rest as any} component={type}/>
             </div>;
-        case "textarea":
-            return <div className="form-group">
-                <label className="control-label col-md-2" htmlFor={form+'-'+keyPath}>{label}</label>
-                <div className="col-md-10">
-                    <Field className="form-control" name={keyPath} {...rest as any} component="textarea"/>
-                </div>
-            </div>;
-        case "checkbox":
-            return <div className="form-group">
-                <label className="control-label col-md-2" htmlFor={form+'-'+keyPath}>{label}</label>
-                <div className="col-md-10">
-                    <Field className=" checkbox" name={keyPath} {...rest as any} component="input"/>
-                </div>
-            </div>;
-        case "select":
-            return <div className="form-group">
-                <label className="control-label col-md-2" htmlFor={form+'-'+keyPath}>{label}</label>
-                <div className="col-md-10">
-                    <Field className="form-control" name={keyPath} {...rest as any} component="select">
-                        <option />
+        //noinspection FallThroughInSwitchStatementJS
+        switch (type) {
+            case "group":
+                //这里不可能存在getChildren还没有被执行的情况
+                return <div className={"field " + typeName} style={field.style}>
+                    <fieldset key={field.key||field.label}>
+                        <legend>{label}</legend>
                         {
-                            (options as Options).map((option,i)=><option key={i} value={option.value as string}>{option.name}</option>)
+                            renderFields(form, children, keyPath)
                         }
-                    </Field>
+                    </fieldset>
+                </div>;
+            default:
+                return <div className="field">
+                    <span>不支持的字段类型:{JSON.stringify(field)}</span>
                 </div>
-            </div>;
-        case "array":
-            return <div className="form-group">
-                <label className="control-label col-md-2" htmlFor={form+'-'+keyPath}>{label}</label>
-                <div className="col-md-10">
-                    <FieldArray name={keyPath} {...rest as any} fieldSchema={field} keyPath={keyPath} renderField={renderField} component={DefaultArrayFieldRenderer}/>
-                </div>
-            </div>;
-        case "group":
-            //这里不可能存在getChildren还没有被执行的情况
-            return <fieldset>
-                <legend>{label}</legend>
-                <SchemaNode ref={(ref)=>{
-                    refChildNode(ref,key)
-                }} keyPath={(keyPath?(keyPath + "."):"")+field.key} initialValues={initialValues} form={form} schema={field.children} />
-            </fieldset>;
-        default:
-            return <span>不可识别的字段:{JSON.stringify(field)}</span>
+        }
     }
 }
 
+interface FieldNodeProps{
+    form:string,
+    fieldSchema:FormFieldSchema,
+    keyPath,
 
-function DefaultArrayFieldRenderer(props:WrappedFieldArrayProps<any>&WidgetProps){
-    const fields = props.fields;
-    return <div>
-        {
-            props.fields.map((name,i)=>{
-                return <div key={i}>
-                    <SchemaNode onSchemaChange={props.onSchemaChange} keyPath={props.keyPath+"."+i} initialValues={fields.get(i)} form={props.meta.form} schema={props.fieldSchema.children} />
-                    <button onClick={()=>fields.remove(i)}><i className="fa fa-minus"/></button>
-                </div>
-            })
-        }
-        <button  onClick={()=>fields.push({})}><i className="fa fa-plus" /></button>
-    </div>
+    listeners?:FieldSchamaChangeListeners,
+    values?:any[],
+    dispatch?
+}
+
+@((connect as any)(
+    (_,p)=>{
+        let listeners = p.fieldSchema.listens;
+        if(typeof listeners === 'function')
+            listeners = listeners(p.keyPath.split(".").slice(0,-1).join("."));
+        const formSelector = formValueSelector(p.form);
+        return createSelector(
+             Object.keys(listeners).map(x=>s=>formSelector(s,x)) as any,
+            (...values)=>{
+                return {
+                    values,
+                    listeners
+                };
+            }
+        ) as any
+    },
+    dispatch=>({dispatch})
+) as any)
+class StatefulField extends React.PureComponent<FieldNodeProps>{
+    static contextTypes={
+        store:PropTypes.object
+    };
+    state=this.props.fieldSchema;
+    componentWillMount(){
+        this.reload(this.props)
+    }
+    reload(props:FieldNodeProps){
+        const state = this.context.store.getState();
+        Promise.all(Object.keys(props.listeners).map((fieldKey,i)=>{
+            const formValue = getFormValues(props.form)(state);
+            const res = props.listeners[fieldKey](props.values[i],formValue);
+            if(!(res instanceof Promise))
+                return Promise.resolve(res||{});
+            else return res;
+        })).then(newSchemas=> {
+            const newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema}),props.fieldSchema);
+            if(newSchema.hasOwnProperty("value"))
+                props.dispatch(change(props.form,props.keyPath,newSchema.value));
+            this.setState(newSchema);
+        })
+    }
+    componentWillReceiveProps(nextProps:FieldNodeProps){
+        if(nextProps.values === this.props.values &&
+            nextProps.form===this.props.form &&
+            nextProps.fieldSchema === this.props.fieldSchema)
+            return;
+        this.reload(nextProps);
+    }
+    render(){
+        const {form,keyPath} = this.props;
+        return <StatelessField field={this.state} form={form} keyPath={keyPath} />
+    }
 }

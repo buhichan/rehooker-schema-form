@@ -6,7 +6,7 @@ var tslib_1 = require("tslib");
  */
 var React = require("react");
 var redux_form_1 = require("redux-form");
-var schema_node_1 = require("./schema-node");
+var render_fields_1 = require("./render-fields");
 var DefaultButton = function (props) {
     return React.createElement("button", { type: props.type, className: "btn btn-primary" + (props.disabled ? " disabled" : ""), disabled: props.disabled, onClick: props.onClick }, props.children);
 };
@@ -24,19 +24,19 @@ var ReduxSchemaForm = (function (_super) {
     };
     ReduxSchemaForm.prototype.render = function () {
         return React.createElement("form", { className: "redux-schema-form form-horizontal", onSubmit: this.props.handleSubmit },
-            React.createElement(schema_node_1.SchemaNode, { schema: this.props.schema, form: this.props.form, initialValues: this.props.initialValues }),
+            render_fields_1.renderFields(this.props.form, this.props.schema),
             this.props.children ? React.createElement("div", { className: "children" }, this.props.children) : null,
             (!this.props.noButton) ? React.createElement("div", { className: "button" },
                 React.createElement("div", { className: "btn-group" },
                     React.createElement(DefaultButton, { type: "submit", disabled: !this.submitable.apply(this) }, "\u63D0\u4EA4"),
                     React.createElement(DefaultButton, { type: "button", disabled: !this.submitable.apply(this), onClick: this.props.reset }, "\u91CD\u7F6E"))) : React.createElement("div", null));
     };
-    ReduxSchemaForm = tslib_1.__decorate([
-        redux_form_1.reduxForm({
-            form: "default"
-        })
-    ], ReduxSchemaForm);
     return ReduxSchemaForm;
 }(React.PureComponent));
+ReduxSchemaForm = tslib_1.__decorate([
+    redux_form_1.reduxForm({
+        form: "default"
+    })
+], ReduxSchemaForm);
 exports.ReduxSchemaForm = ReduxSchemaForm;
 //# sourceMappingURL=form.js.map

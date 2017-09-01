@@ -35,17 +35,17 @@ var SelectField = (function (_super) {
         return (React.createElement(TextField_1.default, tslib_1.__assign({}, other, { style: style, disabled: disabled, floatingLabelFixed: floatingLabelFixed, floatingLabelText: floatingLabelText, floatingLabelStyle: floatingLabelStyle, hintStyle: hintStyle, hintText: (!hintText && !floatingLabelText) ? ' ' : hintText, fullWidth: fullWidth, errorText: errorText, underlineStyle: underlineStyle, errorStyle: errorStyle, onFocus: onFocus, onBlur: onBlur, id: id, underlineDisabledStyle: underlineDisabledStyle, underlineFocusStyle: underlineFocusStyle }),
             React.createElement(my_drop_down_menu_1.DropDownMenu, tslib_1.__assign({ disabled: disabled, style: Object.assign(styles.dropDownMenu, menuStyle), labelStyle: Object.assign(styles.label, labelStyle), iconStyle: Object.assign(styles.icon, iconStyle), menuItemStyle: menuItemStyle, selectedMenuItemStyle: selectedMenuItemStyle, underlineStyle: styles.hideDropDownUnderline, listStyle: listStyle, autoWidth: autoWidth, value: value, onChange: onChange, maxHeight: maxHeight, multiple: multiple, selectionRenderer: selectionRenderer }, dropDownMenuProps), children)));
     };
-    SelectField.propTypes = SelectField_1.default['propTypes'];
-    SelectField.defaultProps = {
-        autoWidth: false,
-        disabled: false,
-        fullWidth: false,
-        multiple: false,
-    };
-    SelectField.contextTypes = {
-        muiTheme: PropTypes.object.isRequired,
-    };
     return SelectField;
 }(React.Component));
+SelectField.propTypes = SelectField_1.default['propTypes'];
+SelectField.defaultProps = {
+    autoWidth: false,
+    disabled: false,
+    fullWidth: false,
+    multiple: false,
+};
+SelectField.contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+};
 exports.SelectField = SelectField;
 //# sourceMappingURL=my-select-field.js.map
