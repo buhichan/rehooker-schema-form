@@ -31,12 +31,12 @@ var ReduxSchemaForm = (function (_super) {
                     React.createElement(DefaultButton, { type: "submit", disabled: !this.submitable.apply(this) }, "\u63D0\u4EA4"),
                     React.createElement(DefaultButton, { type: "button", disabled: !this.submitable.apply(this), onClick: this.props.reset }, "\u91CD\u7F6E"))) : React.createElement("div", null));
     };
+    ReduxSchemaForm = tslib_1.__decorate([
+        redux_form_1.reduxForm({
+            form: "default"
+        })
+    ], ReduxSchemaForm);
     return ReduxSchemaForm;
 }(React.PureComponent));
-ReduxSchemaForm = tslib_1.__decorate([
-    redux_form_1.reduxForm({
-        form: "default"
-    })
-], ReduxSchemaForm);
 exports.ReduxSchemaForm = ReduxSchemaForm;
 //# sourceMappingURL=form.js.map

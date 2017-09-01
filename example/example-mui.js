@@ -61,13 +61,13 @@ var App = (function (_super) {
                     "data:",
                     JSON.stringify(this.props.values, null, "\t"))));
     };
+    App = tslib_1.__decorate([
+        react_redux_1.connect(function (store) { return ({
+            values: store.form.random ? store.form.random.values : {}
+        }); })
+    ], App);
     return App;
 }(React.PureComponent));
-App = tslib_1.__decorate([
-    react_redux_1.connect(function (store) { return ({
-        values: store.form.random ? store.form.random.values : {}
-    }); })
-], App);
 var muiTheme = getMuiTheme_1.default({
     palette: {
         primary1Color: "#885543"

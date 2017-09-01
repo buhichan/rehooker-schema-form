@@ -108,27 +108,27 @@ var StatefulField = (function (_super) {
         var _a = this.props, form = _a.form, keyPath = _a.keyPath;
         return React.createElement(StatelessField, { field: this.state, form: form, keyPath: keyPath });
     };
+    StatefulField.contextTypes = {
+        store: PropTypes.object
+    };
+    StatefulField = tslib_1.__decorate([
+        react_redux_1.connect(function (_, p) {
+            var listeners = p.fieldSchema.listens;
+            if (typeof listeners === 'function')
+                listeners = listeners(p.keyPath.split(".").slice(0, -1).join("."));
+            var formSelector = redux_form_1.formValueSelector(p.form);
+            return reselect_1.createSelector(Object.keys(listeners).map(function (x) { return function (s) { return formSelector(s, x); }; }), function () {
+                var values = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    values[_i] = arguments[_i];
+                }
+                return {
+                    values: values,
+                    listeners: listeners
+                };
+            });
+        }, function (dispatch) { return ({ dispatch: dispatch }); })
+    ], StatefulField);
     return StatefulField;
 }(React.PureComponent));
-StatefulField.contextTypes = {
-    store: PropTypes.object
-};
-StatefulField = tslib_1.__decorate([
-    react_redux_1.connect(function (_, p) {
-        var listeners = p.fieldSchema.listens;
-        if (typeof listeners === 'function')
-            listeners = listeners(p.keyPath.split(".").slice(0, -1).join("."));
-        var formSelector = redux_form_1.formValueSelector(p.form);
-        return reselect_1.createSelector(Object.keys(listeners).map(function (x) { return function (s) { return formSelector(s, x); }; }), function () {
-            var values = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                values[_i] = arguments[_i];
-            }
-            return {
-                values: values,
-                listeners: listeners
-            };
-        });
-    }, function (dispatch) { return ({ dispatch: dispatch }); })
-], StatefulField);
 //# sourceMappingURL=field.js.map

@@ -265,28 +265,28 @@ var DropDownMenu = (function (_super) {
             React.createElement(Popover_1.default, { anchorOrigin: anchorOrigin, targetOrigin: targetOrigin, anchorEl: anchorEl, animation: animation || PopoverAnimationVertical_1.default, open: open, animated: animated, onRequestClose: this.handleRequestCloseMenu },
                 React.createElement(Menu_1.default, { multiple: multiple, maxHeight: maxHeight, desktop: true, value: value, onEscKeyDown: this.handleEscKeyDownMenu, style: menuStyle, listStyle: listStyle, onItemTouchTap: this.handleItemTouchTap, onChange: this.handleChange, selectedMenuItemStyle: selectedMenuItemStyle, autoWidth: autoWidth, width: !autoWidth && menuStyle ? menuStyle.width : null }, children))));
     };
+    DropDownMenu.muiName = 'DropDownMenu';
+    // The nested styles for drop-down-menu are modified by toolbar and possibly
+    // other user components, so it will give full access to its js styles rather
+    // than just the parent.
+    DropDownMenu.propTypes = DropDownMenu_1.default['propTypes'];
+    DropDownMenu.defaultProps = {
+        animated: true,
+        autoWidth: true,
+        disabled: false,
+        iconButton: React.createElement(arrow_drop_down_1.default, null),
+        openImmediately: false,
+        maxHeight: 500,
+        multiple: false,
+        anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'left',
+        },
+    };
+    DropDownMenu.contextTypes = {
+        muiTheme: PropTypes.object.isRequired,
+    };
     return DropDownMenu;
 }(React.Component));
-DropDownMenu.muiName = 'DropDownMenu';
-// The nested styles for drop-down-menu are modified by toolbar and possibly
-// other user components, so it will give full access to its js styles rather
-// than just the parent.
-DropDownMenu.propTypes = DropDownMenu_1.default['propTypes'];
-DropDownMenu.defaultProps = {
-    animated: true,
-    autoWidth: true,
-    disabled: false,
-    iconButton: React.createElement(arrow_drop_down_1.default, null),
-    openImmediately: false,
-    maxHeight: 500,
-    multiple: false,
-    anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'left',
-    },
-};
-DropDownMenu.contextTypes = {
-    muiTheme: PropTypes.object.isRequired,
-};
 exports.DropDownMenu = DropDownMenu;
 //# sourceMappingURL=my-drop-down-menu.js.map

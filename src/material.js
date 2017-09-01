@@ -142,24 +142,24 @@ var BaseAutoComplete = (function (_super) {
             input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: "autocomplete-clear-button", onTouchTap: function () { return input.onChange(fieldSchema.defaultValue || null); } },
                 React.createElement(svg_icons_1.ContentClear, null)) : null);
     };
+    BaseAutoComplete = tslib_1.__decorate([
+        react_jss_1.default({
+            autocomplete: {
+                position: "relative",
+                "&>.autocomplete-clear-button": {
+                    position: "absolute",
+                    top: "15px",
+                    right: 0,
+                    opacity: 0,
+                },
+                "&:hover>.autocomplete-clear-button": {
+                    opacity: 1
+                }
+            }
+        })
+    ], BaseAutoComplete);
     return BaseAutoComplete;
 }(React.PureComponent));
-BaseAutoComplete = tslib_1.__decorate([
-    react_jss_1.default({
-        autocomplete: {
-            position: "relative",
-            "&>.autocomplete-clear-button": {
-                position: "absolute",
-                top: "15px",
-                right: 0,
-                opacity: 0,
-            },
-            "&:hover>.autocomplete-clear-button": {
-                opacity: 1
-            }
-        }
-    })
-], BaseAutoComplete);
 var AutoCompleteSelect = (function (_super) {
     tslib_1.__extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
@@ -284,11 +284,11 @@ var ArrayFieldRenderer = (function (_super) {
                 React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
                     React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
     };
+    ArrayFieldRenderer = tslib_1.__decorate([
+        muiThemeable_1.default()
+    ], ArrayFieldRenderer);
     return ArrayFieldRenderer;
 }(React.Component));
-ArrayFieldRenderer = tslib_1.__decorate([
-    muiThemeable_1.default()
-], ArrayFieldRenderer);
 function TextAreaInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
 }
@@ -339,11 +339,11 @@ var FileInput = (function (_super) {
             } },
             React.createElement("input", { type: "file", style: { display: "none" }, onChange: this.onChange }));
     };
+    FileInput = tslib_1.__decorate([
+        muiThemeable_1.default()
+    ], FileInput);
     return FileInput;
 }(React.PureComponent));
-FileInput = tslib_1.__decorate([
-    muiThemeable_1.default()
-], FileInput);
 field_1.addType("password", TextInput);
 field_1.addType("email", TextInput);
 field_1.addType('text', TextInput);

@@ -46,13 +46,13 @@ var App = (function (_super) {
                     "data:",
                     JSON.stringify(this.props.values, null, "\t"))));
     };
+    App = tslib_1.__decorate([
+        react_redux_1.connect(function (store) { return ({
+            values: store.form.random ? store.form.random.values : {}
+        }); })
+    ], App);
     return App;
 }(React.PureComponent));
-App = tslib_1.__decorate([
-    react_redux_1.connect(function (store) { return ({
-        values: store.form.random ? store.form.random.values : {}
-    }); })
-], App);
 ReactDOM.render(React.createElement(react_redux_1.Provider, { store: store },
     React.createElement(App, null)), document.getElementById('root'));
 //# sourceMappingURL=example-antd.js.map

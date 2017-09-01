@@ -1,6 +1,6 @@
 {
   "name": "redux-schema-form",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0",
   "description": "use redux-form like formly",
   "main": "index.js",
   "repository": {
@@ -11,7 +11,7 @@
     "build": "tsc -p .",
     "version": "npm run build && git add -A",
     "postversion": "git push && git push --tags",
-    "dev":"npm run dev:mui",
+    "dev": "npm run dev:mui",
     "dev:mui": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme mui",
     "dev:antd": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme antd"
   },
