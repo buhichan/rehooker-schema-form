@@ -92,7 +92,7 @@ var StatefulField = (function (_super) {
                 return res;
         })).then(function (newSchemas) {
             var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema)); }, props.fieldSchema);
-            if (newSchema.value)
+            if (newSchema.hasOwnProperty("value"))
                 props.dispatch(redux_form_1.change(props.form, props.keyPath, newSchema.value));
             _this.setState(newSchema);
         });
