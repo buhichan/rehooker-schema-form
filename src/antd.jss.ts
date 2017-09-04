@@ -2,14 +2,17 @@
 const FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
 const widgetHeight = 85;
 const mobileMedia = "@media(max-width:768px)";
+const clearfix = {
+    "&:after":{
+        content:"\" \"",
+        display:"table",
+        clear:"both"
+    },
+};
 export const stylesheet = {
     form: {
         position:"relative",
-        "&:after":{
-            content:"\" \"",
-            display:"table",
-            clear:"both"
-        },
+        ...clearfix,
         "& *":{
             boxSizing:"border-box",
         },
@@ -58,6 +61,7 @@ export const stylesheet = {
             height:"auto",
             minHeight:widgetHeight
         },
+        "& .schema-node":clearfix,
         "& div.children, & div.button": {
             textAlign:"center",
             float: "left",

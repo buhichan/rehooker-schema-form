@@ -1,21 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
 var widgetHeight = 85;
 var mobileMedia = "@media(max-width:768px)";
+var clearfix = {
+    "&:after": {
+        content: "\" \"",
+        display: "table",
+        clear: "both"
+    },
+};
 exports.stylesheet = (_a = {
-        form: (_b = {
-                position: "relative",
-                "&:after": {
-                    content: "\" \"",
-                    display: "table",
-                    clear: "both"
-                },
-                "& *": {
+        form: tslib_1.__assign({ position: "relative" }, clearfix, (_b = { "& *": {
                     boxSizing: "border-box",
-                },
-                "& .btn-group": {},
-                "& .array-field-container": {
+                }, "& .btn-group": {}, "& .array-field-container": {
                     display: "flex",
                     flexWrap: "wrap",
                     alignItems: "flex-start",
@@ -36,13 +35,11 @@ exports.stylesheet = (_a = {
                     "& .delete-button": {
                         float: "right"
                     }
-                },
-                "&>div:after": {
+                }, "&>div:after": {
                     display: "table",
                     content: "",
                     clear: "both"
-                },
-                "& .field": {
+                }, "& .field": {
                     float: "left",
                     paddingRight: "10%",
                     paddingLeft: "10%",
@@ -51,49 +48,42 @@ exports.stylesheet = (_a = {
                     "&.hidden": {
                         display: "none"
                     },
-                }
-            },
-            _b[FullWidthInputs] = {
-                width: "100%",
-                height: "auto",
-                minHeight: widgetHeight
-            },
-            _b["& div.children, & div.button"] = {
-                textAlign: "center",
-                float: "left",
-                paddingRight: "initial",
-                paddingLeft: "initial",
-                height: "auto",
-                width: "100%",
-                margin: "20px 0 0",
-                minHeight: "initial"
-            },
-            _b["& fieldset .field:nth-child(2n)"] = {
-                padding: " 0 5% 0 calc(10% + 15px)",
-            },
-            _b["& fieldset .field:nth-child(2n+1)"] = {
-                padding: " 0 calc(10% + 15px) 0 5%",
-            },
-            _b["&>form>.schema-node>.field>fieldset"] = (_c = {
-                    "&>legend": {
-                        position: "relative",
-                        top: "11px",
-                        marginLeft: " 5%",
-                        borderBottom: "none",
-                        display: "inline-block",
-                        width: "auto",
-                        borderTop: "1px solid " + "#47a8f3",
-                    },
-                    margin: " 40px calc(5% - 7.5px)",
-                    padding: " 0 7.5px",
-                    background: "#f9f9fa",
-                    border: "none"
+                } }, _b[FullWidthInputs] = {
+            width: "100%",
+            height: "auto",
+            minHeight: widgetHeight
+        }, _b["& .schema-node"] = clearfix, _b["& div.children, & div.button"] = {
+            textAlign: "center",
+            float: "left",
+            paddingRight: "initial",
+            paddingLeft: "initial",
+            height: "auto",
+            width: "100%",
+            margin: "20px 0 0",
+            minHeight: "initial"
+        }, _b["& fieldset .field:nth-child(2n)"] = {
+            padding: " 0 5% 0 calc(10% + 15px)",
+        }, _b["& fieldset .field:nth-child(2n+1)"] = {
+            padding: " 0 calc(10% + 15px) 0 5%",
+        }, _b["&>form>.schema-node>.field>fieldset"] = (_c = {
+                "&>legend": {
+                    position: "relative",
+                    top: "11px",
+                    marginLeft: " 5%",
+                    borderBottom: "none",
+                    display: "inline-block",
+                    width: "auto",
+                    borderTop: "1px solid " + "#47a8f3",
                 },
-                _c[FullWidthInputs] = {
-                    padding: " 0 5%",
-                },
-                _c),
-            _b)
+                margin: " 40px calc(5% - 7.5px)",
+                padding: " 0 7.5px",
+                background: "#f9f9fa",
+                border: "none"
+            },
+            _c[FullWidthInputs] = {
+                padding: " 0 5%",
+            },
+            _c), _b))
     },
     _a[mobileMedia] = {
         "form": {

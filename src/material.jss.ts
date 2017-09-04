@@ -3,14 +3,17 @@
 const FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
 const widgetHeight = 85;
 const mobileMedia = "@media(max-width:768px)";
+const clearfix = {
+    "&:after":{
+        content:"\" \"",
+        display:"table",
+        clear:"both"
+    },
+};
 export const stylesheet = {
   form: {
     position:"relative",
-    "&:after":{
-      content:"\" \"",
-      display:"table",
-      clear:"both"
-    },
+    ...clearfix,
     "& *":{
       boxSizing:"border-box",
     },
@@ -83,6 +86,7 @@ export const stylesheet = {
     "& fieldset .field:nth-child(2n+1)": {
       padding: " 0 calc(10% + 15px) 0 5%",
     },
+    "& .schema-node":clearfix,
     "&>form>.schema-node>.field>fieldset": {
       "&>legend": {
         position: "relative",

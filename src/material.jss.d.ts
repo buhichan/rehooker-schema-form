@@ -1,106 +1,5 @@
 export declare const stylesheet: {
     [x: string]: {
-        [x: string]: string | {
-            content: string;
-            display: string;
-            clear: string;
-        } | {
-            boxSizing: string;
-        } | {
-            "&>button": {
-                border: number;
-                borderRadius: number;
-                backgroundColor: ({muiTheme}: {
-                    muiTheme: any;
-                }) => any;
-                color: string;
-                "&:not(:first-child)": {
-                    marginLeft: number;
-                };
-            };
-        } | {
-            display: string;
-            flexWrap: string;
-            alignItems: string;
-            "& .array-field-child": {
-                padding: string;
-                margin: string;
-                borderTop: ({muiTheme}: {
-                    muiTheme: any;
-                }) => string;
-                width: string;
-                "& .field": {
-                    width: string;
-                };
-            };
-            "& .add-button": {
-                textAlign: string;
-                marginBottom: number;
-                width: string;
-            };
-            "& .delete-button": {
-                float: string;
-            };
-        } | {
-            float: string;
-            paddingRight: string;
-            paddingLeft: string;
-            width: string;
-            height: number;
-            "&.hidden": {
-                display: string;
-            };
-        } | {
-            width: string;
-            height: string;
-            minHeight: number;
-        } | {
-            textAlign: string;
-            float: string;
-            paddingRight: string;
-            paddingLeft: string;
-            height: string;
-            width: string;
-            margin: string;
-            minHeight: string;
-        } | {
-            padding: string;
-        } | {
-            [x: string]: string | {
-                position: string;
-                top: string;
-                marginLeft: string;
-                borderBottom: string;
-                display: string;
-                width: string;
-                borderTop: ({muiTheme}: {
-                    muiTheme: any;
-                }) => string;
-            } | {
-                padding: string;
-            };
-            "&>legend": {
-                position: string;
-                top: string;
-                marginLeft: string;
-                borderBottom: string;
-                display: string;
-                width: string;
-                borderTop: ({muiTheme}: {
-                    muiTheme: any;
-                }) => string;
-            };
-            margin: string;
-            padding: string;
-            background: string;
-            border: string;
-        };
-        position: string;
-        "&:after": {
-            content: string;
-            display: string;
-            clear: string;
-        };
         "& *": {
             boxSizing: string;
         };
@@ -172,6 +71,13 @@ export declare const stylesheet: {
         "& fieldset .field:nth-child(2n+1)": {
             padding: string;
         };
+        "& .schema-node": {
+            "&:after": {
+                content: string;
+                display: string;
+                clear: string;
+            };
+        };
         "&>form>.schema-node>.field>fieldset": {
             [x: string]: string | {
                 position: string;
@@ -202,6 +108,12 @@ export declare const stylesheet: {
             background: string;
             border: string;
         };
+        "&:after": {
+            content: string;
+            display: string;
+            clear: string;
+        };
+        position: string;
     } | {
         "form": {
             "& .field, & .array-field-container .array-field-child": {
@@ -210,107 +122,6 @@ export declare const stylesheet: {
         };
     };
     form: {
-        [x: string]: string | {
-            content: string;
-            display: string;
-            clear: string;
-        } | {
-            boxSizing: string;
-        } | {
-            "&>button": {
-                border: number;
-                borderRadius: number;
-                backgroundColor: ({muiTheme}: {
-                    muiTheme: any;
-                }) => any;
-                color: string;
-                "&:not(:first-child)": {
-                    marginLeft: number;
-                };
-            };
-        } | {
-            display: string;
-            flexWrap: string;
-            alignItems: string;
-            "& .array-field-child": {
-                padding: string;
-                margin: string;
-                borderTop: ({muiTheme}: {
-                    muiTheme: any;
-                }) => string;
-                width: string;
-                "& .field": {
-                    width: string;
-                };
-            };
-            "& .add-button": {
-                textAlign: string;
-                marginBottom: number;
-                width: string;
-            };
-            "& .delete-button": {
-                float: string;
-            };
-        } | {
-            float: string;
-            paddingRight: string;
-            paddingLeft: string;
-            width: string;
-            height: number;
-            "&.hidden": {
-                display: string;
-            };
-        } | {
-            width: string;
-            height: string;
-            minHeight: number;
-        } | {
-            textAlign: string;
-            float: string;
-            paddingRight: string;
-            paddingLeft: string;
-            height: string;
-            width: string;
-            margin: string;
-            minHeight: string;
-        } | {
-            padding: string;
-        } | {
-            [x: string]: string | {
-                position: string;
-                top: string;
-                marginLeft: string;
-                borderBottom: string;
-                display: string;
-                width: string;
-                borderTop: ({muiTheme}: {
-                    muiTheme: any;
-                }) => string;
-            } | {
-                padding: string;
-            };
-            "&>legend": {
-                position: string;
-                top: string;
-                marginLeft: string;
-                borderBottom: string;
-                display: string;
-                width: string;
-                borderTop: ({muiTheme}: {
-                    muiTheme: any;
-                }) => string;
-            };
-            margin: string;
-            padding: string;
-            background: string;
-            border: string;
-        };
-        position: string;
-        "&:after": {
-            content: string;
-            display: string;
-            clear: string;
-        };
         "& *": {
             boxSizing: string;
         };
@@ -382,6 +193,13 @@ export declare const stylesheet: {
         "& fieldset .field:nth-child(2n+1)": {
             padding: string;
         };
+        "& .schema-node": {
+            "&:after": {
+                content: string;
+                display: string;
+                clear: string;
+            };
+        };
         "&>form>.schema-node>.field>fieldset": {
             [x: string]: string | {
                 position: string;
@@ -412,5 +230,11 @@ export declare const stylesheet: {
             background: string;
             border: string;
         };
+        "&:after": {
+            content: string;
+            display: string;
+            clear: string;
+        };
+        position: string;
     };
 };

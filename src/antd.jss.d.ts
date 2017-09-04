@@ -1,88 +1,5 @@
 export declare const stylesheet: {
     [x: string]: {
-        [x: string]: {
-            content: string;
-            display: string;
-            clear: string;
-        } | {
-            boxSizing: string;
-        } | {} | {
-            display: string;
-            flexWrap: string;
-            alignItems: string;
-            "& .array-field-child": {
-                padding: string;
-                margin: string;
-                borderTop: string;
-                width: string;
-                "& .field": {
-                    width: string;
-                };
-            };
-            "& .add-button": {
-                textAlign: string;
-                marginBottom: number;
-                width: string;
-            };
-            "& .delete-button": {
-                float: string;
-            };
-        } | {
-            float: string;
-            paddingRight: string;
-            paddingLeft: string;
-            width: string;
-            height: number;
-            "&.hidden": {
-                display: string;
-            };
-        } | {
-            width: string;
-            height: string;
-            minHeight: number;
-        } | {
-            textAlign: string;
-            float: string;
-            paddingRight: string;
-            paddingLeft: string;
-            height: string;
-            width: string;
-            margin: string;
-            minHeight: string;
-        } | {
-            padding: string;
-        } | {
-            [x: string]: string | {
-                position: string;
-                top: string;
-                marginLeft: string;
-                borderBottom: string;
-                display: string;
-                width: string;
-                borderTop: string;
-            } | {
-                padding: string;
-            };
-            "&>legend": {
-                position: string;
-                top: string;
-                marginLeft: string;
-                borderBottom: string;
-                display: string;
-                width: string;
-                borderTop: string;
-            };
-            margin: string;
-            padding: string;
-            background: string;
-            border: string;
-        };
-        position: string;
-        "&:after": {
-            content: string;
-            display: string;
-            clear: string;
-        };
         "& *": {
             boxSizing: string;
         };
@@ -122,6 +39,13 @@ export declare const stylesheet: {
             height: number;
             "&.hidden": {
                 display: string;
+            };
+        };
+        "& .schema-node": {
+            "&:after": {
+                content: string;
+                display: string;
+                clear: string;
             };
         };
         "& div.children, & div.button": {
@@ -166,6 +90,12 @@ export declare const stylesheet: {
             background: string;
             border: string;
         };
+        "&:after": {
+            content: string;
+            display: string;
+            clear: string;
+        };
+        position: string;
     } | {
         "form": {
             "& .field, & .array-field-container .array-field-child": {
@@ -174,89 +104,6 @@ export declare const stylesheet: {
         };
     };
     form: {
-        [x: string]: {
-            content: string;
-            display: string;
-            clear: string;
-        } | {
-            boxSizing: string;
-        } | {} | {
-            display: string;
-            flexWrap: string;
-            alignItems: string;
-            "& .array-field-child": {
-                padding: string;
-                margin: string;
-                borderTop: string;
-                width: string;
-                "& .field": {
-                    width: string;
-                };
-            };
-            "& .add-button": {
-                textAlign: string;
-                marginBottom: number;
-                width: string;
-            };
-            "& .delete-button": {
-                float: string;
-            };
-        } | {
-            float: string;
-            paddingRight: string;
-            paddingLeft: string;
-            width: string;
-            height: number;
-            "&.hidden": {
-                display: string;
-            };
-        } | {
-            width: string;
-            height: string;
-            minHeight: number;
-        } | {
-            textAlign: string;
-            float: string;
-            paddingRight: string;
-            paddingLeft: string;
-            height: string;
-            width: string;
-            margin: string;
-            minHeight: string;
-        } | {
-            padding: string;
-        } | {
-            [x: string]: string | {
-                position: string;
-                top: string;
-                marginLeft: string;
-                borderBottom: string;
-                display: string;
-                width: string;
-                borderTop: string;
-            } | {
-                padding: string;
-            };
-            "&>legend": {
-                position: string;
-                top: string;
-                marginLeft: string;
-                borderBottom: string;
-                display: string;
-                width: string;
-                borderTop: string;
-            };
-            margin: string;
-            padding: string;
-            background: string;
-            border: string;
-        };
-        position: string;
-        "&:after": {
-            content: string;
-            display: string;
-            clear: string;
-        };
         "& *": {
             boxSizing: string;
         };
@@ -296,6 +143,13 @@ export declare const stylesheet: {
             height: number;
             "&.hidden": {
                 display: string;
+            };
+        };
+        "& .schema-node": {
+            "&:after": {
+                content: string;
+                display: string;
+                clear: string;
             };
         };
         "& div.children, & div.button": {
@@ -340,5 +194,11 @@ export declare const stylesheet: {
             background: string;
             border: string;
         };
+        "&:after": {
+            content: string;
+            display: string;
+            clear: string;
+        };
+        position: string;
     };
 };
