@@ -1,4 +1,5 @@
 "use strict";
+var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
@@ -126,6 +127,7 @@ exports.schema = [
             }, {
                 key: "email",
                 type: "email",
+                fullWidth: true,
                 label: "email with validation",
                 validate: function (v) {
                     if (!/.*@.*\..*/.test(v))
@@ -274,6 +276,18 @@ exports.schema = [
             else
                 return [{ name: "0", value: 0 }];
         }
+    }, {
+        key: "radio",
+        type: "radio",
+        label: "radio",
+        options: function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, [
+                        { name: "yes", value: true },
+                        { name: "no", value: false },
+                    ]];
+            });
+        }); }
     }
 ];
 //# sourceMappingURL=schema-example.js.map

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var FullWidthInputs = "& .field.group,& .field.array,& .field.rich-editor, & .field.textarea";
+var FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
 var widgetHeight = 85;
 var mobileMedia = "@media(max-width:768px)";
 exports.stylesheet = (_a = {
@@ -68,14 +68,10 @@ exports.stylesheet = (_a = {
                 margin: "20px 0 0",
                 minHeight: "initial"
             },
-            _b["& fieldset>.schema-node>div:nth-child(2n)"] = {
-                float: "right",
-                width: "50%",
+            _b["& fieldset .field:nth-child(2n)"] = {
                 padding: " 0 5% 0 calc(10% + 15px)",
             },
-            _b["& fieldset>.schema-node>div:nth-child(2n+1)"] = {
-                float: "left",
-                width: "50%",
+            _b["& fieldset .field:nth-child(2n+1)"] = {
                 padding: " 0 calc(10% + 15px) 0 5%",
             },
             _b["&>form>.schema-node>.field>fieldset"] = (_c = {

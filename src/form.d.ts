@@ -26,6 +26,7 @@ export interface FormFieldSchema extends Partial<ConfigProps<any, any>> {
     label: string;
     hide?: boolean;
     placeholder?: string;
+    fullWidth?: boolean;
     required?: boolean;
     disabled?: boolean;
     multiple?: boolean;

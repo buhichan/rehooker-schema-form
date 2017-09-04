@@ -1,6 +1,6 @@
 /**-----------------------------------Form-----------------------------------**/
 
-const FullWidthInputs = "& .field.group,& .field.array,& .field.rich-editor, & .field.textarea";
+const FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
 const widgetHeight = 85;
 const mobileMedia = "@media(max-width:768px)";
 export const stylesheet = {
@@ -77,14 +77,10 @@ export const stylesheet = {
       margin: "20px 0 0",
       minHeight: "initial"
     },
-    "& fieldset>.schema-node>div:nth-child(2n)": {
-      float: "right",
-      width: "50%",
+    "& fieldset .field:nth-child(2n)": {
       padding: " 0 5% 0 calc(10% + 15px)",
     },
-    "& fieldset>.schema-node>div:nth-child(2n+1)": {
-      float: "left",
-      width: "50%",
+    "& fieldset .field:nth-child(2n+1)": {
       padding: " 0 calc(10% + 15px) 0 5%",
     },
     "&>form>.schema-node>.field>fieldset": {

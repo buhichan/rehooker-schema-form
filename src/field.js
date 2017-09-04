@@ -38,7 +38,7 @@ var StatelessField = (function (_super) {
     }
     StatelessField.prototype.render = function () {
         var _a = this.props, field = _a.field, form = _a.form, keyPath = _a.keyPath;
-        var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, style = field.style, children = field.children, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "style", "children"]);
+        var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, style = field.style, children = field.children, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "style", "children"]);
         if (field.hide)
             return null;
         var typeName = field.type;
@@ -46,7 +46,7 @@ var StatelessField = (function (_super) {
             typeName = "";
         if (customTypes.has(type)) {
             var CustomWidget = customTypes.get(type);
-            return React.createElement("div", { className: "field " + typeName, style: field.style },
+            return React.createElement("div", { className: "field " + typeName + (fullWidth ? " full-width" : ""), style: field.style },
                 React.createElement(CustomWidget, tslib_1.__assign({ keyPath: keyPath, fieldSchema: field }, rest, { renderField: preRenderField })));
         }
         else if (typeof type === 'function')

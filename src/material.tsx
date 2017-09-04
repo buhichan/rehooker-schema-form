@@ -3,7 +3,10 @@
  */
 import * as React from "react"
 import {RuntimeAsyncOptions, AsyncOptions, Options, setButton} from "./form"
-import {TextField,TimePicker,MenuItem,Checkbox,DatePicker,RaisedButton,FlatButton,Paper,AutoComplete,IconButton} from "material-ui"
+import {
+    TextField, TimePicker, MenuItem, Checkbox, DatePicker, RaisedButton, FlatButton, Paper, AutoComplete,
+    IconButton, Subheader
+} from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
@@ -17,6 +20,8 @@ import injectCSS from 'react-jss';
 import {Field as RFField,FieldArray as RFFieldArray} from "redux-form";
 import {SelectField} from "./my-select-field"
 import {renderFields} from "./render-fields";
+import {default as RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
+import CircularProgress from "material-ui/CircularProgress";
 
 function NumberInput(props:WidgetProps){
     return <TextField
@@ -227,9 +232,9 @@ const dataSourceConfig = {text:"name",value:"value"};
         }
     }
 })
-class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,fullResult?,input,meta,openOnFocus?,searchText,dataSource,onNewRequest?,onUpdateInput?,classes?},any>{
+class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,loading?, fullResult?,input,meta,openOnFocus?,searchText,dataSource,onNewRequest?,onUpdateInput?,classes?},any>{
     render() {
-        const {fieldSchema, input, meta, fullResult, filter,openOnFocus, searchText, dataSource, onNewRequest, onUpdateInput,classes} = this.props;
+        const {fieldSchema, input, meta, fullResult, filter,openOnFocus,loading, searchText, dataSource, onNewRequest, onUpdateInput,classes} = this.props;
         return <div className={classes.autocomplete}>
             <AutoComplete
                 id={fieldSchema.name}
@@ -248,7 +253,8 @@ class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,fullResu
                 onUpdateInput={onUpdateInput}
             />
             {
-                input.value!==null&&input.value!==undefined&&input.value!=="" ? <IconButton
+                loading?<CircularProgress size={48} />
+                :input.value!==null&&input.value!==undefined&&input.value!=="" ? <IconButton
                     style={{position:"absolute"}}
                     className="autocomplete-clear-button"
                     onTouchTap={() => input.onChange(fieldSchema.defaultValue || null)}
@@ -325,7 +331,8 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
             return;
         const throttle = this.props.fieldSchema['throttle']||400;
         this.setState({
-            searchText:name
+            searchText:name,
+            loading:true
         });
         if(this.pendingUpdate)
             clearTimeout(this.pendingUpdate);
@@ -336,11 +343,13 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
                 result.then(options=>{
                     if(this.fetchingQuery === name && this.$isMounted)
                         this.setState({
-                            dataSource:options
+                            dataSource:options,
+                            loading:false
                         })
                 });
             else this.setState({
-                dataSource:result
+                dataSource:result,
+                loading:false
             })
         },throttle);
     };
@@ -349,6 +358,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
     };
     state={
         searchText:"",
+        loading:false,
         dataSource:[]
     };
     render() {
@@ -357,6 +367,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
             input={input}
             meta={meta}
             fullResult
+            loading={this.state.loading}
             filter={AutoComplete.noFilter}
             fieldSchema={fieldSchema}
             dataSource={this.state.dataSource}
@@ -477,6 +488,44 @@ class FileInput extends React.PureComponent<WidgetProps&{
         >
             <input type="file" style={{display:"none"}} onChange={this.onChange} />
         </RaisedButton>
+    }
+}
+
+@addType("radio")
+class SelectRadio extends SelectInput{
+    render(){
+        const props = this.props;
+        return <div>
+            <Subheader style={{paddingLeft:0}}>
+                {props.fieldSchema.label}
+            </Subheader>
+            <RadioButtonGroup
+                {...props.input as any}
+                onBlur={()=>props.input.onBlur(props.input.value)}
+                id={props.input.name}
+                name={props.input.name}
+                disabled={props.disabled}
+                floatingLabelText={props.fieldSchema.label}
+                fullWidth={true}
+                errorText={props.meta.error}
+                hintText={props.fieldSchema.placeholder}
+                multiple={props.fieldSchema.multiple}
+                style={{
+                    display:'flex'
+                }}
+                onChange={(e,v)=>props.input.onChange(v)}
+            >
+                {
+                    this.state.options?this.state.options.map((option) => (
+                        <RadioButton style={{
+                            width:"auto",
+                            flex:1,
+                            margin:"0 15px 0 0"
+                        }} key={option.value} value={option.value} label={option.name}/>
+                    )):<RadioButton key={"...loading"} value={""} disabled label={"载入中"}/>
+                }
+            </RadioButtonGroup>
+        </div>
     }
 }
 

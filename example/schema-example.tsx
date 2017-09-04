@@ -122,6 +122,7 @@ export let schema:FormFieldSchema[] = [
             },{
                 key:"email",
                 type:"email",
+                fullWidth:true,
                 label:"email with validation",
                 validate(v){
                     if(!/.*@.*\..*/.test(v))
@@ -269,5 +270,13 @@ export let schema:FormFieldSchema[] = [
                 return Promise.resolve(new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i})));
             else return [{name:"0",value:0}];
         }
+    },{
+        key:"radio",
+        type:"radio",
+        label:"radio",
+        options:async ()=>[
+            {name:"yes",value:true},
+            {name:"no",value:false},
+        ]
     }
 ];

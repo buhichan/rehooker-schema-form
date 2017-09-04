@@ -25,6 +25,7 @@ export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
     label:string,
     hide?:boolean,
     placeholder?:string,
+    fullWidth?:boolean, //todo: should I put this presentation logic here?
     required?:boolean,
     disabled?:boolean,
     multiple?:boolean,

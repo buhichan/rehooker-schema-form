@@ -17,6 +17,8 @@ var react_jss_1 = require("react-jss");
 var redux_form_1 = require("redux-form");
 var my_select_field_1 = require("./my-select-field");
 var render_fields_1 = require("./render-fields");
+var RadioButton_1 = require("material-ui/RadioButton");
+var CircularProgress_1 = require("material-ui/CircularProgress");
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
@@ -136,11 +138,12 @@ var BaseAutoComplete = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     BaseAutoComplete.prototype.render = function () {
-        var _a = this.props, fieldSchema = _a.fieldSchema, input = _a.input, meta = _a.meta, fullResult = _a.fullResult, filter = _a.filter, openOnFocus = _a.openOnFocus, searchText = _a.searchText, dataSource = _a.dataSource, onNewRequest = _a.onNewRequest, onUpdateInput = _a.onUpdateInput, classes = _a.classes;
+        var _a = this.props, fieldSchema = _a.fieldSchema, input = _a.input, meta = _a.meta, fullResult = _a.fullResult, filter = _a.filter, openOnFocus = _a.openOnFocus, loading = _a.loading, searchText = _a.searchText, dataSource = _a.dataSource, onNewRequest = _a.onNewRequest, onUpdateInput = _a.onUpdateInput, classes = _a.classes;
         return React.createElement("div", { className: classes.autocomplete },
             React.createElement(material_ui_1.AutoComplete, { id: fieldSchema.name, maxSearchResults: fullResult ? undefined : 5, menuStyle: fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, fullWidth: true, openOnFocus: openOnFocus, hintText: fieldSchema.placeholder, errorText: meta.error, filter: filter || material_ui_1.AutoComplete.fuzzyFilter, dataSource: dataSource, dataSourceConfig: dataSourceConfig, floatingLabelText: fieldSchema.label, searchText: searchText, onNewRequest: onNewRequest, onUpdateInput: onUpdateInput }),
-            input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: "autocomplete-clear-button", onTouchTap: function () { return input.onChange(fieldSchema.defaultValue || null); } },
-                React.createElement(svg_icons_1.ContentClear, null)) : null);
+            loading ? React.createElement(CircularProgress_1.default, { size: 48 })
+                : input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: "autocomplete-clear-button", onTouchTap: function () { return input.onChange(fieldSchema.defaultValue || null); } },
+                    React.createElement(svg_icons_1.ContentClear, null)) : null);
     };
     BaseAutoComplete = tslib_1.__decorate([
         react_jss_1.default({
@@ -204,7 +207,8 @@ var AutoCompleteAsync = (function (_super) {
                 return;
             var throttle = _this.props.fieldSchema['throttle'] || 400;
             _this.setState({
-                searchText: name
+                searchText: name,
+                loading: true
             });
             if (_this.pendingUpdate)
                 clearTimeout(_this.pendingUpdate);
@@ -215,12 +219,14 @@ var AutoCompleteAsync = (function (_super) {
                     result.then(function (options) {
                         if (_this.fetchingQuery === name && _this.$isMounted)
                             _this.setState({
-                                dataSource: options
+                                dataSource: options,
+                                loading: false
                             });
                     });
                 else
                     _this.setState({
-                        dataSource: result
+                        dataSource: result,
+                        loading: false
                     });
             }, throttle);
         };
@@ -230,6 +236,7 @@ var AutoCompleteAsync = (function (_super) {
         };
         _this.state = {
             searchText: "",
+            loading: false,
             dataSource: []
         };
         return _this;
@@ -252,7 +259,7 @@ var AutoCompleteAsync = (function (_super) {
     };
     AutoCompleteAsync.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
     };
     return AutoCompleteAsync;
 }(React.PureComponent));
@@ -344,6 +351,28 @@ var FileInput = (function (_super) {
     ], FileInput);
     return FileInput;
 }(React.PureComponent));
+var SelectRadio = (function (_super) {
+    tslib_1.__extends(SelectRadio, _super);
+    function SelectRadio() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SelectRadio.prototype.render = function () {
+        var props = this.props;
+        return React.createElement("div", null,
+            React.createElement(material_ui_1.Subheader, { style: { paddingLeft: 0 } }, props.fieldSchema.label),
+            React.createElement(RadioButton_1.RadioButtonGroup, tslib_1.__assign({}, props.input, { onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, name: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, style: {
+                    display: 'flex'
+                }, onChange: function (e, v) { return props.input.onChange(v); } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(RadioButton_1.default, { style: {
+                    width: "auto",
+                    flex: 1,
+                    margin: "0 15px 0 0"
+                }, key: option.value, value: option.value, label: option.name })); }) : React.createElement(RadioButton_1.default, { key: "...loading", value: "", disabled: true, label: "载入中" })));
+    };
+    SelectRadio = tslib_1.__decorate([
+        field_1.addType("radio")
+    ], SelectRadio);
+    return SelectRadio;
+}(SelectInput));
 field_1.addType("password", TextInput);
 field_1.addType("email", TextInput);
 field_1.addType('text', TextInput);

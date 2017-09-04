@@ -50,8 +50,6 @@ export declare const stylesheet: {
             margin: string;
             minHeight: string;
         } | {
-            float: string;
-            width: string;
             padding: string;
         } | {
             [x: string]: string | {
@@ -136,14 +134,10 @@ export declare const stylesheet: {
             margin: string;
             minHeight: string;
         };
-        "& fieldset>.schema-node>div:nth-child(2n)": {
-            float: string;
-            width: string;
+        "& fieldset .field:nth-child(2n)": {
             padding: string;
         };
-        "& fieldset>.schema-node>div:nth-child(2n+1)": {
-            float: string;
-            width: string;
+        "& fieldset .field:nth-child(2n+1)": {
             padding: string;
         };
         "&>form>.schema-node>.field>fieldset": {
@@ -230,8 +224,6 @@ export declare const stylesheet: {
             margin: string;
             minHeight: string;
         } | {
-            float: string;
-            width: string;
             padding: string;
         } | {
             [x: string]: string | {
@@ -316,14 +308,10 @@ export declare const stylesheet: {
             margin: string;
             minHeight: string;
         };
-        "& fieldset>.schema-node>div:nth-child(2n)": {
-            float: string;
-            width: string;
+        "& fieldset .field:nth-child(2n)": {
             padding: string;
         };
-        "& fieldset>.schema-node>div:nth-child(2n+1)": {
-            float: string;
-            width: string;
+        "& fieldset .field:nth-child(2n+1)": {
             padding: string;
         };
         "&>form>.schema-node>.field>fieldset": {
