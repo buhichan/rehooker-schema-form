@@ -221,15 +221,17 @@ const dataSourceConfig = {text:"name",value:"value"};
 @injectCSS({
     autocomplete:{
         position:"relative",
-        "&>.autocomplete-clear-button":{
-            position:"absolute",
-            top:"15px",
-            right:0,
-            opacity:0,
-        },
-        "&:hover>.autocomplete-clear-button":{
-            opacity:1
+        "&:hover": {
+            "&>$clearButton": {
+                opacity: 1
+            }
         }
+    },
+    "clearButton":{
+        position:"absolute",
+        top:15,
+        right:12,
+        opacity:0,
     }
 })
 class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,loading?, fullResult?,input,meta,openOnFocus?,searchText,dataSource,onNewRequest?,onUpdateInput?,classes?},any>{
@@ -248,15 +250,19 @@ class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,loading?
                 dataSource={dataSource}
                 dataSourceConfig={dataSourceConfig}
                 floatingLabelText={fieldSchema.label}
-                searchText={searchText}
+                searchText={String(searchText)}
                 onNewRequest={onNewRequest}
                 onUpdateInput={onUpdateInput}
             />
             {
-                loading?<CircularProgress size={48} />
+                loading?<CircularProgress size={30} style={{
+                    position:"absolute",
+                    top:22,
+                    right:18
+                }} />
                 :input.value!==null&&input.value!==undefined&&input.value!=="" ? <IconButton
                     style={{position:"absolute"}}
-                    className="autocomplete-clear-button"
+                    className={classes.clearButton}
                     onTouchTap={() => input.onChange(fieldSchema.defaultValue || null)}
                 >
                     <ContentClear />
@@ -332,7 +338,8 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
         const throttle = this.props.fieldSchema['throttle']||400;
         this.setState({
             searchText:name,
-            loading:true
+            loading:true,
+            dataSource:[]
         });
         if(this.pendingUpdate)
             clearTimeout(this.pendingUpdate);

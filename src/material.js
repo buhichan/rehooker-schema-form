@@ -140,24 +140,30 @@ var BaseAutoComplete = (function (_super) {
     BaseAutoComplete.prototype.render = function () {
         var _a = this.props, fieldSchema = _a.fieldSchema, input = _a.input, meta = _a.meta, fullResult = _a.fullResult, filter = _a.filter, openOnFocus = _a.openOnFocus, loading = _a.loading, searchText = _a.searchText, dataSource = _a.dataSource, onNewRequest = _a.onNewRequest, onUpdateInput = _a.onUpdateInput, classes = _a.classes;
         return React.createElement("div", { className: classes.autocomplete },
-            React.createElement(material_ui_1.AutoComplete, { id: fieldSchema.name, maxSearchResults: fullResult ? undefined : 5, menuStyle: fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, fullWidth: true, openOnFocus: openOnFocus, hintText: fieldSchema.placeholder, errorText: meta.error, filter: filter || material_ui_1.AutoComplete.fuzzyFilter, dataSource: dataSource, dataSourceConfig: dataSourceConfig, floatingLabelText: fieldSchema.label, searchText: searchText, onNewRequest: onNewRequest, onUpdateInput: onUpdateInput }),
-            loading ? React.createElement(CircularProgress_1.default, { size: 48 })
-                : input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: "autocomplete-clear-button", onTouchTap: function () { return input.onChange(fieldSchema.defaultValue || null); } },
+            React.createElement(material_ui_1.AutoComplete, { id: fieldSchema.name, maxSearchResults: fullResult ? undefined : 5, menuStyle: fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, fullWidth: true, openOnFocus: openOnFocus, hintText: fieldSchema.placeholder, errorText: meta.error, filter: filter || material_ui_1.AutoComplete.fuzzyFilter, dataSource: dataSource, dataSourceConfig: dataSourceConfig, floatingLabelText: fieldSchema.label, searchText: String(searchText), onNewRequest: onNewRequest, onUpdateInput: onUpdateInput }),
+            loading ? React.createElement(CircularProgress_1.default, { size: 30, style: {
+                    position: "absolute",
+                    top: 22,
+                    right: 18
+                } })
+                : input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: classes.clearButton, onTouchTap: function () { return input.onChange(fieldSchema.defaultValue || null); } },
                     React.createElement(svg_icons_1.ContentClear, null)) : null);
     };
     BaseAutoComplete = tslib_1.__decorate([
         react_jss_1.default({
             autocomplete: {
                 position: "relative",
-                "&>.autocomplete-clear-button": {
-                    position: "absolute",
-                    top: "15px",
-                    right: 0,
-                    opacity: 0,
-                },
-                "&:hover>.autocomplete-clear-button": {
-                    opacity: 1
+                "&:hover": {
+                    "&>$clearButton": {
+                        opacity: 1
+                    }
                 }
+            },
+            "clearButton": {
+                position: "absolute",
+                top: 15,
+                right: 12,
+                opacity: 0,
             }
         })
     ], BaseAutoComplete);
@@ -208,7 +214,8 @@ var AutoCompleteAsync = (function (_super) {
             var throttle = _this.props.fieldSchema['throttle'] || 400;
             _this.setState({
                 searchText: name,
-                loading: true
+                loading: true,
+                dataSource: []
             });
             if (_this.pendingUpdate)
                 clearTimeout(_this.pendingUpdate);

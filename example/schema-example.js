@@ -272,7 +272,9 @@ exports.schema = [
         label: "自动完成",
         options: function (t) {
             if (/^\d+$/.test(t))
-                return Promise.resolve(new Array(100).fill(0).map(function (_, i) { return ({ name: String(i), value: "value-" + i }); }));
+                return new Promise(function (resolve) {
+                    setTimeout(function () { return resolve(new Array(100).fill(0).map(function (_, i) { return ({ name: String(i), value: "value-" + i }); })); }, 5000);
+                });
             else
                 return [{ name: "0", value: 0 }];
         }
