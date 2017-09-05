@@ -229,6 +229,11 @@ var AutoCompleteAsync = (function (_super) {
                                 dataSource: options,
                                 loading: false
                             });
+                    }, function (e) {
+                        _this.setState({
+                            loading: false
+                        });
+                        throw e;
                     });
                 else
                     _this.setState({

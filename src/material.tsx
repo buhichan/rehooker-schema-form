@@ -353,6 +353,11 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
                             dataSource:options,
                             loading:false
                         })
+                },(e)=>{
+                    this.setState({
+                        loading: false
+                    });
+                    throw e;
                 });
             else this.setState({
                 dataSource:result,
