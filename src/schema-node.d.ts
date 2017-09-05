@@ -13,7 +13,7 @@ export interface SchemaNodeProps {
 }
 export declare class SchemaNode extends React.PureComponent<SchemaNodeProps, any> {
     state: {
-        parsedSchema: any[];
+        parsedSchema: ParsedFormFieldSchema[];
     };
     pendingSchemaChanges: any[];
     onSchemaChange: (newFields: any) => void;
@@ -27,5 +27,5 @@ export declare class SchemaNode extends React.PureComponent<SchemaNodeProps, any
     };
     refChildrenNodes: (ref: any, key: any) => void;
     parseSchema(newSchema: FormFieldSchema[]): Promise<ParsedFormFieldSchema[]>;
-    render(): JSX.Element;
+    render(): any;
 }
