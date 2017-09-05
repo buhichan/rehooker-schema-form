@@ -249,7 +249,7 @@ var ArrayFieldRenderer = (function (_super) {
                     React.createElement("div", { className: "delete-button" },
                         React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
                             React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
-                    React.createElement(schema_node_1.SchemaNode, { form: props.meta.form, keyPath: props.keyPath + "[" + i + "]c", schema: children, initialValues: childValue }));
+                    React.createElement(schema_node_1.SchemaNode, { form: props.meta.form, keyPath: props.keyPath + "[" + i + "]", schema: children, initialValues: childValue }));
             }),
             React.createElement("div", { className: "add-button" },
                 React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
