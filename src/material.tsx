@@ -394,6 +394,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
 /**
  * 这个组件比较复杂,必须考虑
  * getChildren存在的情况
+ * update: 不必了,以后就没有getChildren了,统一用listens
  */
 @muiThemeable()
 class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&WidgetProps,any>{
@@ -513,6 +514,7 @@ class SelectRadio extends SelectInput{
             </Subheader>
             <RadioButtonGroup
                 {...props.input as any}
+                valueSelected={props.input.value}
                 onBlur={()=>props.input.onBlur(props.input.value)}
                 id={props.input.name}
                 name={props.input.name}

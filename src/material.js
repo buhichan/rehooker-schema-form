@@ -278,6 +278,7 @@ var AutoCompleteAsync = (function (_super) {
 /**
  * 这个组件比较复杂,必须考虑
  * getChildren存在的情况
+ * update: 不必了,以后就没有getChildren了,统一用listens
  */
 var ArrayFieldRenderer = (function (_super) {
     tslib_1.__extends(ArrayFieldRenderer, _super);
@@ -372,7 +373,7 @@ var SelectRadio = (function (_super) {
         var props = this.props;
         return React.createElement("div", null,
             React.createElement(material_ui_1.Subheader, { style: { paddingLeft: 0 } }, props.fieldSchema.label),
-            React.createElement(RadioButton_1.RadioButtonGroup, tslib_1.__assign({}, props.input, { onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, name: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, style: {
+            React.createElement(RadioButton_1.RadioButtonGroup, tslib_1.__assign({}, props.input, { valueSelected: props.input.value, onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, name: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, style: {
                     display: 'flex'
                 }, onChange: function (e, v) { return props.input.onChange(v); } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(RadioButton_1.default, { style: {
                     width: "auto",
