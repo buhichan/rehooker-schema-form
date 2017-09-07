@@ -374,10 +374,12 @@ var SelectRadio = (function (_super) {
         return React.createElement("div", null,
             React.createElement(material_ui_1.Subheader, { style: { paddingLeft: 0 } }, props.fieldSchema.label),
             React.createElement(RadioButton_1.RadioButtonGroup, tslib_1.__assign({}, props.input, { valueSelected: props.input.value, onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, name: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, style: {
-                    display: 'flex'
+                    display: 'flex',
+                    flexWrap: "wrap"
                 }, onChange: function (e, v) { return props.input.onChange(v); } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(RadioButton_1.default, { style: {
                     width: "auto",
                     flex: 1,
+                    whiteSpace: "nowrap",
                     margin: "0 15px 0 0"
                 }, key: option.value, value: option.value, label: option.name })); }) : React.createElement(RadioButton_1.default, { key: "...loading", value: "", disabled: true, label: "载入中" })));
     };

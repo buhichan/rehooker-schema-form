@@ -525,7 +525,8 @@ class SelectRadio extends SelectInput{
                 hintText={props.fieldSchema.placeholder}
                 multiple={props.fieldSchema.multiple}
                 style={{
-                    display:'flex'
+                    display:'flex',
+                    flexWrap:"wrap"
                 }}
                 onChange={(e,v)=>props.input.onChange(v)}
             >
@@ -534,6 +535,7 @@ class SelectRadio extends SelectInput{
                         <RadioButton style={{
                             width:"auto",
                             flex:1,
+                            whiteSpace:"nowrap",
                             margin:"0 15px 0 0"
                         }} key={option.value} value={option.value} label={option.name}/>
                     )):<RadioButton key={"...loading"} value={""} disabled label={"载入中"}/>
