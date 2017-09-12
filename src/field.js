@@ -50,7 +50,7 @@ var StatelessField = (function (_super) {
                 React.createElement(CustomWidget, tslib_1.__assign({ keyPath: keyPath, fieldSchema: field }, rest, { renderField: preRenderField })));
         }
         else if (typeof type === 'function')
-            return React.createElement("div", { className: "field " + typeName, style: field.style },
+            return React.createElement("div", { className: "field " + typeName + (fullWidth ? " full-width" : ""), style: field.style },
                 React.createElement(redux_form_1.Field, tslib_1.__assign({ name: keyPath, keyPath: keyPath, fieldSchema: field, renderField: preRenderField }, rest, { component: type })));
         //noinspection FallThroughInSwitchStatementJS
         switch (type) {

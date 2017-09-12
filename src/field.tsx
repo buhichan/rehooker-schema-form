@@ -94,7 +94,7 @@ export class StatelessField extends React.PureComponent<{field:FormFieldSchema, 
                 <CustomWidget keyPath={keyPath} fieldSchema={field} {...rest} renderField={preRenderField}/>
             </div>
         } else if (typeof type === 'function')
-            return <div className={"field " + typeName} style={field.style}>
+            return <div className={"field " + typeName + (fullWidth?" full-width":"")} style={field.style}>
                 <Field name={keyPath} keyPath={keyPath} fieldSchema={field}
                        renderField={preRenderField} {...rest as any} component={type}/>
             </div>;
