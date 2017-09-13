@@ -32,6 +32,7 @@ export interface FormFieldSchema extends Partial<ConfigProps<any, any>> {
     multiple?: boolean;
     children?: FormFieldSchema[];
     options?: Options | AsyncOptions | RuntimeAsyncOptions;
+    defaultValue?: any;
     /**
      * 返回url
      * @param file 要上传的文件

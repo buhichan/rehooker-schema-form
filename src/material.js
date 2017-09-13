@@ -301,7 +301,7 @@ var ArrayFieldRenderer = (function (_super) {
                     render_fields_1.renderFields(props.meta.form, children, props.keyPath + "[" + i + "]"));
             }),
             React.createElement("div", { className: "add-button" },
-                React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push({}); } },
+                React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push(props.fieldSchema.defaultValue ? props.fieldSchema.defaultValue : {}); } },
                     React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
     };
     ArrayFieldRenderer = tslib_1.__decorate([
