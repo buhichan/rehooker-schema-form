@@ -36,6 +36,8 @@ function DateTimeInput(props) {
     var value = input.value ?
         new Date(input.value) :
         undefined;
+    if (!isFinite(value.getTime()))
+        value = undefined;
     return React.createElement("div", null,
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
             React.createElement(material_ui_1.DatePicker, { id: fieldSchema.key + "date", DateTimeFormat: Intl.DateTimeFormat, value: value, fullWidth: true, onChange: function (e, date) {

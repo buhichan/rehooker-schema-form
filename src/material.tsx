@@ -50,9 +50,11 @@ const defaultDateTimeInputFormat = {
 };
 function DateTimeInput(props:WidgetProps){
     const {meta,input,fieldSchema} = props;
-    const value = input.value?
+    let value = input.value?
             new Date(input.value):
             undefined;
+    if(!isFinite(value.getTime()))
+        value = undefined;
     return <div>
         <div style={{width:"50%",display:"inline-block"}}>
             <DatePicker
