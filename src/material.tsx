@@ -287,6 +287,7 @@ class AutoCompleteSelect extends SelectInput{
             input={input}
             meta={meta}
             openOnFocus
+            fullResult={fieldSchema.fullResult}
             searchText={value?value.name:""}
             dataSource={options}
             onNewRequest={this.onNewRequest}
@@ -307,6 +308,7 @@ class AutoCompleteText extends SelectInput{
             input={input}
             meta={meta}
             fieldSchema={fieldSchema}
+            fullResult={fieldSchema.fullResult}
             dataSource={options}
             searchText={input.value}
             onUpdateInput={this.onUpdateInput}
