@@ -231,8 +231,8 @@ const dataSourceConfig = {text:"name",value:"value"};
     },
     "clearButton":{
         position:"absolute",
-        top:15,
-        right:12,
+        top:20,
+        right:0,
         opacity:0,
     }
 })
