@@ -252,7 +252,7 @@ var ArrayFieldRenderer = (function (_super) {
                     React.createElement(schema_node_1.SchemaNode, { form: props.meta.form, keyPath: props.keyPath + "[" + i + "]", schema: children, initialValues: childValue }));
             }),
             React.createElement("div", { className: "add-button" },
-                React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push(props.fieldSchema.defautlValue || {}); } },
+                React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push(props.fieldSchema.defaultValue || {}); } },
                     React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
     };
     ArrayFieldRenderer = tslib_1.__decorate([
