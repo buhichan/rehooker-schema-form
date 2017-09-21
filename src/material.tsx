@@ -374,7 +374,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
             }
             <div className="add-button">
                 <IconButton
-                    tooltip="添加" onTouchTap={() => props.fields.push({})}
+                    tooltip="添加" onTouchTap={() => props.fields.push(props.fieldSchema.defautlValue||{})}
                 >
                     <Add hoverColor={muiTheme.palette.primary1Color}/>
                 </IconButton>
