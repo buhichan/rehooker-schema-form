@@ -137,7 +137,7 @@ function TextInput(props:WidgetProps){
         {...props.input as any}
         errorText={props.meta.error}
         required={props.required}
-        type={props.type}
+        type={props.fieldSchema.type}
         id={props.input.name}
         className="full-width"
         style={{width:"100%"}}
