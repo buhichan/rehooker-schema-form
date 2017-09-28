@@ -1,6 +1,6 @@
 {
   "name": "redux-schema-form",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "use redux-form like formly",
   "main": "index.js",
   "repository": {
