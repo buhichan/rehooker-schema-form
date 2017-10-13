@@ -17,7 +17,7 @@
   },
   "peerDependencies": {
     "antd": "^2.*",
-    "material-ui": "0.18.*",
+    "material-ui": "0.18.* | 0.19.* | 0.17.*",
     "react-jss": "6.*"
   },
   "keywords": [
@@ -27,7 +27,7 @@
   "author": "YS",
   "license": "MIT",
   "devDependencies": {
-    "@types/material-ui": "0.17.*",
+    "@types/material-ui": "0.19.*",
     "@types/node": "^6.0.53",
     "@types/react-dom": "^15.5.1",
     "@types/react-redux": "^4.4.35",
@@ -41,20 +41,19 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.22.0",
-    "material-ui": "0.18.*",
+    "material-ui": "^0.19.*",
     "null-loader": "^0.1.1",
     "postcss-loader": "^0.13.0",
     "raw-loader": "^0.5.1",
     "react-jss": "6.*",
-    "react-tap-event-plugin": "^2.0.1",
     "style-loader": "^0.13.1",
     "typescript": "2.4.*",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
-    "react": "^15.*",
-    "react-dom": "*",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "react-redux": "*",
     "redux": "*",
     "redux-form": "7.*",

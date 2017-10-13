@@ -10,7 +10,6 @@ require("../src/material");
 var _1 = require("../");
 var styles_1 = require("material-ui/styles");
 var getMuiTheme_1 = require("material-ui/styles/getMuiTheme");
-require('react-tap-event-plugin')();
 var schema_example_1 = require("./schema-example");
 var reducer = redux_1.combineReducers({
     form: function () {

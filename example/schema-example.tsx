@@ -6,8 +6,6 @@ export let schema:FormFieldSchema[] = [
         key:"text",
         type:"text",
         placeholder:"input something",
-        parse:v=>(v||"")+"0",
-        format:(v="")=>v.substr(0,v.length-1),
         label:"文本属性",
         validate:v=>{
             if(v!=="a")

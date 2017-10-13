@@ -53,7 +53,7 @@ function DateTimeInput(props:WidgetProps){
     let value = input.value?
             new Date(input.value):
             undefined;
-    if(!isFinite(value.getTime()))
+    if(value && !isFinite(value.getTime()))
         value = undefined;
     return <div>
         <div style={{width:"50%",display:"inline-block"}}>
@@ -265,7 +265,7 @@ class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,loading?
                 :input.value!==null&&input.value!==undefined&&input.value!=="" ? <IconButton
                     style={{position:"absolute"}}
                     className={classes.clearButton}
-                    onTouchTap={() => input.onChange(fieldSchema.defaultValue || null)}
+                    onClick={() => input.onChange(fieldSchema.defaultValue || null)}
                 >
                     <ContentClear />
                 </IconButton> : null
@@ -416,7 +416,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
                         <div className="delete-button">
                             <IconButton
                                 style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
-                                onTouchTap={() => props.fields.remove(i)}
+                                onClick={() => props.fields.remove(i)}
                                 tooltip="删除"
                             >
                                 <Remove hoverColor={muiTheme.palette.accent1Color}/>
@@ -430,7 +430,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
             }
             <div className="add-button">
                 <IconButton
-                    tooltip="添加" onTouchTap={() => props.fields.push(props.fieldSchema.defaultValue?props.fieldSchema.defaultValue:{})}
+                    tooltip="添加" onClick={() => props.fields.push(props.fieldSchema.defaultValue?props.fieldSchema.defaultValue:{})}
                 >
                     <Add hoverColor={muiTheme.palette.primary1Color}/>
                 </IconButton>

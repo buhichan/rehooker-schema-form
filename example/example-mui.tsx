@@ -8,7 +8,6 @@ import {FormFieldSchema, ReduxSchemaForm} from "../"
 import {MuiThemeProvider} from "material-ui/styles";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import {WidgetProps} from "../src/field";
-require('react-tap-event-plugin')();
 import {schema} from "./schema-example"
 
 const reducer = combineReducers({

@@ -36,7 +36,7 @@ function DateTimeInput(props) {
     var value = input.value ?
         new Date(input.value) :
         undefined;
-    if (!isFinite(value.getTime()))
+    if (value && !isFinite(value.getTime()))
         value = undefined;
     return React.createElement("div", null,
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
@@ -148,7 +148,7 @@ var BaseAutoComplete = (function (_super) {
                     top: 22,
                     right: 18
                 } })
-                : input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: classes.clearButton, onTouchTap: function () { return input.onChange(fieldSchema.defaultValue || null); } },
+                : input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: classes.clearButton, onClick: function () { return input.onChange(fieldSchema.defaultValue || null); } },
                     React.createElement(svg_icons_1.ContentClear, null)) : null);
     };
     BaseAutoComplete = tslib_1.__decorate([
@@ -298,12 +298,12 @@ var ArrayFieldRenderer = (function (_super) {
                     children = props.fieldSchema.getChildren(childValue).filter(function (x) { return x; });
                 return React.createElement("div", { key: i, className: "array-field-child" },
                     React.createElement("div", { className: "delete-button" },
-                        React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onTouchTap: function () { return props.fields.remove(i); }, tooltip: "删除" },
+                        React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onClick: function () { return props.fields.remove(i); }, tooltip: "删除" },
                             React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
                     render_fields_1.renderFields(props.meta.form, children, props.keyPath + "[" + i + "]"));
             }),
             React.createElement("div", { className: "add-button" },
-                React.createElement(material_ui_1.IconButton, { tooltip: "添加", onTouchTap: function () { return props.fields.push(props.fieldSchema.defaultValue ? props.fieldSchema.defaultValue : {}); } },
+                React.createElement(material_ui_1.IconButton, { tooltip: "添加", onClick: function () { return props.fields.push(props.fieldSchema.defaultValue ? props.fieldSchema.defaultValue : {}); } },
                     React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
     };
     ArrayFieldRenderer = tslib_1.__decorate([

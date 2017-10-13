@@ -8,11 +8,6 @@ exports.schema = [
         key: "text",
         type: "text",
         placeholder: "input something",
-        parse: function (v) { return (v || "") + "0"; },
-        format: function (v) {
-            if (v === void 0) { v = ""; }
-            return v.substr(0, v.length - 1);
-        },
         label: "文本属性",
         validate: function (v) {
             if (v !== "a")
