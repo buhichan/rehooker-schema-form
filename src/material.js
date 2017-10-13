@@ -15,7 +15,7 @@ var svg_icons_1 = require("material-ui/svg-icons");
 var field_1 = require("./field");
 var react_jss_1 = require("react-jss");
 var redux_form_1 = require("redux-form");
-var my_select_field_1 = require("./my-select-field");
+var SelectField_1 = require("material-ui/SelectField");
 var render_fields_1 = require("./render-fields");
 var RadioButton_1 = require("material-ui/RadioButton");
 var CircularProgress_1 = require("material-ui/CircularProgress");
@@ -125,7 +125,7 @@ var SelectInput = (function (_super) {
     };
     SelectInput.prototype.render = function () {
         var props = this.props;
-        return React.createElement(my_select_field_1.SelectField, tslib_1.__assign({}, props.input, { onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
+        return React.createElement(SelectField_1.default, tslib_1.__assign({}, props.input, { onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
                 e.target['value'] = v;
                 props.input.onChange(e);
             } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }) : React.createElement(material_ui_1.MenuItem, { className: "option", value: null, primaryText: this.props.fieldSchema.loadingText || "载入中" }));

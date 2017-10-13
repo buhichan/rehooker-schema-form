@@ -18,7 +18,7 @@ import {SyntheticEvent} from "react";
 import {addType, addTypeWithWrapper, preRenderField, WidgetProps} from "./field";
 import injectCSS from 'react-jss';
 import {Field as RFField,FieldArray as RFFieldArray} from "redux-form";
-import {SelectField} from "./my-select-field"
+import SelectField from "material-ui/SelectField"
 import {renderFields} from "./render-fields";
 import {default as RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
 import CircularProgress from "material-ui/CircularProgress";
