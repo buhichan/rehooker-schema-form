@@ -22,6 +22,7 @@ var CircularProgress_1 = require("material-ui/CircularProgress");
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
+var defaultDateInputFormat = { year: "numeric", month: "2-digit", day: "2-digit" };
 var defaultDateTimeInputFormat = {
     year: "numeric",
     day: "2-digit",
@@ -31,6 +32,12 @@ var defaultDateTimeInputFormat = {
     minute: "2-digit",
     second: "2-digit"
 };
+function formatDateTime(date) {
+    return date.toLocaleString([navigator && navigator.language || "zh-CN"], defaultDateTimeInputFormat).replace(/\//g, '-');
+}
+function formatDate(date) {
+    return date.toLocaleString([navigator && navigator.language || "zh-CN"], defaultDateInputFormat).replace(/\//g, '-');
+}
 function DateTimeInput(props) {
     var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
     var value = input.value ?
@@ -46,7 +53,7 @@ function DateTimeInput(props) {
                         date.setMinutes(value.getMinutes());
                         date.setSeconds(value.getSeconds());
                     }
-                    input.onChange(date.toLocaleString([navigator.language], defaultDateTimeInputFormat));
+                    input.onChange(formatDateTime(date));
                 }, floatingLabelText: fieldSchema.label, errorText: meta.error, hintText: fieldSchema.placeholder, cancelLabel: "取消", locale: "zh-Hans", autoOk: true })),
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
             React.createElement(material_ui_1.TimePicker, { id: fieldSchema.key + "time", value: value, fullWidth: true, autoOk: true, cancelLabel: "取消", underlineStyle: { bottom: 10 }, format: "24hr", onChange: function (_, time) {
@@ -54,7 +61,7 @@ function DateTimeInput(props) {
                     newValue.setHours(time.getHours());
                     newValue.setMinutes(time.getMinutes());
                     newValue.setSeconds(time.getSeconds());
-                    input.onChange(newValue.toLocaleString([navigator.language], defaultDateTimeInputFormat));
+                    input.onChange(formatDateTime(newValue));
                 } })));
 }
 var DateInput = (function (_super) {
@@ -73,7 +80,7 @@ var DateInput = (function (_super) {
         var props = this.props;
         var DatePickerProps = {
             onChange: function (e, value) {
-                return props.input.onChange(value.toLocaleDateString().replace(/\//g, '-'));
+                return props.input.onChange(formatDate(value));
             }
         };
         var parsedDate = Date.parse(props.input.value);
