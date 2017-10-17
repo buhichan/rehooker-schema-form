@@ -4,8 +4,6 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "importHelpers": true,
-    "declaration": true,
-    "importHelpers": true,
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

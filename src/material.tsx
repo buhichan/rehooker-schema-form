@@ -39,6 +39,8 @@ function NumberInput(props:WidgetProps){
     />;
 }
 
+const defaultDateInputFormat = {year:"numeric",month:"2-digit",day:"2-digit"}
+
 const defaultDateTimeInputFormat = {
     year:"numeric",
     day:"2-digit",
@@ -48,6 +50,14 @@ const defaultDateTimeInputFormat = {
     minute:"2-digit",
     second:"2-digit"
 };
+
+function formatDateTime(date:Date){
+    return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateTimeInputFormat).replace(/\//g,'-')
+}
+
+function formatDate(date:Date){
+    return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateInputFormat).replace(/\//g,'-')
+}
 function DateTimeInput(props:WidgetProps){
     const {meta,input,fieldSchema} = props;
     let value = input.value?
@@ -68,7 +78,7 @@ function DateTimeInput(props:WidgetProps){
                         date.setMinutes(value.getMinutes());
                         date.setSeconds(value.getSeconds());
                     }
-                    input.onChange(date.toLocaleString([navigator.language],defaultDateTimeInputFormat))
+                    input.onChange(formatDateTime(date))
                 }}
                 floatingLabelText={fieldSchema.label}
                 errorText={meta.error}
@@ -92,7 +102,7 @@ function DateTimeInput(props:WidgetProps){
                     newValue.setHours(time.getHours());
                     newValue.setMinutes(time.getMinutes());
                     newValue.setSeconds(time.getSeconds());
-                    input.onChange(newValue.toLocaleString([navigator.language],defaultDateTimeInputFormat))
+                    input.onChange(formatDateTime(newValue))
                 }}
             />
         </div>
@@ -110,7 +120,7 @@ class DateInput extends React.PureComponent<WidgetProps>{
         const props = this.props;
         const DatePickerProps = {
             onChange: (e, value) => {
-                return props.input.onChange(value.toLocaleDateString().replace(/\//g, '-'));
+                return props.input.onChange(formatDate(value));
             }
         };
         const parsedDate = Date.parse(props.input.value);
