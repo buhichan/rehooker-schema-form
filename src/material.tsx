@@ -343,6 +343,8 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
             })
     }
     findName(value){
+        if(value === "" || value === undefined)
+            return this.state.searchText;
         const entry = (this.state.dataSource as Options).find(x=>x.value === value);
         return entry?entry.name:value;
     }

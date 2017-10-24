@@ -275,6 +275,8 @@ var AutoCompleteAsync = (function (_super) {
             });
     };
     AutoCompleteAsync.prototype.findName = function (value) {
+        if (value === "" || value === undefined)
+            return this.state.searchText;
         var entry = this.state.dataSource.find(function (x) { return x.value === value; });
         return entry ? entry.name : value;
     };
