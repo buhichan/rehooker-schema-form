@@ -266,7 +266,7 @@ export let schema:FormFieldSchema[] = [
         options:t=>{
             if(/^\d+$/.test(t))
                 return new Promise(resolve=>{
-                    setTimeout(()=> resolve(new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))), 5000)
+                    setTimeout(()=> resolve(new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))), 1000)
                 });
             else return [{name:"0",value:0}];
         }

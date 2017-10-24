@@ -230,7 +230,7 @@ export class SelectInput extends React.PureComponent<WidgetProps,any>{
 
 const dataSourceConfig = {text:"name",value:"value"};
 
-@injectCSS({
+const BaseAutoComplete = injectCSS({
     autocomplete:{
         position:"relative",
         "&:hover": {
@@ -245,10 +245,8 @@ const dataSourceConfig = {text:"name",value:"value"};
         right:0,
         opacity:0,
     }
-})
-class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,loading?, fullResult?,input,meta,openOnFocus?,searchText,dataSource,onNewRequest?,onUpdateInput?,classes?},any>{
-    render() {
-        const {fieldSchema, input, meta, fullResult, filter,openOnFocus,loading, searchText, dataSource, onNewRequest, onUpdateInput,classes} = this.props;
+})(
+    ({fieldSchema, onClear, input, meta, fullResult, filter,openOnFocus,loading, searchText, dataSource, onNewRequest, onUpdateInput,classes}) =>{
         return <div className={classes.autocomplete}>
             <AutoComplete
                 id={fieldSchema.name}
@@ -275,14 +273,17 @@ class BaseAutoComplete extends React.PureComponent<{fieldSchema,filter?,loading?
                 :input.value!==null&&input.value!==undefined&&input.value!=="" ? <IconButton
                     style={{position:"absolute"}}
                     className={classes.clearButton}
-                    onClick={() => input.onChange(fieldSchema.defaultValue || null)}
+                    onClick={() => {
+                        input.onChange(fieldSchema.defaultValue || null)
+                        onClear && onClear();
+                    }}                
                 >
                     <ContentClear />
                 </IconButton> : null
             }
         </div>
     }
-}
+)
 
 class AutoCompleteSelect extends SelectInput{
     onNewRequest=(value)=>{
@@ -389,6 +390,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
         loading:false,
         dataSource:[]
     };
+    clearSearchText=()=>this.setState({searchText:""})
     render() {
         const {meta,input,fieldSchema} = this.props;
         return <BaseAutoComplete
@@ -402,6 +404,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
             searchText={this.findName(input.value)}
             onUpdateInput={this.onUpdateInput}
             onNewRequest={this.onSelected}
+            onClear={this.clearSearchText}
         />;
     }
 }
