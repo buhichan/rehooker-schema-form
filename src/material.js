@@ -265,18 +265,18 @@ var AutoCompleteAsync = (function (_super) {
     AutoCompleteAsync.prototype.componentWillReceiveProps = function (nextProps) {
         if (nextProps.input.value !== this.props.input.value)
             this.setState({
-                searchText: this.findName(nextProps.input.value)
+                searchText: this.findName(nextProps.input.value) || ""
             });
     };
     AutoCompleteAsync.prototype.findName = function (value) {
-        if (value === "" || value === undefined)
-            return this.state.searchText;
+        if (value === "" || value === undefined || value === null)
+            return null;
         var entry = this.state.dataSource.find(function (x) { return x.value === value; });
-        return entry ? entry.name : value;
+        return entry ? entry.name : null;
     };
     AutoCompleteAsync.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected, onClear: this.clearSearchText });
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value) || this.state.searchText, onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected, onClear: this.clearSearchText });
     };
     return AutoCompleteAsync;
 }(React.PureComponent));
