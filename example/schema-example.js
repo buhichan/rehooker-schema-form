@@ -274,14 +274,25 @@ exports.schema = [
                 return [{ name: "0", value: 0 }];
         }
     }, {
+        key: "radioGroup",
+        type: "radioGroup",
+        label: "radioGroup",
+        options: function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, [
+                        { name: "yes", value: true },
+                        { name: "no", value: false },
+                    ]];
+            });
+        }); }
+    }, {
         key: "radio",
         type: "radio",
         label: "radio",
         options: function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, [
-                        { name: "yes", value: true },
-                        { name: "no", value: false },
+                        { name: "single option", value: true }
                     ]];
             });
         }); }

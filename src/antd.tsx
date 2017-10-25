@@ -51,7 +51,7 @@ function TextInput(props){
 }
 
 
-class AntdSelectInput extends React.Component<any,any>{
+class SelectInput extends React.Component<any,any>{
     state={
         options:null
     };
@@ -217,7 +217,7 @@ function NumberInput(props){
 }
 
 
-class AutoCompleteSelect extends AntdSelectInput{
+class AutoCompleteSelect extends SelectInput{
     render() {
         const {meta,input,fieldSchema} = this.props;
         const value = (fieldSchema.options as Options).find(x=>x.value === input.value);
@@ -269,6 +269,37 @@ class FileInput extends React.Component<WidgetProps,any>{
                     <Icon type="upload" /> {this.props.fieldSchema.label}
                 </Button>
             </Upload>
+        </div>
+    }
+}
+
+@addType("radioGroup")
+class SelectRadio extends SelectInput{
+
+    render(){
+        const props = this.props;
+        return <div>
+            <div style={{paddingLeft:0}}>
+                {props.fieldSchema.label}
+            </div>
+            <RadioGroup
+                id={props.input.name}
+                disabled={props.disabled}
+                value={this.props.input.value || false}
+                onChange={(v)=>props.input.onChange(v)}
+            >
+                {
+                    this.state.options?this.state.options.map((option) => (
+                        <Radio style={{
+                            width:"auto",
+                            flex:1,
+                            whiteSpace:"nowrap",
+                            margin:"0 15px 0 0"
+                        }} key={option.value} value={option.value} >{option.name}</Radio>
+                    )):<Radio key={"...loading"} value={""} disabled label={"载入中"}/>
+                }
+            </RadioGroup>
+            <p style={errorStyle}>{props.meta.error}</p>
         </div>
     }
 }
@@ -431,7 +462,7 @@ class ArrayFieldRenderer extends React.Component<any,any>{
 
 
 addType('text',TextInput);
-addType('select',AntdSelectInput);
+addType('select',SelectInput);
 
 
 addType('checkbox',CheckboxInput);

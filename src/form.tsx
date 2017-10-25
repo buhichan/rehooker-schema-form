@@ -6,7 +6,7 @@ import {reduxForm, ConfigProps, InjectedFormProps} from 'redux-form'
 import {WidgetProps} from "./field";
 import {renderFields} from "./render-fields";
 
-export type Options = {name:string,value:string|number}[]
+export type Options = {name:string,value:any}[]
 export type AsyncOptions = ()=>Promise<Options>
 export type RuntimeAsyncOptions = (value:any, props?:WidgetProps)=>(Promise<Options>|Options)
 export type FieldSchamaChangeListeners={
