@@ -21,11 +21,11 @@ var antd_5 = require("antd");
 var antd_6 = require("antd");
 var antd_7 = require("antd");
 var moment = require("moment");
-var form_1 = require("./form");
 var antd_8 = require("antd");
 var react_jss_1 = require("react-jss");
 var antd_jss_1 = require("./antd.jss");
 var render_fields_1 = require("./render-fields");
+var buttons_1 = require("./buttons");
 var errorStyle = { color: "red" };
 function TextInput(props) {
     var required = {
@@ -352,7 +352,7 @@ field_1.addTypeWithWrapper("array", function (props) {
         React.createElement(FieldArray, { name: props.keyPath, rerenderOnEveryChange: Boolean(props.fieldSchema.getChildren), component: ArrayFieldRenderer, props: props }));
 });
 field_1.addType("autocomplete-async", AutoCompleteAsync);
-form_1.setButton(function (props) {
+buttons_1.setButton(function (props) {
     switch (props.type) {
         case 'submit':
             return React.createElement(antd_8.Button, { className: "raised-button", style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);

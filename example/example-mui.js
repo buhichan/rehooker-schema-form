@@ -11,6 +11,7 @@ var _1 = require("../");
 var styles_1 = require("material-ui/styles");
 var getMuiTheme_1 = require("material-ui/styles/getMuiTheme");
 var schema_example_1 = require("./schema-example");
+var buttons_1 = require("../src/buttons");
 var reducer = redux_1.combineReducers({
     form: function () {
         var args = [];
@@ -55,6 +56,7 @@ var App = (function (_super) {
         return React.createElement("div", null,
             React.createElement(_1.ReduxSchemaForm, { form: "random", initialValues: this.data, schema: schema_example_1.schema, onSubmit: this.onSubmit }),
             React.createElement("p", null, "\u8BF8\u5982\u6570\u636Eschema\u53D1\u751F\u53D8\u5316\u7684\u9700\u6C42\uFF0C\u6700\u597D\u4E0D\u7531\u8868\u5355\u8FD9\u4E00\u5C42\u6765\u5B9E\u73B0.\u5E94\u8BE5\u662F\u903B\u8F91\u5C42\u5B9E\u73B0\u7684\u529F\u80FD\uFF0C\u8FD9\u91CC\u7684\u8868\u5355\u53EA\u8981\u7B28\u7B28\u7684\u5C31\u884C\u4E86.\u4F46\u662F\u4E3A\u4E86\u65B9\u4FBF,\u8FD8\u662F\u52A0\u4E86listens\u8FD9\u4E2AAPI."),
+            React.createElement(InjectedButton, null),
             React.createElement("pre", null,
                 React.createElement("code", null,
                     "data:",
@@ -67,6 +69,13 @@ var App = (function (_super) {
     ], App);
     return App;
 }(React.PureComponent));
+var InjectedButton = buttons_1.injectSubmittable({
+    disableResubmit: false,
+    type: "submit",
+    formName: "random"
+})(function (props) {
+    return React.createElement("button", tslib_1.__assign({}, props), "\u54C8\u54C8");
+});
 var muiTheme = getMuiTheme_1.default({
     palette: {
         primary1Color: "#885543"

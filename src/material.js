@@ -5,7 +5,6 @@ var tslib_1 = require("tslib");
  * Created by buhi on 2017/4/28.
  */
 var React = require("react");
-var form_1 = require("./form");
 var material_ui_1 = require("material-ui");
 var muiThemeable_1 = require("material-ui/styles/muiThemeable");
 var add_1 = require("material-ui/svg-icons/content/add");
@@ -19,6 +18,7 @@ var SelectField_1 = require("material-ui/SelectField");
 var render_fields_1 = require("./render-fields");
 var RadioButton_1 = require("material-ui/RadioButton");
 var CircularProgress_1 = require("material-ui/CircularProgress");
+var buttons_1 = require("./buttons");
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
@@ -413,7 +413,7 @@ field_1.addTypeWithWrapper("array", function (props) {
 });
 var Field = redux_form_1.Field;
 var FieldArray = redux_form_1.FieldArray;
-form_1.setButton(muiThemeable_1.default()(function (props) {
+buttons_1.setButton(muiThemeable_1.default()(function (props) {
     switch (props.type) {
         case 'submit':
             return React.createElement(material_ui_1.RaisedButton, { className: "raised-button", primary: true, label: props.children, labelStyle: { padding: "0" }, style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type });

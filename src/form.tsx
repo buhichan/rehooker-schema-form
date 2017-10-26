@@ -1,7 +1,8 @@
 /**
  * Created by YS on 2016/10/31.
  */
-import * as React from 'react'
+import { FormButton, submittable } from './buttons';
+import * as React from 'react';
 import {reduxForm, ConfigProps, InjectedFormProps} from 'redux-form'
 import {WidgetProps} from "./field";
 import {renderFields} from "./render-fields";
@@ -46,24 +47,6 @@ export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
     loadingText?:string
     [rest:string]:any
 }
-
-let DefaultButton = (props)=>{
-    return <button type={props.type} className={"btn btn-primary"+(props.disabled?" disabled":"")} disabled={props.disabled} onClick={props.onClick}>
-        {props.children}
-    </button>
-};
-
-export function setButton(button: React.StatelessComponent<ButtonProps>){
-    DefaultButton = button;
-}
-
-export type ButtonProps = {
-    disabled:boolean,
-    type:"submit"|"button",
-    onClick?:any,
-    children:any
-}
-
 @(reduxForm({
     form:"default"
 }) as any)
@@ -74,9 +57,6 @@ export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&Inj
     dispatch?:(...args:any[])=>any,
     disableResubmit?:boolean
 },{}>{
-    submitable(){
-        return this.props.valid && !this.props.pristine && !this.props.submitting && !(this.props.disableResubmit && this.props.submitSucceeded);
-    }
     render(){
         return <form className="redux-schema-form form-horizontal" onSubmit={this.props.handleSubmit}>
             {renderFields(
@@ -89,8 +69,8 @@ export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&Inj
             {
                 (!this.props.noButton)? <div className="button">
                     <div className="btn-group">
-                        <DefaultButton type="submit" disabled={!this.submitable.apply(this)}>提交</DefaultButton>
-                        <DefaultButton type="button" disabled={!this.submitable.apply(this)} onClick={this.props.reset}>重置</DefaultButton>
+                        <FormButton type="submit" disabled={!submittable(this.props.disableResubmit)(this.props as any)}>提交</FormButton>
+                        <FormButton type="button" disabled={!submittable(this.props.disableResubmit)(this.props as any)}>重置</FormButton>
                     </div>
                 </div> : <div />
             }

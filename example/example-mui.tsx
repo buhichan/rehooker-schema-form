@@ -9,6 +9,7 @@ import {MuiThemeProvider} from "material-ui/styles";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import {WidgetProps} from "../src/field";
 import {schema} from "./schema-example"
+import { injectSubmittable } from '../src/buttons';
 
 const reducer = combineReducers({
     form: function(...args){
@@ -50,6 +51,7 @@ class App extends React.PureComponent<any,any>{
         return <div>
             <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit} />
             <p>诸如数据schema发生变化的需求，最好不由表单这一层来实现.应该是逻辑层实现的功能，这里的表单只要笨笨的就行了.但是为了方便,还是加了listens这个API.</p>
+            <InjectedButton />
             <pre>
                 <code>
                 data:{
@@ -60,6 +62,14 @@ class App extends React.PureComponent<any,any>{
         </div>
     }
 }
+
+const InjectedButton = injectSubmittable({
+    disableResubmit:false,
+    type:"submit",
+    formName:"random"
+})((props)=>{
+    return <button {...props} >哈哈</button>
+})
 
 const muiTheme = getMuiTheme({
     palette:{

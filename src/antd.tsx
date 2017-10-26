@@ -20,12 +20,13 @@ import {WidgetProps} from "./field";
 import {InputNumber} from "antd";
 import {Tooltip} from "antd";
 const moment = require("moment");
-import {AsyncOptions, Options, setButton} from "./form";
+import {AsyncOptions, Options} from "./form";
 import { Upload, Button, Icon } from 'antd';
 import {RuntimeAsyncOptions} from "./form";
 import injectCSS from 'react-jss';
 import {stylesheet} from "./antd.jss";
 import {renderFields} from "./render-fields";
+import { setButton } from "./buttons";
 
 const errorStyle={color:"red"};
 function TextInput(props){

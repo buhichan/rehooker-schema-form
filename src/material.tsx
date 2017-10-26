@@ -2,7 +2,7 @@
  * Created by buhi on 2017/4/28.
  */
 import * as React from "react"
-import {RuntimeAsyncOptions, AsyncOptions, Options, setButton} from "./form"
+import {RuntimeAsyncOptions, AsyncOptions, Options} from "./form"
 import {
     TextField, TimePicker, MenuItem, Checkbox, DatePicker, RaisedButton, FlatButton, Paper, AutoComplete,
     IconButton, Subheader
@@ -22,6 +22,7 @@ import SelectField from "material-ui/SelectField"
 import {renderFields} from "./render-fields";
 import {default as RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
 import CircularProgress from "material-ui/CircularProgress";
+import { setButton } from "./buttons";
 
 function NumberInput(props:WidgetProps){
     return <TextField
