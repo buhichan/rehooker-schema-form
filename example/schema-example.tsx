@@ -132,6 +132,7 @@ export let schema:FormFieldSchema[] = [
         key:"dependant_lv1",
         type:"select",
         label:"有依赖的单选lv1",
+
         options:[
             {
                 name:"植物",
@@ -271,12 +272,19 @@ export let schema:FormFieldSchema[] = [
             else return [{name:"0",value:0}];
         }
     },{
+        key:"radioGroup",
+        type:"radioGroup",
+        label:"radioGroup",
+        options:async ()=>[
+            {name:"yes",value:true},
+            {name:"no",value:false},
+        ]
+    },{
         key:"radio",
         type:"radio",
         label:"radio",
         options:async ()=>[
-            {name:"yes",value:true},
-            {name:"no",value:false},
+            {name:"single option",value:true}
         ]
     }
 ];

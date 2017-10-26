@@ -36,16 +36,16 @@ function TextInput(props) {
         React.createElement(antd_2.Input, tslib_1.__assign({ type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, name: props.input.name }, required, { onBlur: props.input.onBlur, disabled: props.disabled, value: props.input.value, onChange: props.input.onChange })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-var AntdSelectInput = (function (_super) {
-    tslib_1.__extends(AntdSelectInput, _super);
-    function AntdSelectInput() {
+var SelectInput = /** @class */ (function (_super) {
+    tslib_1.__extends(SelectInput, _super);
+    function SelectInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
             options: null
         };
         return _this;
     }
-    AntdSelectInput.prototype.reload = function (props) {
+    SelectInput.prototype.reload = function (props) {
         var _this = this;
         var rawOptions = props.fieldSchema.options;
         if (typeof rawOptions === 'function') {
@@ -59,14 +59,14 @@ var AntdSelectInput = (function (_super) {
                 options: props.fieldSchema.options
             });
     };
-    AntdSelectInput.prototype.componentWillReceiveProps = function (nextProps) {
+    SelectInput.prototype.componentWillReceiveProps = function (nextProps) {
         if (nextProps.fieldSchema.options !== this.props.fieldSchema.options)
             this.reload(nextProps);
     };
-    AntdSelectInput.prototype.componentWillMount = function () {
+    SelectInput.prototype.componentWillMount = function () {
         this.reload(this.props);
     };
-    AntdSelectInput.prototype.render = function () {
+    SelectInput.prototype.render = function () {
         var _this = this;
         return React.createElement("div", { style: this.props.fieldSchema.hide ? {} : { height: "50px" } },
             React.createElement("div", null, this.props.fieldSchema.label),
@@ -75,9 +75,9 @@ var AntdSelectInput = (function (_super) {
                 } }, this.state.options ? this.state.options.map(function (option) { return (React.createElement(Option, { key: option.name, value: option.value }, option.name)); }) : null),
             React.createElement("div", { style: errorStyle }, this.props.meta.error));
     };
-    return AntdSelectInput;
+    return SelectInput;
 }(React.Component));
-var CheckboxInput = (function (_super) {
+var CheckboxInput = /** @class */ (function (_super) {
     tslib_1.__extends(CheckboxInput, _super);
     function CheckboxInput() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -109,7 +109,7 @@ function DateInput(props) {
         React.createElement(antd_3.DatePicker, tslib_1.__assign({}, required, { key: props.fieldSchema.name, value: value, disabled: props.disabled, style: { width: "100%" }, onChange: function (date, dateString) { props.input.onChange(dateString); } })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-var DateTimeRangeInput = (function (_super) {
+var DateTimeRangeInput = /** @class */ (function (_super) {
     tslib_1.__extends(DateTimeRangeInput, _super);
     function DateTimeRangeInput() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -143,7 +143,7 @@ function NumberInput(props) {
             } })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-var AutoCompleteSelect = (function (_super) {
+var AutoCompleteSelect = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -156,8 +156,8 @@ var AutoCompleteSelect = (function (_super) {
             React.createElement("div", { style: errorStyle }, this.props.meta.error));
     };
     return AutoCompleteSelect;
-}(AntdSelectInput));
-var FileInput = (function (_super) {
+}(SelectInput));
+var FileInput = /** @class */ (function (_super) {
     tslib_1.__extends(FileInput, _super);
     function FileInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -196,7 +196,29 @@ var FileInput = (function (_super) {
     };
     return FileInput;
 }(React.Component));
-var DateRangeInput = (function (_super) {
+var SelectRadio = /** @class */ (function (_super) {
+    tslib_1.__extends(SelectRadio, _super);
+    function SelectRadio() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SelectRadio.prototype.render = function () {
+        var props = this.props;
+        return React.createElement("div", null,
+            React.createElement("div", { style: { paddingLeft: 0 } }, props.fieldSchema.label),
+            React.createElement(RadioGroup, { id: props.input.name, disabled: props.disabled, value: this.props.input.value || false, onChange: function (v) { return props.input.onChange(v); } }, this.state.options ? this.state.options.map(function (option) { return (React.createElement(Radio, { style: {
+                    width: "auto",
+                    flex: 1,
+                    whiteSpace: "nowrap",
+                    margin: "0 15px 0 0"
+                }, key: option.value, value: option.value }, option.name)); }) : React.createElement(Radio, { key: "...loading", value: "", disabled: true, label: "载入中" })),
+            React.createElement("p", { style: errorStyle }, props.meta.error));
+    };
+    SelectRadio = tslib_1.__decorate([
+        field_1.addType("radioGroup")
+    ], SelectRadio);
+    return SelectRadio;
+}(SelectInput));
+var DateRangeInput = /** @class */ (function (_super) {
     tslib_1.__extends(DateRangeInput, _super);
     function DateRangeInput() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -212,7 +234,7 @@ var DateRangeInput = (function (_super) {
     };
     return DateRangeInput;
 }(React.Component));
-var TextareaInput = (function (_super) {
+var TextareaInput = /** @class */ (function (_super) {
     tslib_1.__extends(TextareaInput, _super);
     function TextareaInput() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -226,7 +248,7 @@ var TextareaInput = (function (_super) {
     };
     return TextareaInput;
 }(React.Component));
-var AutoCompleteAsync = (function (_super) {
+var AutoCompleteAsync = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
     function AutoCompleteAsync() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -288,7 +310,7 @@ var AutoCompleteAsync = (function (_super) {
     };
     return AutoCompleteAsync;
 }(React.Component));
-var AutoCompleteText = (function (_super) {
+var AutoCompleteText = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteText, _super);
     function AutoCompleteText() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -307,7 +329,7 @@ var AutoCompleteText = (function (_super) {
     };
     return AutoCompleteText;
 }(React.Component));
-var ArrayFieldRenderer = (function (_super) {
+var ArrayFieldRenderer = /** @class */ (function (_super) {
     tslib_1.__extends(ArrayFieldRenderer, _super);
     function ArrayFieldRenderer() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -332,7 +354,7 @@ var ArrayFieldRenderer = (function (_super) {
     return ArrayFieldRenderer;
 }(React.Component));
 field_1.addType('text', TextInput);
-field_1.addType('select', AntdSelectInput);
+field_1.addType('select', SelectInput);
 field_1.addType('checkbox', CheckboxInput);
 field_1.addType('date', DateInput);
 field_1.addType('autocomplete-text', AutoCompleteText);

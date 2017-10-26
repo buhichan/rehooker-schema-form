@@ -31,7 +31,7 @@ function preRenderField(field, form, keyPath) {
         return React.createElement(StatelessField, { key: field.key || field.label, field: field, form: form, keyPath: keyPath });
 }
 exports.preRenderField = preRenderField;
-var StatelessField = (function (_super) {
+var StatelessField = /** @class */ (function (_super) {
     tslib_1.__extends(StatelessField, _super);
     function StatelessField() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -70,7 +70,7 @@ var StatelessField = (function (_super) {
     return StatelessField;
 }(React.PureComponent));
 exports.StatelessField = StatelessField;
-var StatefulField = (function (_super) {
+var StatefulField = /** @class */ (function (_super) {
     tslib_1.__extends(StatefulField, _super);
     function StatefulField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;

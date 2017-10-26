@@ -4,7 +4,7 @@
 
 "@types/material-ui@0.19.*":
   version "0.18.3"
-  resolved "http://registry.npm.taobao.org/@types/material-ui/download/@types/material-ui-0.18.3.tgz#3a2a9fc81e57799419d8a58137800cd803d64a76"
+  resolved "https://registry.yarnpkg.com/@types/material-ui/-/material-ui-0.18.3.tgz#3a2a9fc81e57799419d8a58137800cd803d64a76"
   dependencies:
     "@types/react" "*"
     "@types/react-addons-linked-state-mixin" "*"
