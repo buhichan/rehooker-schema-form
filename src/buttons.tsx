@@ -35,8 +35,8 @@ export const injectSubmittable = (options:{
     disableResubmit?:boolean
 })=>{
     
-    return Button=>connect(
-        createSelector(
+    return Button=>(connect as any)(
+        (createSelector as any)(
             [
                 isValid(options.formName),
                 isPristine(options.formName),
