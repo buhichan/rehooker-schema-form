@@ -265,14 +265,15 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
     AutoCompleteAsync.prototype.componentWillReceiveProps = function (nextProps) {
         if (nextProps.input.value !== this.props.input.value)
             this.setState({
-                searchText: this.findName(nextProps.input.value) || ""
+                searchText: this.findName(nextProps.input.value, true) || ""
             });
     };
-    AutoCompleteAsync.prototype.findName = function (value) {
+    AutoCompleteAsync.prototype.findName = function (value, showValueWhenNoEntryIsFound) {
+        if (showValueWhenNoEntryIsFound === void 0) { showValueWhenNoEntryIsFound = false; }
         if (value === "" || value === undefined || value === null)
             return null;
         var entry = this.state.dataSource.find(function (x) { return x.value === value; });
-        return entry ? entry.name : null;
+        return entry ? entry.name : showValueWhenNoEntryIsFound ? value : null;
     };
     AutoCompleteAsync.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;

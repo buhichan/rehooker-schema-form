@@ -341,14 +341,14 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
     componentWillReceiveProps(nextProps){
         if(nextProps.input.value!==this.props.input.value)
             this.setState({
-                searchText:this.findName(nextProps.input.value) || ""
+                searchText:this.findName(nextProps.input.value,true) || ""
             })
     }
-    findName(value){
+    findName(value,showValueWhenNoEntryIsFound=false){
         if(value === "" || value === undefined || value === null)
             return null;
         const entry = (this.state.dataSource as Options).find(x=>x.value === value);
-        return entry?entry.name:null;
+        return entry?entry.name:showValueWhenNoEntryIsFound?value:null;
     }
     onUpdateInput=(name,dataSource,params?)=>{
         if(!params||params.source !== 'change')
