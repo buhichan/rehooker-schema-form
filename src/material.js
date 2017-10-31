@@ -64,7 +64,7 @@ function DateTimeInput(props) {
                     input.onChange(formatDateTime(newValue));
                 } })));
 }
-var DateInput = (function (_super) {
+var DateInput = /** @class */ (function (_super) {
     tslib_1.__extends(DateInput, _super);
     function DateInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -100,7 +100,7 @@ function CheckboxInput(props) {
     return React.createElement(material_ui_1.Checkbox, tslib_1.__assign({}, rest, { onBlur: function (e) { return onBlur(value); }, style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: function (e, v) { return onChange(v); }, checked: Boolean(value) }));
 }
 //fixme: todo: https://github.com/callemall/material-ui/issues/6080
-var SelectInput = (function (_super) {
+var SelectInput = /** @class */ (function (_super) {
     tslib_1.__extends(SelectInput, _super);
     function SelectInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -171,7 +171,7 @@ var BaseAutoComplete = react_jss_1.default({
                 } },
                 React.createElement(svg_icons_1.ContentClear, null)) : null);
 });
-var AutoCompleteSelect = (function (_super) {
+var AutoCompleteSelect = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -188,7 +188,7 @@ var AutoCompleteSelect = (function (_super) {
     };
     return AutoCompleteSelect;
 }(SelectInput));
-var AutoCompleteText = (function (_super) {
+var AutoCompleteText = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteText, _super);
     function AutoCompleteText() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -206,14 +206,14 @@ var AutoCompleteText = (function (_super) {
     };
     return AutoCompleteText;
 }(SelectInput));
-var AutoCompleteAsync = (function (_super) {
+var AutoCompleteAsync = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
     function AutoCompleteAsync() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onUpdateInput = function (name, dataSource, params) {
             if (!params || params.source !== 'change')
                 return;
-            var throttle = _this.props.fieldSchema['throttle'] || 400;
+            var throttle = _this.props.fieldSchema.throttle || 400;
             _this.setState({
                 searchText: name,
                 loading: true,
@@ -265,11 +265,10 @@ var AutoCompleteAsync = (function (_super) {
     AutoCompleteAsync.prototype.componentWillReceiveProps = function (nextProps) {
         if (nextProps.input.value !== this.props.input.value)
             this.setState({
-                searchText: this.findName(nextProps.input.value, true) || ""
+                searchText: this.findName(nextProps.input.value, nextProps.fieldSchema.showValueWhenNoEntryIsFound) || ""
             });
     };
     AutoCompleteAsync.prototype.findName = function (value, showValueWhenNoEntryIsFound) {
-        if (showValueWhenNoEntryIsFound === void 0) { showValueWhenNoEntryIsFound = false; }
         if (value === "" || value === undefined || value === null)
             return null;
         var entry = this.state.dataSource.find(function (x) { return x.value === value; });
@@ -277,7 +276,7 @@ var AutoCompleteAsync = (function (_super) {
     };
     AutoCompleteAsync.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value) || this.state.searchText, onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected, onClear: this.clearSearchText });
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value, fieldSchema.showValueWhenNoEntryIsFound) || this.state.searchText, onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected, onClear: this.clearSearchText });
     };
     return AutoCompleteAsync;
 }(React.PureComponent));
@@ -286,7 +285,7 @@ var AutoCompleteAsync = (function (_super) {
  * getChildren存在的情况
  * update: 不必了,以后就没有getChildren了,统一用listens
  */
-var ArrayFieldRenderer = (function (_super) {
+var ArrayFieldRenderer = /** @class */ (function (_super) {
     tslib_1.__extends(ArrayFieldRenderer, _super);
     function ArrayFieldRenderer() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -318,7 +317,7 @@ var ArrayFieldRenderer = (function (_super) {
 function TextAreaInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
 }
-var FileInput = (function (_super) {
+var FileInput = /** @class */ (function (_super) {
     tslib_1.__extends(FileInput, _super);
     function FileInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -370,7 +369,7 @@ var FileInput = (function (_super) {
     ], FileInput);
     return FileInput;
 }(React.PureComponent));
-var SelectRadio = (function (_super) {
+var SelectRadio = /** @class */ (function (_super) {
     tslib_1.__extends(SelectRadio, _super);
     function SelectRadio() {
         return _super !== null && _super.apply(this, arguments) || this;

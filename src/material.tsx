@@ -338,13 +338,13 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
     componentWillUnmount(){
         this.$isMounted=false;
     }
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps(nextProps:WidgetProps){
         if(nextProps.input.value!==this.props.input.value)
             this.setState({
-                searchText:this.findName(nextProps.input.value,true) || ""
+                searchText:this.findName(nextProps.input.value,nextProps.fieldSchema.showValueWhenNoEntryIsFound) || ""
             })
     }
-    findName(value,showValueWhenNoEntryIsFound=false){
+    findName(value,showValueWhenNoEntryIsFound){
         if(value === "" || value === undefined || value === null)
             return null;
         const entry = (this.state.dataSource as Options).find(x=>x.value === value);
@@ -353,7 +353,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
     onUpdateInput=(name,dataSource,params?)=>{
         if(!params||params.source !== 'change')
             return;
-        const throttle = this.props.fieldSchema['throttle']||400;
+        const throttle = this.props.fieldSchema.throttle||400;
         this.setState({
             searchText:name,
             loading:true,
@@ -402,7 +402,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
             filter={AutoComplete.noFilter}
             fieldSchema={fieldSchema}
             dataSource={this.state.dataSource}
-            searchText={this.findName(input.value)||this.state.searchText}
+            searchText={this.findName(input.value,fieldSchema.showValueWhenNoEntryIsFound)||this.state.searchText}
             onUpdateInput={this.onUpdateInput}
             onNewRequest={this.onSelected}
             onClear={this.clearSearchText}
