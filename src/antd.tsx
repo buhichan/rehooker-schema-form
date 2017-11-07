@@ -279,6 +279,7 @@ class FileInput extends React.Component<WidgetProps,any>{
 }
 
 @addType("radioGroup")
+@addType("radio")
 class SelectRadio extends SelectInput{
 
     render(){

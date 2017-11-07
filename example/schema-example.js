@@ -262,7 +262,22 @@ exports.schema = [
         label: "type也可以是组件"
     },
     {
-        key: "autocomplete",
+        key: "autocomplete1",
+        type: "autocomplete",
+        label: "自动完成(select)",
+        options: [
+            { name: "11", value: "11" },
+            { name: "22", value: "22" },
+            { name: "33", value: "33" },
+            { name: '44', value: "44" },
+            { name: "55", value: "55" },
+            { name: "76", value: "66" },
+            { name: "77", value: "77" },
+            { name: "88", value: "88" },
+        ]
+    },
+    {
+        key: "autocomplete2",
         type: "autocomplete-async",
         label: "自动完成",
         options: function (t) {
@@ -274,25 +289,14 @@ exports.schema = [
                 return [{ name: "0", value: 0 }];
         }
     }, {
-        key: "radioGroup",
-        type: "radioGroup",
-        label: "radioGroup",
-        options: function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            return tslib_1.__generator(this, function (_a) {
-                return [2 /*return*/, [
-                        { name: "yes", value: true },
-                        { name: "no", value: false },
-                    ]];
-            });
-        }); }
-    }, {
         key: "radio",
         type: "radio",
         label: "radio",
         options: function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, [
-                        { name: "single option", value: true }
+                        { name: "yes", value: true },
+                        { name: "no", value: false },
                     ]];
             });
         }); }

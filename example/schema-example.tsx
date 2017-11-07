@@ -261,7 +261,22 @@ export let schema:FormFieldSchema[] = [
         label:"type也可以是组件"
     },
     {
-        key:"autocomplete",
+        key:"autocomplete1",
+        type:"autocomplete",
+        label:"自动完成(select)",
+        options:[
+            {name:"11",value:"11"},
+            {name:"22",value:"22"},
+            {name:"33",value:"33"},
+            {name:'44',value:"44"},
+            {name:"55",value:"55"},
+            {name:"76",value:"66"},
+            {name:"77",value:"77"},
+            {name:"88",value:"88"},
+        ]
+    },
+    {
+        key:"autocomplete2",
         type:"autocomplete-async",
         label:"自动完成",
         options:t=>{
@@ -272,19 +287,12 @@ export let schema:FormFieldSchema[] = [
             else return [{name:"0",value:0}];
         }
     },{
-        key:"radioGroup",
-        type:"radioGroup",
-        label:"radioGroup",
-        options:async ()=>[
-            {name:"yes",value:true},
-            {name:"no",value:false},
-        ]
-    },{
         key:"radio",
         type:"radio",
         label:"radio",
         options:async ()=>[
-            {name:"single option",value:true}
+            {name:"yes",value:true},
+            {name:"no",value:false},
         ]
     }
 ];

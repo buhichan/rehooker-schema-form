@@ -160,21 +160,46 @@ var BaseAutoComplete = react_jss_1.default({
         right: 0,
         opacity: 0,
     }
-})(function (_a) {
-    var fieldSchema = _a.fieldSchema, onClear = _a.onClear, input = _a.input, meta = _a.meta, fullResult = _a.fullResult, filter = _a.filter, openOnFocus = _a.openOnFocus, loading = _a.loading, searchText = _a.searchText, dataSource = _a.dataSource, onNewRequest = _a.onNewRequest, onUpdateInput = _a.onUpdateInput, classes = _a.classes;
-    return React.createElement("div", { className: classes.autocomplete },
-        React.createElement(material_ui_1.AutoComplete, { id: fieldSchema.name, maxSearchResults: fullResult ? undefined : 5, menuStyle: fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, fullWidth: true, openOnFocus: openOnFocus, hintText: fieldSchema.placeholder, errorText: meta.error, filter: filter || material_ui_1.AutoComplete.fuzzyFilter, dataSource: dataSource, dataSourceConfig: dataSourceConfig, floatingLabelText: fieldSchema.label, searchText: String(searchText), onNewRequest: onNewRequest, onUpdateInput: onUpdateInput }),
-        loading ? React.createElement(CircularProgress_1.default, { size: 30, style: {
-                position: "absolute",
-                top: 22,
-                right: 18
-            } })
-            : input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: classes.clearButton, onClick: function () {
-                    input.onChange(fieldSchema.defaultValue || null);
-                    onClear && onClear();
-                } },
-                React.createElement(svg_icons_1.ContentClear, null)) : null);
-});
+})((function (_super) {
+    tslib_1.__extends(BaseAutoComplete, _super);
+    function BaseAutoComplete() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            searchText: _this.props.searchText
+        };
+        _this.onUpdateInput = (function (name, datasource, params) {
+            _this.setState({
+                searchText: name
+            });
+            _this.props.onUpdateInput && _this.props.onUpdateInput(name, datasource, params);
+        });
+        return _this;
+    }
+    BaseAutoComplete.prototype.componentWillReceiverProps = function (nextProps) {
+        this.setState({
+            searchText: nextProps.searchText
+        });
+    };
+    BaseAutoComplete.prototype.render = function () {
+        var _this = this;
+        var _a = this.props, classes = _a.classes, fieldSchema = _a.fieldSchema, fullResult = _a.fullResult, openOnFocus = _a.openOnFocus, meta = _a.meta, filter = _a.filter, dataSource = _a.dataSource, onNewRequest = _a.onNewRequest, onUpdateInput = _a.onUpdateInput, input = _a.input, loading = _a.loading;
+        return React.createElement("div", { className: classes.autocomplete },
+            React.createElement(material_ui_1.AutoComplete, { id: fieldSchema.name, maxSearchResults: fullResult ? undefined : 5, menuStyle: fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, fullWidth: true, openOnFocus: openOnFocus, hintText: fieldSchema.placeholder, errorText: meta.error, filter: filter || material_ui_1.AutoComplete.fuzzyFilter, dataSource: dataSource, dataSourceConfig: dataSourceConfig, floatingLabelText: fieldSchema.label, searchText: this.state.searchText, onNewRequest: onNewRequest, onUpdateInput: this.onUpdateInput }),
+            loading ? React.createElement(CircularProgress_1.default, { size: 30, style: {
+                    position: "absolute",
+                    top: 22,
+                    right: 18
+                } })
+                : input.value !== null && input.value !== undefined && input.value !== "" ? React.createElement(material_ui_1.IconButton, { style: { position: "absolute" }, className: classes.clearButton, onClick: function () {
+                        input.onChange(fieldSchema.defaultValue || null);
+                        _this.setState({
+                            searchText: ""
+                        });
+                    } },
+                    React.createElement(svg_icons_1.ContentClear, null)) : null);
+    };
+    return BaseAutoComplete;
+}(React.PureComponent)));
 var AutoCompleteSelect = (function (_super) {
     tslib_1.__extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
@@ -219,7 +244,6 @@ var AutoCompleteAsync = (function (_super) {
                 return;
             var throttle = _this.props.fieldSchema.throttle || 400;
             _this.setState({
-                searchText: name,
                 loading: true,
                 dataSource: []
             });
@@ -253,11 +277,9 @@ var AutoCompleteAsync = (function (_super) {
             _this.props.input.onChange(value);
         };
         _this.state = {
-            searchText: "",
             loading: false,
             dataSource: []
         };
-        _this.clearSearchText = function () { return _this.setState({ searchText: "" }); };
         return _this;
     }
     AutoCompleteAsync.prototype.componentWillMount = function () {
@@ -265,12 +287,6 @@ var AutoCompleteAsync = (function (_super) {
     };
     AutoCompleteAsync.prototype.componentWillUnmount = function () {
         this.$isMounted = false;
-    };
-    AutoCompleteAsync.prototype.componentWillReceiveProps = function (nextProps) {
-        if (nextProps.input.value !== this.props.input.value)
-            this.setState({
-                searchText: this.findName(nextProps.input.value, nextProps.fieldSchema.showValueWhenNoEntryIsFound) || ""
-            });
     };
     AutoCompleteAsync.prototype.findName = function (value, showValueWhenNoEntryIsFound) {
         if (value === "" || value === undefined || value === null)
@@ -280,7 +296,7 @@ var AutoCompleteAsync = (function (_super) {
     };
     AutoCompleteAsync.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value, fieldSchema.showValueWhenNoEntryIsFound) || this.state.searchText, onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected, onClear: this.clearSearchText });
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value, fieldSchema.showValueWhenNoEntryIsFound), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
     };
     return AutoCompleteAsync;
 }(React.PureComponent));

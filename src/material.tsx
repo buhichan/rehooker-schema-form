@@ -251,43 +251,63 @@ const BaseAutoComplete = injectCSS({
         opacity:0,
     }
 })(
-    ({fieldSchema, onClear, input, meta, fullResult, filter,openOnFocus,loading, searchText, dataSource, onNewRequest, onUpdateInput,classes}) =>{
-        return <div className={classes.autocomplete}>
-            <AutoComplete
-                id={fieldSchema.name}
-                maxSearchResults={fullResult ? undefined : 5}
-                menuStyle={fullResult ? {maxHeight: "300px", overflowY: 'auto'} : undefined}
-                fullWidth={true}
-                openOnFocus={openOnFocus}
-                hintText={fieldSchema.placeholder}
-                errorText={meta.error}
-                filter={filter||AutoComplete.fuzzyFilter}
-                dataSource={dataSource}
-                dataSourceConfig={dataSourceConfig}
-                floatingLabelText={fieldSchema.label}
-                searchText={String(searchText)}
-                onNewRequest={onNewRequest}
-                onUpdateInput={onUpdateInput}
-            />
-            {
-                loading?<CircularProgress size={30} style={{
-                    position:"absolute",
-                    top:22,
-                    right:18
-                }} />
-                :input.value!==null&&input.value!==undefined&&input.value!=="" ? <IconButton
-                    style={{position:"absolute"}}
-                    className={classes.clearButton}
-                    onClick={() => {
-                        input.onChange(fieldSchema.defaultValue || null)
-                        onClear && onClear();
-                    }}                
-                >
-                    <ContentClear />
-                </IconButton> : null
-            }
-        </div>
+    class BaseAutoComplete extends React.PureComponent<{fieldSchema, onClear, input, meta, fullResult, filter,openOnFocus,loading, searchText, dataSource, onNewRequest, onUpdateInput,classes},any>{
+        state={
+            searchText:this.props.searchText
+        }
+        componentWillReceiverProps(nextProps){
+            this.setState({
+                searchText:nextProps.searchText
+            })
+        }
+        onUpdateInput=((name,datasource,params)=>{
+            this.setState({
+                searchText:name
+            })
+            this.props.onUpdateInput && this.props.onUpdateInput(name,datasource,params)
+        }) as any
+        render(){
+            const {classes,fieldSchema,fullResult,openOnFocus,meta,filter,dataSource,onNewRequest,onUpdateInput,input,loading,} = this.props;
+            return <div className={classes.autocomplete}>
+                <AutoComplete
+                    id={fieldSchema.name}
+                    maxSearchResults={fullResult ? undefined : 5}
+                    menuStyle={fullResult ? {maxHeight: "300px", overflowY: 'auto'} : undefined}
+                    fullWidth={true}
+                    openOnFocus={openOnFocus}
+                    hintText={fieldSchema.placeholder}
+                    errorText={meta.error}
+                    filter={filter||AutoComplete.fuzzyFilter}
+                    dataSource={dataSource}
+                    dataSourceConfig={dataSourceConfig}
+                    floatingLabelText={fieldSchema.label}
+                    searchText={this.state.searchText}
+                    onNewRequest={onNewRequest}
+                    onUpdateInput={this.onUpdateInput}
+                />
+                {
+                    loading?<CircularProgress size={30} style={{
+                        position:"absolute",
+                        top:22,
+                        right:18
+                    }} />
+                    :input.value!==null&&input.value!==undefined&&input.value!=="" ? <IconButton
+                        style={{position:"absolute"}}
+                        className={classes.clearButton}
+                        onClick={() => {
+                            input.onChange(fieldSchema.defaultValue || null);
+                            this.setState({
+                                searchText:""
+                            })
+                        }}                
+                    >
+                        <ContentClear />
+                    </IconButton> : null
+                }
+            </div>
+        }
     }
+
 )
 
 class AutoCompleteSelect extends SelectInput{
@@ -342,12 +362,6 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
     componentWillUnmount(){
         this.$isMounted=false;
     }
-    componentWillReceiveProps(nextProps:WidgetProps){
-        if(nextProps.input.value!==this.props.input.value)
-            this.setState({
-                searchText:this.findName(nextProps.input.value,nextProps.fieldSchema.showValueWhenNoEntryIsFound) || ""
-            })
-    }
     findName(value,showValueWhenNoEntryIsFound){
         if(value === "" || value === undefined || value === null)
             return null;
@@ -359,7 +373,6 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
             return;
         const throttle = this.props.fieldSchema.throttle||400;
         this.setState({
-            searchText:name,
             loading:true,
             dataSource:[]
         });
@@ -391,11 +404,9 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
         this.props.input.onChange(value)
     };
     state={
-        searchText:"",
         loading:false,
         dataSource:[]
     };
-    clearSearchText=()=>this.setState({searchText:""})
     render() {
         const {meta,input,fieldSchema} = this.props;
         return <BaseAutoComplete
@@ -406,10 +417,9 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
             filter={AutoComplete.noFilter}
             fieldSchema={fieldSchema}
             dataSource={this.state.dataSource}
-            searchText={this.findName(input.value,fieldSchema.showValueWhenNoEntryIsFound)||this.state.searchText}
+            searchText={this.findName(input.value,fieldSchema.showValueWhenNoEntryIsFound)}
             onUpdateInput={this.onUpdateInput}
             onNewRequest={this.onSelected}
-            onClear={this.clearSearchText}
         />;
     }
 }
