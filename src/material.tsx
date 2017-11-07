@@ -187,7 +187,7 @@ export class SelectInput extends React.PureComponent<WidgetProps,any>{
         const rawOptions =  props.fieldSchema.options;
         if(typeof rawOptions=== 'function'){
             if(!rawOptions.length)
-                (rawOptions as AsyncOptions)().then(options=>this.setState({
+                (rawOptions as AsyncOptions)().then(options=>!this.unmounted && this.setState({
                     options
                 }))
 
@@ -199,6 +199,10 @@ export class SelectInput extends React.PureComponent<WidgetProps,any>{
     componentWillReceiveProps(nextProps:WidgetProps){
         if(nextProps.fieldSchema.options!==this.props.fieldSchema.options)
             this.reload(nextProps);
+    }
+    unmounted=false;
+    componentWillUnmount(){
+        this.unmounted=true
     }
     componentWillMount(){
         this.reload(this.props);

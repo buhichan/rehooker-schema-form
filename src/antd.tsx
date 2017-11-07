@@ -60,7 +60,7 @@ class SelectInput extends React.Component<any,any>{
         const rawOptions =  props.fieldSchema.options;
         if(typeof rawOptions=== 'function'){
             if(!rawOptions.length)
-                (rawOptions as AsyncOptions)().then(options=>this.setState({
+                (rawOptions as AsyncOptions)().then(options=>!this.unmounted && this.setState({
                     options
                 }))
 
@@ -73,11 +73,15 @@ class SelectInput extends React.Component<any,any>{
         if(nextProps.fieldSchema.options!==this.props.fieldSchema.options)
             this.reload(nextProps);
     }
+    unmounted=false;
+    componentWillUnmount(){
+        this.unmounted=true
+    }
     componentWillMount(){
         this.reload(this.props);
     }
     render(){
-        return<div
+        return <div
             style={this.props.fieldSchema.hide?{}:{height:"50px"}}
         >
             <div>{this.props.fieldSchema.label}</div>
