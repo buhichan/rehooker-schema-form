@@ -107,6 +107,7 @@ var SelectInput = (function (_super) {
         _this.state = {
             options: null
         };
+        _this.unmounted = false;
         return _this;
     }
     SelectInput.prototype.reload = function (props) {
@@ -114,7 +115,7 @@ var SelectInput = (function (_super) {
         var rawOptions = props.fieldSchema.options;
         if (typeof rawOptions === 'function') {
             if (!rawOptions.length)
-                rawOptions().then(function (options) { return _this.setState({
+                rawOptions().then(function (options) { return !_this.unmounted && _this.setState({
                     options: options
                 }); });
         }
@@ -126,6 +127,9 @@ var SelectInput = (function (_super) {
     SelectInput.prototype.componentWillReceiveProps = function (nextProps) {
         if (nextProps.fieldSchema.options !== this.props.fieldSchema.options)
             this.reload(nextProps);
+    };
+    SelectInput.prototype.componentWillUnmount = function () {
+        this.unmounted = true;
     };
     SelectInput.prototype.componentWillMount = function () {
         this.reload(this.props);
