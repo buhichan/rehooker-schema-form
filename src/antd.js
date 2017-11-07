@@ -36,7 +36,7 @@ function TextInput(props) {
         React.createElement(antd_2.Input, tslib_1.__assign({ type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, name: props.input.name }, required, { onBlur: props.input.onBlur, disabled: props.disabled, value: props.input.value, onChange: props.input.onChange })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-var SelectInput = /** @class */ (function (_super) {
+var SelectInput = (function (_super) {
     tslib_1.__extends(SelectInput, _super);
     function SelectInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -77,7 +77,7 @@ var SelectInput = /** @class */ (function (_super) {
     };
     return SelectInput;
 }(React.Component));
-var CheckboxInput = /** @class */ (function (_super) {
+var CheckboxInput = (function (_super) {
     tslib_1.__extends(CheckboxInput, _super);
     function CheckboxInput() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -109,7 +109,7 @@ function DateInput(props) {
         React.createElement(antd_3.DatePicker, tslib_1.__assign({}, required, { key: props.fieldSchema.name, value: value, disabled: props.disabled, style: { width: "100%" }, onChange: function (date, dateString) { props.input.onChange(dateString); } })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-var DateTimeRangeInput = /** @class */ (function (_super) {
+var DateTimeRangeInput = (function (_super) {
     tslib_1.__extends(DateTimeRangeInput, _super);
     function DateTimeRangeInput() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -143,7 +143,7 @@ function NumberInput(props) {
             } })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-var AutoCompleteSelect = /** @class */ (function (_super) {
+var AutoCompleteSelect = (function (_super) {
     tslib_1.__extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -157,7 +157,7 @@ var AutoCompleteSelect = /** @class */ (function (_super) {
     };
     return AutoCompleteSelect;
 }(SelectInput));
-var FileInput = /** @class */ (function (_super) {
+var FileInput = (function (_super) {
     tslib_1.__extends(FileInput, _super);
     function FileInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -196,7 +196,7 @@ var FileInput = /** @class */ (function (_super) {
     };
     return FileInput;
 }(React.Component));
-var SelectRadio = /** @class */ (function (_super) {
+var SelectRadio = (function (_super) {
     tslib_1.__extends(SelectRadio, _super);
     function SelectRadio() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -218,7 +218,7 @@ var SelectRadio = /** @class */ (function (_super) {
     ], SelectRadio);
     return SelectRadio;
 }(SelectInput));
-var DateRangeInput = /** @class */ (function (_super) {
+var DateRangeInput = (function (_super) {
     tslib_1.__extends(DateRangeInput, _super);
     function DateRangeInput() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -234,7 +234,7 @@ var DateRangeInput = /** @class */ (function (_super) {
     };
     return DateRangeInput;
 }(React.Component));
-var TextareaInput = /** @class */ (function (_super) {
+var TextareaInput = (function (_super) {
     tslib_1.__extends(TextareaInput, _super);
     function TextareaInput() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -248,7 +248,7 @@ var TextareaInput = /** @class */ (function (_super) {
     };
     return TextareaInput;
 }(React.Component));
-var AutoCompleteAsync = /** @class */ (function (_super) {
+var AutoCompleteAsync = (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
     function AutoCompleteAsync() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -310,7 +310,7 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
     };
     return AutoCompleteAsync;
 }(React.Component));
-var AutoCompleteText = /** @class */ (function (_super) {
+var AutoCompleteText = (function (_super) {
     tslib_1.__extends(AutoCompleteText, _super);
     function AutoCompleteText() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -329,7 +329,7 @@ var AutoCompleteText = /** @class */ (function (_super) {
     };
     return AutoCompleteText;
 }(React.Component));
-var ArrayFieldRenderer = /** @class */ (function (_super) {
+var ArrayFieldRenderer = (function (_super) {
     tslib_1.__extends(ArrayFieldRenderer, _super);
     function ArrayFieldRenderer() {
         return _super !== null && _super.apply(this, arguments) || this;

@@ -31,7 +31,7 @@ function preRenderField(field, form, keyPath) {
         return React.createElement(StatelessField, { key: field.key || field.label, field: field, form: form, keyPath: keyPath });
 }
 exports.preRenderField = preRenderField;
-var StatelessField = /** @class */ (function (_super) {
+var StatelessField = (function (_super) {
     tslib_1.__extends(StatelessField, _super);
     function StatelessField() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -70,15 +70,19 @@ var StatelessField = /** @class */ (function (_super) {
     return StatelessField;
 }(React.PureComponent));
 exports.StatelessField = StatelessField;
-var StatefulField = /** @class */ (function (_super) {
+var StatefulField = (function (_super) {
     tslib_1.__extends(StatefulField, _super);
     function StatefulField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = _this.props.fieldSchema;
+        _this.unmounted = false;
         return _this;
     }
     StatefulField.prototype.componentWillMount = function () {
         this.reload(this.props);
+    };
+    StatefulField.prototype.componentWillUnmount = function () {
+        this.unmounted = true;
     };
     StatefulField.prototype.reload = function (props) {
         var _this = this;
@@ -91,6 +95,8 @@ var StatefulField = /** @class */ (function (_super) {
             else
                 return res;
         })).then(function (newSchemas) {
+            if (_this.unmounted)
+                return;
             var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema)); }, props.fieldSchema);
             if (newSchema.hasOwnProperty("value"))
                 props.dispatch(redux_form_1.change(props.form, props.keyPath, newSchema.value));

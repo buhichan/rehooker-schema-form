@@ -154,6 +154,10 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
     componentWillMount(){
         this.reload(this.props)
     }
+    unmounted = false;
+    componentWillUnmount(){
+        this.unmounted = true;
+    }
     reload(props:FieldNodeProps){
         const state = this.context.store.getState();
         Promise.all(Object.keys(props.listeners).map((fieldKey,i)=>{
@@ -163,6 +167,8 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
                 return Promise.resolve(res||{});
             else return res;
         })).then(newSchemas=> {
+            if(this.unmounted)
+                return;
             const newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema}),props.fieldSchema);
             if(newSchema.hasOwnProperty("value"))
                 props.dispatch(change(props.form,props.keyPath,newSchema.value));
