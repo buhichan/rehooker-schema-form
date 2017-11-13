@@ -3,6 +3,31 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
+var arrayFieldChildren = [
+    {
+        key: "array-child",
+        label: "array-child",
+        type: "text"
+    },
+    {
+        key: "currency",
+        label: "currency",
+        type: "text",
+        hide: true,
+        listens: function (keyPath) {
+            return _a = {},
+                //keyPath = 'dynamic-array-alter[0,1,2,....]'
+                _a[keyPath + ".array-child"] = function (v, child) {
+                    console.log(arguments);
+                    return {
+                        hide: !v
+                    };
+                },
+                _a;
+            var _a;
+        }
+    }
+];
 exports.schema = [
     {
         key: "text",
@@ -225,31 +250,7 @@ exports.schema = [
         key: "dynamic-array-alter",
         type: "array",
         label: "dynamic-array(使用listens)",
-        children: [
-            {
-                key: "array-child",
-                label: "array-child",
-                type: "text"
-            },
-            {
-                key: "currency",
-                label: "currency",
-                type: "text",
-                hide: true,
-                listens: function (keyPath) {
-                    return _a = {},
-                        //keyPaht = 'dynamic-array-alter[0,1,2,....]'
-                        _a[keyPath + ".array-child"] = function (v, child) {
-                            console.log(arguments);
-                            return {
-                                hide: !v
-                            };
-                        },
-                        _a;
-                    var _a;
-                }
-            }
-        ]
+        children: arrayFieldChildren
     }, {
         key: "test-component",
         type: function (props) {
@@ -300,6 +301,11 @@ exports.schema = [
                     ]];
             });
         }); }
+    }, {
+        key: "tableArray",
+        type: "table-array",
+        label: "array fiel as table",
+        children: arrayFieldChildren
     }
 ];
 //# sourceMappingURL=schema-example.js.map

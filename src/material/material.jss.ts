@@ -1,6 +1,6 @@
 /**-----------------------------------Form-----------------------------------**/
 
-const FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
+const FullWidthInputs = "& .field.group,& .field.array,& .field.table-array,& .field.full-width";
 const widgetHeight = 85;
 const mobileMedia = "@media(max-width:768px)";
 const clearfix = {

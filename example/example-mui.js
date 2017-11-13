@@ -7,6 +7,8 @@ var react_redux_1 = require("react-redux");
 var redux_1 = require("redux");
 var redux_form_1 = require("redux-form");
 require("../src/material");
+require("../src/material/table-array-field");
+require("ag-grid-material-preset/style.css");
 var _1 = require("../");
 var styles_1 = require("material-ui/styles");
 var getMuiTheme_1 = require("material-ui/styles/getMuiTheme");

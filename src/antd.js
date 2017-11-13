@@ -218,7 +218,6 @@ var SelectRadio = (function (_super) {
             React.createElement("p", { style: errorStyle }, props.meta.error));
     };
     SelectRadio = tslib_1.__decorate([
-        field_1.addType("radioGroup"),
         field_1.addType("radio")
     ], SelectRadio);
     return SelectRadio;

@@ -2,7 +2,7 @@
 /**-----------------------------------Form-----------------------------------**/
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
-var FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
+var FullWidthInputs = "& .field.group,& .field.array,& .field.table-array,& .field.full-width";
 var widgetHeight = 85;
 var mobileMedia = "@media(max-width:768px)";
 var clearfix = {

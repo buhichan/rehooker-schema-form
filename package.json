@@ -16,9 +16,18 @@
     "dev:antd": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme antd"
   },
   "peerDependencies": {
+    "react": "^16.0.*",
+    "react-dom": "^16.0.*",
+    "react-jss": "6.*",
+    "react-redux": "*",
+    "redux": "*",
+    "reselect": "*",
+    "tslib": "*"
+  },
+  "optionalDependencies": {
+    "ag-grid-material-preset": "*",
     "antd": "^2.*",
-    "material-ui": "0.18.* | 0.19.* | 0.17.*",
-    "react-jss": "6.*"
+    "material-ui": "0.18.* | 0.19.* | 0.17.*"
   },
   "keywords": [
     "redux-form",
@@ -27,15 +36,17 @@
   "author": "YS",
   "license": "MIT",
   "devDependencies": {
-    "@types/material-ui": "0.19.*",
+    "@types/material-ui": "0.18.4||0.19.*",
     "@types/node": "^6.0.53",
     "@types/react-dom": "^15.5.1",
     "@types/react-redux": "^4.4.35",
     "@types/redux-form": "7.*",
+    "ag-grid-material-preset": "git+ssh://git@gitlab.ucloudadmin.com:buhi/ag-grid-material-preset.git",
     "antd": "^2.*",
     "awesome-typescript-loader": "^3.0.3",
     "copy-webpack-plugin": "^3.0.1",
     "css-loader": "^0.25.0",
+    "csv-parse": "^2.0.0",
     "es6-promise": "^4.0.3",
     "expose-loader": "^0.7.1",
     "extract-text-webpack-plugin": "^1.0.1",
@@ -46,18 +57,15 @@
     "postcss-loader": "^0.13.0",
     "raw-loader": "^0.5.1",
     "react-jss": "6.*",
+    "react-redux": "^5.0.6",
     "style-loader": "^0.13.1",
+    "tslib": "^1.8.0",
     "typescript": "2.4.*",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-redux": "*",
-    "redux": "*",
     "redux-form": "7.*",
-    "reselect": "*",
-    "tslib": "*"
+    "reselect": "*"
   }
 }

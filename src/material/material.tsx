@@ -2,7 +2,7 @@
  * Created by buhi on 2017/4/28.
  */
 import * as React from "react"
-import {RuntimeAsyncOptions, AsyncOptions, Options} from "./form"
+import {RuntimeAsyncOptions, AsyncOptions, Options} from "../form"
 import {
     TextField, TimePicker, MenuItem, Checkbox, DatePicker, RaisedButton, FlatButton, Paper, AutoComplete,
     IconButton, Subheader
@@ -15,14 +15,14 @@ import {stylesheet} from "./material.jss";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
-import {addType, addTypeWithWrapper, preRenderField, WidgetProps} from "./field";
+import {addType, addTypeWithWrapper, preRenderField, WidgetProps} from "../field";
 import injectCSS from 'react-jss';
 import {Field as RFField,FieldArray as RFFieldArray} from "redux-form";
 import SelectField from "material-ui/SelectField"
-import {renderFields} from "./render-fields";
+import {renderFields} from "../render-fields";
 import {default as RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
 import CircularProgress from "material-ui/CircularProgress";
-import { setButton } from "./buttons";
+import { setButton } from "../buttons";
 
 function NumberInput(props:WidgetProps){
     return <TextField
@@ -635,7 +635,7 @@ setButton(muiThemeable()(function(props:any){
     }
 }) as any);
 
-const formModule = require('../index');
+const formModule = require('../../index');
 const JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm =muiThemeable()
 (injectCSS(stylesheet)(

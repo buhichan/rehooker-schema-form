@@ -11,14 +11,14 @@ var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
 var material_jss_1 = require("./material.jss");
 var svg_icons_1 = require("material-ui/svg-icons");
-var field_1 = require("./field");
+var field_1 = require("../field");
 var react_jss_1 = require("react-jss");
 var redux_form_1 = require("redux-form");
 var SelectField_1 = require("material-ui/SelectField");
-var render_fields_1 = require("./render-fields");
+var render_fields_1 = require("../render-fields");
 var RadioButton_1 = require("material-ui/RadioButton");
 var CircularProgress_1 = require("material-ui/CircularProgress");
-var buttons_1 = require("./buttons");
+var buttons_1 = require("../buttons");
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
@@ -446,7 +446,7 @@ buttons_1.setButton(muiThemeable_1.default()(function (props) {
                 }, labelColor: props.muiTheme.palette.primary1Color, label: props.children, labelStyle: { padding: "0" }, onClick: props.onClick, disabled: props.disabled, type: props.type });
     }
 }));
-var formModule = require('../index');
+var formModule = require('../../index');
 var JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm = muiThemeable_1.default()(react_jss_1.default(material_jss_1.stylesheet)(function (_a) {
     var classes = _a.classes, sheet = _a.sheet, props = tslib_1.__rest(_a, ["classes", "sheet"]);

@@ -1,6 +1,32 @@
 import {FormFieldSchema} from "../src/form";
 import {WidgetProps} from "../src/field";
 import * as React from "react"
+
+const arrayFieldChildren = [
+    {
+        key:"array-child",
+        label:"array-child",
+        type:"text"
+    },
+    {
+        key:"currency",
+        label:"currency",
+        type:"text",
+        hide:true,
+        listens:(keyPath)=>{
+            return {
+                //keyPath = 'dynamic-array-alter[0,1,2,....]'
+                [keyPath+".array-child"]: function (v, child) {
+                    console.log(arguments);
+                    return {
+                        hide:!v
+                    }
+                }
+            }
+        }
+    }
+];
+
 export let schema:FormFieldSchema[] = [
     {
         key:"text",
@@ -223,30 +249,7 @@ export let schema:FormFieldSchema[] = [
         key:"dynamic-array-alter",
         type:"array",
         label:"dynamic-array(使用listens)",
-        children:[
-            {
-                key:"array-child",
-                label:"array-child",
-                type:"text"
-            },
-            {
-                key:"currency",
-                label:"currency",
-                type:"text",
-                hide:true,
-                listens:(keyPath)=>{
-                    return {
-                        //keyPaht = 'dynamic-array-alter[0,1,2,....]'
-                        [keyPath+".array-child"]: function (v, child) {
-                            console.log(arguments);
-                            return {
-                                hide:!v
-                            }
-                        }
-                    }
-                }
-            }
-        ]
+        children:arrayFieldChildren
     },{
         key:"test-component",
         type:function(props:WidgetProps){
@@ -294,5 +297,10 @@ export let schema:FormFieldSchema[] = [
             {name:"yes",value:true},
             {name:"no",value:false},
         ]
+    },{
+        key:"tableArray",
+        type:"table-array",
+        label:"array fiel as table",
+        children:arrayFieldChildren
     }
 ];
