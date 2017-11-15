@@ -48,6 +48,8 @@ export class AutoCompleteChipInput extends React.PureComponent<WidgetProps,any>{
         return <ChipInput
             style={{bottom:9}}
             value={value}
+            maxSearchResults={fieldSchema.fullResult ? undefined : 5}
+            menuStyle={fieldSchema.fullResult ? {maxHeight: "300px", overflowY: 'auto'} : undefined}
             floatingLabelStyle={{top:33}}
             floatingLabelFocusStyle={{top:28}}
             fullWidth
