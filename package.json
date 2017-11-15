@@ -16,16 +16,16 @@
     "dev:antd": "webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme antd"
   },
   "peerDependencies": {
+    "ag-grid-material-preset": "*",
+    "antd": "^2.*",
+    "material-ui": "0.18.* | 0.19.* | 0.17.*",
     "react": "^16.0.*",
     "react-dom": "^16.0.*",
     "react-jss": "6.*",
     "react-redux": "*",
     "redux": "*",
     "reselect": "*",
-    "tslib": "*",
-    "ag-grid-material-preset": "*",
-    "antd": "^2.*",
-    "material-ui": "0.18.* | 0.19.* | 0.17.*"
+    "tslib": "*"
   },
   "keywords": [
     "redux-form",
@@ -51,6 +51,7 @@
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.22.0",
     "material-ui": "^0.19.*",
+    "material-ui-chip-input": "^0.18.3",
     "null-loader": "^0.1.1",
     "postcss-loader": "^0.13.0",
     "raw-loader": "^0.5.1",

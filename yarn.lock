@@ -1913,7 +1913,13 @@ macaddress@^0.2.8:
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/macaddress/-/macaddress-0.2.8.tgz#5904dc537c39ec6dbefeae902327135fa8511f12"
 
-material-ui@*, "material-ui@0.18.* | 0.19.* | 0.17.*":
+material-ui-chip-input@^0.18.3:
+  version "0.18.3"
+  resolved "https://registry.yarnpkg.com/material-ui-chip-input/-/material-ui-chip-input-0.18.3.tgz#379b6f32b144003bf8125e318a268b9d750b7ddd"
+  dependencies:
+    prop-types "^15.5.7"
+
+material-ui@*, material-ui@^0.19.*:
   version "0.19.4"
   resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-0.19.4.tgz#ca9cdca8aa8bb594dfac5db38ec9ff045a323587"
   dependencies:
