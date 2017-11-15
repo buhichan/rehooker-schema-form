@@ -40,7 +40,8 @@ var AutoCompleteChipInput = (function (_super) {
     }
     AutoCompleteChipInput.prototype.render = function () {
         var _a = this.props, input = _a.input, fieldSchema = _a.fieldSchema, meta = _a.meta;
-        var _b = this.state, dataSource = _b.dataSource, async = _b.async;
+        var async = this.state.async;
+        var dataSource = async ? this.state.dataSource : fieldSchema.options;
         var rawValue = input.value instanceof Array ? input.value : [];
         var value = rawValue.map(function (value) {
             var entry = dataSource && dataSource.find(function (x) { return x.value == value; });
@@ -49,7 +50,7 @@ var AutoCompleteChipInput = (function (_super) {
                 value: value
             };
         });
-        return React.createElement(material_ui_chip_input_1.default, { style: { bottom: 9 }, value: value, maxSearchResults: fieldSchema.fullResult ? undefined : 5, menuStyle: fieldSchema.fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, floatingLabelStyle: { top: 33 }, floatingLabelFocusStyle: { top: 28 }, fullWidth: true, onRequestDelete: this.onRequestDelete, onRequestAdd: this.onRequestAdd, dataSourceConfig: dataSourceConfig, dataSource: async ? dataSource : fieldSchema.options, errorText: meta.error, floatingLabelText: fieldSchema.label, hintText: fieldSchema.placeholder, onUpdateInput: async ? this.onRequestDatasource : undefined });
+        return React.createElement(material_ui_chip_input_1.default, { style: { bottom: 9 }, value: value, maxSearchResults: fieldSchema.fullResult ? undefined : 5, menuStyle: fieldSchema.fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, floatingLabelStyle: { top: 33 }, floatingLabelFocusStyle: { top: 28 }, fullWidth: true, onRequestDelete: this.onRequestDelete, onRequestAdd: this.onRequestAdd, dataSourceConfig: dataSourceConfig, dataSource: dataSource, errorText: meta.error, floatingLabelText: fieldSchema.label, hintText: fieldSchema.placeholder, onUpdateInput: async ? this.onRequestDatasource : undefined });
     };
     AutoCompleteChipInput = tslib_1.__decorate([
         _1.addType("multi-autocomplete"),
