@@ -127,7 +127,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 actions={this.actions}
                 gridApi={this.bindGridApi}
             />
-            <Dialog open={this.state.editedIndex >= 0 } onRequestClose={this.closeDialog}>
+            <Dialog autoScrollBodyContent open={this.state.editedIndex >= 0 } onRequestClose={this.closeDialog}>
                 {
                     this.state.editedIndex<0?null:renderFields(this.props.meta.form,this.props.fieldSchema.children,this.props.keyPath+"["+this.state.editedIndex+"]")
                 }
@@ -139,7 +139,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
 const empty = [];
 
 addTypeWithWrapper("table-array",(props)=>{
-    return <div>
+    return <div style={{paddingTop:25}}>
         <label className="control-label">{props.fieldSchema.label}</label>
         <FieldArray name={props.keyPath} rerenderOnEveryChange component={TableArrayField} props={props}/>
     </div>

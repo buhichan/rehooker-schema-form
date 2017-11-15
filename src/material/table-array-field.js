@@ -117,13 +117,13 @@ var TableArrayField = (function (_super) {
         var schema = this.selector(this.props);
         return React.createElement("div", null,
             React.createElement(ag_grid_material_preset_1.Grid, { data: value, schema: schema, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, actions: this.actions, gridApi: this.bindGridApi }),
-            React.createElement(Dialog_1.default, { open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
+            React.createElement(Dialog_1.default, { autoScrollBodyContent: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
     };
     return TableArrayField;
 }(React.PureComponent));
 var empty = [];
 field_1.addTypeWithWrapper("table-array", function (props) {
-    return React.createElement("div", null,
+    return React.createElement("div", { style: { paddingTop: 25 } },
         React.createElement("label", { className: "control-label" }, props.fieldSchema.label),
         React.createElement(redux_form_1.FieldArray, { name: props.keyPath, rerenderOnEveryChange: true, component: TableArrayField, props: props }));
 });
