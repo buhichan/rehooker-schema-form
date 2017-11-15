@@ -6,7 +6,7 @@ var _1 = require("../../");
 var material_ui_chip_input_1 = require("material-ui-chip-input");
 var redux_form_1 = require("redux-form");
 var dataSourceConfig = { text: "name", value: "value" };
-var AutoCompleteChipInput = (function (_super) {
+var AutoCompleteChipInput = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteChipInput, _super);
     function AutoCompleteChipInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -45,7 +45,7 @@ var AutoCompleteChipInput = (function (_super) {
                 value: value
             };
         });
-        return React.createElement(material_ui_chip_input_1.default, { style: { bottom: 9 }, value: value, floatingLabelStyle: { top: 33 }, floatingLabelFocusStyle: { top: 28 }, fullWidth: true, onRequestDelete: this.onRequestDelete, onRequestAdd: this.onRequestAdd, dataSourceConfig: dataSourceConfig, dataSource: async ? dataSource : fieldSchema.options, errorText: meta.error, floatingLabelText: fieldSchema.label, hintText: fieldSchema.placeholder, onUpdateInput: async ? this.onRequestDatasource : undefined });
+        return React.createElement(material_ui_chip_input_1.default, { style: { bottom: 9 }, value: value, maxSearchResults: fieldSchema.fullResult ? undefined : 5, menuStyle: fieldSchema.fullResult ? { maxHeight: "300px", overflowY: 'auto' } : undefined, floatingLabelStyle: { top: 33 }, floatingLabelFocusStyle: { top: 28 }, fullWidth: true, onRequestDelete: this.onRequestDelete, onRequestAdd: this.onRequestAdd, dataSourceConfig: dataSourceConfig, dataSource: async ? dataSource : fieldSchema.options, errorText: meta.error, floatingLabelText: fieldSchema.label, hintText: fieldSchema.placeholder, onUpdateInput: async ? this.onRequestDatasource : undefined });
     };
     AutoCompleteChipInput = tslib_1.__decorate([
         _1.addType("multi-autocomplete")
