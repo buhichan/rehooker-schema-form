@@ -58,6 +58,8 @@ var TableArrayField = (function (_super) {
                     e.stopPropagation();
                     _this.api.forEachNode(function (x) { return x.data === t && _this.setState({
                         editedIndex: x.rowIndex
+                    }, function () {
+                        window.dispatchEvent(new Event("resize"));
                     }); });
                 }
             },

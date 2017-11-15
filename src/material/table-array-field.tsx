@@ -62,6 +62,8 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 e.stopPropagation()
                 this.api.forEachNode(x=>x.data === t && this.setState({
                     editedIndex:x.rowIndex
+                },()=>{
+                    window.dispatchEvent(new Event("resize"))
                 }))
             }
         },
