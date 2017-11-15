@@ -1,6 +1,8 @@
 /**
  * Created by buhi on 2017/7/18.
  */
+import muiThemeable from 'material-ui/styles/muiThemeable';
+import Chip from 'material-ui/Chip';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
 import {addType,WidgetProps, addTypeWithWrapper, ReduxSchemaForm} from "../../"
@@ -12,6 +14,7 @@ import { GridApi } from 'ag-grid';
 const dataSourceConfig = {text:"name",value:"value"};
 
 @addType("multi-autocomplete")
+@muiThemeable()
 export class AutoCompleteChipInput extends React.PureComponent<WidgetProps,any>{
     state={
         dataSource:null,
@@ -36,7 +39,8 @@ export class AutoCompleteChipInput extends React.PureComponent<WidgetProps,any>{
     };
     render(){
         const {input,fieldSchema,meta} = this.props;
-        const {dataSource,async} = this.state;
+        const {async} = this.state;
+        const dataSource = async?this.state.dataSource:fieldSchema.options
         const rawValue = input.value instanceof Array?input.value:[];
         const value = rawValue.map(value=>{
             const entry = dataSource && dataSource.find(x=>x.value==value);
@@ -56,7 +60,7 @@ export class AutoCompleteChipInput extends React.PureComponent<WidgetProps,any>{
             onRequestDelete={this.onRequestDelete}
             onRequestAdd={this.onRequestAdd}
             dataSourceConfig={dataSourceConfig}
-            dataSource={async?dataSource:fieldSchema.options}
+            dataSource={dataSource}
             errorText={meta.error}
             floatingLabelText={fieldSchema.label}
             hintText={fieldSchema.placeholder}

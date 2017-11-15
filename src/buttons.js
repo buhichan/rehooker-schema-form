@@ -26,7 +26,7 @@ exports.injectSubmittable = function (options) {
         redux_form_1.hasSubmitSucceeded(options.formName)
     ], function (valid, pristine, submitting, submitSucceeded) { return ({
         disabled: !exports.submittable(options.disableResubmit)({ valid: valid, pristine: pristine, submitting: submitting, submitSucceeded: submitSucceeded })
-    }); }))(/** @class */ (function (_super) {
+    }); }))((function (_super) {
         tslib_1.__extends(ConnectedButton, _super);
         function ConnectedButton() {
             var _this = _super !== null && _super.apply(this, arguments) || this;

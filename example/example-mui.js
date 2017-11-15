@@ -27,7 +27,7 @@ var reducer = redux_1.combineReducers({
 var composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || redux_1.compose;
 var middleware = composeEnhancers(redux_1.applyMiddleware());
 var store = redux_1.createStore(reducer, {}, middleware);
-var App = /** @class */ (function (_super) {
+var App = (function (_super) {
     tslib_1.__extends(App, _super);
     function App() {
         var _this = _super !== null && _super.apply(this, arguments) || this;

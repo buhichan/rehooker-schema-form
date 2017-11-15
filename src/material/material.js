@@ -64,7 +64,7 @@ function DateTimeInput(props) {
                     input.onChange(formatDateTime(newValue));
                 } })));
 }
-var DateInput = /** @class */ (function (_super) {
+var DateInput = (function (_super) {
     tslib_1.__extends(DateInput, _super);
     function DateInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -100,7 +100,7 @@ function CheckboxInput(props) {
     return React.createElement(material_ui_1.Checkbox, tslib_1.__assign({}, rest, { onBlur: function (e) { return onBlur(value); }, style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: function (e, v) { return onChange(v); }, checked: Boolean(value) }));
 }
 //fixme: todo: https://github.com/callemall/material-ui/issues/6080
-var SelectInput = /** @class */ (function (_super) {
+var SelectInput = (function (_super) {
     tslib_1.__extends(SelectInput, _super);
     function SelectInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -160,7 +160,7 @@ var BaseAutoComplete = react_jss_1.default({
         right: 0,
         opacity: 0,
     }
-})(/** @class */ (function (_super) {
+})((function (_super) {
     tslib_1.__extends(BaseAutoComplete, _super);
     function BaseAutoComplete() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -200,7 +200,7 @@ var BaseAutoComplete = react_jss_1.default({
     };
     return BaseAutoComplete;
 }(React.PureComponent)));
-var AutoCompleteSelect = /** @class */ (function (_super) {
+var AutoCompleteSelect = (function (_super) {
     tslib_1.__extends(AutoCompleteSelect, _super);
     function AutoCompleteSelect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -217,7 +217,7 @@ var AutoCompleteSelect = /** @class */ (function (_super) {
     };
     return AutoCompleteSelect;
 }(SelectInput));
-var AutoCompleteText = /** @class */ (function (_super) {
+var AutoCompleteText = (function (_super) {
     tslib_1.__extends(AutoCompleteText, _super);
     function AutoCompleteText() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -235,7 +235,7 @@ var AutoCompleteText = /** @class */ (function (_super) {
     };
     return AutoCompleteText;
 }(SelectInput));
-var AutoCompleteAsync = /** @class */ (function (_super) {
+var AutoCompleteAsync = (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
     function AutoCompleteAsync() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -305,7 +305,7 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
  * getChildren存在的情况
  * update: 不必了,以后就没有getChildren了,统一用listens
  */
-var ArrayFieldRenderer = /** @class */ (function (_super) {
+var ArrayFieldRenderer = (function (_super) {
     tslib_1.__extends(ArrayFieldRenderer, _super);
     function ArrayFieldRenderer() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -337,7 +337,7 @@ var ArrayFieldRenderer = /** @class */ (function (_super) {
 function TextAreaInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
 }
-var FileInput = /** @class */ (function (_super) {
+var FileInput = (function (_super) {
     tslib_1.__extends(FileInput, _super);
     function FileInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -389,7 +389,7 @@ var FileInput = /** @class */ (function (_super) {
     ], FileInput);
     return FileInput;
 }(React.PureComponent));
-var SelectRadio = /** @class */ (function (_super) {
+var SelectRadio = (function (_super) {
     tslib_1.__extends(SelectRadio, _super);
     function SelectRadio() {
         return _super !== null && _super.apply(this, arguments) || this;
