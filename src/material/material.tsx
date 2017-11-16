@@ -367,11 +367,11 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
     componentWillUnmount(){
         this.$isMounted=false;
     }
-    findName(value,showValueWhenNoEntryIsFound){
+    findInitialSearchText(value,showValueWhenNoEntryIsFound){
         if(value === "" || value === undefined || value === null)
-            return null;
+            return "";
         const entry = (this.state.dataSource as Options).find(x=>x.value === value);
-        return entry?entry.name:showValueWhenNoEntryIsFound?value:null;
+        return entry?entry.name:showValueWhenNoEntryIsFound?value:"";
     }
     onUpdateInput=(name,dataSource,params?)=>{
         if(!params||params.source !== 'change')
@@ -422,7 +422,7 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
             filter={AutoComplete.noFilter}
             fieldSchema={fieldSchema}
             dataSource={this.state.dataSource}
-            searchText={this.findName(input.value,fieldSchema.showValueWhenNoEntryIsFound)}
+            searchText={this.findInitialSearchText(input.value,fieldSchema.showValueWhenNoEntryIsFound)}
             onUpdateInput={this.onUpdateInput}
             onNewRequest={this.onSelected}
         />;

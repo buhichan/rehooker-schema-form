@@ -292,15 +292,15 @@ var AutoCompleteAsync = (function (_super) {
     AutoCompleteAsync.prototype.componentWillUnmount = function () {
         this.$isMounted = false;
     };
-    AutoCompleteAsync.prototype.findName = function (value, showValueWhenNoEntryIsFound) {
+    AutoCompleteAsync.prototype.findInitialSearchText = function (value, showValueWhenNoEntryIsFound) {
         if (value === "" || value === undefined || value === null)
-            return null;
+            return "";
         var entry = this.state.dataSource.find(function (x) { return x.value === value; });
-        return entry ? entry.name : showValueWhenNoEntryIsFound ? value : null;
+        return entry ? entry.name : showValueWhenNoEntryIsFound ? value : "";
     };
     AutoCompleteAsync.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findName(input.value, fieldSchema.showValueWhenNoEntryIsFound), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
+        return React.createElement(BaseAutoComplete, { input: input, meta: meta, fullResult: true, loading: this.state.loading, filter: material_ui_1.AutoComplete.noFilter, fieldSchema: fieldSchema, dataSource: this.state.dataSource, searchText: this.findInitialSearchText(input.value, fieldSchema.showValueWhenNoEntryIsFound), onUpdateInput: this.onUpdateInput, onNewRequest: this.onSelected });
     };
     return AutoCompleteAsync;
 }(React.PureComponent));
