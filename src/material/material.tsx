@@ -257,9 +257,13 @@ const BaseAutoComplete = injectCSS({
             searchText:this.props.searchText
         }
         componentWillReceiveProps(nextProps){
-            this.setState({
-                searchText:nextProps.searchText
-            })
+            /**
+             * 这里不能直接接受searchText,因为searchText是由我来保存的,我这里只需要reinitialize
+             */
+            if(nextProps.searchText!==this.state.searchText)
+                this.setState({
+                    searchText:nextProps.searchText
+                })
         }
         onUpdateInput=((name,datasource,params)=>{
             this.setState({

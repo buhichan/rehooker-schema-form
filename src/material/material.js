@@ -176,9 +176,13 @@ var BaseAutoComplete = react_jss_1.default({
         return _this;
     }
     BaseAutoComplete.prototype.componentWillReceiveProps = function (nextProps) {
-        this.setState({
-            searchText: nextProps.searchText
-        });
+        /**
+         * 这里不能直接接受searchText,因为searchText是由我来保存的,我这里只需要reinitialize
+         */
+        if (nextProps.searchText !== this.state.searchText)
+            this.setState({
+                searchText: nextProps.searchText
+            });
     };
     BaseAutoComplete.prototype.render = function () {
         var _this = this;
