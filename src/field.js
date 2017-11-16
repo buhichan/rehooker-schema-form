@@ -98,8 +98,11 @@ var StatefulField = (function (_super) {
             if (_this.unmounted)
                 return;
             var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema)); }, props.fieldSchema);
-            if (newSchema.hasOwnProperty("value"))
+            if (newSchema.hasOwnProperty("value")) {
+                newSchema = Object.assign({}, newSchema);
+                delete newSchema['value'];
                 props.dispatch(redux_form_1.change(props.form, props.keyPath, newSchema.value));
+            }
             _this.setState(newSchema);
         });
     };

@@ -153,6 +153,7 @@ class DateInput extends React.PureComponent<WidgetProps>{
 function TextInput(props:WidgetProps){
     return <TextField
         {...props.input as any}
+        value={props.input.value||""}
         errorText={props.meta.error}
         required={props.required}
         type={props.fieldSchema.type}
@@ -472,6 +473,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
 function TextAreaInput(props:WidgetProps){
     return <TextField
         {...props.input as any}
+        value={props.input.value||""}
         errorText={props.meta.error}
         required={props.required}
         type={props.type}

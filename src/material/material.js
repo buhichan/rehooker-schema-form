@@ -92,7 +92,7 @@ var DateInput = (function (_super) {
     return DateInput;
 }(React.PureComponent));
 function TextInput(props) {
-    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.fieldSchema.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, hintText: props.fieldSchema.placeholder, multiLine: props.fieldSchema.multiLine, floatingLabelText: props.fieldSchema.label }));
+    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { value: props.input.value || "", errorText: props.meta.error, required: props.required, type: props.fieldSchema.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, hintText: props.fieldSchema.placeholder, multiLine: props.fieldSchema.multiLine, floatingLabelText: props.fieldSchema.label }));
 }
 function CheckboxInput(props) {
     var _a = props.input, onChange = _a.onChange, onBlur = _a.onBlur, value = _a.value, rest = tslib_1.__rest(_a, ["onChange", "onBlur", "value"]);
@@ -335,7 +335,7 @@ var ArrayFieldRenderer = (function (_super) {
     return ArrayFieldRenderer;
 }(React.Component));
 function TextAreaInput(props) {
-    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
+    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { value: props.input.value || "", errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
 }
 var FileInput = (function (_super) {
     tslib_1.__extends(FileInput, _super);

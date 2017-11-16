@@ -169,9 +169,12 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
         })).then(newSchemas=> {
             if(this.unmounted)
                 return;
-            const newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema}),props.fieldSchema);
-            if(newSchema.hasOwnProperty("value"))
+            let newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema}),props.fieldSchema);
+            if(newSchema.hasOwnProperty("value")){
+                newSchema = Object.assign({}, newSchema)
+                delete newSchema['value']
                 props.dispatch(change(props.form,props.keyPath,newSchema.value));
+            }
             this.setState(newSchema);
         })
     }
