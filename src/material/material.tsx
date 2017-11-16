@@ -256,7 +256,7 @@ const BaseAutoComplete = injectCSS({
         state={
             searchText:this.props.searchText
         }
-        componentWillReceiverProps(nextProps){
+        componentWillReceiveProps(nextProps){
             this.setState({
                 searchText:nextProps.searchText
             })
@@ -325,7 +325,7 @@ class AutoCompleteSelect extends SelectInput{
             meta={meta}
             openOnFocus
             fullResult={fieldSchema.fullResult}
-            searchText={value?value.name:""}
+            searchText={value?value.name:input.value||""}
             dataSource={options}
             onNewRequest={this.onNewRequest}
         />

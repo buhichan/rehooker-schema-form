@@ -175,7 +175,7 @@ var BaseAutoComplete = react_jss_1.default({
         });
         return _this;
     }
-    BaseAutoComplete.prototype.componentWillReceiverProps = function (nextProps) {
+    BaseAutoComplete.prototype.componentWillReceiveProps = function (nextProps) {
         this.setState({
             searchText: nextProps.searchText
         });
@@ -213,7 +213,7 @@ var AutoCompleteSelect = (function (_super) {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
         var options = (this.state.options || []);
         var value = options.find(function (x) { return x.value === input.value; });
-        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, fullResult: fieldSchema.fullResult, searchText: value ? value.name : "", dataSource: options, onNewRequest: this.onNewRequest });
+        return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, fullResult: fieldSchema.fullResult, searchText: value ? value.name : input.value || "", dataSource: options, onNewRequest: this.onNewRequest });
     };
     return AutoCompleteSelect;
 }(SelectInput));
