@@ -61,6 +61,12 @@ export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
      * @theme mui/antd
      */
     loadingText?:string,
+    /**
+     * type: "table-array"
+     * @theme mui
+     */
+    disableFixSeparatorForExcel?:boolean //we must add sep=, as the first row to prevent excel to change the separator
+    csvColumnSeparator?:string
 
     data?:any,
     style?:React.CSSProperties,

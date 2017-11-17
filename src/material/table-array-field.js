@@ -86,9 +86,25 @@ var TableArrayField = (function (_super) {
             {
                 name: "导出",
                 call: function () {
-                    _this.api.exportDataAsCsv({
-                        fileName: _this.props.fieldSchema.label
+                    var content = (_this.props.fieldSchema.disableFixSeparatorForExcel ? "" : "sep=,\n") + _this.api.getDataAsCsv();
+                    // for Excel, we need \ufeff at the start
+                    // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
+                    var blobObject = new Blob(["\ufeff", content], {
+                        type: "text/csv"
                     });
+                    // Internet Explorer
+                    if (window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveOrOpenBlob(blobObject, _this.props.fieldSchema.label);
+                    }
+                    else {
+                        // Chrome
+                        var downloadLink = document.createElement("a");
+                        downloadLink.href = window.URL.createObjectURL(blobObject);
+                        downloadLink.download = _this.props.fieldSchema.label;
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                    }
                 },
                 isStatic: true
             }, {

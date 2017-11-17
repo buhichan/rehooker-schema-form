@@ -90,9 +90,25 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         {
             name:"导出",
             call:()=>{
-                this.api.exportDataAsCsv({
-                    fileName:this.props.fieldSchema.label
-                })
+                const content = (this.props.fieldSchema.disableFixSeparatorForExcel?"":"sep=,\n")+this.api.getDataAsCsv()
+                // for Excel, we need \ufeff at the start
+                // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
+                var blobObject = new Blob(["\ufeff", content], {
+                    type: "text/csv"
+                });
+                // Internet Explorer
+                if (window.navigator.msSaveOrOpenBlob) {
+                    window.navigator.msSaveOrOpenBlob(blobObject, this.props.fieldSchema.label);
+                }
+                else {
+                    // Chrome
+                    var downloadLink = document.createElement("a");
+                    downloadLink.href = window.URL.createObjectURL(blobObject);
+                    downloadLink.download = this.props.fieldSchema.label;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                }
             },
             isStatic:true
         },{
