@@ -1,7 +1,9 @@
 /**
  * Created by buhi on 2017/4/28.
  */
-import * as React from "react"
+import NavigationArrowDownward from 'material-ui/svg-icons/navigation/arrow-downward';
+import NavigationArrowUpward from 'material-ui/svg-icons/navigation/arrow-upward';
+import * as React from 'react';
 import {RuntimeAsyncOptions, AsyncOptions, Options} from "../form"
 import {
     TextField, TimePicker, MenuItem, Checkbox, DatePicker, RaisedButton, FlatButton, Paper, AutoComplete,
@@ -447,8 +449,23 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
                     let children = props.fieldSchema.children;
                     if(props.fieldSchema.getChildren)
                         children = props.fieldSchema.getChildren(childValue).filter(x=>x);
-                    return <div key={i} className="array-field-child">
-                        <div className="delete-button">
+                    const itemsPerRow = props.fieldSchema.itemsPerRow || 2
+                    return <div key={i} className="array-field-child" style={{width:`calc(${100/itemsPerRow}% - 20px)`}}>
+                        <div className="item-buttons">
+                            {i===0?null:<IconButton
+                                style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
+                                onClick={() => props.fields.swap(i,i-1)}
+                                tooltip="前移"
+                            >
+                                <NavigationArrowUpward hoverColor={muiTheme.palette.accent1Color}/>
+                            </IconButton>}
+                            {i>=props.fields.length-1?null:<IconButton
+                                style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
+                                onClick={() => props.fields.swap(i,i+1)}
+                                tooltip="后移"
+                            >
+                                <NavigationArrowDownward hoverColor={muiTheme.palette.accent1Color}/>
+                            </IconButton>}
                             <IconButton
                                 style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
                                 onClick={() => props.fields.remove(i)}

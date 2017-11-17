@@ -56,6 +56,18 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             isStatic:true
         },
         {
+            name:"前移",
+            call:(t)=>{
+                this.api.forEachNode(x=>x.data === t && this.props.fields.swap(x.rowIndex,x.rowIndex-1))
+            }
+        },
+        {
+            name:"后移",
+            call:(t)=>{
+                this.api.forEachNode(x=>x.data === t && this.props.fields.swap(x.rowIndex,x.rowIndex+1))
+            }
+        },
+        {
             name:"编辑",
             call:(t,e)=>{
                 e.preventDefault()

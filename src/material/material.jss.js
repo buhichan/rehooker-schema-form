@@ -39,7 +39,6 @@ exports.stylesheet = (_a = {
                             var muiTheme = _a.muiTheme;
                             return "2px solid " + muiTheme.palette.primary1Color;
                         },
-                        width: "calc(50% - 20px)",
                         "& .field": {
                             width: "100%"
                         }
@@ -49,7 +48,7 @@ exports.stylesheet = (_a = {
                         marginBottom: 10,
                         width: "100%"
                     },
-                    "& .delete-button": {
+                    "& .item-buttons": {
                         float: "right"
                     }
                 }, "&>div:after": {

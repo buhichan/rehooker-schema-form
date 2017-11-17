@@ -221,6 +221,7 @@ exports.schema = [
     }, {
         key: "array",
         type: "array",
+        itemsPerRow: 6,
         label: "Array(当select是梨子的时候会少一个child)",
         listens: {
             select1: function (v) {

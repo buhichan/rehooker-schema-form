@@ -52,6 +52,18 @@ var TableArrayField = (function (_super) {
                 isStatic: true
             },
             {
+                name: "前移",
+                call: function (t) {
+                    _this.api.forEachNode(function (x) { return x.data === t && _this.props.fields.swap(x.rowIndex, x.rowIndex - 1); });
+                }
+            },
+            {
+                name: "后移",
+                call: function (t) {
+                    _this.api.forEachNode(function (x) { return x.data === t && _this.props.fields.swap(x.rowIndex, x.rowIndex + 1); });
+                }
+            },
+            {
                 name: "编辑",
                 call: function (t, e) {
                     e.preventDefault();

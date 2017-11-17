@@ -34,17 +34,40 @@ export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
     options?:Options | AsyncOptions | RuntimeAsyncOptions,
     defaultValue?:any
     /**
+     * type: "file"
      * 返回url
+     * @theme mui/antd
      * @param file 要上传的文件
      */
     onFileChange?:(file:File|FileList)=>Promise<string>,
+    /**
+     * type: "array"
+     * @theme mui
+     */
+    itemsPerRow?:number
+    /**
+     * type: "autocomplete-text/async/-"
+     * @theme mui
+     */
+    fullResult?:boolean
+    /**
+     * type: "autocomplete-async"
+     * @theme mui
+     */
+    throttle?:number
+    showValueWhenNoEntryIsFound?:boolean
+    /**
+     * type: "select"
+     * @theme mui/antd
+     */
+    loadingText?:string,
+
     data?:any,
     style?:React.CSSProperties,
     /**
      * keyPath will be the array of keys from the root of the form to your deeply nested field.
      */
     listens?:FieldSchamaChangeListeners| ((keyPath:string[])=>FieldSchamaChangeListeners),
-    loadingText?:string
     [rest:string]:any
 }
 @(reduxForm({

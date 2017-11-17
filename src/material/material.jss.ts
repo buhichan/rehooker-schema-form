@@ -36,7 +36,6 @@ export const stylesheet = {
         padding: '10px 0',
         margin: '10px',
         borderTop: ({muiTheme}) => "2px solid " + muiTheme.palette.primary1Color,
-        width:"calc(50% - 20px)",
         "& .field":{
           width:"100%"
         }
@@ -46,7 +45,7 @@ export const stylesheet = {
         marginBottom:10,
         width:"100%"
       },
-      "& .delete-button":{
+      "& .item-buttons":{
         float:"right"
       }
     },

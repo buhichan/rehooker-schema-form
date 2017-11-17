@@ -4,6 +4,8 @@ var tslib_1 = require("tslib");
 /**
  * Created by buhi on 2017/4/28.
  */
+var arrow_downward_1 = require("material-ui/svg-icons/navigation/arrow-downward");
+var arrow_upward_1 = require("material-ui/svg-icons/navigation/arrow-upward");
 var React = require("react");
 var material_ui_1 = require("material-ui");
 var muiThemeable_1 = require("material-ui/styles/muiThemeable");
@@ -323,8 +325,13 @@ var ArrayFieldRenderer = (function (_super) {
                 var children = props.fieldSchema.children;
                 if (props.fieldSchema.getChildren)
                     children = props.fieldSchema.getChildren(childValue).filter(function (x) { return x; });
-                return React.createElement("div", { key: i, className: "array-field-child" },
-                    React.createElement("div", { className: "delete-button" },
+                var itemsPerRow = props.fieldSchema.itemsPerRow || 2;
+                return React.createElement("div", { key: i, className: "array-field-child", style: { width: "calc(" + 100 / itemsPerRow + "% - 20px)" } },
+                    React.createElement("div", { className: "item-buttons" },
+                        i === 0 ? null : React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onClick: function () { return props.fields.swap(i, i - 1); }, tooltip: "前移" },
+                            React.createElement(arrow_upward_1.default, { hoverColor: muiTheme.palette.accent1Color })),
+                        i >= props.fields.length - 1 ? null : React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onClick: function () { return props.fields.swap(i, i + 1); }, tooltip: "后移" },
+                            React.createElement(arrow_downward_1.default, { hoverColor: muiTheme.palette.accent1Color })),
                         React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onClick: function () { return props.fields.remove(i); }, tooltip: "删除" },
                             React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
                     render_fields_1.renderFields(props.meta.form, children, props.keyPath + "[" + i + "]"));
