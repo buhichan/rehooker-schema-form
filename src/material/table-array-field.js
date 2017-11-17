@@ -54,13 +54,13 @@ var TableArrayField = (function (_super) {
             {
                 name: "前移",
                 call: function (t) {
-                    _this.api.forEachNode(function (x) { return x.data === t && _this.props.fields.swap(x.rowIndex, x.rowIndex - 1); });
+                    _this.api.forEachNode(function (x) { return x.data === t && x.rowIndex > 0 && _this.props.fields.swap(x.rowIndex, x.rowIndex - 1); });
                 }
             },
             {
                 name: "后移",
                 call: function (t) {
-                    _this.api.forEachNode(function (x) { return x.data === t && _this.props.fields.swap(x.rowIndex, x.rowIndex + 1); });
+                    _this.api.forEachNode(function (x) { return x.data === t && x.rowIndex < _this.props.fields.length - 1 && _this.props.fields.swap(x.rowIndex, x.rowIndex + 1); });
                 }
             },
             {
@@ -86,51 +86,61 @@ var TableArrayField = (function (_super) {
             {
                 name: "导出",
                 call: function () {
-                    var content = (_this.props.fieldSchema.disableFixSeparatorForExcel ? "" : "sep=,\n") + _this.api.getDataAsCsv();
-                    // for Excel, we need \ufeff at the start
-                    // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
-                    var blobObject = new Blob(["\ufeff", content], {
-                        type: "text/csv"
-                    });
-                    // Internet Explorer
-                    if (window.navigator.msSaveOrOpenBlob) {
-                        window.navigator.msSaveOrOpenBlob(blobObject, _this.props.fieldSchema.label);
+                    try {
+                        var content = (_this.props.fieldSchema.disableFixSeparatorForExcel ? "" : "sep=,\n") + _this.api.getDataAsCsv();
+                        // for Excel, we need \ufeff at the start
+                        // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
+                        var blobObject = new Blob(["\ufeff", content], {
+                            type: "text/csv"
+                        });
+                        // Internet Explorer
+                        if (window.navigator.msSaveOrOpenBlob) {
+                            window.navigator.msSaveOrOpenBlob(blobObject, _this.props.fieldSchema.label);
+                        }
+                        else {
+                            // Chrome
+                            var downloadLink = document.createElement("a");
+                            downloadLink.href = window.URL.createObjectURL(blobObject);
+                            downloadLink.download = _this.props.fieldSchema.label;
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                            document.body.removeChild(downloadLink);
+                        }
                     }
-                    else {
-                        // Chrome
-                        var downloadLink = document.createElement("a");
-                        downloadLink.href = window.URL.createObjectURL(blobObject);
-                        downloadLink.download = _this.props.fieldSchema.label;
-                        document.body.appendChild(downloadLink);
-                        downloadLink.click();
-                        document.body.removeChild(downloadLink);
+                    catch (e) {
+                        console.error(e);
                     }
                 },
                 isStatic: true
             }, {
                 name: "导入",
                 call: function (data) {
-                    var id = _this.props.meta.form + "fjorandomstring";
-                    var input = document.querySelector("input#" + id);
-                    if (!input) {
-                        input = document.createElement("input");
-                        input.id = id;
-                        input.type = 'file';
-                        input.style.display = "none";
-                        document.body.appendChild(input);
-                    }
-                    input.onchange = function (e) {
-                        readCSV(e, function (labels) {
-                            return labels.map(function (label) {
-                                var item = _this.props.fieldSchema.children.find(function (x) { return x.label === String(label).trim(); });
-                                return item ? item.key : null;
+                    try {
+                        var id = _this.props.meta.form + "fjorandomstring";
+                        var input_1 = document.querySelector("input#" + id);
+                        if (!input_1) {
+                            input_1 = document.createElement("input");
+                            input_1.id = id;
+                            input_1.type = 'file';
+                            input_1.style.display = "none";
+                            document.body.appendChild(input_1);
+                        }
+                        input_1.onchange = function (e) {
+                            readCSV(e, function (labels) {
+                                return labels.map(function (label) {
+                                    var item = _this.props.fieldSchema.children.find(function (x) { return x.label === String(label).trim(); });
+                                    return item ? item.key : null;
+                                });
+                            }).then(function (data) {
+                                data.forEach(_this.props.fields.push);
+                                document.body.removeChild(input_1);
                             });
-                        }).then(function (data) {
-                            data.forEach(_this.props.fields.push);
-                            document.body.removeChild(input);
-                        });
-                    };
-                    input.click();
+                        };
+                        input_1.click();
+                    }
+                    catch (e) {
+                        console.error(e);
+                    }
                 },
                 isStatic: true
             }

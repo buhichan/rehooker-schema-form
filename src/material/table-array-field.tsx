@@ -58,13 +58,13 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         {
             name:"前移",
             call:(t)=>{
-                this.api.forEachNode(x=>x.data === t && this.props.fields.swap(x.rowIndex,x.rowIndex-1))
+                this.api.forEachNode(x=>x.data === t && x.rowIndex>0 && this.props.fields.swap(x.rowIndex,x.rowIndex-1))
             }
         },
         {
             name:"后移",
             call:(t)=>{
-                this.api.forEachNode(x=>x.data === t && this.props.fields.swap(x.rowIndex,x.rowIndex+1))
+                this.api.forEachNode(x=>x.data === t && x.rowIndex<this.props.fields.length-1 &&this.props.fields.swap(x.rowIndex,x.rowIndex+1))
             }
         },
         {
@@ -90,51 +90,59 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         {
             name:"导出",
             call:()=>{
-                const content = (this.props.fieldSchema.disableFixSeparatorForExcel?"":"sep=,\n")+this.api.getDataAsCsv()
-                // for Excel, we need \ufeff at the start
-                // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
-                var blobObject = new Blob(["\ufeff", content], {
-                    type: "text/csv"
-                });
-                // Internet Explorer
-                if (window.navigator.msSaveOrOpenBlob) {
-                    window.navigator.msSaveOrOpenBlob(blobObject, this.props.fieldSchema.label);
-                }
-                else {
-                    // Chrome
-                    var downloadLink = document.createElement("a");
-                    downloadLink.href = window.URL.createObjectURL(blobObject);
-                    downloadLink.download = this.props.fieldSchema.label;
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
+                try{
+                    const content = (this.props.fieldSchema.disableFixSeparatorForExcel?"":"sep=,\n")+this.api.getDataAsCsv()
+                    // for Excel, we need \ufeff at the start
+                    // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
+                    var blobObject = new Blob(["\ufeff", content], {
+                        type: "text/csv"
+                    });
+                    // Internet Explorer
+                    if (window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveOrOpenBlob(blobObject, this.props.fieldSchema.label);
+                    }
+                    else {
+                        // Chrome
+                        var downloadLink = document.createElement("a");
+                        downloadLink.href = window.URL.createObjectURL(blobObject);
+                        downloadLink.download = this.props.fieldSchema.label;
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                    }
+                }catch(e){
+                    console.error(e)
                 }
             },
             isStatic:true
         },{
             name:"导入",
             call:(data)=>{
-                const id = this.props.meta.form+"fjorandomstring";
-                let input = document.querySelector("input#"+id) as HTMLInputElement;
-                if(!input){
-                    input = document.createElement("input")
-                    input.id = id
-                    input.type='file'
-                    input.style.display="none"
-                    document.body.appendChild(input)
-                }
-                input.onchange=(e)=>{
-                    readCSV(e,labels=>{
-                        return labels.map(label=>{
-                            const item = this.props.fieldSchema.children.find(x=>x.label === String(label).trim())
-                            return item?item.key:null
+                try{
+                    const id = this.props.meta.form+"fjorandomstring";
+                    let input = document.querySelector("input#"+id) as HTMLInputElement;
+                    if(!input){
+                        input = document.createElement("input")
+                        input.id = id
+                        input.type='file'
+                        input.style.display="none"
+                        document.body.appendChild(input)
+                    }
+                    input.onchange=(e)=>{
+                        readCSV(e,labels=>{
+                            return labels.map(label=>{
+                                const item = this.props.fieldSchema.children.find(x=>x.label === String(label).trim())
+                                return item?item.key:null
+                            })
+                        }).then((data)=>{
+                            data.forEach(this.props.fields.push)
+                            document.body.removeChild(input)
                         })
-                    }).then((data)=>{
-                        data.forEach(this.props.fields.push)
-                        document.body.removeChild(input)
-                    })
+                    }
+                    input.click()
+                }catch(e){
+                    console.error(e)
                 }
-                input.click()
             },
             isStatic:true
         }
