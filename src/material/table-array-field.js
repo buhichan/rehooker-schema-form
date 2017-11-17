@@ -9,30 +9,65 @@ var reselect_1 = require("reselect");
 var dataSourceConfig = { text: "name", value: "value" };
 var Grid = require("ag-grid-material-preset").Grid;
 var render_fields_1 = require("../render-fields");
-var readCSV = function (e, columns) {
-    var files = e.target.files;
-    return new Promise(function (resolve, reject) {
-        Array.from(files).forEach(function (file) {
-            if (file.type !== 'text/csv')
-                return alert("必须导入csv文件");
-            var fileReader = new FileReader();
-            fileReader.onload = function () {
-                var str = fileReader.result;
-                require("csv-parse")(str, {
-                    auto_parse: true,
-                    auto_parse_date: false,
-                    columns: columns,
-                    skip_empty_lines: true,
-                    trim: true
-                }, function (err, chunks) {
-                    err ? alert(err) : resolve(chunks);
-                });
+var XLSX = require("xlsx");
+function readWorkBook() {
+    try {
+        return new Promise(function (resolve, reject) {
+            var id = "fjorandomstring";
+            var input = document.querySelector("input#" + id);
+            if (!input) {
+                input = document.createElement("input");
+                input.id = id;
+                input.type = 'file';
+                input.style.display = "none";
+                document.body.appendChild(input);
+            }
+            input.onchange = function (e) {
+                var reader = new FileReader();
+                var file = e.target.files[0];
+                reader.onload = function () {
+                    var data = XLSX.read(reader.result, { type: 'binary' });
+                    document.body.removeChild(input);
+                    if (data.SheetNames.length)
+                        resolve(XLSX.utils.sheet_to_json(data.Sheets[data.SheetNames[0]]));
+                };
+                reader.readAsBinaryString(file);
             };
-            fileReader.onerror = reject;
-            fileReader.readAsText(file);
+            input.click();
         });
-    });
-};
+    }
+    catch (e) {
+        console.error(e);
+    }
+}
+function downloadWorkSheet(worksheet, fileName) {
+    function s2ab(s) {
+        var buf = new ArrayBuffer(s.length);
+        var view = new Uint8Array(buf);
+        for (var i = 0; i != s.length; ++i)
+            view[i] = s.charCodeAt(i) & 0xFF;
+        return buf;
+    }
+    try {
+        var workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, fileName);
+        /* bookType can be any supported output type */
+        var wopts = { bookType: 'xlsx', bookSST: false, type: 'binary' };
+        var wbout = XLSX.write(workbook, wopts);
+        /* the saveAs call downloads a file on the local machine */
+        var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = fileName + ".xlsx";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    catch (e) {
+        console.error(e);
+    }
+}
 var TableArrayField = (function (_super) {
     tslib_1.__extends(TableArrayField, _super);
     function TableArrayField() {
@@ -92,61 +127,29 @@ var TableArrayField = (function (_super) {
             {
                 name: "导出",
                 call: function () {
-                    try {
-                        var content = (_this.props.fieldSchema.disableFixSeparatorForExcel ? "" : "sep=,\n") + _this.api.getDataAsCsv();
-                        // for Excel, we need \ufeff at the start
-                        // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
-                        var blobObject = new Blob(["\ufeff", content], {
-                            type: "text/csv"
-                        });
-                        // Internet Explorer
-                        if (window.navigator.msSaveOrOpenBlob) {
-                            window.navigator.msSaveOrOpenBlob(blobObject, _this.props.fieldSchema.label);
-                        }
-                        else {
-                            // Chrome
-                            var downloadLink = document.createElement("a");
-                            downloadLink.href = window.URL.createObjectURL(blobObject);
-                            downloadLink.download = _this.props.fieldSchema.label;
-                            document.body.appendChild(downloadLink);
-                            downloadLink.click();
-                            document.body.removeChild(downloadLink);
-                        }
-                    }
-                    catch (e) {
-                        console.error(e);
-                    }
+                    var schema = _this.selector(_this.props);
+                    var rawData = _this.props.fields.getAll();
+                    var sheet = XLSX.utils.json_to_sheet(rawData.map(function (x) {
+                        return schema.reduce(function (res, y) {
+                            res[y.label] = x[y.key];
+                            return res;
+                        }, {});
+                    }));
+                    downloadWorkSheet(sheet, _this.props.fieldSchema.label);
                 },
                 isStatic: true
             }, {
                 name: "导入",
                 call: function (data) {
-                    try {
-                        var id = _this.props.meta.form + "fjorandomstring";
-                        var input_1 = document.querySelector("input#" + id);
-                        if (!input_1) {
-                            input_1 = document.createElement("input");
-                            input_1.id = id;
-                            input_1.type = 'file';
-                            input_1.style.display = "none";
-                            document.body.appendChild(input_1);
-                        }
-                        input_1.onchange = function (e) {
-                            readCSV(e, function (labels) {
-                                return labels.map(function (label) {
-                                    var item = _this.props.fieldSchema.children.find(function (x) { return x.label === String(label).trim(); });
-                                    return item ? item.key : null;
-                                });
-                            }).then(function (data) {
-                                data.forEach(_this.props.fields.push);
-                                document.body.removeChild(input_1);
-                            });
-                        };
-                        input_1.click();
-                    }
-                    catch (e) {
-                        console.error(e);
-                    }
+                    readWorkBook().then(function (data) {
+                        var schema = _this.selector(_this.props);
+                        data.forEach(function (item) {
+                            _this.props.fields.push(schema.reduce(function (res, field) {
+                                res[field.key] = item[field.label];
+                                return res;
+                            }, item));
+                        });
+                    });
                 },
                 isStatic: true
             }

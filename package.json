@@ -25,7 +25,8 @@
     "react-redux": "*",
     "redux": "*",
     "reselect": "*",
-    "tslib": "*"
+    "tslib": "*",
+    "xlsx": "^0.11.9"
   },
   "keywords": [
     "redux-form",
@@ -39,6 +40,7 @@
     "@types/react-dom": "^15.5.1",
     "@types/react-redux": "^4.4.35",
     "@types/redux-form": "7.*",
+    "ag-grid-material-preset": "git+ssh://git@gitlab.ucloudadmin.com:buhi/ag-grid-material-preset.git",
     "antd": "^2.*",
     "awesome-typescript-loader": "^3.0.3",
     "copy-webpack-plugin": "^3.0.1",
@@ -60,7 +62,8 @@
     "tslib": "^1.8.0",
     "typescript": "2.4.*",
     "webpack": "^1.14.0",
-    "webpack-dev-server": "^1.16.2"
+    "webpack-dev-server": "^1.16.2",
+    "xlsx": "^0.11.9"
   },
   "dependencies": {
     "redux-form": "7.*",

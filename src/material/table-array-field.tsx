@@ -1,39 +1,74 @@
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
-import { GridApi } from 'ag-grid';
 import { WrappedFieldArrayProps, FieldArray } from 'redux-form';
 import { WidgetProps, addTypeWithWrapper } from '../field';
 import { createSelector } from "reselect";
 const dataSourceConfig = {text:"name",value:"value"};
 const {Grid} = require("ag-grid-material-preset")
 import { renderFields } from '../render-fields';
+const XLSX = require("xlsx")
 
 type TableArrayFieldProps = WrappedFieldArrayProps<any>&WidgetProps;
 
-const readCSV=(e:Event,columns):Promise<any[]>=>{
-    const files = (e.target as HTMLInputElement).files;
-    return new Promise((resolve,reject)=>{
-        Array.from(files).forEach(file => {
-            if(file.type!=='text/csv')
-                return alert("必须导入csv文件")
-            const fileReader = new FileReader();
-            fileReader.onload = ()=>{
-                const str = fileReader.result
-                require("csv-parse")(str,{
-                    auto_parse:true,
-                    auto_parse_date:false,
-                    columns,
-                    skip_empty_lines:true,
-                    trim:true
-                },(err,chunks)=>{
-                    err?alert(err):resolve(chunks)
-                })
+function readWorkBook():Promise<any[]>{
+    try{
+        return new Promise((resolve,reject)=>{
+            const id = "fjorandomstring";
+            let input = document.querySelector("input#"+id) as HTMLInputElement;
+            if(!input){
+                input = document.createElement("input")
+                input.id = id
+                input.type='file'
+                input.style.display="none"
+                document.body.appendChild(input)
             }
-            fileReader.onerror = reject
-            fileReader.readAsText(file)
-        });
-    })
+            input.onchange=(e)=>{
+                var reader = new FileReader();
+                const file = (e.target as any).files[0]
+                reader.onload = ()=> {
+                    const data = XLSX.read(reader.result, {type:'binary'});
+                    document.body.removeChild(input)
+                    if(data.SheetNames.length)
+                    resolve(XLSX.utils.sheet_to_json(data.Sheets[data.SheetNames[0]]))
+                };
+                reader.readAsBinaryString(file);
+            }
+            input.click()
+        })
+    }catch(e){
+        console.error(e)
+    }
 }
+
+function downloadWorkSheet(worksheet,fileName){
+    function s2ab(s) {
+        var buf = new ArrayBuffer(s.length);
+        var view = new Uint8Array(buf);
+        for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+        return buf;
+    }
+    try{
+        const workbook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workbook,worksheet,fileName)
+        /* bookType can be any supported output type */
+        var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
+
+        var wbout = XLSX.write(workbook,wopts);
+
+        /* the saveAs call downloads a file on the local machine */
+        const blob = new Blob([s2ab(wbout)],{type:"application/octet-stream"});
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = url;
+        a.download=fileName+".xlsx";
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+    }catch(e){
+        console.error(e)
+    }
+}
+
 class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
     selector=createSelector<TableArrayFieldProps,any,any>(
         s=>s.fieldSchema.children,
@@ -96,59 +131,29 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         {
             name:"导出",
             call:()=>{
-                try{
-                    const content = (this.props.fieldSchema.disableFixSeparatorForExcel?"":"sep=,\n")+this.api.getDataAsCsv()
-                    // for Excel, we need \ufeff at the start
-                    // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
-                    var blobObject = new Blob(["\ufeff", content], {
-                        type: "text/csv"
-                    });
-                    // Internet Explorer
-                    if (window.navigator.msSaveOrOpenBlob) {
-                        window.navigator.msSaveOrOpenBlob(blobObject, this.props.fieldSchema.label);
-                    }
-                    else {
-                        // Chrome
-                        var downloadLink = document.createElement("a");
-                        downloadLink.href = window.URL.createObjectURL(blobObject);
-                        downloadLink.download = this.props.fieldSchema.label;
-                        document.body.appendChild(downloadLink);
-                        downloadLink.click();
-                        document.body.removeChild(downloadLink);
-                    }
-                }catch(e){
-                    console.error(e)
-                }
+                const schema = this.selector(this.props)
+                const rawData = this.props.fields.getAll()
+                const sheet = XLSX.utils.json_to_sheet(rawData.map(x=>{
+                    return schema.reduce((res,y)=>{
+                        res[y.label] = x[y.key]
+                        return res
+                    },{})
+                }))
+                downloadWorkSheet(sheet, this.props.fieldSchema.label)
             },
             isStatic:true
         },{
             name:"导入",
             call:(data)=>{
-                try{
-                    const id = this.props.meta.form+"fjorandomstring";
-                    let input = document.querySelector("input#"+id) as HTMLInputElement;
-                    if(!input){
-                        input = document.createElement("input")
-                        input.id = id
-                        input.type='file'
-                        input.style.display="none"
-                        document.body.appendChild(input)
-                    }
-                    input.onchange=(e)=>{
-                        readCSV(e,labels=>{
-                            return labels.map(label=>{
-                                const item = this.props.fieldSchema.children.find(x=>x.label === String(label).trim())
-                                return item?item.key:null
-                            })
-                        }).then((data)=>{
-                            data.forEach(this.props.fields.push)
-                            document.body.removeChild(input)
-                        })
-                    }
-                    input.click()
-                }catch(e){
-                    console.error(e)
-                }
+                readWorkBook().then(data=>{
+                    const schema = this.selector(this.props)
+                    data.forEach(item=>{
+                        this.props.fields.push(schema.reduce((res,field)=>{
+                            res[field.key] = item[field.label]
+                            return res
+                        },item))
+                    })
+                })
             },
             isStatic:true
         }
@@ -156,7 +161,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
     state={
         editedIndex:-1
     }
-    api:GridApi
+    api
     bindGridApi=api=>this.api=api;
     closeDialog=()=>this.setState({editedIndex:-1})
     render(){

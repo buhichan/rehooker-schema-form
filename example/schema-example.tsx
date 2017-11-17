@@ -5,12 +5,12 @@ import * as React from "react"
 const arrayFieldChildren = [
     {
         key:"array-child",
-        label:"array-child",
+        label:"嵌套字段#1",
         type:"text"
     },
     {
         key:"currency",
-        label:"currency",
+        label:"货币",
         type:"text",
         hide:true,
         listens:(keyPath)=>{
