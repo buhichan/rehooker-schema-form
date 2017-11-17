@@ -65,8 +65,8 @@ add-dom-event-listener@1.x:
     object-assign "4.x"
 
 "ag-grid-material-preset@git+ssh://git@gitlab.ucloudadmin.com:buhi/ag-grid-material-preset.git":
-  version "1.2.0"
-  resolved "git+ssh://git@gitlab.ucloudadmin.com:buhi/ag-grid-material-preset.git#68a11148dc0f925ac3d8666a221d93eb15d8be86"
+  version "1.2.1"
+  resolved "git+ssh://git@gitlab.ucloudadmin.com:buhi/ag-grid-material-preset.git#4e79aff863ecfaba655f6a273f8d0a6f2f715517"
   dependencies:
     ag-grid "^13.3.1"
     ag-grid-react "^13.3.0"

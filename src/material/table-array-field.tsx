@@ -5,7 +5,7 @@ import { WrappedFieldArrayProps, FieldArray } from 'redux-form';
 import { WidgetProps, addTypeWithWrapper } from '../field';
 import { createSelector } from "reselect";
 const dataSourceConfig = {text:"name",value:"value"};
-import {Grid} from "ag-grid-material-preset"
+const {Grid} = require("ag-grid-material-preset")
 import { renderFields } from '../render-fields';
 
 type TableArrayFieldProps = WrappedFieldArrayProps<any>&WidgetProps;
@@ -57,14 +57,20 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         },
         {
             name:"前移",
-            call:(t)=>{
-                this.api.forEachNode(x=>x.data === t && x.rowIndex>0 && this.props.fields.swap(x.rowIndex,x.rowIndex-1))
+            call:(t,e,x)=>{
+                this.props.fields.swap(x.rowIndex,x.rowIndex-1)
+            },
+            enabled:(t,x)=>{
+                return x.rowIndex>0
             }
         },
         {
             name:"后移",
-            call:(t)=>{
-                this.api.forEachNode(x=>x.data === t && x.rowIndex<this.props.fields.length-1 &&this.props.fields.swap(x.rowIndex,x.rowIndex+1))
+            call:(t,e,x)=>{
+                 this.props.fields.swap(x.rowIndex,x.rowIndex+1)
+            },
+            enabled:(t,x)=>{
+                return x.rowIndex<this.props.fields.length-1
             }
         },
         {

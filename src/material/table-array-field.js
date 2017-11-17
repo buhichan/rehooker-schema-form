@@ -7,7 +7,7 @@ var redux_form_1 = require("redux-form");
 var field_1 = require("../field");
 var reselect_1 = require("reselect");
 var dataSourceConfig = { text: "name", value: "value" };
-var ag_grid_material_preset_1 = require("ag-grid-material-preset");
+var Grid = require("ag-grid-material-preset").Grid;
 var render_fields_1 = require("../render-fields");
 var readCSV = function (e, columns) {
     var files = e.target.files;
@@ -53,14 +53,20 @@ var TableArrayField = (function (_super) {
             },
             {
                 name: "前移",
-                call: function (t) {
-                    _this.api.forEachNode(function (x) { return x.data === t && x.rowIndex > 0 && _this.props.fields.swap(x.rowIndex, x.rowIndex - 1); });
+                call: function (t, e, x) {
+                    _this.props.fields.swap(x.rowIndex, x.rowIndex - 1);
+                },
+                enabled: function (t, x) {
+                    return x.rowIndex > 0;
                 }
             },
             {
                 name: "后移",
-                call: function (t) {
-                    _this.api.forEachNode(function (x) { return x.data === t && x.rowIndex < _this.props.fields.length - 1 && _this.props.fields.swap(x.rowIndex, x.rowIndex + 1); });
+                call: function (t, e, x) {
+                    _this.props.fields.swap(x.rowIndex, x.rowIndex + 1);
+                },
+                enabled: function (t, x) {
+                    return x.rowIndex < _this.props.fields.length - 1;
                 }
             },
             {
@@ -156,7 +162,7 @@ var TableArrayField = (function (_super) {
         var value = this.props.fields.getAll() || empty;
         var schema = this.selector(this.props);
         return React.createElement("div", null,
-            React.createElement(ag_grid_material_preset_1.Grid, { data: value, schema: schema, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, actions: this.actions, gridApi: this.bindGridApi }),
+            React.createElement(Grid, { data: value, schema: schema, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, actions: this.actions, gridApi: this.bindGridApi }),
             React.createElement(Dialog_1.default, { autoScrollBodyContent: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
     };
     return TableArrayField;
