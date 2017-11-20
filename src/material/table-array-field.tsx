@@ -4,8 +4,8 @@ import { WrappedFieldArrayProps, FieldArray } from 'redux-form';
 import { WidgetProps, addTypeWithWrapper } from '../field';
 import { createSelector } from "reselect";
 const dataSourceConfig = {text:"name",value:"value"};
-const {Grid} = require("ag-grid-material-preset")
 import { renderFields } from '../render-fields';
+const {Grid} = require("ag-grid-material-preset")
 const XLSX = require("xlsx")
 
 type TableArrayFieldProps = WrappedFieldArrayProps<any>&WidgetProps;

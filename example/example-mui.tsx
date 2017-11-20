@@ -6,7 +6,7 @@ import { reducer as reduxFormReducer } from 'redux-form'
 import "../src/material"
 import "../src/material/table-array-field"
 import "../src/material/multiple-autocomplete"
-import "ag-grid-material-preset/style.css"
+// import "ag-grid-material-preset/style.css"
 import {FormFieldSchema, ReduxSchemaForm} from "../"
 import {MuiThemeProvider} from "material-ui/styles";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
