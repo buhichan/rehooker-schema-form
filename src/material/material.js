@@ -21,6 +21,7 @@ var render_fields_1 = require("../render-fields");
 var RadioButton_1 = require("material-ui/RadioButton");
 var CircularProgress_1 = require("material-ui/CircularProgress");
 var buttons_1 = require("../buttons");
+var moment = require("moment");
 function NumberInput(props) {
     return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
@@ -35,18 +36,22 @@ var defaultDateTimeInputFormat = {
     second: "2-digit"
 };
 function formatDateTime(date) {
-    return date.toLocaleString([navigator && navigator.language || "zh-CN"], defaultDateTimeInputFormat).replace(/\//g, '-');
+    //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateTimeInputFormat).replace(/\//g,'-')
+    return moment(date).format("YYYY-MM-DD HH:mm:ss");
 }
 function formatDate(date) {
-    return date.toLocaleString([navigator && navigator.language || "zh-CN"], defaultDateInputFormat).replace(/\//g, '-');
+    //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateInputFormat).replace(/\//g,'-')
+    return moment(date).format("YYYY-MM-DD");
 }
 function DateTimeInput(props) {
     var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
     var value = input.value ?
-        new Date(input.value.replace(" ", "T")) :
+        moment(input.value) :
         undefined;
-    if (value && !isFinite(value.getTime()))
+    if (!value || !value.isValid())
         value = undefined;
+    else
+        value = value.toDate();
     return React.createElement("div", null,
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
             React.createElement(material_ui_1.DatePicker, { id: fieldSchema.key + "date", DateTimeFormat: Intl.DateTimeFormat, value: value, fullWidth: true, onChange: function (e, date) {
@@ -87,7 +92,7 @@ var DateInput = (function (_super) {
         };
         var parsedDate = Date.parse(props.input.value);
         if (isNaN(props.input.value) && !isNaN(parsedDate)) {
-            DatePickerProps['value'] = new Date(props.input.value);
+            DatePickerProps['value'] = moment(props.input.value);
         }
         return React.createElement(material_ui_1.DatePicker, tslib_1.__assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", errorText: props.meta.error, floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, onFocus: this.onFocus, okLabel: "确认", ref: function (ref) { return _this.datepicker = ref; } }, DatePickerProps, { hintText: props.fieldSchema.placeholder, disabled: props.disabled }));
     };

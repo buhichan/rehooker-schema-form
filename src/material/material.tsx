@@ -25,6 +25,7 @@ import {renderFields} from "../render-fields";
 import {default as RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
 import CircularProgress from "material-ui/CircularProgress";
 import { setButton } from "../buttons";
+const moment = require("moment")
 
 function NumberInput(props:WidgetProps){
     return <TextField
@@ -55,19 +56,23 @@ const defaultDateTimeInputFormat = {
 };
 
 function formatDateTime(date:Date){
-    return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateTimeInputFormat).replace(/\//g,'-')
+    //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateTimeInputFormat).replace(/\//g,'-')
+    return moment(date).format("YYYY-MM-DD HH:mm:ss")
 }
 
 function formatDate(date:Date){
-    return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateInputFormat).replace(/\//g,'-')
+    //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateInputFormat).replace(/\//g,'-')
+    return moment(date).format("YYYY-MM-DD")
 }
 function DateTimeInput(props:WidgetProps){
     const {meta,input,fieldSchema} = props;
     let value = input.value?
-            new Date(input.value.replace(" ","T")):
+            moment(input.value):
             undefined;
-    if(value && !isFinite(value.getTime()))
+    if(!value || !value.isValid())
         value = undefined;
+    else 
+        value = value.toDate()
     return <div>
         <div style={{width:"50%",display:"inline-block"}}>
             <DatePicker
@@ -129,7 +134,7 @@ class DateInput extends React.PureComponent<WidgetProps>{
         const parsedDate = Date.parse(props.input.value);
 
         if (isNaN(props.input.value) && !isNaN(parsedDate)) {
-            DatePickerProps['value'] = new Date(props.input.value);
+            DatePickerProps['value'] = moment(props.input.value);
         }
 
         return <DatePicker
