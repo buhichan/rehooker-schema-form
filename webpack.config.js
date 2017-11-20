@@ -11,22 +11,20 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const i = process.argv.findIndex(x=>x === "--theme");
+
 const theme = i&&i<process.argv.length?process.argv[i+1]:"mui";
 
-let ENV = process.env.npm_lifecycle_event;
-
-if(ENV.includes(":"))
-    ENV=ENV.replace(/:.*/,"");
+let NODE_ENV = process.env.NODE_ENV;
 
 const config = {
     entry: {
-        "main":["./src/index.tsx"]
+        "main":["./src/index.ts"]
     },
     output: {
-        path:  __dirname +"/build",
+        path:  __dirname +"/demo",
         publicPath: "/",
-        filename: ENV == 'build' ? "[name].min.js" : "[name].js",
-        chunkFilename: ENV=='dev' ? '[name].[hash].js' : '[name].js'
+        filename: NODE_ENV === 'production' ? "[name].min.js" : "[name].js",
+        chunkFilename: NODE_ENV==='development' ? '[name].[hash].js' : '[name].js'
     },
     module: {
         loaders: [{
@@ -69,17 +67,17 @@ const config = {
 
 config.plugins.push(
     new webpack.DefinePlugin({
-        'process.env.NODE_ENV': /dev/.test(ENV)?"'dev'":"'prod'"
+        'process.env.NODE_ENV': NODE_ENV==='development'?"'development'":"'produdction'"
     })
 );
 
-switch(ENV){
-    case "dev": {
+switch(NODE_ENV){
+    case "development": {
         config.devtools = 'inline-source-map';
         config.entry.main=[`./example/example-${theme}.tsx`];
         break;
     }
-    case "build": {
+    case "production": {
         config.plugins.push(new webpack.optimize.UglifyJsPlugin());
         config.devtools = 'source-map';
         break;
