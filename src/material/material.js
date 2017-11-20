@@ -43,7 +43,7 @@ function formatDate(date) {
 function DateTimeInput(props) {
     var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
     var value = input.value ?
-        new Date(input.value) :
+        new Date(input.value.replace(" ", "T")) :
         undefined;
     if (value && !isFinite(value.getTime()))
         value = undefined;

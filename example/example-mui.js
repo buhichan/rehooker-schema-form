@@ -4,6 +4,8 @@ var tslib_1 = require("tslib");
 var React = require("react");
 var ReactDOM = require("react-dom");
 var react_redux_1 = require("react-redux");
+if (typeof fetch === 'undefined')
+    require('isomorphic-fetch');
 var redux_1 = require("redux");
 var redux_form_1 = require("redux-form");
 require("../src/material");

@@ -64,7 +64,7 @@ function formatDate(date:Date){
 function DateTimeInput(props:WidgetProps){
     const {meta,input,fieldSchema} = props;
     let value = input.value?
-            new Date(input.value):
+            new Date(input.value.replace(" ","T")):
             undefined;
     if(value && !isFinite(value.getTime()))
         value = undefined;

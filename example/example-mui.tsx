@@ -1,6 +1,8 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider,connect } from 'react-redux'
+if(typeof fetch === 'undefined')
+    require('isomorphic-fetch')
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import { reducer as reduxFormReducer } from 'redux-form'
 import "../src/material"
