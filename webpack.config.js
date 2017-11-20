@@ -18,13 +18,13 @@ let NODE_ENV = process.env.NODE_ENV;
 
 const config = {
     entry: {
-        "main":["./src/index.ts"]
+        "main":[`./example/example-${theme}.tsx`]
     },
     output: {
         path:  __dirname +"/demo",
         publicPath: "/",
-        filename: NODE_ENV === 'production' ? "[name].min.js" : "[name].js",
-        chunkFilename: NODE_ENV==='development' ? '[name].[hash].js' : '[name].js'
+        filename: NODE_ENV === 'production' ? "[name].[chunkHash].js" : "[name].js",
+        chunkFilename: NODE_ENV==='development' ? '[name].[chunkHash].js' : '[name].js'
     },
     module: {
         loaders: [{
@@ -74,7 +74,6 @@ config.plugins.push(
 switch(NODE_ENV){
     case "development": {
         config.devtools = 'inline-source-map';
-        config.entry.main=[`./example/example-${theme}.tsx`];
         break;
     }
     case "production": {

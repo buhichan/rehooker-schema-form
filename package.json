@@ -14,7 +14,7 @@
     "dev": "NODE_ENV=development npm run dev:mui",
     "dev:mui": "NODE_ENV=development webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme mui",
     "dev:antd": "NODE_ENV=development webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme antd",
-    "build:dev": "NODE_ENV=development webpack . --theme mui"
+    "build:demo": "NODE_ENV=production webpack . --theme mui"
   },
   "peerDependencies": {
     "ag-grid-material-preset": "git+ssh://git@gitlab.ucloudadmin.com:buhi/ag-grid-material-preset.git",
