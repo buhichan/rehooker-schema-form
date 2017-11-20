@@ -5,7 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
-var field_1 = require("./field");
+var field_1 = require("../field");
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
 var Radio = require("antd/lib").Radio;
 var RadioGroup = Radio.Group;
@@ -24,8 +24,8 @@ var moment = require("moment");
 var antd_8 = require("antd");
 var react_jss_1 = require("react-jss");
 var antd_jss_1 = require("./antd.jss");
-var render_fields_1 = require("./render-fields");
-var buttons_1 = require("./buttons");
+var render_fields_1 = require("../render-fields");
+var buttons_1 = require("../buttons");
 var errorStyle = { color: "red" };
 function TextInput(props) {
     var required = {
@@ -389,7 +389,7 @@ buttons_1.setButton(function (props) {
                 }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);
     }
 });
-var formModule = require('../index');
+var formModule = require('../../index');
 var JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm = react_jss_1.default(antd_jss_1.stylesheet)(function (_a) {
     var classes = _a.classes, sheet = _a.sheet, props = tslib_1.__rest(_a, ["classes", "sheet"]);

@@ -5,3 +5,4 @@ webpack.config.js
 README.MD
 yarn.lock
 demo
+__test__

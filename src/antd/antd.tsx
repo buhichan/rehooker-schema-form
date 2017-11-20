@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import {addType, addTypeWithWrapper} from "./field";
+import {addType, addTypeWithWrapper} from "../field";
 const {Field,FieldArray} =require("redux-form");
 const {Radio} = require("antd/lib");
 const RadioGroup = Radio.Group;
@@ -16,17 +16,17 @@ import {Select} from "antd"
 import {isArray} from "util";
 const Option = Select.Option;
 import {Checkbox} from "antd";
-import {WidgetProps} from "./field";
+import {WidgetProps} from "../field";
 import {InputNumber} from "antd";
 import {Tooltip} from "antd";
 const moment = require("moment");
-import {AsyncOptions, Options} from "./form";
+import {AsyncOptions, Options} from "../form";
 import { Upload, Button, Icon } from 'antd';
-import {RuntimeAsyncOptions} from "./form";
+import {RuntimeAsyncOptions} from "../form";
 import injectCSS from 'react-jss';
 import {stylesheet} from "./antd.jss";
-import {renderFields} from "./render-fields";
-import { setButton } from "./buttons";
+import {renderFields} from "../render-fields";
+import { setButton } from "../buttons";
 
 const errorStyle={color:"red"};
 function TextInput(props){
@@ -532,7 +532,7 @@ setButton(function(props:any){
     }
 });
 
-const formModule = require('../index');
+const formModule = require('../../index');
 const JSSForm = formModule.ReduxSchemaForm;
 formModule.ReduxSchemaForm = injectCSS(stylesheet)(
     ({classes,sheet,...props})=>{

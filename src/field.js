@@ -24,6 +24,14 @@ function addTypeWithWrapper(name, widget) {
 }
 exports.addTypeWithWrapper = addTypeWithWrapper;
 var customTypes = new Map();
+function clearTypes() {
+    customTypes.clear();
+}
+exports.clearTypes = clearTypes;
+function getType(name) {
+    return customTypes.get(name);
+}
+exports.getType = getType;
 function preRenderField(field, form, keyPath) {
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
         return React.createElement(StatefulField, { key: field.key || field.label, fieldSchema: field, keyPath: keyPath, form: form });
@@ -44,8 +52,8 @@ var StatelessField = (function (_super) {
         var typeName = field.type;
         if (typeof field.type !== 'string')
             typeName = "";
-        if (customTypes.has(type)) {
-            var CustomWidget = customTypes.get(type);
+        var CustomWidget = customTypes.get(type);
+        if (CustomWidget) {
             return React.createElement("div", { className: "field " + typeName + (fullWidth ? " full-width" : ""), style: field.style },
                 React.createElement(CustomWidget, tslib_1.__assign({ keyPath: keyPath, fieldSchema: field }, rest, { renderField: preRenderField })));
         }

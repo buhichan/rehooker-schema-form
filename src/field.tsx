@@ -46,7 +46,9 @@ export type WidgetProps = {
     onSchemaChange:(changes:Partial<FormFieldSchema>[]|Promise<Partial<FormFieldSchema>[]>)=>void
 }
 
-export function addType(name,widget?: React.ComponentClass<WidgetProps>|React.StatelessComponent<WidgetProps>) {
+type Widget=React.ComponentClass<WidgetProps>|React.StatelessComponent<WidgetProps>
+
+export function addType(name,widget?: Widget) {
     function addWidgetTypeToRegistration(widget) {
         customTypes.set(name, props => <div>
             <Field name={props.keyPath} {...props} component={widget}/>
@@ -59,8 +61,15 @@ export function addType(name,widget?: React.ComponentClass<WidgetProps>|React.St
 export function addTypeWithWrapper(name,widget){
     customTypes.set(name,widget);
 }
-
 let customTypes = new Map();
+
+export function clearTypes(){
+    customTypes.clear()
+}
+
+export function getType(name):Widget{
+    return customTypes.get(name)
+}
 
 export function preRenderField(field:FormFieldSchema, form:string, keyPath:string){ //keyPath is the old keyPath
     if(field.listens && ( typeof field.listens === 'function' || Object.keys(field.listens).length))
@@ -88,8 +97,8 @@ export class StatelessField extends React.PureComponent<{field:FormFieldSchema, 
         let typeName = field.type;
         if (typeof field.type !== 'string')
             typeName = "";
-        if (customTypes.has(type)) {
-            const CustomWidget = customTypes.get(type);
+        const CustomWidget = customTypes.get(type);
+        if (CustomWidget) {
             return <div className={"field " + typeName + (fullWidth?" full-width":"")} style={field.style}>
                 <CustomWidget keyPath={keyPath} fieldSchema={field} {...rest} renderField={preRenderField}/>
             </div>
