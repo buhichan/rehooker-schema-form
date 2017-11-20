@@ -50,7 +50,7 @@ const config = {
         new CopyWebpackPlugin([
             {
                 from:"./example/options.json",
-                to:"options.json"
+                to:"example/options.json"
             }
         ])
     ],
