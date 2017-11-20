@@ -7,8 +7,8 @@ var redux_form_1 = require("redux-form");
 var field_1 = require("../field");
 var reselect_1 = require("reselect");
 var dataSourceConfig = { text: "name", value: "value" };
-var Grid = require("ag-grid-material-preset").Grid;
 var render_fields_1 = require("../render-fields");
+var Grid = require("ag-grid-material-preset").Grid;
 var XLSX = require("xlsx");
 function readWorkBook() {
     try {

@@ -302,12 +302,15 @@ exports.schema = [
                     ]];
             });
         }); }
-    }, {
-        key: "tableArray",
-        type: "table-array",
-        label: "array fiel as table",
-        children: arrayFieldChildren
-    }, {
+    },
+    //要用这个必须使用table-array-field, 那个又依赖ag-grid-material-preset,因此去掉
+    // {
+    //     key:"tableArray",
+    //     type:"table-array",
+    //     label:"array fiel as table",
+    //     children:arrayFieldChildren
+    // },
+    {
         key: "multi-autocomplete",
         type: "multi-autocomplete",
         label: "multi-autocomplete",
