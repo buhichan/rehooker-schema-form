@@ -1,3 +1,5 @@
+![travis ci](https://travis-ci.org/buhichan/redux-schema-form.svg?branch=master)
+
 # Why
 
 So that I don't have to write a component for every single `redux-form`.
