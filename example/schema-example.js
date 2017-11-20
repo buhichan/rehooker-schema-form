@@ -303,25 +303,5 @@ exports.schema = [
             });
         }); }
     },
-    //要用这个必须使用table-array-field, 那个又依赖ag-grid-material-preset,因此去掉
-    // {
-    //     key:"tableArray",
-    //     type:"table-array",
-    //     label:"array fiel as table",
-    //     children:arrayFieldChildren
-    // },
-    {
-        key: "multi-autocomplete",
-        type: "multi-autocomplete",
-        label: "multi-autocomplete",
-        options: function (t) {
-            if (/^\d+$/.test(t))
-                return new Promise(function (resolve) {
-                    setTimeout(function () { return resolve(new Array(100).fill(0).map(function (_, i) { return ({ name: String(i), value: "value-" + i }); })); }, 1000);
-                });
-            else
-                return [{ name: "0", value: 0 }];
-        }
-    }
 ];
 //# sourceMappingURL=schema-example.js.map

@@ -10,7 +10,6 @@ import ChipInput from "material-ui-chip-input";
 import {Field, FieldArray, WrappedFieldArrayProps} from "redux-form";
 import TextField from "material-ui/TextField";
 import { createSelector } from "reselect";
-import { GridApi } from 'ag-grid';
 const dataSourceConfig = {text:"name",value:"value"};
 
 @addType("multi-autocomplete")

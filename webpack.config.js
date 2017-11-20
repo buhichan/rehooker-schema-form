@@ -9,6 +9,7 @@ require('es6-promise').polyfill();
 const webpack = require("webpack");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const i = process.argv.findIndex(x=>x === "--theme");
 
@@ -45,7 +46,13 @@ const config = {
         new HtmlWebpackPlugin({
             template: './example/index.html',
             inject: 'body'
-        })
+        }),
+        new CopyWebpackPlugin([
+            {
+                from:"./example/options.json",
+                to:"options.json"
+            }
+        ])
     ],
     devServer:{
         contentBase: '.',

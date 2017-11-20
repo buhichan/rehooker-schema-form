@@ -7,8 +7,8 @@ var react_redux_1 = require("react-redux");
 var redux_1 = require("redux");
 var redux_form_1 = require("redux-form");
 require("../src/material");
-require("../src/material/table-array-field");
-require("../src/material/multiple-autocomplete");
+//import "../src/material/table-array-field"
+//import "../src/material/multiple-autocomplete"
 // import "ag-grid-material-preset/style.css"
 var _1 = require("../");
 var styles_1 = require("material-ui/styles");
