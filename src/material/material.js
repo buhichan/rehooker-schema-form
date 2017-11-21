@@ -90,9 +90,9 @@ var DateInput = (function (_super) {
                 return props.input.onChange(formatDate(value));
             }
         };
-        var parsedDate = Date.parse(props.input.value);
-        if (isNaN(props.input.value) && !isNaN(parsedDate)) {
-            DatePickerProps['value'] = moment(props.input.value);
+        var parsedDate = moment(props.input.value);
+        if (parsedDate.isValid()) {
+            DatePickerProps['value'] = parsedDate.toDate();
         }
         return React.createElement(material_ui_1.DatePicker, tslib_1.__assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", errorText: props.meta.error, floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, onFocus: this.onFocus, okLabel: "确认", ref: function (ref) { return _this.datepicker = ref; } }, DatePickerProps, { hintText: props.fieldSchema.placeholder, disabled: props.disabled }));
     };

@@ -131,10 +131,10 @@ class DateInput extends React.PureComponent<WidgetProps>{
                 return props.input.onChange(formatDate(value));
             }
         };
-        const parsedDate = Date.parse(props.input.value);
+        const parsedDate = moment(props.input.value);
 
-        if (isNaN(props.input.value) && !isNaN(parsedDate)) {
-            DatePickerProps['value'] = moment(props.input.value);
+        if (parsedDate.isValid()) {
+            DatePickerProps['value'] = parsedDate.toDate()
         }
 
         return <DatePicker
