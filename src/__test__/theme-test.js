@@ -19,7 +19,7 @@ function describeTestWithStore(Container, schema, initialValues, expectation) {
     var store = redux_1.createStore(reducer, {
         form: {}
     });
-    var Form = (function (_super) {
+    var Form = /** @class */ (function (_super) {
         tslib_1.__extends(Form, _super);
         function Form() {
             return _super !== null && _super.apply(this, arguments) || this;

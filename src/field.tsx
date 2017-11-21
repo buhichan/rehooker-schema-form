@@ -46,9 +46,11 @@ export type WidgetProps = {
     onSchemaChange:(changes:Partial<FormFieldSchema>[]|Promise<Partial<FormFieldSchema>[]>)=>void
 }
 
-type Widget=React.ComponentClass<WidgetProps>|React.StatelessComponent<WidgetProps>
+type Widget = React.StatelessComponent<WidgetProps> | React.ComponentClass<WidgetProps>
 
-export function addType(name,widget?: Widget) {
+export function addType(name):(widget:Widget)=>void
+export function addType(name,widget:Widget):void
+export function addType(name,widget?) {
     function addWidgetTypeToRegistration(widget) {
         customTypes.set(name, props => <div>
             <Field name={props.keyPath} {...props} component={widget}/>

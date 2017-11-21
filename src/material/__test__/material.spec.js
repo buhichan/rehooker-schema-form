@@ -6,7 +6,7 @@ var getMuiTheme_1 = require("material-ui/styles/getMuiTheme");
 var React = require("react");
 var theme_test_1 = require("../../__test__/theme-test");
 var PropTypes = require("prop-types");
-var Container = (function (_super) {
+var Container = /** @class */ (function (_super) {
     tslib_1.__extends(Container, _super);
     function Container() {
         return _super !== null && _super.apply(this, arguments) || this;

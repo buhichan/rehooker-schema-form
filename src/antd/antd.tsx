@@ -52,7 +52,7 @@ function TextInput(props){
 }
 
 
-class SelectInput extends React.Component<any,any>{
+class SelectInput extends React.Component<WidgetProps,any>{
     state={
         options:null
     };
@@ -94,7 +94,7 @@ class SelectInput extends React.Component<any,any>{
                 value={this.props.fieldSchema.multiple?(isArray(this.props.input.value)?this.props.input.value:[]):this.props.input.value}
                 onChange={(value)=>this.props.input.onChange(value)}
                 filterOption={(input, option) => {
-                    return option["props"].children.toLowerCase().indexOf(input.toLowerCase()) >= 0}}
+                    return (option["props"].children as any).toLowerCase().indexOf(input.toLowerCase()) >= 0}}
 
             >
 
@@ -110,7 +110,7 @@ class SelectInput extends React.Component<any,any>{
 
 }
 
-class CheckboxInput extends React.Component<any,any>{
+class CheckboxInput extends React.Component<WidgetProps,any>{
 
     render(){
         return <Checkbox
@@ -169,7 +169,7 @@ function DateInput(props){
     </div>
 }
 
-class DateTimeRangeInput extends React.Component<any,any>{
+class DateTimeRangeInput extends React.Component<WidgetProps,any>{
 
     render(){
         const value = this.props.input.value&&JSON.parse(this.props.input.value);
@@ -278,8 +278,8 @@ class FileInput extends React.Component<WidgetProps,any>{
     }
 }
 
-@addType("radio")
-class SelectRadio extends SelectInput{
+@(addType("radio") as any)
+class SelectRadio extends (SelectInput as any){
 
     render(){
         const props = this.props;
@@ -309,7 +309,7 @@ class SelectRadio extends SelectInput{
     }
 }
 
-class DateRangeInput extends React.Component<any,any>{
+class DateRangeInput extends React.Component<WidgetProps,any>{
     render(){
         const dateFormat = 'YYYY-MM-DD';
         const {value}=this.props.input;
@@ -327,7 +327,7 @@ class DateRangeInput extends React.Component<any,any>{
 }
 
 
-class TextareaInput extends React.Component<any,any>{
+class TextareaInput extends React.Component<WidgetProps,any>{
     render(){
         return <div>
             <div>{this.props.fieldSchema.label}</div>
@@ -342,7 +342,7 @@ class TextareaInput extends React.Component<any,any>{
 }
 
 
-class AutoCompleteAsync extends React.Component<any,any>{
+class AutoCompleteAsync extends React.Component<WidgetProps,any>{
     pendingUpdate;
     fetchingQuery;
     $isMounted;
@@ -411,7 +411,7 @@ class AutoCompleteAsync extends React.Component<any,any>{
 }
 
 
-class AutoCompleteText extends React.Component<any,any>{
+class AutoCompleteText extends React.Component<WidgetProps,any>{
     onUpdateInput=name=>{
         const entry = (this.props.fieldSchema.options as Options).find(x=>x.name===name);
         return this.props.input.onChange(entry?entry.value:name);
@@ -421,7 +421,7 @@ class AutoCompleteText extends React.Component<any,any>{
         return <div>
             <div>{fieldSchema.label}</div>
             <AutoComplete
-                dataSource={fieldSchema.options.map(itm=>({text:itm.name,value:itm.value}))}
+                dataSource={(fieldSchema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
                 onSearch={this.onUpdateInput}
                 onSelect={(value)=>input.onChange(value)}
                 filterOption
@@ -433,7 +433,7 @@ class AutoCompleteText extends React.Component<any,any>{
 
 
 
-class ArrayFieldRenderer extends React.Component<any,any>{
+class ArrayFieldRenderer extends React.Component<WidgetProps,any>{
     render(){
         const props = this.props;
 

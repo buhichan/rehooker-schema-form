@@ -8,7 +8,7 @@ theme_test_1.testTheme("ant.design theme", function () {
         matches: true
     }); };
     require("../index");
-}, (function (_super) {
+}, /** @class */ (function (_super) {
     tslib_1.__extends(Root, _super);
     function Root() {
         return _super !== null && _super.apply(this, arguments) || this;

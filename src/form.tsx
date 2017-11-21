@@ -3,7 +3,7 @@
  */
 import { FormButton, submittable } from './buttons';
 import * as React from 'react';
-import {reduxForm, ConfigProps, InjectedFormProps} from 'redux-form'
+import {reduxForm, ConfigProps, InjectedFormProps,BaseFieldProps} from 'redux-form'
 import {WidgetProps} from "./field";
 import {renderFields} from "./render-fields";
 
@@ -20,7 +20,7 @@ export type FieldSchamaChangeListeners={
     [fieldKey:string]: (value:any,formValue:any)=>Partial<FormFieldSchema>|Promise<Partial<FormFieldSchema>>;
 };
 
-export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
+export interface FormFieldSchema extends Partial<BaseFieldProps>{
     key:string,
     type: string | React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>,
     label:string,

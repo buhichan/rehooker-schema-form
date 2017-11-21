@@ -8,7 +8,7 @@ var buttons_1 = require("./buttons");
 var React = require("react");
 var redux_form_1 = require("redux-form");
 var render_fields_1 = require("./render-fields");
-var ReduxSchemaForm = (function (_super) {
+var ReduxSchemaForm = /** @class */ (function (_super) {
     tslib_1.__extends(ReduxSchemaForm, _super);
     function ReduxSchemaForm() {
         return _super !== null && _super.apply(this, arguments) || this;
