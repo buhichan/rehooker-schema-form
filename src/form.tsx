@@ -88,7 +88,7 @@ export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&Inj
 },{}>{
     reset=()=>this.props.dispatch(reset(this.props.form))
     render(){
-        return <form className="redux-schema-form form-horizontal" onSubmit={this.props.handleSubmit}>
+        return <form id={this.props.form} className="redux-schema-form form-horizontal" onSubmit={this.props.handleSubmit}>
             {renderFields(
                 this.props.form,
                 this.props.schema
