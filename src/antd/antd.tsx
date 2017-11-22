@@ -516,7 +516,7 @@ setButton(function(props:any){
             >
                 {props.children}
             </Button>;
-        default:
+        case "button":
             return <Button
                 style={{
                     backgroundColor: "transparent",
@@ -529,6 +529,8 @@ setButton(function(props:any){
             >
                 {props.children}
             </Button>
+        default:
+            return null;
     }
 });
 

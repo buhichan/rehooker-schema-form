@@ -382,11 +382,13 @@ buttons_1.setButton(function (props) {
     switch (props.type) {
         case 'submit':
             return React.createElement(antd_8.Button, { className: "raised-button", style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);
-        default:
+        case "button":
             return React.createElement(antd_8.Button, { style: {
                     backgroundColor: "transparent",
                     margin: "15px"
                 }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);
+        default:
+            return null;
     }
 });
 var formModule = require('../../index');

@@ -3,7 +3,7 @@
  */
 import { FormButton, submittable } from './buttons';
 import * as React from 'react';
-import {reduxForm, ConfigProps, InjectedFormProps,BaseFieldProps} from 'redux-form'
+import {reduxForm, ConfigProps, InjectedFormProps,BaseFieldProps, reset} from 'redux-form'
 import {WidgetProps} from "./field";
 import {renderFields} from "./render-fields";
 
@@ -86,6 +86,7 @@ export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&Inj
     dispatch?:(...args:any[])=>any,
     disableResubmit?:boolean
 },{}>{
+    reset=()=>this.props.dispatch(reset(this.props.form))
     render(){
         return <form className="redux-schema-form form-horizontal" onSubmit={this.props.handleSubmit}>
             {renderFields(
@@ -99,7 +100,7 @@ export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&Inj
                 (!this.props.noButton)? <div className="button">
                     <div className="btn-group">
                         <FormButton type="submit" disabled={!submittable(this.props.disableResubmit)(this.props as any)}>提交</FormButton>
-                        <FormButton type="button" disabled={!submittable(this.props.disableResubmit)(this.props as any)}>重置</FormButton>
+                        <FormButton type="button" onClick={this.reset} disabled={!submittable(this.props.disableResubmit)(this.props as any)}>重置</FormButton>
                     </div>
                 </div> : <div />
             }
