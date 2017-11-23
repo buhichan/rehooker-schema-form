@@ -48,11 +48,19 @@ export class AutoCompleteChipInput extends React.PureComponent<WidgetProps,any>{
                 value
             }
         });
+        const {
+            openOnFocus,
+            fullResult,
+            label,
+            placeholder,
+            showValueWhenNoEntryIsFound
+        } = fieldSchema
         return <ChipInput
+            openOnFocus
             style={{bottom:9}}
             value={value}
-            maxSearchResults={fieldSchema.fullResult ? undefined : 5}
-            menuStyle={fieldSchema.fullResult ? {maxHeight: "300px", overflowY: 'auto'} : undefined}
+            maxSearchResults={fullResult ? undefined : 5}
+            menuStyle={fullResult ? {maxHeight: "300px", overflowY: 'auto'} : undefined}
             floatingLabelStyle={{top:33}}
             floatingLabelFocusStyle={{top:28}}
             fullWidth
@@ -61,8 +69,8 @@ export class AutoCompleteChipInput extends React.PureComponent<WidgetProps,any>{
             dataSourceConfig={dataSourceConfig}
             dataSource={dataSource}
             errorText={meta.error}
-            floatingLabelText={fieldSchema.label}
-            hintText={fieldSchema.placeholder}
+            floatingLabelText={label}
+            hintText={placeholder}
             onUpdateInput={async?this.onRequestDatasource:undefined}
         />
     }
