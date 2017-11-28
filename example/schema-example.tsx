@@ -298,7 +298,16 @@ export let schema:FormFieldSchema[] = [
             {name:"yes",value:true},
             {name:"no",value:false},
         ]
-    },
+    },{
+        key:"multiple-listen",
+        label:"多重监听",
+        type:"text",
+        listens:{
+            'radio,text':(...args)=>{
+                console.log(args)
+            }
+        }
+    }
     //要用这个必须使用table-array-field, 那个又依赖ag-grid-material-preset,因此去掉
     // {
     //     key:"tableArray",

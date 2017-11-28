@@ -146,7 +146,20 @@ interface FieldNodeProps{
             listeners = listeners(p.keyPath.split(".").slice(0,-1).join("."));
         const formSelector = formValueSelector(p.form);
         return createSelector(
-             Object.keys(listeners).map(x=>s=>formSelector(s,x)) as any,
+            Object.keys(listeners).map(key=>{
+                if(key.includes(",")){
+                    const multipleKeys = key.split(",").map(s=>s.trim())
+                    return createSelector(
+                        multipleKeys.map(key=>{
+                            return s=>formSelector(s,key) as any
+                        }) as any,
+                        (...values)=>{
+                            return values
+                        }
+                    )
+                }else 
+                    return s=>formSelector(s,key) as any
+            }) as any,
             (...values)=>{
                 return {
                     values,
@@ -180,7 +193,7 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
         })).then(newSchemas=> {
             if(this.unmounted)
                 return;
-            let newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema}),props.fieldSchema);
+            let newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema||emptyObject}),props.fieldSchema);
             if(newSchema.hasOwnProperty("value")){
                 newSchema = Object.assign({}, newSchema)
                 props.dispatch(change(props.form,props.keyPath,newSchema.value));
@@ -201,3 +214,5 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
         return <StatelessField field={this.state} form={form} keyPath={keyPath} />
     }
 }
+
+const emptyObject = {}

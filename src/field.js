@@ -105,7 +105,7 @@ var StatefulField = /** @class */ (function (_super) {
         })).then(function (newSchemas) {
             if (_this.unmounted)
                 return;
-            var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema)); }, props.fieldSchema);
+            var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema || emptyObject)); }, props.fieldSchema);
             if (newSchema.hasOwnProperty("value")) {
                 newSchema = Object.assign({}, newSchema);
                 props.dispatch(redux_form_1.change(props.form, props.keyPath, newSchema.value));
@@ -134,7 +134,22 @@ var StatefulField = /** @class */ (function (_super) {
             if (typeof listeners === 'function')
                 listeners = listeners(p.keyPath.split(".").slice(0, -1).join("."));
             var formSelector = redux_form_1.formValueSelector(p.form);
-            return reselect_1.createSelector(Object.keys(listeners).map(function (x) { return function (s) { return formSelector(s, x); }; }), function () {
+            return reselect_1.createSelector(Object.keys(listeners).map(function (key) {
+                if (key.includes(",")) {
+                    var multipleKeys = key.split(",").map(function (s) { return s.trim(); });
+                    return reselect_1.createSelector(multipleKeys.map(function (key) {
+                        return function (s) { return formSelector(s, key); };
+                    }), function () {
+                        var values = [];
+                        for (var _i = 0; _i < arguments.length; _i++) {
+                            values[_i] = arguments[_i];
+                        }
+                        return values;
+                    });
+                }
+                else
+                    return function (s) { return formSelector(s, key); };
+            }), function () {
                 var values = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
                     values[_i] = arguments[_i];
@@ -148,4 +163,5 @@ var StatefulField = /** @class */ (function (_super) {
     ], StatefulField);
     return StatefulField;
 }(React.PureComponent));
+var emptyObject = {};
 //# sourceMappingURL=field.js.map

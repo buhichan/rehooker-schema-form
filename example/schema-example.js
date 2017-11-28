@@ -302,6 +302,38 @@ exports.schema = [
                     ]];
             });
         }); }
-    },
+    }, {
+        key: "multiple-listen",
+        label: "多重监听",
+        type: "text",
+        listens: {
+            'radio,text': function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                console.log(args);
+            }
+        }
+    }
+    //要用这个必须使用table-array-field, 那个又依赖ag-grid-material-preset,因此去掉
+    // {
+    //     key:"tableArray",
+    //     type:"table-array",
+    //     label:"array fiel as table",
+    //     children:arrayFieldChildren
+    // },
+    // {
+    //     key:"multi-autocomplete",
+    //     type:"multi-autocomplete",
+    //     label:"multi-autocomplete",
+    //     options:t=>{
+    //         if(/^\d+$/.test(t))
+    //             return new Promise(resolve=>{
+    //                 setTimeout(()=> resolve(new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))), 1000)
+    //             });
+    //         else return [{name:"0",value:0}];
+    //     }
+    // }
 ];
 //# sourceMappingURL=schema-example.js.map
