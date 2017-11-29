@@ -129,6 +129,11 @@ var TableArrayField = /** @class */ (function (_super) {
                 call: function () {
                     var schema = _this.selector(_this.props);
                     var rawData = _this.props.fields.getAll();
+                    if (!rawData || !(rawData instanceof Array) || !rawData.length)
+                        rawData = [schema.reduce(function (res, y) {
+                                res[y.label] = "";
+                                return res;
+                            }, {})];
                     var sheet = XLSX.utils.json_to_sheet(rawData.map(function (x) {
                         return schema.reduce(function (res, y) {
                             res[y.label] = x[y.key];

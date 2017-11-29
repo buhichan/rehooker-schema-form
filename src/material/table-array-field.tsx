@@ -132,7 +132,12 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             name:"导出",
             call:()=>{
                 const schema = this.selector(this.props)
-                const rawData = this.props.fields.getAll()
+                let rawData = this.props.fields.getAll()
+                if(!rawData || !(rawData instanceof Array) || !rawData.length)
+                rawData = [schema.reduce(function (res, y) {
+                    res[y.label] = "";
+                    return res;
+                }, {})]
                 const sheet = XLSX.utils.json_to_sheet(rawData.map(x=>{
                     return schema.reduce((res,y)=>{
                         res[y.label] = x[y.key]
