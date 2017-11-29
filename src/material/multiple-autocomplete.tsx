@@ -6,7 +6,7 @@ import Chip from 'material-ui/Chip';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
 import {addType,WidgetProps, addTypeWithWrapper, ReduxSchemaForm} from "../../"
-import ChipInput from "material-ui-chip-input";
+const ChipInput = require("material-ui-chip-input").default
 import {Field, FieldArray, WrappedFieldArrayProps} from "redux-form";
 import TextField from "material-ui/TextField";
 import { createSelector } from "reselect";

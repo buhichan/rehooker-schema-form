@@ -8,7 +8,7 @@ var field_1 = require("../field");
 var reselect_1 = require("reselect");
 var dataSourceConfig = { text: "name", value: "value" };
 var render_fields_1 = require("../render-fields");
-var Grid = require("ag-grid-material-preset").Grid;
+var Grid = require("ag-grid-presets").Grid;
 var XLSX = require("xlsx");
 function readWorkBook() {
     try {
@@ -68,7 +68,7 @@ function downloadWorkSheet(worksheet, fileName) {
         console.error(e);
     }
 }
-var TableArrayField = (function (_super) {
+var TableArrayField = /** @class */ (function (_super) {
     tslib_1.__extends(TableArrayField, _super);
     function TableArrayField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -165,6 +165,9 @@ var TableArrayField = (function (_super) {
         var value = this.props.fields.getAll() || empty;
         var schema = this.selector(this.props);
         return React.createElement("div", null,
+            React.createElement("label", { className: "control-label" },
+                this.props.fieldSchema.label,
+                this.props.fields.length ? "(" + this.props.fields.length + ")" : ""),
             React.createElement(Grid, { data: value, schema: schema, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, actions: this.actions, gridApi: this.bindGridApi }),
             React.createElement(Dialog_1.default, { autoScrollBodyContent: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
     };
@@ -173,7 +176,6 @@ var TableArrayField = (function (_super) {
 var empty = [];
 field_1.addTypeWithWrapper("table-array", function (props) {
     return React.createElement("div", { style: { paddingTop: 25 } },
-        React.createElement("label", { className: "control-label" }, props.fieldSchema.label),
         React.createElement(redux_form_1.FieldArray, { name: props.keyPath, rerenderOnEveryChange: true, component: TableArrayField, props: props }));
 });
 //# sourceMappingURL=table-array-field.js.map

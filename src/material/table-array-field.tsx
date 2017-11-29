@@ -5,7 +5,7 @@ import { WidgetProps, addTypeWithWrapper } from '../field';
 import { createSelector } from "reselect";
 const dataSourceConfig = {text:"name",value:"value"};
 import { renderFields } from '../render-fields';
-const {Grid} = require("ag-grid-material-preset")
+const {Grid} = require("ag-grid-presets")
 const XLSX = require("xlsx")
 
 type TableArrayFieldProps = WrappedFieldArrayProps<any>&WidgetProps;
@@ -168,6 +168,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         const value=this.props.fields.getAll()||empty
         const schema=this.selector(this.props);
         return <div>
+            <label className="control-label">{this.props.fieldSchema.label}{this.props.fields.length?`(${this.props.fields.length})`:""}</label>
             <Grid 
                 data={value}
                 schema={schema}
@@ -189,7 +190,6 @@ const empty = [];
 
 addTypeWithWrapper("table-array",(props)=>{
     return <div style={{paddingTop:25}}>
-        <label className="control-label">{props.fieldSchema.label}</label>
         <FieldArray name={props.keyPath} rerenderOnEveryChange component={TableArrayField} props={props}/>
     </div>
 });

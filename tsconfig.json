@@ -15,10 +15,6 @@
     "lib":["es6","scripthost","dom","es2016.array.include","es2015.promise"]
   },
   "exclude": [
-    "node_modules",
-    "./src/material/table-array-field.tsx",
-    "./src/material/multiple-autocomplete.tsx",
-    "./src/material/table-array-field.js",
-    "./src/material/multiple-autocomplete.js"
+    "node_modules"
   ]
 }
