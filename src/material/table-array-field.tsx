@@ -70,7 +70,8 @@ function downloadWorkSheet(worksheet,fileName){
         console.error(e)
     }
 }
-@connect()
+
+@(connect() as any)
 class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
     selector=createSelector<TableArrayFieldProps,any,any>(
         s=>s.fieldSchema.children,
