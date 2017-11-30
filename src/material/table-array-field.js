@@ -8,6 +8,7 @@ var field_1 = require("../field");
 var reselect_1 = require("reselect");
 var dataSourceConfig = { text: "name", value: "value" };
 var render_fields_1 = require("../render-fields");
+var react_redux_1 = require("react-redux");
 var Grid = require("ag-grid-presets").Grid;
 var XLSX = require("xlsx");
 function readWorkBook() {
@@ -77,6 +78,24 @@ var TableArrayField = /** @class */ (function (_super) {
         });
         _this.actions = [
             {
+                name: "编辑",
+                call: function (t, e) {
+                    var index = _this.findIndex(t);
+                    _this.api.forEachNode(function (x) { return x.data === t && _this.setState({
+                        editedIndex: index
+                    }, function () {
+                        window.dispatchEvent(new Event("resize"));
+                    }); });
+                }
+            },
+            {
+                name: "删除",
+                call: function (t, e) {
+                    var index = _this.findIndex(t);
+                    _this.api.forEachNode(function (x) { return x.data === t && _this.props.fields.remove(index); });
+                }
+            },
+            {
                 name: "添加",
                 call: function () {
                     _this.setState({
@@ -89,39 +108,25 @@ var TableArrayField = /** @class */ (function (_super) {
             {
                 name: "前移",
                 call: function (t, e, x) {
-                    _this.props.fields.swap(x.rowIndex, x.rowIndex - 1);
+                    var index = _this.findIndex(t);
+                    if (index >= 0)
+                        _this.props.fields.swap(index, index - 1);
                 },
                 enabled: function (t, x) {
-                    return x.rowIndex > 0;
+                    var index = _this.findIndex(t);
+                    return index > 0;
                 }
             },
             {
                 name: "后移",
                 call: function (t, e, x) {
-                    _this.props.fields.swap(x.rowIndex, x.rowIndex + 1);
+                    var index = _this.findIndex(t);
+                    if (index >= 0)
+                        _this.props.fields.swap(index, index + 1);
                 },
                 enabled: function (t, x) {
-                    return x.rowIndex < _this.props.fields.length - 1;
-                }
-            },
-            {
-                name: "编辑",
-                call: function (t, e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    _this.api.forEachNode(function (x) { return x.data === t && _this.setState({
-                        editedIndex: x.rowIndex
-                    }, function () {
-                        window.dispatchEvent(new Event("resize"));
-                    }); });
-                }
-            },
-            {
-                name: "删除",
-                call: function (t, e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    _this.api.forEachNode(function (x) { return x.data === t && _this.props.fields.remove(x.rowIndex); });
+                    var index = _this.findIndex(t);
+                    return index < _this.props.fields.length - 1;
                 }
             },
             {
@@ -148,34 +153,89 @@ var TableArrayField = /** @class */ (function (_super) {
                 call: function (data) {
                     readWorkBook().then(function (data) {
                         var schema = _this.selector(_this.props);
-                        data.forEach(function (item) {
-                            _this.props.fields.push(schema.reduce(function (res, field) {
+                        var newValues = data.map(function (item) {
+                            return schema.reduce(function (res, field) {
                                 res[field.key] = item[field.label];
                                 return res;
-                            }, item));
+                            }, item);
                         });
+                        if (confirm("是否替换原有数据? "))
+                            _this.changeArrayValues(newValues);
+                        else
+                            _this.changeArrayValues(_this.props.input.value.concat(newValues));
                     });
                 },
                 isStatic: true
+            }, {
+                name: "批量编辑",
+                call: function (data, e, nodes) {
+                    if (!data || data.length < 2)
+                        return;
+                    _this.setState({
+                        editedIndex: _this.props.fields.length,
+                        batchEditedData: data
+                    });
+                    _this.props.fields.push({}); // insert a new child to provide a blank form.
+                },
+                isStatic: true,
+                enabled: function (data) { return data && data.length >= 2; }
             }
         ];
+        _this.findIndex = function (data) {
+            for (var i = 0; i < _this.props.fields.length; i++) {
+                if (_this.props.fields.get(i) === data)
+                    return i;
+            }
+            return -1;
+        };
+        _this.changeArrayValues = function (newValues) { return _this.props.dispatch(redux_form_1.change(_this.props.meta.form, _this.props.keyPath, newValues)); };
+        _this.onBatchEdit = function () {
+            //remove the added child
+            var values = _this.props.fields.getAll().slice();
+            var batchEditValues = values.pop();
+            var filledBatchEditValues = Object.keys(batchEditValues).reduce(function (values, key) {
+                if (batchEditValues[key] !== null && batchEditValues[key] !== undefined)
+                    values[key] = batchEditValues[key];
+                return values;
+            }, {});
+            _this.changeArrayValues(values.map(function (value) {
+                if (_this.state.batchEditedData.includes(value))
+                    return tslib_1.__assign({}, value, batchEditValues);
+                else
+                    return value;
+            }));
+        };
         _this.state = {
-            editedIndex: -1
+            editedIndex: -1,
+            batchEditedData: null
         };
         _this.bindGridApi = function (api) { return _this.api = api; };
-        _this.closeDialog = function () { return _this.setState({ editedIndex: -1 }); };
+        _this.closeDialog = function () {
+            if (_this.state.batchEditedData)
+                _this.onBatchEdit();
+            _this.setState({
+                editedIndex: -1,
+                batchEditedData: null
+            });
+        };
+        _this.stripLastItem = reselect_1.createSelector(function (s) { return s; }, function (s) { return s.slice(0, -1); });
         return _this;
     }
     TableArrayField.prototype.render = function () {
         var value = this.props.fields.getAll() || empty;
-        var schema = this.selector(this.props);
+        var _a = this.props.fieldSchema, key = _a.key, type = _a.type, label = _a.label, hide = _a.hide, fullWidth = _a.fullWidth, //todo: should I put this presentation logic here?
+        required = _a.required, disabled = _a.disabled, children = _a.children, gridOptions = tslib_1.__rest(_a, ["key", "type", "label", "hide", "fullWidth", "required", "disabled", "children"]);
+        var gridSchema = this.selector(this.props);
         return React.createElement("div", null,
             React.createElement("label", { className: "control-label" },
                 this.props.fieldSchema.label,
                 this.props.fields.length ? "(" + this.props.fields.length + ")" : ""),
-            React.createElement(Grid, { data: value, schema: schema, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, actions: this.actions, gridApi: this.bindGridApi }),
-            React.createElement(Dialog_1.default, { autoScrollBodyContent: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
+            React.createElement(Grid, tslib_1.__assign({ data: this.state.batchEditedData ? this.stripLastItem(value) : value, schema: gridSchema, gridName: this.props.meta.form + "-" + this.props.keyPath, suppressAutoSizeToFit: true, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, selectionStyle: "checkbox", actions: this.actions, gridApi: this.bindGridApi }, gridOptions)),
+            React.createElement(Dialog_1.default, { autoScrollBodyContent: true, autoDetectWindowHeight: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
     };
+    TableArrayField = tslib_1.__decorate([
+        react_redux_1.connect()
+    ], TableArrayField);
     return TableArrayField;
 }(React.PureComponent));
 var empty = [];

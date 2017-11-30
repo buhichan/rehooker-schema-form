@@ -1,10 +1,12 @@
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
-import { WrappedFieldArrayProps, FieldArray } from 'redux-form';
+import { WrappedFieldArrayProps, FieldArray, reduxForm, change } from 'redux-form';
 import { WidgetProps, addTypeWithWrapper } from '../field';
 import { createSelector } from "reselect";
 const dataSourceConfig = {text:"name",value:"value"};
 import { renderFields } from '../render-fields';
+import { ReduxSchemaForm } from '../form';
+import { connect } from 'react-redux';
 const {Grid} = require("ag-grid-presets")
 const XLSX = require("xlsx")
 
@@ -68,7 +70,7 @@ function downloadWorkSheet(worksheet,fileName){
         console.error(e)
     }
 }
-
+@connect()
 class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
     selector=createSelector<TableArrayFieldProps,any,any>(
         s=>s.fieldSchema.children,
@@ -80,6 +82,24 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         }
     )
     actions=[
+        {
+            name:"编辑",
+            call:(t,e)=>{
+                const index = this.findIndex(t)
+                this.api.forEachNode(x=>x.data === t && this.setState({
+                    editedIndex:index
+                },()=>{
+                    window.dispatchEvent(new Event("resize"))
+                }))
+            }
+        },
+        {
+            name:"删除",
+            call:(t,e)=>{
+                const index = this.findIndex(t)
+                this.api.forEachNode(x=>x.data === t && this.props.fields.remove(index))
+            }
+        },
         {
             name:"添加",
             call:()=>{
@@ -93,39 +113,25 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         {
             name:"前移",
             call:(t,e,x)=>{
-                this.props.fields.swap(x.rowIndex,x.rowIndex-1)
+                const index = this.findIndex(t)
+                if(index>=0)
+                    this.props.fields.swap(index,index-1)
             },
             enabled:(t,x)=>{
-                return x.rowIndex>0
+                const index = this.findIndex(t)
+                return index>0
             }
         },
         {
             name:"后移",
             call:(t,e,x)=>{
-                 this.props.fields.swap(x.rowIndex,x.rowIndex+1)
+                const index = this.findIndex(t)
+                if(index>=0)
+                    this.props.fields.swap(index,index+1)
             },
             enabled:(t,x)=>{
-                return x.rowIndex<this.props.fields.length-1
-            }
-        },
-        {
-            name:"编辑",
-            call:(t,e)=>{
-                e.preventDefault()
-                e.stopPropagation()
-                this.api.forEachNode(x=>x.data === t && this.setState({
-                    editedIndex:x.rowIndex
-                },()=>{
-                    window.dispatchEvent(new Event("resize"))
-                }))
-            }
-        },
-        {
-            name:"删除",
-            call:(t,e)=>{
-                e.preventDefault()
-                e.stopPropagation()
-                this.api.forEachNode(x=>x.data === t && this.props.fields.remove(x.rowIndex))
+                const index = this.findIndex(t)
+                return index<this.props.fields.length-1
             }
         },
         {
@@ -152,37 +158,108 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             call:(data)=>{
                 readWorkBook().then(data=>{
                     const schema = this.selector(this.props)
-                    data.forEach(item=>{
-                        this.props.fields.push(schema.reduce((res,field)=>{
+                    const newValues = data.map(item=>{
+                        return schema.reduce((res,field)=>{
                             res[field.key] = item[field.label]
                             return res
-                        },item))
+                        },item)
                     })
+                    if(confirm("是否替换原有数据? "))
+                        this.changeArrayValues(newValues)
+                    else 
+                        this.changeArrayValues(this.props.input.value.concat(newValues))
                 })
             },
             isStatic:true
+        },{
+            name:"批量编辑",
+            call:(data,e,nodes)=>{
+                if(!data || data.length<2)
+                    return
+                this.setState({
+                    editedIndex:this.props.fields.length,
+                    batchEditedData:data
+                })
+                this.props.fields.push({}) // insert a new child to provide a blank form.
+            },
+            isStatic:true,
+            enabled:data=>data && data.length>=2
         }
     ]
+    findIndex=(data)=>{
+        for(let i =0;i<this.props.fields.length;i++){
+            if(this.props.fields.get(i) === data)
+                return i
+        }
+        return -1
+    }
+    changeArrayValues=newValues=>this.props.dispatch(change(this.props.meta.form,this.props.keyPath,newValues))
+    onBatchEdit=()=>{
+        //remove the added child
+        const values = this.props.fields.getAll().slice()
+        const batchEditValues = values.pop()
+        const filledBatchEditValues = Object.keys(batchEditValues).reduce((values,key)=>{
+            if(batchEditValues[key] !== null && batchEditValues[key] !== undefined)
+                values[key] = batchEditValues[key]
+            return values;
+        },{})
+        this.changeArrayValues(values.map((value)=>{
+            if(this.state.batchEditedData.includes(value))
+                return {
+                    ...value,
+                    ...batchEditValues
+                }
+            else 
+                return value
+        }))
+    }
     state={
-        editedIndex:-1
+        editedIndex:-1,
+        batchEditedData:null
     }
     api
     bindGridApi=api=>this.api=api;
-    closeDialog=()=>this.setState({editedIndex:-1})
+    closeDialog=()=>{
+        if(this.state.batchEditedData)
+            this.onBatchEdit()
+        this.setState({
+            editedIndex:-1,
+            batchEditedData:null
+        })
+    }
+    stripLastItem = createSelector<any[],any[],any[]>(
+        s=>s,
+        s=>s.slice(0,-1)
+    )
     render(){
         const value=this.props.fields.getAll()||empty
-        const schema=this.selector(this.props);
+        const {
+            key,
+            type,
+            label,
+            hide,
+            fullWidth, //todo: should I put this presentation logic here?
+            required,
+            disabled,
+            children,
+            ...gridOptions
+        } = this.props.fieldSchema
+        const gridSchema=this.selector(this.props);
         return <div>
             <label className="control-label">{this.props.fieldSchema.label}{this.props.fields.length?`(${this.props.fields.length})`:""}</label>
             <Grid 
-                data={value}
-                schema={schema}
+                data={this.state.batchEditedData?this.stripLastItem(value):value}
+                schema={gridSchema}
+                gridName={this.props.meta.form+"-"+this.props.keyPath}
+                suppressAutoSizeToFit
                 overlayNoRowsTemplate={`<div style="font-size:30px">${""}</div>`}
                 height={300}
+                selectionStyle="checkbox"
                 actions={this.actions}
                 gridApi={this.bindGridApi}
+                {...gridOptions}
             />
-            <Dialog autoScrollBodyContent open={this.state.editedIndex >= 0 } onRequestClose={this.closeDialog}>
+            <Dialog autoScrollBodyContent autoDetectWindowHeight open={this.state.editedIndex >= 0 } onRequestClose={this.closeDialog}>
                 {
                     this.state.editedIndex<0?null:renderFields(this.props.meta.form,this.props.fieldSchema.children,this.props.keyPath+"["+this.state.editedIndex+"]")
                 }
