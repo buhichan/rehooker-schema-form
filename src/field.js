@@ -33,10 +33,13 @@ function getType(name) {
 }
 exports.getType = getType;
 function preRenderField(field, form, keyPath) {
+    var key = field.key || field.label;
+    if (!key)
+        console.warn("必须为此schema设置一个key或者label, 以作为React的key:", field);
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return React.createElement(StatefulField, { key: field.key || field.label, fieldSchema: field, keyPath: keyPath, form: form });
+        return React.createElement(StatefulField, { key: key, fieldSchema: field, keyPath: keyPath, form: form });
     else
-        return React.createElement(StatelessField, { key: field.key || field.label, field: field, form: form, keyPath: keyPath });
+        return React.createElement(StatelessField, { key: key, field: field, form: form, keyPath: keyPath });
 }
 exports.preRenderField = preRenderField;
 var StatelessField = /** @class */ (function (_super) {
@@ -60,12 +63,13 @@ var StatelessField = /** @class */ (function (_super) {
         else if (typeof type === 'function')
             return React.createElement("div", { className: "field " + typeName + (fullWidth ? " full-width" : ""), style: field.style },
                 React.createElement(redux_form_1.Field, tslib_1.__assign({ name: keyPath, keyPath: keyPath, fieldSchema: field, renderField: preRenderField }, rest, { component: type })));
-        //noinspection FallThroughInSwitchStatementJS
         switch (type) {
+            //这里不可能存在getChildren还没有被执行的情况
+            case "virtual-group":
+                return render_fields_1.renderFields(form, children, keyPath, true);
             case "group":
-                //这里不可能存在getChildren还没有被执行的情况
                 return React.createElement("div", { className: "field " + typeName, style: field.style },
-                    React.createElement("fieldset", { key: field.key || field.label },
+                    React.createElement("fieldset", null,
                         React.createElement("legend", null, label),
                         render_fields_1.renderFields(form, children, keyPath)));
             default:

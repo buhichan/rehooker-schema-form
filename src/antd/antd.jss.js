@@ -1,18 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
-var FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
-var widgetHeight = 85;
-var mobileMedia = "@media(max-width:768px)";
-var clearfix = {
-    "&:after": {
-        content: "\" \"",
-        display: "table",
-        clear: "both"
-    },
-};
+var constants_1 = require("../constants");
 exports.stylesheet = (_a = {
-        form: tslib_1.__assign({ position: "relative" }, clearfix, (_b = { "& *": {
+        form: tslib_1.__assign({ position: "relative" }, constants_1.clearfix, (_b = { "& *": {
                     boxSizing: "border-box",
                 }, "& .btn-group": {}, "& .array-field-container": {
                     display: "flex",
@@ -44,15 +35,15 @@ exports.stylesheet = (_a = {
                     paddingRight: "10%",
                     paddingLeft: "10%",
                     width: "50%",
-                    height: widgetHeight,
+                    height: constants_1.widgetHeight,
                     "&.hidden": {
                         display: "none"
                     },
-                } }, _b[FullWidthInputs] = {
+                } }, _b[constants_1.fullWidthInputs] = {
             width: "100%",
             height: "auto",
-            minHeight: widgetHeight
-        }, _b["& .schema-node"] = clearfix, _b["& div.children, & div.button"] = {
+            minHeight: constants_1.widgetHeight
+        }, _b["& .schema-node"] = constants_1.clearfix, _b["& div.children, & div.button"] = {
             textAlign: "center",
             float: "left",
             paddingRight: "initial",
@@ -80,12 +71,12 @@ exports.stylesheet = (_a = {
                 background: "#f9f9fa",
                 border: "none"
             },
-            _c[FullWidthInputs] = {
+            _c[constants_1.fullWidthInputs] = {
                 padding: " 0 5%",
             },
             _c), _b))
     },
-    _a[mobileMedia] = {
+    _a[constants_1.mobileMedia] = {
         "form": {
             "& .field, & .array-field-container .array-field-child": {
                 width: "100%"

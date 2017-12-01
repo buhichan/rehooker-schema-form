@@ -5,14 +5,16 @@ import * as React from "react"
 import {AsyncOptions, FormFieldSchema} from "./form";
 import {preRenderField} from "./field";
 
-export function renderFields(form,schema:FormFieldSchema[],keyPath:string=""){
+export function renderFields(form,schema:FormFieldSchema[],keyPath:string="", noSchemaNodeWrapper=false){
     if(!schema)
         return null;
-    return <div className="schema-node">
-        {
-            schema.map(field => {
-                return preRenderField(field, form, (keyPath?(keyPath+"."):"")+field.key)
-            })
-        }
+    const children = schema.map(field => {
+        const childKeyPath = (keyPath?(keyPath+"."):"")+field.key
+        return preRenderField(field, form, childKeyPath)
+    })
+    if(noSchemaNodeWrapper)
+        return children
+    else return <div className="schema-node">
+        {children}
     </div>
 }

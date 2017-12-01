@@ -74,10 +74,13 @@ export function getType(name):Widget{
 }
 
 export function preRenderField(field:FormFieldSchema, form:string, keyPath:string){ //keyPath is the old keyPath
+    const key = field.key||field.label
+    if(!key)
+        console.warn("必须为此schema设置一个key或者label, 以作为React的key:",field)
     if(field.listens && ( typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return <StatefulField key={field.key||field.label} fieldSchema={field} keyPath={keyPath} form={form}/>;
+        return <StatefulField key={key} fieldSchema={field} keyPath={keyPath} form={form}/>;
     else
-        return <StatelessField key={field.key||field.label}  field={field} form={form} keyPath={keyPath} />;
+        return <StatelessField key={key} field={field} form={form} keyPath={keyPath} />;
 }
 
 export class StatelessField extends React.PureComponent<{field:FormFieldSchema, form:string, keyPath:string}>{
@@ -109,12 +112,13 @@ export class StatelessField extends React.PureComponent<{field:FormFieldSchema, 
                 <Field name={keyPath} keyPath={keyPath} fieldSchema={field}
                        renderField={preRenderField} {...rest as any} component={type}/>
             </div>;
-        //noinspection FallThroughInSwitchStatementJS
         switch (type) {
+            //这里不可能存在getChildren还没有被执行的情况
+            case "virtual-group":
+                return renderFields(form, children, keyPath, true)
             case "group":
-                //这里不可能存在getChildren还没有被执行的情况
                 return <div className={"field " + typeName} style={field.style}>
-                    <fieldset key={field.key||field.label}>
+                    <fieldset>
                         <legend>{label}</legend>
                         {
                             renderFields(form, children, keyPath)

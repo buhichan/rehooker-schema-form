@@ -315,6 +315,24 @@ exports.schema = [
                 console.log(args);
             }
         }
+    }, {
+        key: "",
+        label: "some text",
+        type: "virtual-group",
+        children: [],
+        listens: {
+            text: function (v) {
+                return {
+                    children: [
+                        {
+                            key: "text",
+                            label: v,
+                            type: 'text'
+                        }
+                    ]
+                };
+            }
+        }
     }
     //要用这个必须使用table-array-field, 那个又依赖ag-grid-material-preset,因此去掉
     // {

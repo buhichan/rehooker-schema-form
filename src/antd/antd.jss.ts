@@ -1,14 +1,5 @@
+import { clearfix, widgetHeight, fullWidthInputs, mobileMedia } from '../constants';
 
-const FullWidthInputs = "& .field.group,& .field.array,& .field.full-width";
-const widgetHeight = 85;
-const mobileMedia = "@media(max-width:768px)";
-const clearfix = {
-    "&:after":{
-        content:"\" \"",
-        display:"table",
-        clear:"both"
-    },
-};
 export const stylesheet = {
     form: {
         position:"relative",
@@ -56,7 +47,7 @@ export const stylesheet = {
                 display: "none"
             },
         },
-        [FullWidthInputs]: {
+        [fullWidthInputs]: {
             width: "100%",
             height:"auto",
             minHeight:widgetHeight
@@ -92,7 +83,7 @@ export const stylesheet = {
             padding: " 0 7.5px",
             background: "#f9f9fa",
             border: "none",
-            [FullWidthInputs]: {
+            [fullWidthInputs]: {
                 padding: " 0 5%",
             }
         }
