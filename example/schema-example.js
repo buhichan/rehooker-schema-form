@@ -106,7 +106,6 @@ exports.schema = [
         key: "ajax_select",
         type: "select",
         label: "单选(async)",
-        placeholder: "placeholder",
         options: function () {
             return fetch("/example/options.json").then(function (res) { return res.json(); });
         }

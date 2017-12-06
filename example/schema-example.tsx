@@ -105,7 +105,6 @@ export let schema:FormFieldSchema[] = [
         key:"ajax_select",
         type:"select",
         label:"单选(async)",
-        placeholder:"placeholder",
         options:()=>{
             return fetch("/example/options.json").then(res=>res.json())
         }

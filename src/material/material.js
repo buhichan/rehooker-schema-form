@@ -22,12 +22,12 @@ var RadioButton_1 = require("material-ui/RadioButton");
 var CircularProgress_1 = require("material-ui/CircularProgress");
 var buttons_1 = require("../buttons");
 var moment = require("moment");
-var errorTextAsHintTextStyle = {
-    color: "inherit"
-};
-function NumberInput(props) {
-    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, floatingLabelStyle: props.meta.error ? undefined : errorTextAsHintTextStyle, value: Number(props.input.value), errorText: props.meta.error || props.fieldSchema.placeholder, errorStyle: props.meta.error ? undefined : errorTextAsHintTextStyle, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
-}
+var errorTextAsHintTextStyle = function (muiTheme) { return ({
+    color: muiTheme.textField.hintColor
+}); };
+var NumberInput = muiThemeable_1.default()(function NumberInput(props) {
+    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, floatingLabelStyle: props.meta.error ? undefined : errorTextAsHintTextStyle(props.muiTheme), value: Number(props.input.value), errorText: props.meta.error || props.fieldSchema.placeholder, errorStyle: props.meta.error ? undefined : errorTextAsHintTextStyle(props.muiTheme), onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
+});
 var defaultDateInputFormat = { year: "numeric", month: "2-digit", day: "2-digit" };
 var defaultDateTimeInputFormat = {
     year: "numeric",
@@ -51,7 +51,7 @@ function formatDate(date) {
     return moment(date).format("YYYY-MM-DD");
 }
 var timePickerStyle = { bottom: 40, position: "relative" };
-function DateTimeInput(props) {
+var DateTimeInput = muiThemeable_1.default()(function DateTimeInput(props) {
     var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
     var value = input.value ?
         moment(input.value) :
@@ -62,7 +62,7 @@ function DateTimeInput(props) {
         value = value.toDate();
     return React.createElement("div", null,
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
-            React.createElement(material_ui_1.DatePicker, { id: fieldSchema.key + "date", DateTimeFormat: Intl.DateTimeFormat, value: value, fullWidth: true, errorText: meta.error || fieldSchema.placeholder, errorStyle: meta.error ? undefined : errorTextAsHintTextStyle, onChange: function (e, date) {
+            React.createElement(material_ui_1.DatePicker, { id: fieldSchema.key + "date", DateTimeFormat: Intl.DateTimeFormat, value: value, fullWidth: true, errorText: meta.error || fieldSchema.placeholder, errorStyle: meta.error ? undefined : errorTextAsHintTextStyle(props.muiTheme), onChange: function (e, date) {
                     if (value) {
                         date.setHours(value.getHours());
                         date.setMinutes(value.getMinutes());
@@ -71,14 +71,14 @@ function DateTimeInput(props) {
                     input.onChange(formatDateTime(date));
                 }, floatingLabelText: fieldSchema.label, cancelLabel: "取消", locale: "zh-Hans", autoOk: true })),
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
-            React.createElement(material_ui_1.TimePicker, { id: fieldSchema.key + "time", value: value, fullWidth: true, autoOk: true, style: timePickerStyle, errorText: " ", errorStyle: meta.error ? undefined : errorTextAsHintTextStyle, cancelLabel: "取消", underlineStyle: { bottom: 10 }, format: "24hr", onChange: function (_, time) {
+            React.createElement(material_ui_1.TimePicker, { id: fieldSchema.key + "time", value: value, fullWidth: true, autoOk: true, style: timePickerStyle, errorText: " ", errorStyle: meta.error ? undefined : errorTextAsHintTextStyle(props.muiTheme), cancelLabel: "取消", underlineStyle: { bottom: 10 }, format: "24hr", onChange: function (_, time) {
                     var newValue = value ? new Date(value) : new Date();
                     newValue.setHours(time.getHours());
                     newValue.setMinutes(time.getMinutes());
                     newValue.setSeconds(time.getSeconds());
                     input.onChange(formatDateTime(newValue));
                 } })));
-}
+});
 var DateInput = /** @class */ (function (_super) {
     tslib_1.__extends(DateInput, _super);
     function DateInput() {
@@ -102,8 +102,11 @@ var DateInput = /** @class */ (function (_super) {
         if (parsedDate.isValid()) {
             DatePickerProps['value'] = parsedDate.toDate();
         }
-        return React.createElement(material_ui_1.DatePicker, tslib_1.__assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", errorText: props.meta.error || props.fieldSchema.placeholder, errorStyle: props.meta.error ? undefined : errorTextAsHintTextStyle, floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, onFocus: this.onFocus, okLabel: "确认", ref: function (ref) { return _this.datepicker = ref; } }, DatePickerProps, { hintText: props.fieldSchema.placeholder, disabled: props.disabled }));
+        return React.createElement(material_ui_1.DatePicker, tslib_1.__assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", errorText: props.meta.error || props.fieldSchema.placeholder, errorStyle: props.meta.error ? undefined : errorTextAsHintTextStyle(props.muiTheme), floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, onFocus: this.onFocus, okLabel: "确认", ref: function (ref) { return _this.datepicker = ref; } }, DatePickerProps, { hintText: props.fieldSchema.placeholder, disabled: props.disabled }));
     };
+    DateInput = tslib_1.__decorate([
+        muiThemeable_1.default()
+    ], DateInput);
     return DateInput;
 }(React.PureComponent));
 function TextInput(props) {
@@ -117,50 +120,55 @@ function CheckboxInput(props) {
     return React.createElement(material_ui_1.Checkbox, tslib_1.__assign({}, rest, { onBlur: function (e) { return onBlur(value); }, style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: function (e, v) { return onChange(v); }, checked: Boolean(value) }));
 }
 //fixme: todo: https://github.com/callemall/material-ui/issues/6080
-var SelectInput = /** @class */ (function (_super) {
-    tslib_1.__extends(SelectInput, _super);
-    function SelectInput() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = {
-            options: null
-        };
-        _this.unmounted = false;
-        return _this;
-    }
-    SelectInput.prototype.reload = function (props) {
-        var _this = this;
-        var rawOptions = props.fieldSchema.options;
-        if (typeof rawOptions === 'function') {
-            if (!rawOptions.length)
-                rawOptions().then(function (options) { return !_this.unmounted && _this.setState({
-                    options: options
-                }); });
+function resolvefieldSchemaOptions(Component) {
+    return /** @class */ (function (_super) {
+        tslib_1.__extends(OptionsResolver, _super);
+        function OptionsResolver() {
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.state = {
+                options: null
+            };
+            _this.unmounted = false;
+            return _this;
         }
-        else if (rawOptions instanceof Array)
-            this.setState({
-                options: props.fieldSchema.options
-            });
-    };
-    SelectInput.prototype.componentWillReceiveProps = function (nextProps) {
-        if (nextProps.fieldSchema.options !== this.props.fieldSchema.options)
-            this.reload(nextProps);
-    };
-    SelectInput.prototype.componentWillUnmount = function () {
-        this.unmounted = true;
-    };
-    SelectInput.prototype.componentWillMount = function () {
-        this.reload(this.props);
-    };
-    SelectInput.prototype.render = function () {
-        var _a = this.props, input = _a.input, fieldSchema = _a.fieldSchema, meta = _a.meta;
-        return React.createElement(SelectField_1.default, tslib_1.__assign({}, input, { onBlur: function () { return input.onBlur(input.value); }, id: input.name, disabled: fieldSchema.disabled, floatingLabelText: fieldSchema.label, fullWidth: true, errorText: meta.error || fieldSchema.placeholder, errorStyle: meta.error ? undefined : errorTextAsHintTextStyle, hintText: fieldSchema.placeholder, multiple: fieldSchema.multiple, onChange: function (e, i, v) {
-                e.target['value'] = v;
-                input.onChange(e);
-            } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }) : React.createElement(material_ui_1.MenuItem, { className: "option", value: null, primaryText: fieldSchema.loadingText || "载入中" }));
-    };
-    return SelectInput;
-}(React.PureComponent));
-exports.SelectInput = SelectInput;
+        OptionsResolver.prototype.reload = function (props) {
+            var _this = this;
+            var rawOptions = props.fieldSchema.options;
+            if (typeof rawOptions === 'function') {
+                if (!rawOptions.length)
+                    rawOptions().then(function (options) { return !_this.unmounted && _this.setState({
+                        options: options
+                    }); });
+            }
+            else if (rawOptions instanceof Array)
+                this.setState({
+                    options: props.fieldSchema.options
+                });
+        };
+        OptionsResolver.prototype.componentWillReceiveProps = function (nextProps) {
+            if (nextProps.fieldSchema.options !== this.props.fieldSchema.options)
+                this.reload(nextProps);
+        };
+        OptionsResolver.prototype.componentWillUnmount = function () {
+            this.unmounted = true;
+        };
+        OptionsResolver.prototype.componentWillMount = function () {
+            this.reload(this.props);
+        };
+        OptionsResolver.prototype.render = function () {
+            return React.createElement(Component, tslib_1.__assign({}, this.props, { options: this.state.options }));
+        };
+        return OptionsResolver;
+    }(React.PureComponent));
+}
+exports.resolvefieldSchemaOptions = resolvefieldSchemaOptions;
+var SelectInput = muiThemeable_1.default()(resolvefieldSchemaOptions(function (props) {
+    var input = props.input, fieldSchema = props.fieldSchema, meta = props.meta, options = props.options, muiTheme = props.muiTheme;
+    return React.createElement(SelectField_1.default, tslib_1.__assign({}, input, { onBlur: function () { return input.onBlur(input.value); }, id: input.name, disabled: fieldSchema.disabled, floatingLabelText: fieldSchema.label, fullWidth: true, errorText: meta.error, floatingLabelFixed: !!fieldSchema.placeholder, hintText: fieldSchema.placeholder, multiple: fieldSchema.multiple, onChange: function (e, i, v) {
+            e.target['value'] = v;
+            input.onChange(e);
+        } }), options ? options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }) : React.createElement(material_ui_1.MenuItem, { className: "option", value: null, primaryText: fieldSchema.loadingText || "载入中" }));
+}));
 var dataSourceConfig = { text: "name", value: "value" };
 var BaseAutoComplete = react_jss_1.default({
     autocomplete: {
@@ -232,18 +240,21 @@ var AutoCompleteSelect = /** @class */ (function (_super) {
     }
     AutoCompleteSelect.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        var options = (this.state.options || []);
+        var options = (this.props.options || []);
         var value = options.find(function (x) { return x.value === input.value; });
         return React.createElement(BaseAutoComplete, { fieldSchema: fieldSchema, input: input, meta: meta, openOnFocus: true, fullResult: fieldSchema.fullResult, searchText: value ? value.name : input.value || "", dataSource: options, onNewRequest: this.onNewRequest });
     };
+    AutoCompleteSelect = tslib_1.__decorate([
+        resolvefieldSchemaOptions
+    ], AutoCompleteSelect);
     return AutoCompleteSelect;
-}(SelectInput));
+}(React.PureComponent));
 var AutoCompleteText = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteText, _super);
     function AutoCompleteText() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onUpdateInput = function (name) {
-            var options = (_this.state.options || []);
+            var options = (_this.props.options || []);
             var entry = options.find(function (x) { return x.name === name; });
             return _this.props.input.onChange(entry ? entry.value : name);
         };
@@ -251,11 +262,14 @@ var AutoCompleteText = /** @class */ (function (_super) {
     }
     AutoCompleteText.prototype.render = function () {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
-        var options = (this.state.options || []);
+        var options = (this.props.options || []);
         return React.createElement(BaseAutoComplete, { input: input, meta: meta, fieldSchema: fieldSchema, fullResult: fieldSchema.fullResult, dataSource: options, searchText: input.value, onUpdateInput: this.onUpdateInput });
     };
+    AutoCompleteText = tslib_1.__decorate([
+        resolvefieldSchemaOptions
+    ], AutoCompleteText);
     return AutoCompleteText;
-}(SelectInput));
+}(React.PureComponent));
 var AutoCompleteAsync = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
     function AutoCompleteAsync() {
@@ -334,9 +348,10 @@ var ArrayFieldRenderer = /** @class */ (function (_super) {
     ArrayFieldRenderer.prototype.render = function () {
         var props = this.props;
         var muiTheme = props.muiTheme;
-        var _a = props.fieldSchema, fields = _a.fields, children = _a.children, getChildren = _a.getChildren, _b = _a.itemsPerRow, itemsPerRow = _b === void 0 ? 2 : _b, disableCreate = _a.disableCreate, disableDelete = _a.disableDelete, disableSort = _a.disableSort;
+        var fields = props.fields;
+        var _a = props.fieldSchema, children = _a.children, getChildren = _a.getChildren, _b = _a.itemsPerRow, itemsPerRow = _b === void 0 ? 2 : _b, disableCreate = _a.disableCreate, disableDelete = _a.disableDelete, disableSort = _a.disableSort;
         return React.createElement("div", { className: "clearfix array-field-container" },
-            props.fields.map(function (name, i) {
+            fields.map(function (name, i) {
                 var childValue = props.fields.get(i);
                 var meta = props.meta;
                 var keyPath = props.keyPath;
@@ -430,7 +445,7 @@ var SelectRadio = /** @class */ (function (_super) {
             React.createElement(RadioButton_1.RadioButtonGroup, tslib_1.__assign({}, props.input, { valueSelected: props.input.value, onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, name: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, style: {
                     display: 'flex',
                     flexWrap: "wrap"
-                }, onChange: function (e, v) { return props.input.onChange(v); } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(RadioButton_1.default, { style: {
+                }, onChange: function (e, v) { return props.input.onChange(v); } }), this.props.options ? this.props.options.map(function (option) { return (React.createElement(RadioButton_1.default, { style: {
                     width: "auto",
                     flex: 1,
                     whiteSpace: "nowrap",
@@ -438,10 +453,11 @@ var SelectRadio = /** @class */ (function (_super) {
                 }, key: option.value, value: option.value, label: option.name })); }) : React.createElement(RadioButton_1.default, { key: "...loading", value: "", disabled: true, label: "载入中" })));
     };
     SelectRadio = tslib_1.__decorate([
-        field_1.addType("radio")
+        field_1.addType("radio"),
+        resolvefieldSchemaOptions
     ], SelectRadio);
     return SelectRadio;
-}(SelectInput));
+}(React.PureComponent));
 field_1.addType("password", TextInput);
 field_1.addType("email", TextInput);
 field_1.addType('text', TextInput);

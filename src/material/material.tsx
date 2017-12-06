@@ -27,11 +27,11 @@ import CircularProgress from "material-ui/CircularProgress";
 import { setButton } from "../buttons";
 const moment = require("moment")
 
-const errorTextAsHintTextStyle = {
-    color:"inherit"
-}
+const errorTextAsHintTextStyle = (muiTheme:MuiTheme)=>({
+    color:muiTheme.textField.hintColor
+})
 
-function NumberInput(props:WidgetProps){
+const NumberInput = muiThemeable()(function NumberInput(props:WidgetProps&{muiTheme:MuiTheme}){
     return <TextField
         {...props.input as any}
         type="number"
@@ -40,13 +40,13 @@ function NumberInput(props:WidgetProps){
         disabled={props.disabled}
         style={{width:"100%"}}
         floatingLabelText={props.fieldSchema.label}
-        floatingLabelStyle={props.meta.error?undefined:errorTextAsHintTextStyle}
+        floatingLabelStyle={props.meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
         value={Number(props.input.value)}
         errorText={props.meta.error||props.fieldSchema.placeholder}
-        errorStyle={props.meta.error?undefined:errorTextAsHintTextStyle}
+        errorStyle={props.meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
         onChange={(e)=>props.input.onChange(Number(e.target['value']))}
-    />;
-}
+    />
+})
 
 const defaultDateInputFormat = {year:"numeric",month:"2-digit",day:"2-digit"}
 
@@ -77,7 +77,7 @@ const timePickerStyle:React.CSSProperties = {bottom:40,position:"relative"}
 
 
 
-function DateTimeInput(props:WidgetProps){
+const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{muiTheme:MuiTheme}){
     const {meta,input,fieldSchema} = props;
     let value = input.value?
             moment(input.value):
@@ -94,7 +94,7 @@ function DateTimeInput(props:WidgetProps){
                 value={value}
                 fullWidth
                 errorText={meta.error||fieldSchema.placeholder}
-                errorStyle={meta.error?undefined:errorTextAsHintTextStyle}
+                errorStyle={meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
                 onChange={(e,date)=>{
                     if(value) {
                         date.setHours(value.getHours());
@@ -117,7 +117,7 @@ function DateTimeInput(props:WidgetProps){
                 autoOk
                 style={timePickerStyle}
                 errorText={" "}
-                errorStyle={meta.error?undefined:errorTextAsHintTextStyle}
+                errorStyle={meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
                 cancelLabel="取消"
                 underlineStyle={{bottom:10}}
                 format="24hr"
@@ -131,8 +131,9 @@ function DateTimeInput(props:WidgetProps){
             />
         </div>
     </div>
-}
+})
 
+@muiThemeable()
 class DateInput extends React.PureComponent<WidgetProps>{
     datepicker;
     onFocus=(e:React.SyntheticEvent<any>)=>{
@@ -157,7 +158,7 @@ class DateInput extends React.PureComponent<WidgetProps>{
             DateTimeFormat={Intl.DateTimeFormat as any}
             locale="zh-CN"
             errorText={props.meta.error||props.fieldSchema.placeholder}
-            errorStyle={props.meta.error?undefined:errorTextAsHintTextStyle}
+            errorStyle={props.meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
             floatingLabelText={props.fieldSchema.label}
             autoOk={true}
             id={props.input.name}
@@ -207,60 +208,69 @@ function CheckboxInput (props:WidgetProps){
 }
 
 //fixme: todo: https://github.com/callemall/material-ui/issues/6080
-export class SelectInput extends React.PureComponent<WidgetProps,any>{
-    state={
-        options:null
-    };
-    reload(props:WidgetProps){
-        const rawOptions =  props.fieldSchema.options;
-        if(typeof rawOptions=== 'function'){
-            if(!rawOptions.length)
-                (rawOptions as AsyncOptions)().then(options=>!this.unmounted && this.setState({
-                    options
-                }))
+export function resolvefieldSchemaOptions(Component){
+    return class OptionsResolver extends React.PureComponent<WidgetProps,any>{
+        state={
+            options:null
+        };
+        reload(props:WidgetProps){
+            const rawOptions =  props.fieldSchema.options;
+            if(typeof rawOptions=== 'function'){
+                if(!rawOptions.length)
+                    (rawOptions as AsyncOptions)().then(options=>!this.unmounted && this.setState({
+                        options
+                    }))
 
-        }else if (rawOptions instanceof Array)
-            this.setState({
-                options:props.fieldSchema.options
-            })
-    }
-    componentWillReceiveProps(nextProps:WidgetProps){
-        if(nextProps.fieldSchema.options!==this.props.fieldSchema.options)
-            this.reload(nextProps);
-    }
-    unmounted=false;
-    componentWillUnmount(){
-        this.unmounted=true
-    }
-    componentWillMount(){
-        this.reload(this.props);
-    }
-    render() {
-        const {input,fieldSchema,meta} = this.props;
-        return <SelectField
-                {...input as any}
-                onBlur={()=>input.onBlur(input.value)}
-                id={input.name}
-                disabled={fieldSchema.disabled}
-                floatingLabelText={fieldSchema.label}
-                fullWidth={true}
-                errorText={meta.error||fieldSchema.placeholder}
-                errorStyle={meta.error?undefined:errorTextAsHintTextStyle}
-                hintText={fieldSchema.placeholder}
-                multiple={fieldSchema.multiple}
-                onChange={(e, i, v) => {
-                    e.target['value'] = v;
-                    input.onChange(e);
-                }}
-            >
-            {
-                this.state.options?this.state.options.map((option) => (
-                    <MenuItem className="option" key={option.value} value={option.value} primaryText={option.name}/>
-                )):<MenuItem className="option" value={null} primaryText={fieldSchema.loadingText||"载入中"}/>
-            }
-        </SelectField>
-    }
+            }else if (rawOptions instanceof Array)
+                this.setState({
+                    options:props.fieldSchema.options
+                })
+        }
+        componentWillReceiveProps(nextProps:WidgetProps){
+            if(nextProps.fieldSchema.options!==this.props.fieldSchema.options)
+                this.reload(nextProps);
+        }
+        unmounted=false;
+        componentWillUnmount(){
+            this.unmounted=true
+        }
+        componentWillMount(){
+            this.reload(this.props);
+        }
+        render() {
+            return <Component
+                {...this.props}
+                options={this.state.options}
+            />
+        }
+    } as any
 }
+
+const SelectInput = muiThemeable()(resolvefieldSchemaOptions((props:WidgetProps&{options:Options,muiTheme:MuiTheme})=>{
+    const {input,fieldSchema,meta,options,muiTheme} = props;
+    return <SelectField
+        {...input as any}
+        onBlur={()=>input.onBlur(input.value)}
+        id={input.name}
+        disabled={fieldSchema.disabled}
+        floatingLabelText={fieldSchema.label}
+        fullWidth={true}
+        errorText={meta.error}
+        floatingLabelFixed={!!fieldSchema.placeholder}
+        hintText={fieldSchema.placeholder}
+        multiple={fieldSchema.multiple}
+        onChange={(e, i, v) => {
+            e.target['value'] = v;
+            input.onChange(e);
+        }}
+    >
+    {
+        options?options.map((option) => (
+            <MenuItem className="option" key={option.value} value={option.value} primaryText={option.name}/>
+        )):<MenuItem className="option" value={null} primaryText={fieldSchema.loadingText||"载入中"}/>
+    }
+    </SelectField>
+}))
 
 const dataSourceConfig = {text:"name",value:"value"};
 
@@ -343,13 +353,14 @@ const BaseAutoComplete = injectCSS({
 
 )
 
-class AutoCompleteSelect extends SelectInput{
+@resolvefieldSchemaOptions
+class AutoCompleteSelect extends React.PureComponent<WidgetProps,any>{
     onNewRequest=(value)=>{
         return this.props.input.onChange(value['value']);
     };
     render() {
         const {meta,input,fieldSchema} = this.props;
-        const options = (this.state.options || []) as Options;
+        const options = (this.props.options || []) as Options;
         const value = options.find(x=>x.value === input.value);
         return <BaseAutoComplete
             fieldSchema={fieldSchema}
@@ -364,15 +375,16 @@ class AutoCompleteSelect extends SelectInput{
     }
 }
 
-class AutoCompleteText extends SelectInput{
+@resolvefieldSchemaOptions
+class AutoCompleteText extends React.PureComponent<WidgetProps,any>{
     onUpdateInput=name=>{
-        const options = (this.state.options || []) as Options;
+        const options = (this.props.options || []) as Options;
         const entry = options.find(x=>x.name===name);
         return this.props.input.onChange(entry?entry.value:name);
     };
     render() {
         const {meta,input,fieldSchema} = this.props;
-        const options = (this.state.options || []) as Options;
+        const options = (this.props.options || []) as Options;
         return <BaseAutoComplete
             input={input}
             meta={meta}
@@ -468,8 +480,8 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
     render() {
         const props = this.props;
         const muiTheme: MuiTheme = props.muiTheme;
+        const fields = props.fields
         let {
-            fields,
             children,
             getChildren,
             itemsPerRow = 2,
@@ -479,7 +491,7 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
         } = props.fieldSchema
         return <div className="clearfix array-field-container">
             {
-                props.fields.map((name, i) => {
+                fields.map((name, i) => {
                     const childValue = props.fields.get(i);
                     const meta = props.meta
                     const keyPath = props.keyPath
@@ -598,7 +610,8 @@ class FileInput extends React.PureComponent<WidgetProps&{
 }
 
 @addType("radio")
-class SelectRadio extends SelectInput{
+@resolvefieldSchemaOptions
+class SelectRadio extends React.PureComponent<WidgetProps,any>{
     render(){
         const props = this.props;
         return <div>
@@ -625,7 +638,7 @@ class SelectRadio extends SelectInput{
                 onChange={(e,v)=>props.input.onChange(v)}
             >
                 {
-                    this.state.options?this.state.options.map((option) => (
+                    this.props.options?this.props.options.map((option) => (
                         <RadioButton style={{
                             width:"auto",
                             flex:1,
