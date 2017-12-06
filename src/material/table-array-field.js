@@ -93,7 +93,8 @@ var TableArrayField = /** @class */ (function (_super) {
                 call: function (t, e) {
                     var index = _this.findIndex(t);
                     _this.api.forEachNode(function (x) { return x.data === t && _this.props.fields.remove(index); });
-                }
+                },
+                enabled: function () { return !_this.props.fieldSchema.disableDelete; }
             },
             {
                 name: "添加",
@@ -103,7 +104,8 @@ var TableArrayField = /** @class */ (function (_super) {
                     });
                     _this.props.fields.push(_this.props.fieldSchema.defaultValue || {});
                 },
-                isStatic: true
+                isStatic: true,
+                enabled: function () { return !_this.props.fieldSchema.disableCreate; }
             },
             {
                 name: "前移",
@@ -113,6 +115,8 @@ var TableArrayField = /** @class */ (function (_super) {
                         _this.props.fields.swap(index, index - 1);
                 },
                 enabled: function (t, x) {
+                    if (_this.props.fieldSchema.disableSort)
+                        return false;
                     var index = _this.findIndex(t);
                     return index > 0;
                 }
@@ -125,6 +129,8 @@ var TableArrayField = /** @class */ (function (_super) {
                         _this.props.fields.swap(index, index + 1);
                 },
                 enabled: function (t, x) {
+                    if (_this.props.fieldSchema.disableSort)
+                        return false;
                     var index = _this.findIndex(t);
                     return index < _this.props.fields.length - 1;
                 }

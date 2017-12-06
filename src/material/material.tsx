@@ -468,51 +468,60 @@ class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&Wid
     render() {
         const props = this.props;
         const muiTheme: MuiTheme = props.muiTheme;
+        let {
+            fields,
+            children,
+            getChildren,
+            itemsPerRow = 2,
+            disableCreate,
+            disableDelete,
+            disableSort
+        } = props.fieldSchema
         return <div className="clearfix array-field-container">
             {
                 props.fields.map((name, i) => {
                     const childValue = props.fields.get(i);
-                    let children = props.fieldSchema.children;
-                    if(props.fieldSchema.getChildren)
-                        children = props.fieldSchema.getChildren(childValue).filter(x=>x);
-                    const itemsPerRow = props.fieldSchema.itemsPerRow || 2
+                    const meta = props.meta
+                    const keyPath = props.keyPath
+                    if(getChildren)
+                        children = getChildren(childValue).filter(x=>x);
                     return <div key={i} className="array-field-child" style={{width:`calc(${100/itemsPerRow}% - 20px)`}}>
                         <div className="item-buttons">
-                            {i===0?null:<IconButton
-                                style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
-                                onClick={() => props.fields.swap(i,i-1)}
+                            {i===0||disableSort?null:<IconButton
+                                style={{minWidth: '30px', height: "30px", color: muiTheme.palette.accent1Color}}
+                                onClick={() => fields.swap(i,i-1)}
                                 tooltip="前移"
                             >
                                 <NavigationArrowUpward hoverColor={muiTheme.palette.accent1Color}/>
                             </IconButton>}
-                            {i>=props.fields.length-1?null:<IconButton
-                                style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
-                                onClick={() => props.fields.swap(i,i+1)}
+                            {i>=fields.length-1||disableSort?null:<IconButton
+                                style={{minWidth: '30px', height: "30px", color: muiTheme.palette.accent1Color}}
+                                onClick={() => fields.swap(i,i+1)}
                                 tooltip="后移"
                             >
                                 <NavigationArrowDownward hoverColor={muiTheme.palette.accent1Color}/>
                             </IconButton>}
-                            <IconButton
-                                style={{minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color}}
-                                onClick={() => props.fields.remove(i)}
+                            {disableDelete?null:<IconButton
+                                style={{minWidth: '30px', height: "30px", color: muiTheme.palette.accent1Color}}
+                                onClick={() => fields.remove(i)}
                                 tooltip="删除"
                             >
                                 <Remove hoverColor={muiTheme.palette.accent1Color}/>
-                            </IconButton>
+                            </IconButton>}
                         </div>
                         {
-                            renderFields(props.meta.form,children,props.keyPath+"["+i+"]")
+                            renderFields(meta.form,children,keyPath+"["+i+"]")
                         }
                     </div>
                 })
             }
-            <div className="add-button">
+            {disableCreate?null:<div className="add-button">
                 <IconButton
                     tooltip="添加" onClick={() => props.fields.push(props.fieldSchema.defaultValue?props.fieldSchema.defaultValue:{})}
                 >
                     <Add hoverColor={muiTheme.palette.primary1Color}/>
                 </IconButton>
-            </div>
+            </div>}
         </div>
     }
 }

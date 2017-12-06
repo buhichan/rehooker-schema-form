@@ -334,24 +334,25 @@ var ArrayFieldRenderer = /** @class */ (function (_super) {
     ArrayFieldRenderer.prototype.render = function () {
         var props = this.props;
         var muiTheme = props.muiTheme;
+        var _a = props.fieldSchema, fields = _a.fields, children = _a.children, getChildren = _a.getChildren, _b = _a.itemsPerRow, itemsPerRow = _b === void 0 ? 2 : _b, disableCreate = _a.disableCreate, disableDelete = _a.disableDelete, disableSort = _a.disableSort;
         return React.createElement("div", { className: "clearfix array-field-container" },
             props.fields.map(function (name, i) {
                 var childValue = props.fields.get(i);
-                var children = props.fieldSchema.children;
-                if (props.fieldSchema.getChildren)
-                    children = props.fieldSchema.getChildren(childValue).filter(function (x) { return x; });
-                var itemsPerRow = props.fieldSchema.itemsPerRow || 2;
+                var meta = props.meta;
+                var keyPath = props.keyPath;
+                if (getChildren)
+                    children = getChildren(childValue).filter(function (x) { return x; });
                 return React.createElement("div", { key: i, className: "array-field-child", style: { width: "calc(" + 100 / itemsPerRow + "% - 20px)" } },
                     React.createElement("div", { className: "item-buttons" },
-                        i === 0 ? null : React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onClick: function () { return props.fields.swap(i, i - 1); }, tooltip: "前移" },
+                        i === 0 || disableSort ? null : React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: muiTheme.palette.accent1Color }, onClick: function () { return fields.swap(i, i - 1); }, tooltip: "前移" },
                             React.createElement(arrow_upward_1.default, { hoverColor: muiTheme.palette.accent1Color })),
-                        i >= props.fields.length - 1 ? null : React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onClick: function () { return props.fields.swap(i, i + 1); }, tooltip: "后移" },
+                        i >= fields.length - 1 || disableSort ? null : React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: muiTheme.palette.accent1Color }, onClick: function () { return fields.swap(i, i + 1); }, tooltip: "后移" },
                             React.createElement(arrow_downward_1.default, { hoverColor: muiTheme.palette.accent1Color })),
-                        React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: props.muiTheme.palette.accent1Color }, onClick: function () { return props.fields.remove(i); }, tooltip: "删除" },
+                        disableDelete ? null : React.createElement(material_ui_1.IconButton, { style: { minWidth: '30px', height: "30px", color: muiTheme.palette.accent1Color }, onClick: function () { return fields.remove(i); }, tooltip: "删除" },
                             React.createElement(remove_1.default, { hoverColor: muiTheme.palette.accent1Color }))),
-                    render_fields_1.renderFields(props.meta.form, children, props.keyPath + "[" + i + "]"));
+                    render_fields_1.renderFields(meta.form, children, keyPath + "[" + i + "]"));
             }),
-            React.createElement("div", { className: "add-button" },
+            disableCreate ? null : React.createElement("div", { className: "add-button" },
                 React.createElement(material_ui_1.IconButton, { tooltip: "添加", onClick: function () { return props.fields.push(props.fieldSchema.defaultValue ? props.fieldSchema.defaultValue : {}); } },
                     React.createElement(add_1.default, { hoverColor: muiTheme.palette.primary1Color }))));
     };

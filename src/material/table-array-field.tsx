@@ -99,7 +99,8 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             call:(t,e)=>{
                 const index = this.findIndex(t)
                 this.api.forEachNode(x=>x.data === t && this.props.fields.remove(index))
-            }
+            },
+            enabled:()=>!this.props.fieldSchema.disableDelete
         },
         {
             name:"添加",
@@ -109,7 +110,8 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 })
                 this.props.fields.push(this.props.fieldSchema.defaultValue || {})
             },
-            isStatic:true
+            isStatic:true,
+            enabled:()=>!this.props.fieldSchema.disableCreate
         },
         {
             name:"前移",
@@ -119,6 +121,8 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                     this.props.fields.swap(index,index-1)
             },
             enabled:(t,x)=>{
+                if(this.props.fieldSchema.disableSort)
+                    return false
                 const index = this.findIndex(t)
                 return index>0
             }
@@ -131,6 +135,8 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                     this.props.fields.swap(index,index+1)
             },
             enabled:(t,x)=>{
+                if(this.props.fieldSchema.disableSort)
+                    return false
                 const index = this.findIndex(t)
                 return index<this.props.fields.length-1
             }
