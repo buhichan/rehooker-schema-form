@@ -22,8 +22,11 @@ var RadioButton_1 = require("material-ui/RadioButton");
 var CircularProgress_1 = require("material-ui/CircularProgress");
 var buttons_1 = require("../buttons");
 var moment = require("moment");
+var errorTextAsHintTextStyle = {
+    color: "inherit"
+};
 function NumberInput(props) {
-    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", errorText: props.meta.error, id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, value: Number(props.input.value), hintText: props.fieldSchema.placeholder, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
+    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { type: "number", id: props.input.name, className: "full-width", disabled: props.disabled, style: { width: "100%" }, floatingLabelText: props.fieldSchema.label, floatingLabelStyle: props.meta.error ? undefined : errorTextAsHintTextStyle, value: Number(props.input.value), errorText: props.meta.error || props.fieldSchema.placeholder, errorStyle: props.meta.error ? undefined : errorTextAsHintTextStyle, onChange: function (e) { return props.input.onChange(Number(e.target['value'])); } }));
 }
 var defaultDateInputFormat = { year: "numeric", month: "2-digit", day: "2-digit" };
 var defaultDateTimeInputFormat = {
@@ -35,6 +38,10 @@ var defaultDateTimeInputFormat = {
     minute: "2-digit",
     second: "2-digit"
 };
+var GenericPlaceHolder = function (_a) {
+    var placeholder = _a.placeholder;
+    return React.createElement("small", { style: { marginLeft: 5, opacity: 0.5 } }, placeholder);
+};
 function formatDateTime(date) {
     //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateTimeInputFormat).replace(/\//g,'-')
     return moment(date).format("YYYY-MM-DD HH:mm:ss");
@@ -43,6 +50,7 @@ function formatDate(date) {
     //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateInputFormat).replace(/\//g,'-')
     return moment(date).format("YYYY-MM-DD");
 }
+var timePickerStyle = { bottom: 40, position: "relative" };
 function DateTimeInput(props) {
     var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
     var value = input.value ?
@@ -54,16 +62,16 @@ function DateTimeInput(props) {
         value = value.toDate();
     return React.createElement("div", null,
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
-            React.createElement(material_ui_1.DatePicker, { id: fieldSchema.key + "date", DateTimeFormat: Intl.DateTimeFormat, value: value, fullWidth: true, onChange: function (e, date) {
+            React.createElement(material_ui_1.DatePicker, { id: fieldSchema.key + "date", DateTimeFormat: Intl.DateTimeFormat, value: value, fullWidth: true, errorText: meta.error || fieldSchema.placeholder, errorStyle: meta.error ? undefined : errorTextAsHintTextStyle, onChange: function (e, date) {
                     if (value) {
                         date.setHours(value.getHours());
                         date.setMinutes(value.getMinutes());
                         date.setSeconds(value.getSeconds());
                     }
                     input.onChange(formatDateTime(date));
-                }, floatingLabelText: fieldSchema.label, errorText: meta.error, hintText: fieldSchema.placeholder, cancelLabel: "取消", locale: "zh-Hans", autoOk: true })),
+                }, floatingLabelText: fieldSchema.label, cancelLabel: "取消", locale: "zh-Hans", autoOk: true })),
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
-            React.createElement(material_ui_1.TimePicker, { id: fieldSchema.key + "time", value: value, fullWidth: true, autoOk: true, cancelLabel: "取消", underlineStyle: { bottom: 10 }, format: "24hr", onChange: function (_, time) {
+            React.createElement(material_ui_1.TimePicker, { id: fieldSchema.key + "time", value: value, fullWidth: true, autoOk: true, style: timePickerStyle, errorText: " ", errorStyle: meta.error ? undefined : errorTextAsHintTextStyle, cancelLabel: "取消", underlineStyle: { bottom: 10 }, format: "24hr", onChange: function (_, time) {
                     var newValue = value ? new Date(value) : new Date();
                     newValue.setHours(time.getHours());
                     newValue.setMinutes(time.getMinutes());
@@ -94,7 +102,7 @@ var DateInput = /** @class */ (function (_super) {
         if (parsedDate.isValid()) {
             DatePickerProps['value'] = parsedDate.toDate();
         }
-        return React.createElement(material_ui_1.DatePicker, tslib_1.__assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", errorText: props.meta.error, floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, onFocus: this.onFocus, okLabel: "确认", ref: function (ref) { return _this.datepicker = ref; } }, DatePickerProps, { hintText: props.fieldSchema.placeholder, disabled: props.disabled }));
+        return React.createElement(material_ui_1.DatePicker, tslib_1.__assign({ DateTimeFormat: Intl.DateTimeFormat, locale: "zh-CN", errorText: props.meta.error || props.fieldSchema.placeholder, errorStyle: props.meta.error ? undefined : errorTextAsHintTextStyle, floatingLabelText: props.fieldSchema.label, autoOk: true, id: props.input.name, container: "inline", mode: "portrait", cancelLabel: "取消", fullWidth: true, onFocus: this.onFocus, okLabel: "确认", ref: function (ref) { return _this.datepicker = ref; } }, DatePickerProps, { hintText: props.fieldSchema.placeholder, disabled: props.disabled }));
     };
     return DateInput;
 }(React.PureComponent));
@@ -103,7 +111,9 @@ function TextInput(props) {
 }
 function CheckboxInput(props) {
     var _a = props.input, onChange = _a.onChange, onBlur = _a.onBlur, value = _a.value, rest = tslib_1.__rest(_a, ["onChange", "onBlur", "value"]);
-    rest['label'] = props.fieldSchema.label;
+    rest['label'] = React.createElement("span", null,
+        props.fieldSchema.label,
+        React.createElement(GenericPlaceHolder, { placeholder: props.fieldSchema.placeholder }));
     return React.createElement(material_ui_1.Checkbox, tslib_1.__assign({}, rest, { onBlur: function (e) { return onBlur(value); }, style: { width: "100%", margin: "32px 0 16px" }, disabled: props.disabled, onChange: undefined, onCheck: function (e, v) { return onChange(v); }, checked: Boolean(value) }));
 }
 //fixme: todo: https://github.com/callemall/material-ui/issues/6080
@@ -142,11 +152,11 @@ var SelectInput = /** @class */ (function (_super) {
         this.reload(this.props);
     };
     SelectInput.prototype.render = function () {
-        var props = this.props;
-        return React.createElement(SelectField_1.default, tslib_1.__assign({}, props.input, { onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, onChange: function (e, i, v) {
+        var _a = this.props, input = _a.input, fieldSchema = _a.fieldSchema, meta = _a.meta;
+        return React.createElement(SelectField_1.default, tslib_1.__assign({}, input, { onBlur: function () { return input.onBlur(input.value); }, id: input.name, disabled: fieldSchema.disabled, floatingLabelText: fieldSchema.label, fullWidth: true, errorText: meta.error || fieldSchema.placeholder, errorStyle: meta.error ? undefined : errorTextAsHintTextStyle, hintText: fieldSchema.placeholder, multiple: fieldSchema.multiple, onChange: function (e, i, v) {
                 e.target['value'] = v;
-                props.input.onChange(e);
-            } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }) : React.createElement(material_ui_1.MenuItem, { className: "option", value: null, primaryText: this.props.fieldSchema.loadingText || "载入中" }));
+                input.onChange(e);
+            } }), this.state.options ? this.state.options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }) : React.createElement(material_ui_1.MenuItem, { className: "option", value: null, primaryText: fieldSchema.loadingText || "载入中" }));
     };
     return SelectInput;
 }(React.PureComponent));
@@ -351,7 +361,7 @@ var ArrayFieldRenderer = /** @class */ (function (_super) {
     return ArrayFieldRenderer;
 }(React.Component));
 function TextAreaInput(props) {
-    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { value: props.input.value || "", errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
+    return React.createElement(material_ui_1.TextField, tslib_1.__assign({}, props.input, { value: props.input.value || "", errorText: props.meta.error, required: props.required, type: props.type, id: props.input.name, className: "full-width", hintText: props.fieldSchema.placeholder, style: { width: "100%" }, disabled: props.disabled, multiLine: true, floatingLabelText: props.fieldSchema.label }));
 }
 var FileInput = /** @class */ (function (_super) {
     tslib_1.__extends(FileInput, _super);
@@ -413,7 +423,9 @@ var SelectRadio = /** @class */ (function (_super) {
     SelectRadio.prototype.render = function () {
         var props = this.props;
         return React.createElement("div", null,
-            React.createElement(material_ui_1.Subheader, { style: { paddingLeft: 0 } }, props.fieldSchema.label),
+            React.createElement(material_ui_1.Subheader, { style: { paddingLeft: 0 } },
+                props.fieldSchema.label,
+                React.createElement(GenericPlaceHolder, { placeholder: props.fieldSchema.placeholder })),
             React.createElement(RadioButton_1.RadioButtonGroup, tslib_1.__assign({}, props.input, { valueSelected: props.input.value, onBlur: function () { return props.input.onBlur(props.input.value); }, id: props.input.name, name: props.input.name, disabled: props.disabled, floatingLabelText: props.fieldSchema.label, fullWidth: true, errorText: props.meta.error, hintText: props.fieldSchema.placeholder, multiple: props.fieldSchema.multiple, style: {
                     display: 'flex',
                     flexWrap: "wrap"

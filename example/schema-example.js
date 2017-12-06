@@ -32,7 +32,7 @@ exports.schema = [
     {
         key: "text",
         type: "text",
-        placeholder: "input something",
+        placeholder: "一般的文本,带验证",
         label: "文本属性",
         validate: function (v) {
             if (v !== "a")
@@ -42,6 +42,7 @@ exports.schema = [
         key: 'select1',
         type: "select",
         label: "单选",
+        placeholder: "一般的单选",
         options: [
             {
                 name: "苹果",
@@ -56,11 +57,13 @@ exports.schema = [
         key: "checkbox",
         type: "checkbox",
         label: "勾选",
+        placeholder: "一般的checkbox",
         required: true
     }, {
         key: "mulSel",
         type: "select",
         multiple: true,
+        placeholder: "一般的多选",
         label: "多选",
         options: [
             {
@@ -76,14 +79,18 @@ exports.schema = [
         key: "date",
         type: "date",
         label: "date",
+        placeholder: "placeholder",
+        validate: function (v) { return v && v.includes("2017") ? "2017" : undefined; }
     }, {
         key: "datetime",
         type: "datetime",
+        placeholder: "placeholder",
         label: "datetime"
     }, {
         key: "file",
         type: "file",
         label: "文件",
+        placeholder: "placeholder",
         validate: function (v) {
             if (v instanceof File && !v.type.startsWith('image/'))
                 return "只能上传图片";
@@ -99,6 +106,7 @@ exports.schema = [
         key: "ajax_select",
         type: "select",
         label: "单选(async)",
+        placeholder: "placeholder",
         options: function () {
             return fetch("/example/options.json").then(function (res) { return res.json(); });
         }
@@ -110,10 +118,10 @@ exports.schema = [
             {
                 type: "number",
                 key: "phone",
-                validators: {
-                    minLength: 11,
-                    maxLength: 14,
-                    pattern: /[0-9]+/
+                placeholder: "placeholder",
+                validate: function (v) {
+                    if (v > 900)
+                        return "最大900";
                 },
                 label: "手机号",
                 listens: {
@@ -125,6 +133,7 @@ exports.schema = [
         key: "conditional1",
         type: "text",
         label: "当单选框为梨子的时候，隐藏",
+        placeholder: "placeholder",
         listens: {
             select1: function (v, formValue) { return ({ hide: v === 'pear', value: null }); }
         }
@@ -132,6 +141,7 @@ exports.schema = [
         key: "nest.1",
         type: "text",
         label: "nest",
+        placeholder: "placeholder",
         style: {
             border: "1px dotted #23f0ff"
         }
@@ -139,6 +149,7 @@ exports.schema = [
         key: "nest.2",
         type: "group",
         label: "组2",
+        placeholder: "placeholder",
         children: [
             {
                 type: 'date',
@@ -159,6 +170,7 @@ exports.schema = [
         key: "dependant_lv1",
         type: "select",
         label: "有依赖的单选lv1",
+        placeholder: "placeholder",
         options: [
             {
                 name: "植物",
@@ -173,6 +185,7 @@ exports.schema = [
         key: "dependant_lv2",
         type: "select",
         label: "有依赖的单选lv2",
+        placeholder: "placeholder",
         listens: {
             dependant_lv1: function (v) {
                 return {
@@ -204,6 +217,7 @@ exports.schema = [
         key: "dependant_lv3",
         type: "select",
         label: "有依赖的单选lv3",
+        placeholder: "placeholder",
         options: [],
         hide: true,
         listens: {
@@ -222,6 +236,7 @@ exports.schema = [
         key: "array",
         type: "array",
         itemsPerRow: 6,
+        placeholder: "placeholder",
         label: "Array(当select是梨子的时候会少一个child)",
         listens: {
             select1: function (v) {
@@ -267,6 +282,7 @@ exports.schema = [
         key: "autocomplete1",
         type: "autocomplete",
         label: "自动完成(select)",
+        placeholder: "placeholder",
         options: [
             { name: "11", value: "11" },
             { name: "22", value: "22" },
@@ -282,6 +298,7 @@ exports.schema = [
         key: "autocomplete2",
         type: "autocomplete-async",
         label: "自动完成",
+        placeholder: "placeholder",
         options: function (t) {
             if (/^\d+$/.test(t))
                 return new Promise(function (resolve) {
@@ -294,6 +311,7 @@ exports.schema = [
         key: "radio",
         type: "radio",
         label: "radio",
+        placeholder: "placeholder",
         options: function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, [
@@ -305,6 +323,7 @@ exports.schema = [
     }, {
         key: "multiple-listen",
         label: "多重监听",
+        placeholder: "placeholder",
         type: "text",
         listens: {
             'radio,text': function () {

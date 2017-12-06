@@ -27,18 +27,23 @@ import CircularProgress from "material-ui/CircularProgress";
 import { setButton } from "../buttons";
 const moment = require("moment")
 
+const errorTextAsHintTextStyle = {
+    color:"inherit"
+}
+
 function NumberInput(props:WidgetProps){
     return <TextField
         {...props.input as any}
         type="number"
-        errorText={props.meta.error}
         id={props.input.name}
         className="full-width"
         disabled={props.disabled}
         style={{width:"100%"}}
         floatingLabelText={props.fieldSchema.label}
+        floatingLabelStyle={props.meta.error?undefined:errorTextAsHintTextStyle}
         value={Number(props.input.value)}
-        hintText={props.fieldSchema.placeholder}
+        errorText={props.meta.error||props.fieldSchema.placeholder}
+        errorStyle={props.meta.error?undefined:errorTextAsHintTextStyle}
         onChange={(e)=>props.input.onChange(Number(e.target['value']))}
     />;
 }
@@ -55,6 +60,8 @@ const defaultDateTimeInputFormat = {
     second:"2-digit"
 };
 
+const GenericPlaceHolder = ({placeholder})=><small style={{marginLeft:5,opacity:0.5}}>{placeholder}</small>
+
 function formatDateTime(date:Date){
     //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateTimeInputFormat).replace(/\//g,'-')
     return moment(date).format("YYYY-MM-DD HH:mm:ss")
@@ -64,6 +71,12 @@ function formatDate(date:Date){
     //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateInputFormat).replace(/\//g,'-')
     return moment(date).format("YYYY-MM-DD")
 }
+
+const timePickerStyle:React.CSSProperties = {bottom:40,position:"relative"}
+
+
+
+
 function DateTimeInput(props:WidgetProps){
     const {meta,input,fieldSchema} = props;
     let value = input.value?
@@ -80,6 +93,8 @@ function DateTimeInput(props:WidgetProps){
                 DateTimeFormat={Intl.DateTimeFormat as any}
                 value={value}
                 fullWidth
+                errorText={meta.error||fieldSchema.placeholder}
+                errorStyle={meta.error?undefined:errorTextAsHintTextStyle}
                 onChange={(e,date)=>{
                     if(value) {
                         date.setHours(value.getHours());
@@ -89,8 +104,6 @@ function DateTimeInput(props:WidgetProps){
                     input.onChange(formatDateTime(date))
                 }}
                 floatingLabelText={fieldSchema.label}
-                errorText={meta.error}
-                hintText={fieldSchema.placeholder}
                 cancelLabel="取消"
                 locale="zh-Hans"
                 autoOk
@@ -102,6 +115,9 @@ function DateTimeInput(props:WidgetProps){
                 value={value}
                 fullWidth
                 autoOk
+                style={timePickerStyle}
+                errorText={" "}
+                errorStyle={meta.error?undefined:errorTextAsHintTextStyle}
                 cancelLabel="取消"
                 underlineStyle={{bottom:10}}
                 format="24hr"
@@ -140,7 +156,8 @@ class DateInput extends React.PureComponent<WidgetProps>{
         return <DatePicker
             DateTimeFormat={Intl.DateTimeFormat as any}
             locale="zh-CN"
-            errorText={props.meta.error}
+            errorText={props.meta.error||props.fieldSchema.placeholder}
+            errorStyle={props.meta.error?undefined:errorTextAsHintTextStyle}
             floatingLabelText={props.fieldSchema.label}
             autoOk={true}
             id={props.input.name}
@@ -174,7 +191,10 @@ function TextInput(props:WidgetProps){
 }
 function CheckboxInput (props:WidgetProps){
     const {onChange,onBlur,value,...rest} = props.input;
-    rest['label']=props.fieldSchema.label;
+    rest['label']=<span>
+        {props.fieldSchema.label}
+        <GenericPlaceHolder placeholder={props.fieldSchema.placeholder} />
+    </span>;
     return <Checkbox
         {...rest as any}
         onBlur={e=>onBlur(value)}
@@ -216,26 +236,27 @@ export class SelectInput extends React.PureComponent<WidgetProps,any>{
         this.reload(this.props);
     }
     render() {
-        const props = this.props;
+        const {input,fieldSchema,meta} = this.props;
         return <SelectField
-                {...props.input as any}
-                onBlur={()=>props.input.onBlur(props.input.value)}
-                id={props.input.name}
-                disabled={props.disabled}
-                floatingLabelText={props.fieldSchema.label}
+                {...input as any}
+                onBlur={()=>input.onBlur(input.value)}
+                id={input.name}
+                disabled={fieldSchema.disabled}
+                floatingLabelText={fieldSchema.label}
                 fullWidth={true}
-                errorText={props.meta.error}
-                hintText={props.fieldSchema.placeholder}
-                multiple={props.fieldSchema.multiple}
+                errorText={meta.error||fieldSchema.placeholder}
+                errorStyle={meta.error?undefined:errorTextAsHintTextStyle}
+                hintText={fieldSchema.placeholder}
+                multiple={fieldSchema.multiple}
                 onChange={(e, i, v) => {
                     e.target['value'] = v;
-                    props.input.onChange(e);
+                    input.onChange(e);
                 }}
             >
             {
                 this.state.options?this.state.options.map((option) => (
                     <MenuItem className="option" key={option.value} value={option.value} primaryText={option.name}/>
-                )):<MenuItem className="option" value={null} primaryText={this.props.fieldSchema.loadingText||"载入中"}/>
+                )):<MenuItem className="option" value={null} primaryText={fieldSchema.loadingText||"载入中"}/>
             }
         </SelectField>
     }
@@ -505,6 +526,7 @@ function TextAreaInput(props:WidgetProps){
         type={props.type}
         id={props.input.name}
         className="full-width"
+        hintText={props.fieldSchema.placeholder}
         style={{width:"100%"}}
         disabled={props.disabled}
         multiLine
@@ -573,6 +595,7 @@ class SelectRadio extends SelectInput{
         return <div>
             <Subheader style={{paddingLeft:0}}>
                 {props.fieldSchema.label}
+                <GenericPlaceHolder placeholder={props.fieldSchema.placeholder} />
             </Subheader>
             <RadioButtonGroup
                 {...props.input as any}

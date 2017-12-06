@@ -31,7 +31,7 @@ export let schema:FormFieldSchema[] = [
     {
         key:"text",
         type:"text",
-        placeholder:"input something",
+        placeholder:"一般的文本,带验证",
         label:"文本属性",
         validate:v=>{
             if(v!=="a")
@@ -41,6 +41,7 @@ export let schema:FormFieldSchema[] = [
         key:'select1',
         type:"select",
         label:"单选",
+        placeholder:"一般的单选",
         options:[
             {
                 name:"苹果",
@@ -55,11 +56,13 @@ export let schema:FormFieldSchema[] = [
         key:"checkbox",
         type:"checkbox",
         label:"勾选",
+        placeholder:"一般的checkbox",
         required:true
     },{
         key:"mulSel",
         type:"select",
         multiple:true,
+        placeholder:"一般的多选",
         label:"多选",
         options:[
             {
@@ -75,14 +78,18 @@ export let schema:FormFieldSchema[] = [
         key:"date",
         type:"date",
         label:"date",
+        placeholder:"placeholder",
+        validate:v=>v&&v.includes("2017")?"2017":undefined
     },{
         key:"datetime",
         type:"datetime",
+        placeholder:"placeholder",
         label:"datetime"
     },{
         key:"file",
         type:"file",
         label:"文件",
+        placeholder:"placeholder",
         validate:(v:File|string)=>{
             if(v instanceof File && !v.type.startsWith('image/'))
                 return "只能上传图片"
@@ -98,6 +105,7 @@ export let schema:FormFieldSchema[] = [
         key:"ajax_select",
         type:"select",
         label:"单选(async)",
+        placeholder:"placeholder",
         options:()=>{
             return fetch("/example/options.json").then(res=>res.json())
         }
@@ -109,10 +117,10 @@ export let schema:FormFieldSchema[] = [
             {
                 type:"number",
                 key:"phone",
-                validators:{
-                    minLength:11,
-                    maxLength:14,
-                    pattern:/[0-9]+/
+                placeholder:"placeholder",
+                validate:v=>{
+                    if(v>900)
+                        return "最大900"
                 },
                 label:"手机号",
                 listens:{
@@ -124,6 +132,7 @@ export let schema:FormFieldSchema[] = [
         key:"conditional1",
         type:"text",
         label:"当单选框为梨子的时候，隐藏",
+        placeholder:"placeholder",
         listens:{
             select1:(v,formValue)=>({hide:v==='pear',value:null})
         }
@@ -131,6 +140,7 @@ export let schema:FormFieldSchema[] = [
         key:"nest.1",
         type:"text",
         label:"nest",
+        placeholder:"placeholder",
         style:{
             border:"1px dotted #23f0ff"
         }
@@ -138,6 +148,7 @@ export let schema:FormFieldSchema[] = [
         key:"nest.2",
         type:"group",
         label:"组2",
+        placeholder:"placeholder",
         children:[
             {
                 type:'date',
@@ -158,7 +169,7 @@ export let schema:FormFieldSchema[] = [
         key:"dependant_lv1",
         type:"select",
         label:"有依赖的单选lv1",
-
+        placeholder:"placeholder",
         options:[
             {
                 name:"植物",
@@ -173,6 +184,7 @@ export let schema:FormFieldSchema[] = [
         key:"dependant_lv2",
         type:"select",
         label:"有依赖的单选lv2",
+        placeholder:"placeholder",
         listens:{
             dependant_lv1:v=>{
                 return{
@@ -204,6 +216,7 @@ export let schema:FormFieldSchema[] = [
         key:"dependant_lv3",
         type:"select",
         label:"有依赖的单选lv3",
+        placeholder:"placeholder",
         options:[],
         hide:true,
         listens:{
@@ -221,6 +234,7 @@ export let schema:FormFieldSchema[] = [
         key:"array",
         type:"array",
         itemsPerRow:6,
+        placeholder:"placeholder",
         label:"Array(当select是梨子的时候会少一个child)",
         listens:{
             select1:v=>{
@@ -268,6 +282,7 @@ export let schema:FormFieldSchema[] = [
         key:"autocomplete1",
         type:"autocomplete",
         label:"自动完成(select)",
+        placeholder:"placeholder",
         options:[
             {name:"11",value:"11"},
             {name:"22",value:"22"},
@@ -283,6 +298,7 @@ export let schema:FormFieldSchema[] = [
         key:"autocomplete2",
         type:"autocomplete-async",
         label:"自动完成",
+        placeholder:"placeholder",
         options:t=>{
             if(/^\d+$/.test(t))
                 return new Promise(resolve=>{
@@ -294,6 +310,7 @@ export let schema:FormFieldSchema[] = [
         key:"radio",
         type:"radio",
         label:"radio",
+        placeholder:"placeholder",
         options:async ()=>[
             {name:"yes",value:true},
             {name:"no",value:false},
@@ -301,6 +318,7 @@ export let schema:FormFieldSchema[] = [
     },{
         key:"multiple-listen",
         label:"多重监听",
+        placeholder:"placeholder",
         type:"text",
         listens:{
             'radio,text':(...args)=>{
