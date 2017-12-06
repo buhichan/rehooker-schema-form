@@ -4,7 +4,6 @@ var tslib_1 = require("tslib");
 window['requestAnimationFrame'] = function (callback) {
     setTimeout(callback, 0);
 };
-var __1 = require("../..");
 require("jest");
 var redux_1 = require("redux");
 var redux_form_1 = require("redux-form");
@@ -30,7 +29,8 @@ function describeTestWithStore(Container, schema, initialValues, expectation) {
             };
         };
         Form.prototype.render = function () {
-            var ReduxSchemaFormWithStore = __1.ReduxSchemaForm;
+            var ReduxSchemaForm = require('../../index').ReduxSchemaForm;
+            var ReduxSchemaFormWithStore = ReduxSchemaForm;
             return React.createElement(ReduxSchemaFormWithStore, { form: "default", schema: schema, initialValues: initialValues });
         };
         Form.childContextTypes = {

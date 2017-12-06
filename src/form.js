@@ -17,7 +17,10 @@ var ReduxSchemaForm = /** @class */ (function (_super) {
         return _this;
     }
     ReduxSchemaForm.prototype.render = function () {
-        return React.createElement("form", { id: this.props.form, className: "redux-schema-form form-horizontal " + this.props.classes.form, onSubmit: this.props.handleSubmit },
+        var formClass = this.props.classes && this.props.classes.form ? this.props.classes.form : "";
+        if (process.env.NODE_ENV === 'development' && !formClass)
+            console.warn("ReduxSchemaForm did not receive a correct jss, please import a theme file.");
+        return React.createElement("form", { id: this.props.form, className: "redux-schema-form form-horizontal " + formClass, onSubmit: this.props.handleSubmit },
             render_fields_1.renderFields(this.props.form, this.props.schema),
             this.props.children ? React.createElement("div", { className: "children" }, this.props.children) : null,
             (!this.props.noButton) ? React.createElement("div", { className: "button" },

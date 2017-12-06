@@ -89,7 +89,10 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
 export class ReduxSchemaForm extends React.PureComponent<ReduxSchemaFormProps,{}>{
     reset=()=>this.props.dispatch(reset(this.props.form))
     render(){
-        return <form id={this.props.form} className={"redux-schema-form form-horizontal "+this.props.classes.form} onSubmit={this.props.handleSubmit}>
+        const formClass = this.props.classes&&this.props.classes.form?this.props.classes.form:""
+        if(process.env.NODE_ENV === 'development' && !formClass)
+            console.warn("ReduxSchemaForm did not receive a correct jss, please import a theme file.")
+        return <form id={this.props.form} className={"redux-schema-form form-horizontal "+formClass} onSubmit={this.props.handleSubmit}>
             {renderFields(
                 this.props.form,
                 this.props.schema

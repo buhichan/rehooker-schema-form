@@ -2,7 +2,7 @@ window['requestAnimationFrame'] = function(callback) {
     setTimeout(callback, 0);
 } as any
 
-import { FormFieldSchema, ReduxSchemaForm } from '../..';
+import { FormFieldSchema} from '../..';
 import "jest"
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import {reducer as reduxFormReducer, getFormValues} from "redux-form"
@@ -29,6 +29,7 @@ function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFi
             store: PropTypes.object
           };
         render(){
+            const {ReduxSchemaForm} = require('../../index')
             const ReduxSchemaFormWithStore = ReduxSchemaForm as any
             return <ReduxSchemaFormWithStore
                 form="default"
