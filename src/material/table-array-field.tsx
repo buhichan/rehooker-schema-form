@@ -268,7 +268,12 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             />
             <Dialog autoScrollBodyContent autoDetectWindowHeight open={this.state.editedIndex >= 0 } onRequestClose={this.closeDialog}>
                 {
-                    this.state.editedIndex<0?null:renderFields(this.props.meta.form,this.props.fieldSchema.children,this.props.keyPath+"["+this.state.editedIndex+"]")
+                    this.state.editedIndex<0?null:renderFields(this.props.meta.form,children.map(x=>{
+                        return {
+                            ...x,
+                            hide:x.disabled
+                        }
+                    }),this.props.keyPath+"["+this.state.editedIndex+"]")
                 }
             </Dialog>
         </div>

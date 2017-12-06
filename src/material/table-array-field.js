@@ -237,7 +237,9 @@ var TableArrayField = /** @class */ (function (_super) {
                 this.props.fieldSchema.label,
                 this.props.fields.length ? "(" + this.props.fields.length + ")" : ""),
             React.createElement(Grid, tslib_1.__assign({ data: this.state.batchEditedData ? this.stripLastItem(value) : value, schema: gridSchema, gridName: this.props.meta.form + "-" + this.props.keyPath, suppressAutoSizeToFit: true, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, selectionStyle: "checkbox", actions: this.actions, gridApi: this.bindGridApi }, gridOptions)),
-            React.createElement(Dialog_1.default, { autoScrollBodyContent: true, autoDetectWindowHeight: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
+            React.createElement(Dialog_1.default, { autoScrollBodyContent: true, autoDetectWindowHeight: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, children.map(function (x) {
+                return tslib_1.__assign({}, x, { hide: x.disabled });
+            }), this.props.keyPath + "[" + this.state.editedIndex + "]")));
     };
     TableArrayField = tslib_1.__decorate([
         react_redux_1.connect()
