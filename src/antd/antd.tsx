@@ -23,8 +23,7 @@ const moment = require("moment");
 import {AsyncOptions, Options} from "../form";
 import { Upload, Button, Icon } from 'antd';
 import {RuntimeAsyncOptions} from "../form";
-import injectCSS from 'react-jss';
-import {stylesheet} from "./antd.jss";
+import "./antd.jss";
 import {renderFields} from "../render-fields";
 import { setButton } from "../buttons";
 
@@ -533,12 +532,3 @@ setButton(function(props:any){
             return null;
     }
 });
-
-const formModule = require('../../index');
-const JSSForm = formModule.ReduxSchemaForm;
-formModule.ReduxSchemaForm = injectCSS(stylesheet)(
-    ({classes,sheet,...props})=>{
-        return <div className={classes.form}>
-            <JSSForm {...props} />
-        </div>;
-    });

@@ -307,6 +307,11 @@ exports.schema = [
                 return [{ name: "0", value: 0 }];
         }
     }, {
+        key: "textarea",
+        type: "textarea",
+        label: "textarea",
+        placeholder: "placeholder"
+    }, {
         key: "radio",
         type: "radio",
         label: "radio",

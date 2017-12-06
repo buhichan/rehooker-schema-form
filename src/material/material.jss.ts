@@ -1,8 +1,11 @@
 import { clearfix, widgetHeight, fullWidthInputs, mobileMedia } from '../constants';
+import injectJSS from "react-jss"
+import muiThemeable from 'material-ui/styles/muiThemeable';
+import { pushDecorator } from '../decorate';
 
 /**-----------------------------------Form-----------------------------------**/
 
-export const stylesheet = {
+const stylesheet = {
   form: {
     position:"relative",
     ...clearfix,
@@ -78,7 +81,7 @@ export const stylesheet = {
       padding: " 0 calc(10% + 15px) 0 5%",
     },
     "& .schema-node":clearfix,
-    "&>form>.schema-node>.field>fieldset": {
+    "&>.schema-node>.field>fieldset": {
       "&>legend": {
         position: "relative",
         top: "11px",
@@ -105,3 +108,6 @@ export const stylesheet = {
     }
   },
 };
+
+pushDecorator(injectJSS(stylesheet))
+pushDecorator(muiThemeable())

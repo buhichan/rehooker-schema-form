@@ -8,6 +8,7 @@ var buttons_1 = require("./buttons");
 var React = require("react");
 var redux_form_1 = require("redux-form");
 var render_fields_1 = require("./render-fields");
+var decorate_1 = require("./decorate");
 var ReduxSchemaForm = /** @class */ (function (_super) {
     tslib_1.__extends(ReduxSchemaForm, _super);
     function ReduxSchemaForm() {
@@ -16,7 +17,7 @@ var ReduxSchemaForm = /** @class */ (function (_super) {
         return _this;
     }
     ReduxSchemaForm.prototype.render = function () {
-        return React.createElement("form", { id: this.props.form, className: "redux-schema-form form-horizontal", onSubmit: this.props.handleSubmit },
+        return React.createElement("form", { id: this.props.form, className: "redux-schema-form form-horizontal " + this.props.classes.form, onSubmit: this.props.handleSubmit },
             render_fields_1.renderFields(this.props.form, this.props.schema),
             this.props.children ? React.createElement("div", { className: "children" }, this.props.children) : null,
             (!this.props.noButton) ? React.createElement("div", { className: "button" },
@@ -25,9 +26,7 @@ var ReduxSchemaForm = /** @class */ (function (_super) {
                     React.createElement(buttons_1.FormButton, { type: "button", onClick: this.reset, disabled: !buttons_1.submittable(this.props.disableResubmit)(this.props) }, "\u91CD\u7F6E"))) : React.createElement("div", null));
     };
     ReduxSchemaForm = tslib_1.__decorate([
-        redux_form_1.reduxForm({
-            form: "default"
-        })
+        decorate_1.getDecorator()
     ], ReduxSchemaForm);
     return ReduxSchemaForm;
 }(React.PureComponent));

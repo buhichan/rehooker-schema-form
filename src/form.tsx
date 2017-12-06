@@ -3,9 +3,10 @@
  */
 import { FormButton, submittable } from './buttons';
 import * as React from 'react';
-import {reduxForm, ConfigProps, InjectedFormProps,BaseFieldProps, reset} from 'redux-form'
+import {ConfigProps, InjectedFormProps,BaseFieldProps, reset} from 'redux-form'
 import {WidgetProps} from "./field";
 import {renderFields} from "./render-fields";
+import { pushDecorator, getDecorator } from './decorate';
 
 export type Options = {name:string,value:any}[]
 export type AsyncOptions = ()=>Promise<Options>
@@ -83,19 +84,12 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
     listens?:FieldSchamaChangeListeners| ((keyPath:string[])=>FieldSchamaChangeListeners),
     [rest:string]:any
 }
-@(reduxForm({
-    form:"default"
-}) as any)
-export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&InjectedFormProps<any,any>>&{
-    schema:FormFieldSchema[],
-    noButton?:boolean,
 
-    dispatch?:(...args:any[])=>any,
-    disableResubmit?:boolean
-},{}>{
+@getDecorator()
+export class ReduxSchemaForm extends React.PureComponent<ReduxSchemaFormProps,{}>{
     reset=()=>this.props.dispatch(reset(this.props.form))
     render(){
-        return <form id={this.props.form} className="redux-schema-form form-horizontal" onSubmit={this.props.handleSubmit}>
+        return <form id={this.props.form} className={"redux-schema-form form-horizontal "+this.props.classes.form} onSubmit={this.props.handleSubmit}>
             {renderFields(
                 this.props.form,
                 this.props.schema
@@ -114,3 +108,12 @@ export class ReduxSchemaForm extends React.PureComponent<Partial<ConfigProps&Inj
         </form>
     }
 }
+
+type ReduxSchemaFormOwnProps = {
+    schema:FormFieldSchema[],
+    noButton?:boolean,
+    classes?:any,
+    dispatch?:(...args:any[])=>any,
+    disableResubmit?:boolean
+}
+type ReduxSchemaFormProps = Partial<ConfigProps&InjectedFormProps<any,any>>&ReduxSchemaFormOwnProps

@@ -2,8 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var constants_1 = require("../constants");
+var react_jss_1 = require("react-jss");
+var muiThemeable_1 = require("material-ui/styles/muiThemeable");
+var decorate_1 = require("../decorate");
 /**-----------------------------------Form-----------------------------------**/
-exports.stylesheet = (_a = {
+var stylesheet = (_a = {
         form: tslib_1.__assign({ position: "relative" }, constants_1.clearfix, (_b = { "& *": {
                     boxSizing: "border-box",
                 }, "& .btn-group": {
@@ -72,7 +75,7 @@ exports.stylesheet = (_a = {
             padding: " 0 5% 0 calc(10% + 15px)",
         }, _b["& fieldset .field:nth-child(2n+1)"] = {
             padding: " 0 calc(10% + 15px) 0 5%",
-        }, _b["& .schema-node"] = constants_1.clearfix, _b["&>form>.schema-node>.field>fieldset"] = (_c = {
+        }, _b["& .schema-node"] = constants_1.clearfix, _b["&>.schema-node>.field>fieldset"] = (_c = {
                 "&>legend": {
                     position: "relative",
                     top: "11px",
@@ -103,5 +106,7 @@ exports.stylesheet = (_a = {
         }
     },
     _a);
+decorate_1.pushDecorator(react_jss_1.default(stylesheet));
+decorate_1.pushDecorator(muiThemeable_1.default());
 var _a, _b, _c;
 //# sourceMappingURL=material.jss.js.map

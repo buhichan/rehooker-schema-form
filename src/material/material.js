@@ -11,7 +11,7 @@ var material_ui_1 = require("material-ui");
 var muiThemeable_1 = require("material-ui/styles/muiThemeable");
 var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
-var material_jss_1 = require("./material.jss");
+require("./material.jss");
 var svg_icons_1 = require("material-ui/svg-icons");
 var field_1 = require("../field");
 var react_jss_1 = require("react-jss");
@@ -490,12 +490,5 @@ buttons_1.setButton(muiThemeable_1.default()(function (props) {
                     border: props.disabled ? "none" : "1px solid " + props.muiTheme.palette.primary1Color
                 }, labelColor: props.muiTheme.palette.primary1Color, label: props.children, labelStyle: { padding: "0" }, onClick: props.onClick, disabled: props.disabled, type: props.type });
     }
-}));
-var formModule = require('../../index');
-var JSSForm = formModule.ReduxSchemaForm;
-formModule.ReduxSchemaForm = muiThemeable_1.default()(react_jss_1.default(material_jss_1.stylesheet)(function (_a) {
-    var classes = _a.classes, sheet = _a.sheet, props = tslib_1.__rest(_a, ["classes", "sheet"]);
-    return React.createElement("div", { className: classes.form },
-        React.createElement(JSSForm, tslib_1.__assign({}, props)));
 }));
 //# sourceMappingURL=material.js.map

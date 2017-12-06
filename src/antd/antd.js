@@ -22,8 +22,7 @@ var antd_6 = require("antd");
 var antd_7 = require("antd");
 var moment = require("moment");
 var antd_8 = require("antd");
-var react_jss_1 = require("react-jss");
-var antd_jss_1 = require("./antd.jss");
+require("./antd.jss");
 var render_fields_1 = require("../render-fields");
 var buttons_1 = require("../buttons");
 var errorStyle = { color: "red" };
@@ -390,12 +389,5 @@ buttons_1.setButton(function (props) {
         default:
             return null;
     }
-});
-var formModule = require('../../index');
-var JSSForm = formModule.ReduxSchemaForm;
-formModule.ReduxSchemaForm = react_jss_1.default(antd_jss_1.stylesheet)(function (_a) {
-    var classes = _a.classes, sheet = _a.sheet, props = tslib_1.__rest(_a, ["classes", "sheet"]);
-    return React.createElement("div", { className: classes.form },
-        React.createElement(JSSForm, tslib_1.__assign({}, props)));
 });
 //# sourceMappingURL=antd.js.map

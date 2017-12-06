@@ -1,6 +1,8 @@
 import { clearfix, widgetHeight, fullWidthInputs, mobileMedia } from '../constants';
+import injectJSS from "react-jss"
+import { pushDecorator } from '../decorate';
 
-export const stylesheet = {
+const stylesheet = {
     form: {
         position:"relative",
         ...clearfix,
@@ -69,7 +71,7 @@ export const stylesheet = {
         "& fieldset .field:nth-child(2n+1)": {
             padding: " 0 calc(10% + 15px) 0 5%",
         },
-        "&>form>.schema-node>.field>fieldset": {
+        "&>.schema-node>.field>fieldset": {
             "&>legend": {
                 position: "relative",
                 top: "11px",
@@ -96,3 +98,5 @@ export const stylesheet = {
         }
     },
 };
+
+pushDecorator(injectJSS(stylesheet))

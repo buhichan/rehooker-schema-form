@@ -13,7 +13,7 @@ import muiThemeable from "material-ui/styles/muiThemeable";
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
 import {MuiTheme} from "material-ui/styles";
-import {stylesheet} from "./material.jss";
+import "./material.jss";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
@@ -707,13 +707,3 @@ setButton(muiThemeable()(function(props:any){
             />
     }
 }) as any);
-
-const formModule = require('../../index');
-const JSSForm = formModule.ReduxSchemaForm;
-formModule.ReduxSchemaForm =muiThemeable()
-(injectCSS(stylesheet)(
-    ({classes,sheet,...props})=>{
-        return <div className={classes.form}>
-            <JSSForm {...props} />
-        </div>;
-    }));
