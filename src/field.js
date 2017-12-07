@@ -91,12 +91,12 @@ var StatefulField = /** @class */ (function (_super) {
         return _this;
     }
     StatefulField.prototype.componentWillMount = function () {
-        this.reload(this.props);
+        this.reload(this.props, true);
     };
     StatefulField.prototype.componentWillUnmount = function () {
         this.unmounted = true;
     };
-    StatefulField.prototype.reload = function (props) {
+    StatefulField.prototype.reload = function (props, isInitializing) {
         var _this = this;
         var state = this.context.store.getState();
         Promise.all(Object.keys(props.listeners).map(function (fieldKey, i) {
@@ -110,7 +110,7 @@ var StatefulField = /** @class */ (function (_super) {
             if (_this.unmounted)
                 return;
             var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema || emptyObject)); }, props.fieldSchema);
-            if (newSchema.hasOwnProperty("value")) {
+            if (newSchema.hasOwnProperty("value") && (!isInitializing || newSchema.valueCanChangeOnInitialze)) {
                 newSchema = Object.assign({}, newSchema);
                 props.dispatch(redux_form_1.change(props.form, props.keyPath, newSchema.value));
                 delete newSchema['value'];

@@ -34,6 +34,12 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
     children?:FormFieldSchema[]
     options?:Options | AsyncOptions | RuntimeAsyncOptions,
     defaultValue?:any
+    style?:React.CSSProperties,
+    /**
+     * keyPath will be the array of keys from the root of the form to your deeply nested field.
+     */
+    listens?:FieldSchamaChangeListeners| ((keyPath:string[])=>FieldSchamaChangeListeners),
+    valueCanChangeOnInitialze?:boolean
     /**
      * type: "file"
      * 返回url
@@ -78,11 +84,6 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
     csvColumnSeparator?:string
 
     data?:any,
-    style?:React.CSSProperties,
-    /**
-     * keyPath will be the array of keys from the root of the form to your deeply nested field.
-     */
-    listens?:FieldSchamaChangeListeners| ((keyPath:string[])=>FieldSchamaChangeListeners),
     [rest:string]:any
 }
 

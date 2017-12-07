@@ -4,7 +4,7 @@
 import * as React from "react"
 import {Options, FormFieldSchema, FieldSchamaChangeListeners} from "./form";
 import {
-    change, Field, FieldArray, formValueSelector, getFormValues, initialize
+    change, Field, FieldArray, formValueSelector, getFormValues, initialize, autofill
 } from "redux-form"
 import {renderFields} from "./render-fields";
 import {connect} from "react-redux";
@@ -180,13 +180,13 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
     };
     state=this.props.fieldSchema;
     componentWillMount(){
-        this.reload(this.props)
+        this.reload(this.props,true)
     }
     unmounted = false;
     componentWillUnmount(){
         this.unmounted = true;
     }
-    reload(props:FieldNodeProps){
+    reload(props:FieldNodeProps,isInitializing?:boolean){
         const state = this.context.store.getState();
         Promise.all(Object.keys(props.listeners).map((fieldKey,i)=>{
             const formValue = getFormValues(props.form)(state);
@@ -198,7 +198,7 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
             if(this.unmounted)
                 return;
             let newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema||emptyObject}),props.fieldSchema);
-            if(newSchema.hasOwnProperty("value")){
+            if(newSchema.hasOwnProperty("value") && (!isInitializing || newSchema.valueCanChangeOnInitialze)){
                 newSchema = Object.assign({}, newSchema)
                 props.dispatch(change(props.form,props.keyPath,newSchema.value));
                 delete newSchema['value']
