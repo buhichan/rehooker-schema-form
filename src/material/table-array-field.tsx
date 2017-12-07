@@ -92,7 +92,8 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 },()=>{
                     window.dispatchEvent(new Event("resize"))
                 }))
-            }
+            },
+            enabled:()=>!this.props.fieldSchema.disabled
         },
         {
             name:"删除",

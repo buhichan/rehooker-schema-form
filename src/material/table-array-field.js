@@ -86,7 +86,8 @@ var TableArrayField = /** @class */ (function (_super) {
                     }, function () {
                         window.dispatchEvent(new Event("resize"));
                     }); });
-                }
+                },
+                enabled: function () { return !_this.props.fieldSchema.disabled; }
             },
             {
                 name: "删除",
