@@ -6,7 +6,7 @@ So that I don't have to write a component for every single `redux-form`.
 
 # Demo
 
-[Demo](http://demo.buhichan.xyz)
+[Demo](https://stackblitz.com/edit/react-pnrkgw?file=index.js)
 
 # Intro
 
