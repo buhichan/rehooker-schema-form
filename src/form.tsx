@@ -69,6 +69,7 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
     disableDelete?:boolean,
     disableCreate?:boolean,
     disableSort?:boolean,
+    disableImport?:boolean
     /**
      * type: "table-array"
      * @theme mui

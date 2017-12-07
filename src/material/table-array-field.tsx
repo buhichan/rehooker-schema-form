@@ -177,7 +177,8 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                         this.changeArrayValues(this.props.input.value.concat(newValues))
                 })
             },
-            isStatic:true
+            isStatic:true,
+            enabled:()=>!this.props.fieldSchema.disableImport
         },{
             name:"批量编辑",
             call:(data,e,nodes)=>{
@@ -190,7 +191,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 this.props.fields.push({}) // insert a new child to provide a blank form.
             },
             isStatic:true,
-            enabled:data=>data && data.length>=2
+            enabled:data=>!this.props.fieldSchema.disabled && data && data.length>=2
         }
     ]
     findIndex=(data)=>{

@@ -171,7 +171,8 @@ var TableArrayField = /** @class */ (function (_super) {
                             _this.changeArrayValues(_this.props.input.value.concat(newValues));
                     });
                 },
-                isStatic: true
+                isStatic: true,
+                enabled: function () { return !_this.props.fieldSchema.disableImport; }
             }, {
                 name: "批量编辑",
                 call: function (data, e, nodes) {
@@ -184,7 +185,7 @@ var TableArrayField = /** @class */ (function (_super) {
                     _this.props.fields.push({}); // insert a new child to provide a blank form.
                 },
                 isStatic: true,
-                enabled: function (data) { return data && data.length >= 2; }
+                enabled: function (data) { return !_this.props.fieldSchema.disabled && data && data.length >= 2; }
             }
         ];
         _this.findIndex = function (data) {
