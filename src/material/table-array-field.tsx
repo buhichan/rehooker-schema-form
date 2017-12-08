@@ -232,7 +232,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         s=>s,
         s=>s.slice(0,-1)
     )
-    getGridSchema = createSelector<FormFieldSchema,FormFieldSchema,any[]>(
+    getGridSchema = createSelector<FormFieldSchema,any,any>(
         s=>s,
         fieldSchema=>{
             if(fieldSchema.hideColumns && fieldSchema.hideColumns instanceof Array)
