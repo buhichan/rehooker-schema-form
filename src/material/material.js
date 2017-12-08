@@ -11,7 +11,6 @@ var material_ui_1 = require("material-ui");
 var muiThemeable_1 = require("material-ui/styles/muiThemeable");
 var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
-require("./material.jss");
 var svg_icons_1 = require("material-ui/svg-icons");
 var field_1 = require("../field");
 var react_jss_1 = require("react-jss");

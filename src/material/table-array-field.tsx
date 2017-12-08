@@ -73,15 +73,6 @@ function downloadWorkSheet(worksheet,fileName){
 
 @(connect() as any)
 class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
-    selector=createSelector<TableArrayFieldProps,any,any>(
-        s=>s.fieldSchema.children,
-        oldSchema=>{
-            return oldSchema.map(x=>({
-                ...x,
-                hide:false 
-            }))
-        }
-    )
     actions=[
         {
             name:"编辑",
@@ -145,7 +136,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         {
             name:"导出",
             call:()=>{
-                const schema = this.selector(this.props)
+                const schema = this.props.fieldSchema.children
                 let rawData = this.props.fields.getAll()
                 if(!rawData || !(rawData instanceof Array) || !rawData.length)
                 rawData = [schema.reduce(function (res, y) {
@@ -165,7 +156,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             name:"导入",
             call:(data)=>{
                 readWorkBook().then(data=>{
-                    const schema = this.selector(this.props)
+                    const schema = this.props.fieldSchema.children
                     const newValues = data.map(item=>{
                         return schema.reduce((res,field)=>{
                             res[field.key] = item[field.label]
@@ -240,6 +231,17 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         s=>s,
         s=>s.slice(0,-1)
     )
+    getGridSchema = createSelector<any[],any[],any[]>(
+        s=>s,
+        s=>s.map(x=>{
+            if(x.hasOwnProperty("showInTable"))
+                return {
+                    ...x,
+                    hide:!x.showInTable
+                }
+            else return x
+        })
+    )
     render(){
         const value=this.props.fields.getAll()||empty
         const {
@@ -253,7 +255,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             children,
             ...gridOptions
         } = this.props.fieldSchema
-        const gridSchema=this.selector(this.props);
+        const gridSchema=this.getGridSchema(this.props.fieldSchema.children)
         return <div>
             <label className="control-label">{this.props.fieldSchema.label}{this.props.fields.length?`(${this.props.fields.length})`:""}</label>
             <Grid 
@@ -270,12 +272,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             />
             <Dialog autoScrollBodyContent autoDetectWindowHeight open={this.state.editedIndex >= 0 } onRequestClose={this.closeDialog}>
                 {
-                    this.state.editedIndex<0?null:renderFields(this.props.meta.form,children.map(x=>{
-                        return {
-                            ...x,
-                            hide:x.disabled
-                        }
-                    }),this.props.keyPath+"["+this.state.editedIndex+"]")
+                    this.state.editedIndex<0?null:renderFields(this.props.meta.form,this.props.fieldSchema.children,this.props.keyPath+"["+this.state.editedIndex+"]")
                 }
             </Dialog>
         </div>

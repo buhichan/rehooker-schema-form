@@ -23,7 +23,6 @@ const moment = require("moment");
 import {AsyncOptions, Options} from "../form";
 import { Upload, Button, Icon } from 'antd';
 import {RuntimeAsyncOptions} from "../form";
-import "./antd.jss";
 import {renderFields} from "../render-fields";
 import { setButton } from "../buttons";
 

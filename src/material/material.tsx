@@ -13,7 +13,6 @@ import muiThemeable from "material-ui/styles/muiThemeable";
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
 import {MuiTheme} from "material-ui/styles";
-import "./material.jss";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
 import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";

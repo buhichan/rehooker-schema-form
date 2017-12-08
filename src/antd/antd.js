@@ -22,7 +22,6 @@ var antd_6 = require("antd");
 var antd_7 = require("antd");
 var moment = require("moment");
 var antd_8 = require("antd");
-require("./antd.jss");
 var render_fields_1 = require("../render-fields");
 var buttons_1 = require("../buttons");
 var errorStyle = { color: "red" };

@@ -73,9 +73,6 @@ var TableArrayField = /** @class */ (function (_super) {
     tslib_1.__extends(TableArrayField, _super);
     function TableArrayField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.selector = reselect_1.createSelector(function (s) { return s.fieldSchema.children; }, function (oldSchema) {
-            return oldSchema.map(function (x) { return (tslib_1.__assign({}, x, { hide: false })); });
-        });
         _this.actions = [
             {
                 name: "编辑",
@@ -139,7 +136,7 @@ var TableArrayField = /** @class */ (function (_super) {
             {
                 name: "导出",
                 call: function () {
-                    var schema = _this.selector(_this.props);
+                    var schema = _this.props.fieldSchema.children;
                     var rawData = _this.props.fields.getAll();
                     if (!rawData || !(rawData instanceof Array) || !rawData.length)
                         rawData = [schema.reduce(function (res, y) {
@@ -159,7 +156,7 @@ var TableArrayField = /** @class */ (function (_super) {
                 name: "导入",
                 call: function (data) {
                     readWorkBook().then(function (data) {
-                        var schema = _this.selector(_this.props);
+                        var schema = _this.props.fieldSchema.children;
                         var newValues = data.map(function (item) {
                             return schema.reduce(function (res, field) {
                                 res[field.key] = item[field.label];
@@ -227,21 +224,25 @@ var TableArrayField = /** @class */ (function (_super) {
             });
         };
         _this.stripLastItem = reselect_1.createSelector(function (s) { return s; }, function (s) { return s.slice(0, -1); });
+        _this.getGridSchema = reselect_1.createSelector(function (s) { return s; }, function (s) { return s.map(function (x) {
+            if (x.hasOwnProperty("showInTable"))
+                return tslib_1.__assign({}, x, { hide: !x.showInTable });
+            else
+                return x;
+        }); });
         return _this;
     }
     TableArrayField.prototype.render = function () {
         var value = this.props.fields.getAll() || empty;
         var _a = this.props.fieldSchema, key = _a.key, type = _a.type, label = _a.label, hide = _a.hide, fullWidth = _a.fullWidth, //todo: should I put this presentation logic here?
         required = _a.required, disabled = _a.disabled, children = _a.children, gridOptions = tslib_1.__rest(_a, ["key", "type", "label", "hide", "fullWidth", "required", "disabled", "children"]);
-        var gridSchema = this.selector(this.props);
+        var gridSchema = this.getGridSchema(this.props.fieldSchema.children);
         return React.createElement("div", null,
             React.createElement("label", { className: "control-label" },
                 this.props.fieldSchema.label,
                 this.props.fields.length ? "(" + this.props.fields.length + ")" : ""),
             React.createElement(Grid, tslib_1.__assign({ data: this.state.batchEditedData ? this.stripLastItem(value) : value, schema: gridSchema, gridName: this.props.meta.form + "-" + this.props.keyPath, suppressAutoSizeToFit: true, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, selectionStyle: "checkbox", actions: this.actions, gridApi: this.bindGridApi }, gridOptions)),
-            React.createElement(Dialog_1.default, { autoScrollBodyContent: true, autoDetectWindowHeight: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, children.map(function (x) {
-                return tslib_1.__assign({}, x, { hide: x.disabled });
-            }), this.props.keyPath + "[" + this.state.editedIndex + "]")));
+            React.createElement(Dialog_1.default, { autoScrollBodyContent: true, autoDetectWindowHeight: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
     };
     TableArrayField = tslib_1.__decorate([
         react_redux_1.connect()

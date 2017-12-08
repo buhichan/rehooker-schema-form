@@ -18,7 +18,7 @@ export type FieldSchamaChangeListeners={
      * If your formValue is {"foo":{"haha":[{"bar":10032}]}}, then the callback here will receive these arguments:
      * 10032, {bar:10032}, [{bar:10032}], {haha:[{bar:10032}]}, {foo:...}
      */
-    [fieldKey:string]: (value:any,formValue:any)=>Partial<FormFieldSchema>|Promise<Partial<FormFieldSchema>>|void;
+    [fieldKey:string]: (value?:any,formValue?:any,dispatch?:any)=>Partial<FormFieldSchema>|Promise<Partial<FormFieldSchema>>|void;
 };
 
 export interface FormFieldSchema extends Partial<BaseFieldProps>{
