@@ -136,7 +136,7 @@ var TableArrayField = /** @class */ (function (_super) {
             {
                 name: "导出",
                 call: function () {
-                    var schema = _this.props.fieldSchema.children;
+                    var schema = _this.getGridSchema(_this.props.fieldSchema).filter(function (x) { return !x.hide; });
                     var rawData = _this.props.fields.getAll();
                     if (!rawData || !(rawData instanceof Array) || !rawData.length)
                         rawData = [schema.reduce(function (res, y) {
@@ -156,7 +156,7 @@ var TableArrayField = /** @class */ (function (_super) {
                 name: "导入",
                 call: function (data) {
                     readWorkBook().then(function (data) {
-                        var schema = _this.props.fieldSchema.children;
+                        var schema = _this.getGridSchema(_this.props.fieldSchema).filter(function (x) { return !x.hide; });
                         var newValues = data.map(function (item) {
                             return schema.reduce(function (res, field) {
                                 res[field.key] = item[field.label];

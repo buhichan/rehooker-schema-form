@@ -137,7 +137,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         {
             name:"导出",
             call:()=>{
-                const schema = this.props.fieldSchema.children
+                const schema = this.getGridSchema(this.props.fieldSchema).filter(x=>!x.hide)
                 let rawData = this.props.fields.getAll()
                 if(!rawData || !(rawData instanceof Array) || !rawData.length)
                 rawData = [schema.reduce(function (res, y) {
@@ -157,7 +157,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             name:"导入",
             call:(data)=>{
                 readWorkBook().then(data=>{
-                    const schema = this.props.fieldSchema.children
+                    const schema = this.getGridSchema(this.props.fieldSchema).filter(x=>!x.hide)
                     const newValues = data.map(item=>{
                         return schema.reduce((res,field)=>{
                             res[field.key] = item[field.label]
