@@ -7,6 +7,7 @@ const dataSourceConfig = {text:"name",value:"value"};
 import { renderFields } from '../render-fields';
 import { ReduxSchemaForm } from '../form';
 import { connect } from 'react-redux';
+import { FormFieldSchema } from '../../index';
 const {Grid} = require("ag-grid-presets")
 const XLSX = require("xlsx")
 
@@ -231,16 +232,18 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         s=>s,
         s=>s.slice(0,-1)
     )
-    getGridSchema = createSelector<any[],any[],any[]>(
+    getGridSchema = createSelector<FormFieldSchema,FormFieldSchema,any[]>(
         s=>s,
-        s=>s.map(x=>{
-            if(x.hasOwnProperty("showInTable"))
-                return {
-                    ...x,
-                    hide:!x.showInTable
-                }
-            else return x
-        })
+        fieldSchema=>{
+            if(fieldSchema.hideColumns && fieldSchema.hideColumns instanceof Array)
+                return fieldSchema.children.map(x=>{
+                    return {
+                        ...x,
+                        hide:fieldSchema.hideColumns.includes(x.key)
+                    }
+                })
+            else return fieldSchema.children
+        }
     )
     render(){
         const value=this.props.fields.getAll()||empty
@@ -255,7 +258,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
             children,
             ...gridOptions
         } = this.props.fieldSchema
-        const gridSchema=this.getGridSchema(this.props.fieldSchema.children)
+        const gridSchema=this.getGridSchema(this.props.fieldSchema)
         return <div>
             <label className="control-label">{this.props.fieldSchema.label}{this.props.fields.length?`(${this.props.fields.length})`:""}</label>
             <Grid 

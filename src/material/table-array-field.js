@@ -224,19 +224,21 @@ var TableArrayField = /** @class */ (function (_super) {
             });
         };
         _this.stripLastItem = reselect_1.createSelector(function (s) { return s; }, function (s) { return s.slice(0, -1); });
-        _this.getGridSchema = reselect_1.createSelector(function (s) { return s; }, function (s) { return s.map(function (x) {
-            if (x.hasOwnProperty("showInTable"))
-                return tslib_1.__assign({}, x, { hide: !x.showInTable });
+        _this.getGridSchema = reselect_1.createSelector(function (s) { return s; }, function (fieldSchema) {
+            if (fieldSchema.hideColumns && fieldSchema.hideColumns instanceof Array)
+                return fieldSchema.children.map(function (x) {
+                    return tslib_1.__assign({}, x, { hide: fieldSchema.hideColumns.includes(x.key) });
+                });
             else
-                return x;
-        }); });
+                return fieldSchema.children;
+        });
         return _this;
     }
     TableArrayField.prototype.render = function () {
         var value = this.props.fields.getAll() || empty;
         var _a = this.props.fieldSchema, key = _a.key, type = _a.type, label = _a.label, hide = _a.hide, fullWidth = _a.fullWidth, //todo: should I put this presentation logic here?
         required = _a.required, disabled = _a.disabled, children = _a.children, gridOptions = tslib_1.__rest(_a, ["key", "type", "label", "hide", "fullWidth", "required", "disabled", "children"]);
-        var gridSchema = this.getGridSchema(this.props.fieldSchema.children);
+        var gridSchema = this.getGridSchema(this.props.fieldSchema);
         return React.createElement("div", null,
             React.createElement("label", { className: "control-label" },
                 this.props.fieldSchema.label,
