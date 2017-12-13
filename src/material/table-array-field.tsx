@@ -258,7 +258,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
         } = this.props.fieldSchema
         const gridSchema=this.getGridSchema(this.props.fieldSchema)
         return <div>
-            <label className="control-label">{this.props.fieldSchema.label}{this.props.fields.length?`(${this.props.fields.length})`:""}</label>
+            <label style={{marginLeft:10}}>{this.props.fieldSchema.label}{this.props.fields.length?`(${this.props.fields.length})`:""}</label>
             <Grid 
                 data={this.state.batchEditedData?this.stripLastItem(value):value}
                 schema={gridSchema}

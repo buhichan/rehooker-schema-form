@@ -236,7 +236,7 @@ var TableArrayField = /** @class */ (function (_super) {
         required = _a.required, disabled = _a.disabled, children = _a.children, gridOptions = tslib_1.__rest(_a, ["key", "type", "label", "hide", "fullWidth", "required", "disabled", "children"]);
         var gridSchema = this.getGridSchema(this.props.fieldSchema);
         return React.createElement("div", null,
-            React.createElement("label", { className: "control-label" },
+            React.createElement("label", { style: { marginLeft: 10 } },
                 this.props.fieldSchema.label,
                 this.props.fields.length ? "(" + this.props.fields.length + ")" : ""),
             React.createElement(Grid, tslib_1.__assign({ data: this.state.batchEditedData ? this.stripLastItem(value) : value, schema: gridSchema, gridName: this.props.meta.form + "-" + this.props.keyPath, suppressAutoSizeToFit: true, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, selectionStyle: "checkbox", actions: this.getActions(this.props), gridApi: this.bindGridApi }, gridOptions)),
