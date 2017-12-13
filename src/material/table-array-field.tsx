@@ -164,8 +164,9 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                     })
                     if(confirm("是否替换原有数据? "))
                         this.changeArrayValues(newValues)
-                    else 
-                        this.changeArrayValues(this.props.input.value.concat(newValues))
+                    else {
+                        this.changeArrayValues(this.props.fields.getAll().concat(newValues))
+                    }
                 })
             },
             isStatic:true

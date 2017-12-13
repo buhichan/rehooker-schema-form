@@ -161,8 +161,9 @@ var TableArrayField = /** @class */ (function (_super) {
                         });
                         if (confirm("是否替换原有数据? "))
                             _this.changeArrayValues(newValues);
-                        else
-                            _this.changeArrayValues(_this.props.input.value.concat(newValues));
+                        else {
+                            _this.changeArrayValues(_this.props.fields.getAll().concat(newValues));
+                        }
                     });
                 },
                 isStatic: true
