@@ -74,8 +74,10 @@ function downloadWorkSheet(worksheet,fileName){
 
 @(connect() as any)
 class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
-    actions=[
-        {
+    getActions=createSelector<TableArrayFieldProps,any,any>(
+        p=>p.fieldSchema,
+        fieldSchema=>[
+        fieldSchema.disabled?null:{
             name:"编辑",
             call:(t,e)=>{
                 const index = this.findIndex(t)
@@ -84,18 +86,16 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 },()=>{
                     window.dispatchEvent(new Event("resize"))
                 }))
-            },
-            enabled:()=>!this.props.fieldSchema.disabled
+            }
         },
-        {
+        fieldSchema.disableDelete?null:{
             name:"删除",
             call:(t,e)=>{
                 const index = this.findIndex(t)
                 this.api.forEachNode(x=>x.data === t && this.props.fields.remove(index))
-            },
-            enabled:()=>!this.props.fieldSchema.disableDelete
+            }
         },
-        {
+        fieldSchema.disableCreate?null: {
             name:"添加",
             call:()=>{
                 this.setState({
@@ -103,10 +103,9 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 })
                 this.props.fields.push(this.props.fieldSchema.defaultValue || {})
             },
-            isStatic:true,
-            enabled:()=>!this.props.fieldSchema.disableCreate
+            isStatic:true
         },
-        {
+        fieldSchema.disableSort?null:{
             name:"前移",
             call:(t,e,x)=>{
                 const index = this.findIndex(t)
@@ -114,13 +113,11 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                     this.props.fields.swap(index,index-1)
             },
             enabled:(t,x)=>{
-                if(this.props.fieldSchema.disableSort)
-                    return false
                 const index = this.findIndex(t)
                 return index>0
             }
         },
-        {
+        fieldSchema.disableSort?null:{
             name:"后移",
             call:(t,e,x)=>{
                 const index = this.findIndex(t)
@@ -153,7 +150,8 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 downloadWorkSheet(sheet, this.props.fieldSchema.label)
             },
             isStatic:true
-        },{
+        },
+        fieldSchema.disableImport?null:{
             name:"导入",
             call:(data)=>{
                 readWorkBook().then(data=>{
@@ -170,9 +168,9 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                         this.changeArrayValues(this.props.input.value.concat(newValues))
                 })
             },
-            isStatic:true,
-            enabled:()=>!this.props.fieldSchema.disableImport
-        },{
+            isStatic:true
+        },
+        fieldSchema.disabled?null:{
             name:"批量编辑",
             call:(data,e,nodes)=>{
                 if(!data || data.length<2)
@@ -184,9 +182,9 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 this.props.fields.push({}) // insert a new child to provide a blank form.
             },
             isStatic:true,
-            enabled:data=>!this.props.fieldSchema.disabled && data && data.length>=2
+            enabled:data=> data && data.length>=2
         }
-    ]
+    ].filter(x=>!!x))
     findIndex=(data)=>{
         for(let i =0;i<this.props.fields.length;i++){
             if(this.props.fields.get(i) === data)
@@ -269,7 +267,7 @@ class TableArrayField extends React.PureComponent<TableArrayFieldProps,any>{
                 overlayNoRowsTemplate={`<div style="font-size:30px">${""}</div>`}
                 height={300}
                 selectionStyle="checkbox"
-                actions={this.actions}
+                actions={this.getActions(this.props)}
                 gridApi={this.bindGridApi}
                 {...gridOptions}
             />

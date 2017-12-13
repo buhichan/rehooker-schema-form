@@ -73,8 +73,8 @@ var TableArrayField = /** @class */ (function (_super) {
     tslib_1.__extends(TableArrayField, _super);
     function TableArrayField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.actions = [
-            {
+        _this.getActions = reselect_1.createSelector(function (p) { return p.fieldSchema; }, function (fieldSchema) { return [
+            fieldSchema.disabled ? null : {
                 name: "编辑",
                 call: function (t, e) {
                     var index = _this.findIndex(t);
@@ -83,18 +83,16 @@ var TableArrayField = /** @class */ (function (_super) {
                     }, function () {
                         window.dispatchEvent(new Event("resize"));
                     }); });
-                },
-                enabled: function () { return !_this.props.fieldSchema.disabled; }
+                }
             },
-            {
+            fieldSchema.disableDelete ? null : {
                 name: "删除",
                 call: function (t, e) {
                     var index = _this.findIndex(t);
                     _this.api.forEachNode(function (x) { return x.data === t && _this.props.fields.remove(index); });
-                },
-                enabled: function () { return !_this.props.fieldSchema.disableDelete; }
+                }
             },
-            {
+            fieldSchema.disableCreate ? null : {
                 name: "添加",
                 call: function () {
                     _this.setState({
@@ -102,10 +100,9 @@ var TableArrayField = /** @class */ (function (_super) {
                     });
                     _this.props.fields.push(_this.props.fieldSchema.defaultValue || {});
                 },
-                isStatic: true,
-                enabled: function () { return !_this.props.fieldSchema.disableCreate; }
+                isStatic: true
             },
-            {
+            fieldSchema.disableSort ? null : {
                 name: "前移",
                 call: function (t, e, x) {
                     var index = _this.findIndex(t);
@@ -113,13 +110,11 @@ var TableArrayField = /** @class */ (function (_super) {
                         _this.props.fields.swap(index, index - 1);
                 },
                 enabled: function (t, x) {
-                    if (_this.props.fieldSchema.disableSort)
-                        return false;
                     var index = _this.findIndex(t);
                     return index > 0;
                 }
             },
-            {
+            fieldSchema.disableSort ? null : {
                 name: "后移",
                 call: function (t, e, x) {
                     var index = _this.findIndex(t);
@@ -152,7 +147,8 @@ var TableArrayField = /** @class */ (function (_super) {
                     downloadWorkSheet(sheet, _this.props.fieldSchema.label);
                 },
                 isStatic: true
-            }, {
+            },
+            fieldSchema.disableImport ? null : {
                 name: "导入",
                 call: function (data) {
                     readWorkBook().then(function (data) {
@@ -169,9 +165,9 @@ var TableArrayField = /** @class */ (function (_super) {
                             _this.changeArrayValues(_this.props.input.value.concat(newValues));
                     });
                 },
-                isStatic: true,
-                enabled: function () { return !_this.props.fieldSchema.disableImport; }
-            }, {
+                isStatic: true
+            },
+            fieldSchema.disabled ? null : {
                 name: "批量编辑",
                 call: function (data, e, nodes) {
                     if (!data || data.length < 2)
@@ -183,9 +179,9 @@ var TableArrayField = /** @class */ (function (_super) {
                     _this.props.fields.push({}); // insert a new child to provide a blank form.
                 },
                 isStatic: true,
-                enabled: function (data) { return !_this.props.fieldSchema.disabled && data && data.length >= 2; }
+                enabled: function (data) { return data && data.length >= 2; }
             }
-        ];
+        ].filter(function (x) { return !!x; }); });
         _this.findIndex = function (data) {
             for (var i = 0; i < _this.props.fields.length; i++) {
                 if (_this.props.fields.get(i) === data)
@@ -243,7 +239,7 @@ var TableArrayField = /** @class */ (function (_super) {
             React.createElement("label", { className: "control-label" },
                 this.props.fieldSchema.label,
                 this.props.fields.length ? "(" + this.props.fields.length + ")" : ""),
-            React.createElement(Grid, tslib_1.__assign({ data: this.state.batchEditedData ? this.stripLastItem(value) : value, schema: gridSchema, gridName: this.props.meta.form + "-" + this.props.keyPath, suppressAutoSizeToFit: true, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, selectionStyle: "checkbox", actions: this.actions, gridApi: this.bindGridApi }, gridOptions)),
+            React.createElement(Grid, tslib_1.__assign({ data: this.state.batchEditedData ? this.stripLastItem(value) : value, schema: gridSchema, gridName: this.props.meta.form + "-" + this.props.keyPath, suppressAutoSizeToFit: true, overlayNoRowsTemplate: "<div style=\"font-size:30px\">" + "" + "</div>", height: 300, selectionStyle: "checkbox", actions: this.getActions(this.props), gridApi: this.bindGridApi }, gridOptions)),
             React.createElement(Dialog_1.default, { autoScrollBodyContent: true, autoDetectWindowHeight: true, open: this.state.editedIndex >= 0, onRequestClose: this.closeDialog }, this.state.editedIndex < 0 ? null : render_fields_1.renderFields(this.props.meta.form, this.props.fieldSchema.children, this.props.keyPath + "[" + this.state.editedIndex + "]")));
     };
     TableArrayField = tslib_1.__decorate([
