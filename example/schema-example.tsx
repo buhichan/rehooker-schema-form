@@ -79,12 +79,20 @@ export let schema:FormFieldSchema[] = [
         type:"date",
         label:"date",
         placeholder:"placeholder",
-        validate:v=>v&&v.includes("2017")?"2017":undefined
+        listens:{
+            text:v=>({
+                placeholder:v
+            })
+        }
     },{
         key:"datetime",
         type:"datetime",
-        placeholder:"placeholder",
-        label:"datetime"
+        label:"datetime",
+        listens:{
+            text:v=>({
+                placeholder:v
+            })
+        }
     },{
         key:"file",
         type:"file",

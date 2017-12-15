@@ -49,7 +49,7 @@ function formatDate(date) {
     //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateInputFormat).replace(/\//g,'-')
     return moment(date).format("YYYY-MM-DD");
 }
-var timePickerStyle = { bottom: 40, position: "relative" };
+var timePickerStyle = { top: 24, position: "absolute" };
 var DateTimeInput = muiThemeable_1.default()(function DateTimeInput(props) {
     var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
     var value = input.value ?
@@ -59,7 +59,7 @@ var DateTimeInput = muiThemeable_1.default()(function DateTimeInput(props) {
         value = undefined;
     else
         value = value.toDate();
-    return React.createElement("div", null,
+    return React.createElement("div", { style: { position: "relative" } },
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
             React.createElement(material_ui_1.DatePicker, { id: fieldSchema.key + "date", DateTimeFormat: Intl.DateTimeFormat, value: value, fullWidth: true, errorText: meta.error || fieldSchema.placeholder, errorStyle: meta.error ? undefined : errorTextAsHintTextStyle(props.muiTheme), onChange: function (e, date) {
                     if (value) {
@@ -70,7 +70,7 @@ var DateTimeInput = muiThemeable_1.default()(function DateTimeInput(props) {
                     input.onChange(formatDateTime(date));
                 }, floatingLabelText: fieldSchema.label, cancelLabel: "取消", locale: "zh-Hans", autoOk: true })),
         React.createElement("div", { style: { width: "50%", display: "inline-block" } },
-            React.createElement(material_ui_1.TimePicker, { id: fieldSchema.key + "time", value: value, fullWidth: true, autoOk: true, style: timePickerStyle, errorText: " ", errorStyle: meta.error ? undefined : errorTextAsHintTextStyle(props.muiTheme), cancelLabel: "取消", underlineStyle: { bottom: 10 }, format: "24hr", onChange: function (_, time) {
+            React.createElement(material_ui_1.TimePicker, { id: fieldSchema.key + "time", value: value, fullWidth: true, autoOk: true, style: timePickerStyle, errorText: fieldSchema.placeholder ? " " : undefined, errorStyle: meta.error ? undefined : errorTextAsHintTextStyle(props.muiTheme), cancelLabel: "取消", format: "24hr", onChange: function (_, time) {
                     var newValue = value ? new Date(value) : new Date();
                     newValue.setHours(time.getHours());
                     newValue.setMinutes(time.getMinutes());

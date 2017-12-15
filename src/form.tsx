@@ -36,9 +36,9 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
     defaultValue?:any
     style?:React.CSSProperties,
     /**
-     * keyPath will be the array of keys from the root of the form to your deeply nested field.
+     * keyPath will keyPath from the root of the form to your deeply nested field. e.g. foo.bar[1].far
      */
-    listens?:FieldSchamaChangeListeners| ((keyPath:string[])=>FieldSchamaChangeListeners),
+    listens?:FieldSchamaChangeListeners| ((keyPath:string)=>FieldSchamaChangeListeners),
     valueCanChangeOnInitialze?:boolean
     /**
      * type: "file"

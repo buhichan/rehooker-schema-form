@@ -71,10 +71,7 @@ function formatDate(date:Date){
     return moment(date).format("YYYY-MM-DD")
 }
 
-const timePickerStyle:React.CSSProperties = {bottom:40,position:"relative"}
-
-
-
+const timePickerStyle:React.CSSProperties = {top:24,position:"absolute"}
 
 const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{muiTheme:MuiTheme}){
     const {meta,input,fieldSchema} = props;
@@ -85,7 +82,7 @@ const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{m
         value = undefined;
     else 
         value = value.toDate()
-    return <div>
+    return <div style={{position:"relative"}}>
         <div style={{width:"50%",display:"inline-block"}}>
             <DatePicker
                 id={fieldSchema.key+"date"}
@@ -115,10 +112,9 @@ const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{m
                 fullWidth
                 autoOk
                 style={timePickerStyle}
-                errorText={" "}
+                errorText={fieldSchema.placeholder?" ":undefined}
                 errorStyle={meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
                 cancelLabel="取消"
-                underlineStyle={{bottom:10}}
                 format="24hr"
                 onChange={(_,time:Date)=>{
                     const newValue = value?new Date(value):new Date();

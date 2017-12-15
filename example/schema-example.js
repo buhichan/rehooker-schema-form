@@ -80,12 +80,20 @@ exports.schema = [
         type: "date",
         label: "date",
         placeholder: "placeholder",
-        validate: function (v) { return v && v.includes("2017") ? "2017" : undefined; }
+        listens: {
+            text: function (v) { return ({
+                placeholder: v
+            }); }
+        }
     }, {
         key: "datetime",
         type: "datetime",
-        placeholder: "placeholder",
-        label: "datetime"
+        label: "datetime",
+        listens: {
+            text: function (v) { return ({
+                placeholder: v
+            }); }
+        }
     }, {
         key: "file",
         type: "file",
