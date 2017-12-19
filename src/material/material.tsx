@@ -72,6 +72,7 @@ function formatDate(date:Date){
 }
 
 const timePickerStyle:React.CSSProperties = {top:24,position:"absolute"}
+const timePickerInputStyle:React.CSSProperties = {top:2}
 
 const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{muiTheme:MuiTheme}){
     const {meta,input,fieldSchema} = props;
@@ -85,7 +86,7 @@ const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{m
     return <div style={{position:"relative"}}>
         <div style={{width:"50%",display:"inline-block"}}>
             <DatePicker
-                id={fieldSchema.key+"date"}
+                id={fieldSchema.key+"-date"}
                 DateTimeFormat={Intl.DateTimeFormat as any}
                 value={value}
                 fullWidth
@@ -107,11 +108,12 @@ const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{m
         </div>
         <div style={{width:"50%",display:"inline-block"}}>
             <TimePicker
-                id={fieldSchema.key+"time"}
+                id={fieldSchema.key+"-time"}
                 value={value}
                 fullWidth
                 autoOk
                 style={timePickerStyle}
+                inputStyle={timePickerInputStyle}
                 errorText={fieldSchema.placeholder?" ":undefined}
                 errorStyle={meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
                 cancelLabel="取消"
