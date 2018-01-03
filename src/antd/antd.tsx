@@ -25,6 +25,19 @@ import { Upload, Button, Icon } from 'antd';
 import {RuntimeAsyncOptions} from "../form";
 import {renderFields} from "../render-fields";
 import { setButton } from "../buttons";
+import * as PropTypes from 'prop-types';
+import RCSelect from "rc-select"
+
+RCSelect.propTypes['value'] = PropTypes.any
+Option.propTypes['value'] = PropTypes.any
+Select.propTypes['value'] = PropTypes.any
+
+const convertValueToString = Comp=>(props)=>{
+    let onChange=!props.onChange?undefined:(value)=>{
+        props.onChange()
+    }
+    return <Comp {...props} value={String(props.value)} />
+}
 
 const errorStyle={color:"red"};
 function TextInput(props){
@@ -97,7 +110,7 @@ class SelectInput extends React.Component<WidgetProps,any>{
             >
 
                 {this.state.options?this.state.options.map(option=>(
-                    <Option key={option.name} value={option.value}>{option.name}</Option>
+                    <Option key={option.name} value={String(option.value)}>{option.name}</Option>
                 )):null}
             </Select>
             <div style={errorStyle}>

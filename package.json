@@ -12,7 +12,7 @@
     "test": "jest",
     "version": "npm run build && git add -A",
     "postversion": "git push && git push --tags",
-    "dev": "NODE_ENV=development npm run dev:mui",
+    "dev": "NODE_ENV=development npm run dev:antd",
     "dev:mui": "NODE_ENV=development webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme mui",
     "dev:antd": "NODE_ENV=development webpack-dev-server --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9011 --theme antd",
     "build:demo": "rm -rf ./demo/* && NODE_ENV=production webpack . --theme mui"

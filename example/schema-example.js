@@ -51,6 +51,9 @@ exports.schema = [
             {
                 name: "梨子",
                 value: "pear"
+            }, {
+                name: "哈哈",
+                value: 0
             }
         ]
     }, {

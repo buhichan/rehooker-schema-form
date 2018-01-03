@@ -26,7 +26,8 @@ var App = /** @class */ (function (_super) {
             state: 2,
             "dependant_lv1": "animal",
             "dependant_lv2": "dog",
-            "select": "pear"
+            "select": "pear",
+            select1: 0
         };
         _this.onSubmit = function (values) {
             if (values.text) {

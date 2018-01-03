@@ -30,7 +30,8 @@ class App extends React.PureComponent<any,any>{
         state:2,
         "dependant_lv1": "animal",
         "dependant_lv2": "dog",
-        "select": "pear"
+        "select": "pear",
+        select1:0
     };
     onSubmit=(values)=>{
         if(values.text){

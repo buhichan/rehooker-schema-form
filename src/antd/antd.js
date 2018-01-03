@@ -24,6 +24,17 @@ var moment = require("moment");
 var antd_8 = require("antd");
 var render_fields_1 = require("../render-fields");
 var buttons_1 = require("../buttons");
+var PropTypes = require("prop-types");
+var rc_select_1 = require("rc-select");
+rc_select_1.default.propTypes['value'] = PropTypes.any;
+Option.propTypes['value'] = PropTypes.any;
+antd_4.Select.propTypes['value'] = PropTypes.any;
+var convertValueToString = function (Comp) { return function (props) {
+    var onChange = !props.onChange ? undefined : function (value) {
+        props.onChange();
+    };
+    return React.createElement(Comp, tslib_1.__assign({}, props, { value: String(props.value) }));
+}; };
 var errorStyle = { color: "red" };
 function TextInput(props) {
     var required = {
@@ -74,7 +85,7 @@ var SelectInput = /** @class */ (function (_super) {
             React.createElement("div", null, this.props.fieldSchema.label),
             React.createElement(antd_4.Select, { showSearch: true, style: { width: "100%" }, disabled: this.props.disabled, mode: this.props.fieldSchema.multiple ? "multiple" : "default", optionFilterProp: "children", value: this.props.fieldSchema.multiple ? (util_1.isArray(this.props.input.value) ? this.props.input.value : []) : this.props.input.value, onChange: function (value) { return _this.props.input.onChange(value); }, filterOption: function (input, option) {
                     return option["props"].children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                } }, this.state.options ? this.state.options.map(function (option) { return (React.createElement(Option, { key: option.name, value: option.value }, option.name)); }) : null),
+                } }, this.state.options ? this.state.options.map(function (option) { return (React.createElement(Option, { key: option.name, value: String(option.value) }, option.name)); }) : null),
             React.createElement("div", { style: errorStyle }, this.props.meta.error));
     };
     return SelectInput;

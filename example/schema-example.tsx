@@ -50,6 +50,9 @@ export let schema:FormFieldSchema[] = [
             {
                 name:"梨子",
                 value:"pear"
+            },{
+                name:"哈哈",
+                value:0
             }
         ]
     },{
