@@ -110,7 +110,7 @@ class SelectInput extends React.Component<WidgetProps,any>{
             >
 
                 {this.state.options?this.state.options.map(option=>(
-                    <Option key={option.name} value={String(option.value)}>{option.name}</Option>
+                    <Option key={option.name} value={option.value}>{option.name}</Option>
                 )):null}
             </Select>
             <div style={errorStyle}>
