@@ -6,12 +6,14 @@ var tslib_1 = require("tslib");
  */
 var arrow_downward_1 = require("material-ui/svg-icons/navigation/arrow-downward");
 var arrow_upward_1 = require("material-ui/svg-icons/navigation/arrow-upward");
+var file_upload_1 = require("material-ui/svg-icons/file/file-upload");
+var file_download_1 = require("material-ui/svg-icons/file/file-download");
+var clear_1 = require("material-ui/svg-icons/content/clear");
 var React = require("react");
 var material_ui_1 = require("material-ui");
 var muiThemeable_1 = require("material-ui/styles/muiThemeable");
 var add_1 = require("material-ui/svg-icons/content/add");
 var remove_1 = require("material-ui/svg-icons/content/remove");
-var svg_icons_1 = require("material-ui/svg-icons");
 var field_1 = require("../field");
 var react_jss_1 = require("react-jss");
 var redux_form_1 = require("redux-form");
@@ -20,6 +22,7 @@ var render_fields_1 = require("../render-fields");
 var RadioButton_1 = require("material-ui/RadioButton");
 var CircularProgress_1 = require("material-ui/CircularProgress");
 var buttons_1 = require("../buttons");
+var utils_1 = require("../utils");
 var moment = require("moment");
 var errorTextAsHintTextStyle = function (muiTheme) { return ({
     color: muiTheme.textField.hintColor
@@ -225,7 +228,7 @@ var BaseAutoComplete = react_jss_1.default({
                             searchText: ""
                         });
                     } },
-                    React.createElement(svg_icons_1.ContentClear, null)) : null);
+                    React.createElement(clear_1.default, null)) : null);
     };
     return BaseAutoComplete;
 }(React.PureComponent)));
@@ -384,47 +387,67 @@ var FileInput = /** @class */ (function (_super) {
     function FileInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
-            filename: _this.props.fieldSchema.label,
+            files: [],
             uploading: false
         };
-        _this.onChange = function (e) {
-            var file = e.target.files[0];
-            if (!_this.props.fieldSchema.onFileChange) {
+        _this.onRequest = function () {
+            utils_1.requestFileUpload(_this.props.fieldSchema).then(function (_a) {
+                var files = _a.files, clear = _a.clear;
                 _this.setState({
-                    filename: file.name.length > 15 ? ("..." + file.name.slice(-12)) : file.name
+                    files: files,
                 });
-                _this.props.input.onChange(file);
-            }
-            else {
+                if (!_this.props.fieldSchema.onFileChange) {
+                    _this.props.input.onChange(files);
+                }
+                else {
+                    _this.setState({
+                        uploading: true
+                    });
+                    _this.props.input.onChange(new Array().fill(files.length));
+                    return Promise.all(files.map(_this.props.fieldSchema.onFileChange)).then(function (res) {
+                        var url;
+                        if (!_this.props.fieldSchema.multiple)
+                            url = res[0];
+                        else
+                            url = res;
+                        _this.props.input.onChange(url);
+                        _this.setState({
+                            uploading: false
+                        });
+                    });
+                }
+            }).catch(function (e) {
                 _this.setState({
-                    filename: "上传中",
-                    uploading: true
+                    uploading: false
                 });
-                _this.props.fieldSchema.onFileChange(file).then(function (url) {
-                    _this.props.input.onChange(url);
-                    _this.setState({
-                        filename: file.name.length > 15 ? ("..." + file.name.slice(-12)) : file.name,
-                        uploading: false
-                    });
-                }).catch(function (e) {
-                    _this.setState({
-                        filename: "上传出错",
-                        uploading: false
-                    });
-                });
-            }
+                throw e;
+            });
         };
         return _this;
     }
     FileInput.prototype.render = function () {
-        var _a = this.props, meta = _a.meta, muiTheme = _a.muiTheme;
+        var _a = this.props, input = _a.input, meta = _a.meta, muiTheme = _a.muiTheme, fieldSchema = _a.fieldSchema;
+        var files = this.state.files;
         var hasError = Boolean(meta.error);
-        return React.createElement(material_ui_1.RaisedButton, { backgroundColor: hasError ? muiTheme.textField.errorColor : muiTheme.palette.primary1Color, style: { marginTop: 28 }, disabled: this.state.uploading, label: meta.error || this.state.filename, labelColor: "#FFFFFF", containerElement: "label", labelStyle: {
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                overflow: "hidden"
-            } },
-            React.createElement("input", { type: "file", style: { display: "none" }, onChange: this.onChange }));
+        var filePaths = input.value instanceof Array ? input.value : input.value ? [input.value] : [];
+        return React.createElement("div", { className: "file-input" },
+            React.createElement("div", { className: "label" },
+                React.createElement(material_ui_1.RaisedButton, { primary: true, style: { marginRight: 10 }, disabled: this.state.uploading, onClick: this.onRequest, icon: React.createElement(file_upload_1.default, null), label: fieldSchema.label }),
+                React.createElement("label", { style: { transform: 'scale(0.6)', color: "#cc3333", marginRight: 10 } }, meta.error)),
+            React.createElement("div", { style: { position: 'relative', verticalAlign: "middle", display: "inline-block" } }, filePaths.map(function (path, i) {
+                var file = files[i];
+                var fileName = file ? file.name : path;
+                return React.createElement(material_ui_1.FlatButton, { style: { margin: "5px" }, key: i, onClick: function () {
+                        if (!path)
+                            return;
+                        var filenames = path.split('/');
+                        var filename = filenames[filenames.length - 1];
+                        utils_1.requestDownload({
+                            href: fieldSchema.downloadPathPrefix || "" + path,
+                            download: filename
+                        });
+                    }, icon: path ? React.createElement(file_download_1.default, null) : null, label: fileName });
+            })));
     };
     FileInput = tslib_1.__decorate([
         muiThemeable_1.default()

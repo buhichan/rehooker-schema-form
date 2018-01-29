@@ -97,9 +97,14 @@ export let schema:FormFieldSchema[] = [
             })
         }
     },{
+        key:"fileIsMultiple",
+        type:"checkbox",
+        label:"file input is multiple"
+    },{
         key:"file",
         type:"file",
         label:"文件",
+        multiple:true,
         placeholder:"placeholder",
         validate:(v:File|string)=>{
             if(v instanceof File && !v.type.startsWith('image/'))
@@ -111,6 +116,9 @@ export let schema:FormFieldSchema[] = [
                     r("/fake/url")
                 },3000)
             });
+        },
+        listens:{
+            fileIsMultiple:multiple=>({multiple})
         }
     },{
         key:"ajax_select",

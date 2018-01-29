@@ -75,6 +75,12 @@ var stylesheet = (_a = {
             padding: " 0 5% 0 calc(10% + 15px)",
         }, _b["& fieldset .field:nth-child(2n+1)"] = {
             padding: " 0 calc(10% + 15px) 0 5%",
+        }, _b["& .file-input"] = {
+            background: "#f9f9fa",
+            padding: "5px 0 5px 5%",
+            "& .label": {
+                marginBottom: 5
+            }
         }, _b["& .schema-node"] = constants_1.clearfix, _b["&>.schema-node>.field>fieldset"] = (_c = {
                 "&>legend": {
                     position: "relative",
@@ -88,7 +94,7 @@ var stylesheet = (_a = {
                         return "3px solid " + muiTheme.palette.primary1Color;
                     }
                 },
-                margin: " 40px calc(5% - 7.5px)",
+                margin: "40px 0",
                 padding: " 0 7.5px",
                 background: "#f9f9fa",
                 border: "none"

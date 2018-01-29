@@ -80,6 +80,13 @@ const stylesheet = {
     "& fieldset .field:nth-child(2n+1)": {
       padding: " 0 calc(10% + 15px) 0 5%",
     },
+    "& .file-input":{
+      background: "#f9f9fa",
+      padding:"5px 0 5px 5%",
+      "& .label":{
+        marginBottom:5
+      }
+    },
     "& .schema-node":clearfix,
     "&>.schema-node>.field>fieldset": {
       "&>legend": {
@@ -91,7 +98,7 @@ const stylesheet = {
         width: "auto",
         borderTop: ({muiTheme})=>`3px solid ${muiTheme.palette.primary1Color}`
       },
-      margin: " 40px calc(5% - 7.5px)",
+      margin: "40px 0",
       padding: " 0 7.5px",
       background: "#f9f9fa",
       border: "none",

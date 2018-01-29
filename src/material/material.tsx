@@ -3,18 +3,20 @@
  */
 import NavigationArrowDownward from 'material-ui/svg-icons/navigation/arrow-downward';
 import NavigationArrowUpward from 'material-ui/svg-icons/navigation/arrow-upward';
+import FileFileUpload from 'material-ui/svg-icons/file/file-upload';
+import FileFileDownload from 'material-ui/svg-icons/file/file-download';
+import ContentClear from 'material-ui/svg-icons/content/clear';
 import * as React from 'react';
 import {RuntimeAsyncOptions, AsyncOptions, Options} from "../form"
 import {
     TextField, TimePicker, MenuItem, Checkbox, DatePicker, RaisedButton, FlatButton, Paper, AutoComplete,
-    IconButton, Subheader
+    IconButton, Subheader, Chip
 } from "material-ui"
 import muiThemeable from "material-ui/styles/muiThemeable";
 import Add from "material-ui/svg-icons/content/add";
 import Remove from "material-ui/svg-icons/content/remove";
 import {MuiTheme} from "material-ui/styles";
 import {WrappedFieldArrayProps} from "redux-form/lib/FieldArray";
-import {ContentClear} from "material-ui/svg-icons";
 import {SyntheticEvent} from "react";
 import {addType, addTypeWithWrapper, preRenderField, WidgetProps} from "../field";
 import injectCSS from 'react-jss';
@@ -24,6 +26,7 @@ import {renderFields} from "../render-fields";
 import {default as RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
 import CircularProgress from "material-ui/CircularProgress";
 import { setButton } from "../buttons";
+import { requestFileUpload, requestDownload } from '../utils';
 const moment = require("moment")
 
 const errorTextAsHintTextStyle = (muiTheme:MuiTheme)=>({
@@ -556,53 +559,82 @@ class FileInput extends React.PureComponent<WidgetProps&{
     muiTheme:MuiTheme
 },any>{
     state={
-        filename:this.props.fieldSchema.label,
+        files:[] as File[],
         uploading:false
     };
-    onChange=(e:SyntheticEvent<HTMLInputElement>)=>{
-        const file = (e.target as HTMLInputElement).files[0];
-        if(!this.props.fieldSchema.onFileChange){
+    onRequest=()=>{
+        requestFileUpload(this.props.fieldSchema as any).then(({files,clear})=>{
             this.setState({
-                filename:file.name.length>15?("..."+file.name.slice(-12)):file.name
+                files,
             });
-            this.props.input.onChange(file);
-        }else{
-            this.setState({
-                filename:"上传中",
-                uploading:true
-            });
-            this.props.fieldSchema.onFileChange(file).then((url)=>{
-                this.props.input.onChange(url);
+            if(!this.props.fieldSchema.onFileChange){
+                this.props.input.onChange(files);
+            }else{
                 this.setState({
-                    filename:file.name.length>15?("..."+file.name.slice(-12)):file.name,
-                    uploading:false
+                    uploading:true
                 });
-            }).catch((e)=>{
-                this.setState({
-                    filename:"上传出错",
-                    uploading:false
+                this.props.input.onChange(new Array().fill(files.length));
+                return Promise.all(files.map(this.props.fieldSchema.onFileChange)).then((res)=>{
+                    let url
+                    if(!this.props.fieldSchema.multiple)
+                        url = res[0]
+                    else
+                        url = res
+                    this.props.input.onChange(url);
+                    this.setState({
+                        uploading:false
+                    });
                 })
-            });
-        }
+            }
+        }).catch(e=>{
+            this.setState({
+                uploading:false
+            })
+            throw e
+        })
     };
     render(){
-        const {meta,muiTheme} = this.props;
+        const {input,meta,muiTheme,fieldSchema} = this.props;
+        const {files} = this.state
         const hasError = Boolean(meta.error);
-        return <RaisedButton
-            backgroundColor={hasError?muiTheme.textField.errorColor:muiTheme.palette.primary1Color}
-            style={{marginTop:28}}
-            disabled={this.state.uploading}
-            label={meta.error||this.state.filename}
-            labelColor={"#FFFFFF"}
-            containerElement="label"
-            labelStyle={{
-                whiteSpace:"nowrap",
-                textOverflow:"ellipsis",
-                overflow:"hidden"
-            }}
-        >
-            <input type="file" style={{display:"none"}} onChange={this.onChange} />
-        </RaisedButton>
+        const filePaths = input.value instanceof Array? input.value : input.value? [input.value] : []
+        return <div className="file-input">
+            <div className="label">
+                <RaisedButton
+                    primary
+                    style={{marginRight:10}}
+                    disabled={this.state.uploading}
+                    onClick={this.onRequest}
+                    icon={<FileFileUpload />}
+                    label={fieldSchema.label}
+                />
+                <label style={{transform:'scale(0.6)',color:"#cc3333",marginRight:10}}>{meta.error}</label>
+            </div>
+            <div style={{position:'relative',verticalAlign:"middle",display:"inline-block"}} >
+                {
+                    filePaths.map((path,i)=>{
+                        const file = files[i]
+                        const fileName:string = file?file.name:path
+                        return <FlatButton
+                            style={{margin:"5px"}} 
+                            key={i} 
+                            onClick={()=>{
+                                if(!path)
+                                    return
+                                const filenames = path.split('/')
+                                const filename = filenames[filenames.length-1]
+                                requestDownload({
+                                    href:fieldSchema.downloadPathPrefix||""+path,
+                                    download:filename
+                                })
+                            }} 
+                            icon={path?<FileFileDownload />:null}
+                            label={fileName}
+                        />
+                    })
+                }
+            </div>
+        </div>
     }
 }
 

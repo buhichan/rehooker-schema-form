@@ -98,9 +98,14 @@ exports.schema = [
             }); }
         }
     }, {
+        key: "fileIsMultiple",
+        type: "checkbox",
+        label: "file input is multiple"
+    }, {
         key: "file",
         type: "file",
         label: "文件",
+        multiple: true,
         placeholder: "placeholder",
         validate: function (v) {
             if (v instanceof File && !v.type.startsWith('image/'))
@@ -112,6 +117,9 @@ exports.schema = [
                     r("/fake/url");
                 }, 3000);
             });
+        },
+        listens: {
+            fileIsMultiple: function (multiple) { return ({ multiple: multiple }); }
         }
     }, {
         key: "ajax_select",

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullWidthInputs = "& .field.group,& .field.array,& .field.table-array, & .field.virtual-group, & .field.full-width";
+exports.fullWidthInputs = "& .field.group,& .field.array,& .field.file,& .field.table-array, & .field.virtual-group, & .field.full-width";
 exports.widgetHeight = 85;
 exports.mobileMedia = "@media(max-width:768px)";
 exports.clearfix = {
