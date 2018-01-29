@@ -78,7 +78,7 @@ var stylesheet = (_a = {
         }, _b["& .file-input"] = {
             background: "#f9f9fa",
             padding: "5px 0 5px 5%",
-            marginBottom:5,
+            marginBottom: 5,
             "& .label": {
                 marginBottom: 5
             }

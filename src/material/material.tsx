@@ -614,22 +614,24 @@ class FileInput extends React.PureComponent<WidgetProps&{
                 {
                     filePaths.map((path,i)=>{
                         const file = files[i]
-                        const fileName:string = file?file.name:path
+                        let filename = file?file.name:null
+                        if(!filename && path){
+                            const chunks = path.split('/')
+                            filename = chunks[chunks.length-1]
+                        }
                         return <FlatButton
                             style={{margin:"5px"}} 
                             key={i} 
                             onClick={()=>{
                                 if(!path)
                                     return
-                                const filenames = path.split('/')
-                                const filename = filenames[filenames.length-1]
                                 requestDownload({
                                     href:fieldSchema.downloadPathPrefix||""+path,
                                     download:filename
                                 })
                             }} 
                             icon={path?<FileFileDownload />:null}
-                            label={fileName}
+                            label={filename}
                         />
                     })
                 }

@@ -436,17 +436,19 @@ var FileInput = /** @class */ (function (_super) {
                 React.createElement("label", { style: { transform: 'scale(0.6)', color: "#cc3333", marginRight: 10 } }, meta.error)),
             React.createElement("div", { style: { position: 'relative', verticalAlign: "middle", display: "inline-block" } }, filePaths.map(function (path, i) {
                 var file = files[i];
-                var fileName = file ? file.name : path;
+                var filename = file ? file.name : null;
+                if (!filename && path) {
+                    var chunks = path.split('/');
+                    filename = chunks[chunks.length - 1];
+                }
                 return React.createElement(material_ui_1.FlatButton, { style: { margin: "5px" }, key: i, onClick: function () {
                         if (!path)
                             return;
-                        var filenames = path.split('/');
-                        var filename = filenames[filenames.length - 1];
                         utils_1.requestDownload({
                             href: fieldSchema.downloadPathPrefix || "" + path,
                             download: filename
                         });
-                    }, icon: path ? React.createElement(file_download_1.default, null) : null, label: fileName });
+                    }, icon: path ? React.createElement(file_download_1.default, null) : null, label: filename });
             })));
     };
     FileInput = tslib_1.__decorate([
