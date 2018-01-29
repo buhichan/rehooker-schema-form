@@ -7,8 +7,8 @@ export const requestFileUpload = ({multiple})=>{
         input.id='hidden-file-input'
         input.style.display='hidden'
         document.body.appendChild(input)
-        input.multiple = multiple
     }
+    input.multiple = multiple
     const promise = new Promise((resolve,reject)=>{
         input.onchange = e=>{
             const files = (e.target as HTMLInputElement).files

@@ -10,8 +10,8 @@ exports.requestFileUpload = function (_a) {
         input.id = 'hidden-file-input';
         input.style.display = 'hidden';
         document.body.appendChild(input);
-        input.multiple = multiple;
     }
+    input.multiple = multiple;
     var promise = new Promise(function (resolve, reject) {
         input.onchange = function (e) {
             var files = e.target.files;
