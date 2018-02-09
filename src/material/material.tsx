@@ -626,7 +626,7 @@ class FileInput extends React.PureComponent<WidgetProps&{
                                 if(!path)
                                     return
                                 requestDownload({
-                                    href:fieldSchema.downloadPathPrefix||""+path,
+                                    href:(fieldSchema.downloadPathPrefix||"")+path,
                                     download:filename
                                 })
                             }} 

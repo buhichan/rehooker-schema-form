@@ -445,7 +445,7 @@ var FileInput = /** @class */ (function (_super) {
                         if (!path)
                             return;
                         utils_1.requestDownload({
-                            href: fieldSchema.downloadPathPrefix || "" + path,
+                            href: (fieldSchema.downloadPathPrefix || "") + path,
                             download: filename
                         });
                     }, icon: path ? React.createElement(file_download_1.default, null) : null, label: filename });

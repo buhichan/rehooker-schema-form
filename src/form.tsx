@@ -47,6 +47,7 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
      * @param file 要上传的文件
      */
     onFileChange?:(file:File|FileList)=>Promise<string>,
+    downloadPathPrefix?:string,
     /**
      * type: "array"
      * @theme mui
