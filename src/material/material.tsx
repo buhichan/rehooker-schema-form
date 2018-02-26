@@ -33,6 +33,10 @@ const errorTextAsHintTextStyle = (muiTheme:MuiTheme)=>({
     color:muiTheme.textField.hintColor
 })
 
+const DEFAULT_LOCALE = "zh-Hans"
+const DEFAULT_OK_LABEL = "确认"
+const DEFAULT_CANCEL_LABEL = "取消"
+
 const NumberInput = muiThemeable()(function NumberInput(props:WidgetProps&{muiTheme:MuiTheme}){
     return <TextField
         {...props.input as any}
@@ -65,16 +69,14 @@ const defaultDateTimeInputFormat = {
 const GenericPlaceHolder = ({placeholder})=><small style={{marginLeft:5,opacity:0.5}}>{placeholder}</small>
 
 function formatDateTime(date:Date){
-    //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateTimeInputFormat).replace(/\//g,'-')
     return moment(date).format("YYYY-MM-DD HH:mm:ss")
 }
 
 function formatDate(date:Date){
-    //return date.toLocaleString([navigator&&navigator.language||"zh-CN"],defaultDateInputFormat).replace(/\//g,'-')
     return moment(date).format("YYYY-MM-DD")
 }
 
-const timePickerStyle:React.CSSProperties = {top:24,position:"absolute"}
+const timePickerStyle:React.CSSProperties = {top:24,position:"absolute",width:"50%"}
 const timePickerInputStyle:React.CSSProperties = {top:2}
 
 const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{muiTheme:MuiTheme}){
@@ -104,8 +106,9 @@ const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{m
                     input.onChange(formatDateTime(date))
                 }}
                 floatingLabelText={fieldSchema.label}
-                cancelLabel="取消"
-                locale="zh-Hans"
+                okLabel={fieldSchema.okLabel||DEFAULT_OK_LABEL}
+                cancelLabel={fieldSchema.cancelLabel||DEFAULT_OK_LABEL}
+                locale={fieldSchema.locale||DEFAULT_LOCALE}
                 autoOk
             />
         </div>
@@ -119,7 +122,8 @@ const DateTimeInput = muiThemeable()(function DateTimeInput(props:WidgetProps&{m
                 inputStyle={timePickerInputStyle}
                 errorText={fieldSchema.placeholder?" ":undefined}
                 errorStyle={meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
-                cancelLabel="取消"
+                okLabel={fieldSchema.okLabel||DEFAULT_OK_LABEL}
+                cancelLabel={fieldSchema.cancelLabel||DEFAULT_CANCEL_LABEL}
                 format="24hr"
                 onChange={(_,time:Date)=>{
                     const newValue = value?new Date(value):new Date();
@@ -142,13 +146,13 @@ class DateInput extends React.PureComponent<WidgetProps>{
         }
     };
     render() {
-        const props = this.props;
+        const {fieldSchema,input,meta,muiTheme,disabled} = this.props;
         const DatePickerProps = {
             onChange: (e, value) => {
-                return props.input.onChange(formatDate(value));
+                return input.onChange(formatDate(value));
             }
         };
-        const parsedDate = moment(props.input.value);
+        const parsedDate = moment(input.value);
 
         if (parsedDate.isValid()) {
             DatePickerProps['value'] = parsedDate.toDate()
@@ -156,22 +160,22 @@ class DateInput extends React.PureComponent<WidgetProps>{
 
         return <DatePicker
             DateTimeFormat={Intl.DateTimeFormat as any}
-            locale="zh-CN"
-            errorText={props.meta.error||props.fieldSchema.placeholder}
-            errorStyle={props.meta.error?undefined:errorTextAsHintTextStyle(props.muiTheme)}
-            floatingLabelText={props.fieldSchema.label}
+            errorText={meta.error||fieldSchema.placeholder}
+            errorStyle={meta.error?undefined:errorTextAsHintTextStyle(muiTheme)}
+            floatingLabelText={fieldSchema.label}
             autoOk={true}
-            id={props.input.name}
+            id={input.name}
             container="inline"
             mode="portrait"
-            cancelLabel="取消"
             fullWidth={true}
             onFocus={this.onFocus}
-            okLabel="确认"
+            okLabel={fieldSchema.okLabel||DEFAULT_OK_LABEL}
+            cancelLabel={fieldSchema.cancelLabel||DEFAULT_OK_LABEL}
+            locale={fieldSchema.locale||DEFAULT_LOCALE}
             ref={ref=>this.datepicker=ref}
             {...DatePickerProps}
-            hintText={props.fieldSchema.placeholder}
-            disabled={props.disabled}/>
+            hintText={fieldSchema.placeholder}
+            disabled={disabled}/>
     }
 }
 
@@ -296,7 +300,7 @@ const BaseAutoComplete = injectCSS({
         }
         componentWillReceiveProps(nextProps){
             /**
-             * 这里不能直接接受searchText,因为searchText是由我来保存的,我这里只需要reinitialize
+             * cannot directly use searchText
              */
             if(nextProps.searchText!==this.props.searchText)
                 this.setState({
@@ -470,11 +474,6 @@ class AutoCompleteAsync extends React.PureComponent<WidgetProps,any>{
 }
 
 
-/**
- * 这个组件比较复杂,必须考虑
- * getChildren存在的情况
- * update: 不必了,以后就没有getChildren了,统一用listens
- */
 @muiThemeable()
 class ArrayFieldRenderer extends React.Component<WrappedFieldArrayProps<any>&WidgetProps,any>{
     render() {

@@ -84,6 +84,13 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
      */
     disableFixSeparatorForExcel?:boolean //we must add sep=, as the first row to prevent excel to change the separator
     csvColumnSeparator?:string
+    /**
+     * type: "date/datetime"
+     * @theme mui
+     */
+    okLabel?:string
+    cancelLabel?:string
+    locale?:string
 
     data?:any,
     [rest:string]:any
