@@ -101,8 +101,6 @@ export class ReduxSchemaForm extends React.PureComponent<ReduxSchemaFormProps,{}
     reset=()=>this.props.dispatch(reset(this.props.form))
     render(){
         const formClass = this.props.classes&&this.props.classes.form?this.props.classes.form:""
-        if(process.env.NODE_ENV === 'development' && !formClass)
-            console.warn("ReduxSchemaForm did not receive a correct jss, please import a theme file.")
         return <form id={this.props.form} className={"redux-schema-form form-horizontal "+formClass} onSubmit={this.props.handleSubmit as any}>
             {renderFields(
                 this.props.form,
