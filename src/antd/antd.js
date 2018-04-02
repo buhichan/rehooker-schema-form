@@ -165,6 +165,7 @@ var AutoCompleteSelect = /** @class */ (function (_super) {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
         var value = fieldSchema.options.find(function (x) { return x.value === input.value; });
         return React.createElement("div", { style: { width: "100%" } },
+            React.createElement("div", null, fieldSchema.label),
             React.createElement(antd_1.AutoComplete, { dataSource: (this.state.options || []).map(function (itm) { return ({ value: itm.value, text: itm.name }); }), style: { width: "100%" }, onSelect: function (value) { return input.onChange(value); } }),
             React.createElement("div", { style: errorStyle }, this.props.meta.error));
     };
