@@ -29,12 +29,17 @@ export function setButton(button: React.StatelessComponent<ButtonProps>){
     FormButton = button;
 }
 
-export const injectSubmittable = (options:{  
+interface InjectSubmittableOptions {  
     formName:string,
     type:"submit"|"reset",
+    /**
+     *  @deprecated disableResubmit, use submittable instead
+     */
     disableResubmit?:boolean
-})=>{
-    
+    submittable?:(valid:boolean,pristine:boolean,submitting:boolean,submitSucceeded:boolean)=>boolean
+}
+
+export const injectSubmittable = (options:InjectSubmittableOptions)=>{
     return Button=>(connect as any)(
         (createSelector as any)(
             [
@@ -43,9 +48,14 @@ export const injectSubmittable = (options:{
                 isSubmitting(options.formName),
                 hasSubmitSucceeded(options.formName)
             ],
-            (valid,pristine,submitting,submitSucceeded)=>({
-                disabled:!submittable(options.disableResubmit)({valid,pristine,submitting,submitSucceeded})
-            })
+            (valid,pristine,submitting,submitSucceeded)=>{
+                const disabled = options.submittable ? 
+                    !options.submittable(valid,pristine,submitting,submitSucceeded) :
+                    !submittable(options.disableResubmit)({valid,pristine,submitting,submitSucceeded})
+                return {
+                    disabled
+                }
+            }
         )
     )(class ConnectedButton extends React.PureComponent<any,any>{
         onClick=()=>{
