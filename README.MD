@@ -2,7 +2,8 @@
 
 # Why
 
-So that I don't have to write a component for every single `redux-form`.
+1. So that I don't have to write a component for every single `redux-form`.
+2. Provide a per-field state that can be changed by form values at runtime, for example, hide or show a field based on another field's value.
 
 # Demo
 
