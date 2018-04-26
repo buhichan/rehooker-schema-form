@@ -54,6 +54,7 @@ export const injectSubmittable = (options:InjectSubmittableOptions)=>{
                         !options.submittable(valid,pristine,submitting,submitSucceeded) :
                         !submittable(options.disableResubmit)({valid,pristine,submitting,submitSucceeded})
                     return {
+                        formName:options.formName||p.formName,
                         disabled
                     }
                 }
@@ -61,7 +62,7 @@ export const injectSubmittable = (options:InjectSubmittableOptions)=>{
         }
     )(class ConnectedButton extends React.PureComponent<any,any>{
         onClick=()=>{
-            this.props.dispatch(options.type==='submit'?submit(options.formName):reset(options.formName))
+            this.props.dispatch(options.type==='submit'?submit(this.props.formName):reset(this.props.formName))
         }
         render(){
             const {dispatch,formName,...rest} = this.props;

@@ -30,6 +30,7 @@ exports.injectSubmittable = function (options) {
                 !options.submittable(valid, pristine, submitting, submitSucceeded) :
                 !exports.submittable(options.disableResubmit)({ valid: valid, pristine: pristine, submitting: submitting, submitSucceeded: submitSucceeded });
             return {
+                formName: options.formName || p.formName,
                 disabled: disabled
             };
         });
@@ -38,7 +39,7 @@ exports.injectSubmittable = function (options) {
         function ConnectedButton() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
             _this.onClick = function () {
-                _this.props.dispatch(options.type === 'submit' ? redux_form_1.submit(options.formName) : redux_form_1.reset(options.formName));
+                _this.props.dispatch(options.type === 'submit' ? redux_form_1.submit(_this.props.formName) : redux_form_1.reset(_this.props.formName));
             };
             return _this;
         }
