@@ -43,6 +43,7 @@ var App = /** @class */ (function (_super) {
     App.prototype.render = function () {
         return React.createElement("div", null,
             React.createElement(_1.ReduxSchemaForm, { form: "random", initialValues: this.data, schema: schema_example_1.schema, onSubmit: this.onSubmit }),
+            React.createElement(Button, { formName: "random" }, "can submit?"),
             React.createElement("p", null, "\u8BF8\u5982\u6570\u636Eschema\u53D1\u751F\u53D8\u5316\u7684\u9700\u6C42\uFF0C\u4E0D\u5E94\u8BE5\u7531\u8868\u5355\u8FD9\u4E00\u5C42\u6765\u5B9E\u73B0\uFF01\u5E94\u8BE5\u662F\u903B\u8F91\u5C42\u5B9E\u73B0\u7684\u529F\u80FD\uFF0C\u8FD9\u91CC\u7684\u8868\u5355\u53EA\u8981\u7B28\u7B28\u7684\u5C31\u884C\u4E86"),
             React.createElement("pre", null,
                 React.createElement("code", null,
@@ -56,6 +57,10 @@ var App = /** @class */ (function (_super) {
     ], App);
     return App;
 }(React.PureComponent));
+var Button = _1.injectSubmittable({ formName: "1", type: "submit" })(function (_a) {
+    var disabled = _a.disabled;
+    return React.createElement("div", null, disabled ? "不可以提交" : "可以提交");
+});
 ReactDOM.render(React.createElement(react_redux_1.Provider, { store: store },
     React.createElement(App, null)), document.getElementById('root'));
 //# sourceMappingURL=example-antd.js.map

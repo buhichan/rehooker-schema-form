@@ -41,22 +41,24 @@ interface InjectSubmittableOptions {
 
 export const injectSubmittable = (options:InjectSubmittableOptions)=>{
     return Button=>(connect as any)(
-        (createSelector as any)(
-            [
-                isValid(options.formName),
-                isPristine(options.formName),
-                isSubmitting(options.formName),
-                hasSubmitSucceeded(options.formName)
-            ],
-            (valid,pristine,submitting,submitSucceeded)=>{
-                const disabled = options.submittable ? 
-                    !options.submittable(valid,pristine,submitting,submitSucceeded) :
-                    !submittable(options.disableResubmit)({valid,pristine,submitting,submitSucceeded})
-                return {
-                    disabled
+        (s,p)=>{
+            return (createSelector as any)(
+                [
+                    isValid(p.formName || options.formName),
+                    isPristine(p.formName || options.formName),
+                    isSubmitting(p.formName || options.formName),
+                    hasSubmitSucceeded(p.formName || options.formName)
+                ],
+                (valid,pristine,submitting,submitSucceeded)=>{
+                    const disabled = options.submittable ? 
+                        !options.submittable(valid,pristine,submitting,submitSucceeded) :
+                        !submittable(options.disableResubmit)({valid,pristine,submitting,submitSucceeded})
+                    return {
+                        disabled
+                    }
                 }
-            }
-        )
+            )
+        }
     )(class ConnectedButton extends React.PureComponent<any,any>{
         onClick=()=>{
             this.props.dispatch(options.type==='submit'?submit(options.formName):reset(options.formName))

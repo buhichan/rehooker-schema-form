@@ -19,19 +19,21 @@ function setButton(button) {
 }
 exports.setButton = setButton;
 exports.injectSubmittable = function (options) {
-    return function (Button) { return react_redux_1.connect(reselect_1.createSelector([
-        redux_form_1.isValid(options.formName),
-        redux_form_1.isPristine(options.formName),
-        redux_form_1.isSubmitting(options.formName),
-        redux_form_1.hasSubmitSucceeded(options.formName)
-    ], function (valid, pristine, submitting, submitSucceeded) {
-        var disabled = options.submittable ?
-            !options.submittable(valid, pristine, submitting, submitSucceeded) :
-            !exports.submittable(options.disableResubmit)({ valid: valid, pristine: pristine, submitting: submitting, submitSucceeded: submitSucceeded });
-        return {
-            disabled: disabled
-        };
-    }))(/** @class */ (function (_super) {
+    return function (Button) { return react_redux_1.connect(function (s, p) {
+        return reselect_1.createSelector([
+            redux_form_1.isValid(p.formName || options.formName),
+            redux_form_1.isPristine(p.formName || options.formName),
+            redux_form_1.isSubmitting(p.formName || options.formName),
+            redux_form_1.hasSubmitSucceeded(p.formName || options.formName)
+        ], function (valid, pristine, submitting, submitSucceeded) {
+            var disabled = options.submittable ?
+                !options.submittable(valid, pristine, submitting, submitSucceeded) :
+                !exports.submittable(options.disableResubmit)({ valid: valid, pristine: pristine, submitting: submitting, submitSucceeded: submitSucceeded });
+            return {
+                disabled: disabled
+            };
+        });
+    })(/** @class */ (function (_super) {
         tslib_1.__extends(ConnectedButton, _super);
         function ConnectedButton() {
             var _this = _super !== null && _super.apply(this, arguments) || this;

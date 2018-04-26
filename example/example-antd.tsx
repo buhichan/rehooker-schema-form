@@ -7,7 +7,7 @@ import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import { reducer as reduxFormReducer } from 'redux-form'
 import "../src/antd"
 require("antd/dist/antd.css");
-import {FormFieldSchema, ReduxSchemaForm} from "../"
+import {FormFieldSchema, ReduxSchemaForm, injectSubmittable} from "../"
 import {schema} from "./schema-example"
 
 const reducer = combineReducers({
@@ -42,8 +42,8 @@ class App extends React.PureComponent<any,any>{
     };
     render(){
         return <div>
-            {/*{# redux-form #}*/}
             <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit} />
+            <Button formName="random">can submit?</Button>
             <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
             <pre>
                 <code>
@@ -56,6 +56,12 @@ class App extends React.PureComponent<any,any>{
         </div>
     }
 }
+
+const Button = injectSubmittable({formName:"1",type:"submit"})(({disabled})=>{
+    return <div>
+        {disabled?"不可以提交":"可以提交"}
+    </div>
+})
 
 ReactDOM.render(
         <Provider store={store}>
