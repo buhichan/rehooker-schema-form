@@ -64,7 +64,7 @@ export const injectSubmittable = (options:InjectSubmittableOptions)=>{
             this.props.dispatch(options.type==='submit'?submit(options.formName):reset(options.formName))
         }
         render(){
-            const {dispatch,...rest} = this.props;
+            const {dispatch,formName,...rest} = this.props;
             return <Button {...rest} type={options.type} onClick={this.onClick} />
         }
     })

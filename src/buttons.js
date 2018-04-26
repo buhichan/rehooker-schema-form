@@ -43,7 +43,7 @@ exports.injectSubmittable = function (options) {
             return _this;
         }
         ConnectedButton.prototype.render = function () {
-            var _a = this.props, dispatch = _a.dispatch, rest = tslib_1.__rest(_a, ["dispatch"]);
+            var _a = this.props, dispatch = _a.dispatch, formName = _a.formName, rest = tslib_1.__rest(_a, ["dispatch", "formName"]);
             return React.createElement(Button, tslib_1.__assign({}, rest, { type: options.type, onClick: this.onClick }));
         };
         return ConnectedButton;
