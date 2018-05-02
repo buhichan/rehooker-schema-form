@@ -103,12 +103,16 @@ export class StatelessField extends React.PureComponent<{field:FormFieldSchema, 
         if (typeof field.type !== 'string')
             typeName = "";
         const CustomWidget = customTypes.get(type);
+        const className = "field " + typeName 
+            + (fullWidth?" full-width":"")
+            + (rest.required?" required":"")
+            + (rest.disabled?" disabled":"")
         if (CustomWidget) {
-            return <div className={"field " + typeName + (fullWidth?" full-width":"")} style={field.style}>
+            return <div className={className} style={field.style}>
                 <CustomWidget keyPath={keyPath} fieldSchema={field} {...rest} renderField={preRenderField}/>
             </div>
         } else if (typeof type === 'function')
-            return <div className={"field " + typeName + (fullWidth?" full-width":"")} style={field.style}>
+            return <div className={className} style={field.style}>
                 <Field name={keyPath} keyPath={keyPath} fieldSchema={field}
                        renderField={preRenderField} {...rest as any} component={type}/>
             </div>;

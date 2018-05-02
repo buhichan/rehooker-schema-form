@@ -56,12 +56,16 @@ var StatelessField = /** @class */ (function (_super) {
         if (typeof field.type !== 'string')
             typeName = "";
         var CustomWidget = customTypes.get(type);
+        var className = "field " + typeName
+            + (fullWidth ? " full-width" : "")
+            + (rest.required ? " required" : "")
+            + (rest.disabled ? " disabled" : "");
         if (CustomWidget) {
-            return React.createElement("div", { className: "field " + typeName + (fullWidth ? " full-width" : ""), style: field.style },
+            return React.createElement("div", { className: className, style: field.style },
                 React.createElement(CustomWidget, tslib_1.__assign({ keyPath: keyPath, fieldSchema: field }, rest, { renderField: preRenderField })));
         }
         else if (typeof type === 'function')
-            return React.createElement("div", { className: "field " + typeName + (fullWidth ? " full-width" : ""), style: field.style },
+            return React.createElement("div", { className: className, style: field.style },
                 React.createElement(redux_form_1.Field, tslib_1.__assign({ name: keyPath, keyPath: keyPath, fieldSchema: field, renderField: preRenderField }, rest, { component: type })));
         switch (type) {
             //这里不可能存在getChildren还没有被执行的情况

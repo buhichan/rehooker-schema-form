@@ -43,7 +43,7 @@ class App extends React.PureComponent<any,any>{
     render(){
         return <div>
             <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit} />
-            <Button formName="random">can submit?</Button>
+            <Button formName="random">CustomSubmitButton</Button>
             <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
             <pre>
                 <code>
@@ -57,10 +57,10 @@ class App extends React.PureComponent<any,any>{
     }
 }
 
-const Button = injectSubmittable({formName:"1",type:"submit"})(({disabled})=>{
-    return <div>
-        {disabled?"不可以提交":"可以提交"}
-    </div>
+const Button = injectSubmittable({formName:"1",type:"submit"})(({props,children})=>{
+    return <button {...props}>
+        {children}
+    </button>
 })
 
 ReactDOM.render(
