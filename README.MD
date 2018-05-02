@@ -254,29 +254,11 @@ const schema = [
 //The value passed to onSubmit will be like: {g:{name:"john"}}
 ```
 
-- sideEffect
+- listens 
 
-Called when the value of this field is changed or initialized. If it returns anything, it should be an array of type `Partial<FormFieldSchema>[]`, which will merged into existing `schema` using the `key` field.
+Object, the key is the keyPath of the field that is listened, when that field changed, the value which is a callback will be called by (current value,form value, redux dispatch), and the returned is a description of the change, which would be undefined or a partial FormFieldSchema, or a Promise of a partial FormFieldSchema.
 
-- getChildren
 
-Only meaningful if the type is "array", to provide a way to have dynamic children form per child specific. It will be called with the value of a child of the array field, and should return a `FormFieldSchema[]` as the child form of this child. e.g.
-```typescript
-const schema = [
-    {
-        key:"g",
-        type:"array",
-        label:"array",
-        getChildren:value=>[
-            {
-                key:"name",
-                type:"text",
-                label:value
-            }
-        ]
-    }
-]
-//The label of the array child will be the same as its value.
 ```
 - others
 All other fields in `FormFieldSchema` are passed to the underlying `redux-form`'s `Field` component. See their [docs](http://redux-form.com/).
