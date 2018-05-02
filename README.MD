@@ -12,7 +12,7 @@
 # Intro
 
 - Accept a `schema` prop to generate form. *Not* json schema but a self-invented one. :P
-- The state of the form is mained by `redux-form` in `redux` state.
+- The state of the form is maintained by `redux-form` in `redux` state.
 - Predefined material-ui widget components so you don't have to write in every form.
     - number
     - text
@@ -30,6 +30,8 @@
 - Also has a set of ant-design theme widgets.
         
 - You can add more widgets using `addType`.
+
+- You can use custom buttons by using `setButtons` and `injectSubmittable`
     
 # How to use
 
@@ -42,23 +44,64 @@ import "redux-schema-form/src/material"
 const schema=[
     {
         key:"name",
-        label:"Company Name",
+        label:"Name",
         type:"text",
         ...others// other props are passed to underlying component, such as required and multiLine
     },{
         key:"password",
         label:"Password"
         type:"password"
+    },{
+        key:"fieldWithState",
+        label:"this field changed when Name changed",
+        type:"text",
+        listens:{
+            "Company Name":(value)=>{
+                if(value === 'Some Company')
+                    return {
+                        label:"Name Illegal"
+                    }
+                else
+                    return {
+                        label:"this field changed when Name changed"
+                    }
+            }
+        }
     }
 ]
 
-function Form(){
+function FormWithDefaultButtons(){ //Default buttons are chinese
     return <ReduxSchemaForm
         form="my-form" 
         schema={schema}
         {...others}
     />
 }
+
+const CustomButton = injectSubmittable({formName:"foo1",type:"submit"})(({props,children})=>{
+    return <button {...props}>
+        {children}
+    </button>
+})
+
+const CustomResetForm = injectSubmittable({formName:"foo1",type:"reset"})(({props,children})=>{
+    return <button {...props}>
+        {children}
+    </button>
+})
+
+function FormWithCustomButtons(){
+    return <div>
+        <ReduxSchemaForm
+            form="foo1" 
+            schema={schema}
+            {...others}
+        />
+        <CustomSubmitButton>Submit Form</CustomSubmitButton>
+        <CustomResetButton>Reset Fields</CustomResetButton>
+    </div>
+}
+
 ```
 
 # Limitation
