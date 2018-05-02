@@ -78,7 +78,7 @@ function FormWithDefaultButtons(){ //Default buttons are chinese
     />
 }
 
-const CustomButton = injectSubmittable({formName:"foo1",type:"submit"})(({props,children})=>{
+const CustomSubmitButton = injectSubmittable({formName:"foo1",type:"submit"})(({props,children})=>{
     return <button {...props}>
         {children}
     </button>
