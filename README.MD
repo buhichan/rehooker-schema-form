@@ -124,30 +124,92 @@ Children will be placed between form fields and buttons.
 ## schema
 Accepts an array of type `FormFieldSchema[]`:
 ```typescript
-import {ConfigProps} from "redux-form"
+import {BaseFieldProps} from "redux-form"
 export type Options = {name:string,value:string|number}[]
 export type AsyncOptions = ()=>Promise<Options>
 export type RuntimeAsyncOptions = (value:any)=>(Promise<Options>|Options)
-export type ChangeOfSchema = (Partial<FormFieldSchema>&{key:string})[];
-export interface FormFieldSchema extends Partial<ConfigProps<any,any>>{
+export type FieldSchamaChangeListeners={
+    /**
+     * q:what is valuePath here?
+     * a:
+     * If your formValue is {"foo":{"haha":[{"bar":10032}]}}, then the callback here will receive these arguments:
+     * 10032, {bar:10032}, [{bar:10032}], {haha:[{bar:10032}]}, {foo:...}
+     */
+    [fieldKey:string]: (value?:any,formValue?:any,dispatch?:any)=>Partial<FormFieldSchema>|Promise<Partial<FormFieldSchema>>|void;
+};
+export interface FormFieldSchema extends Partial<BaseFieldProps> {
     key:string,
-    type: string,
+    type: string | React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>,
     label:string,
     hide?:boolean,
     placeholder?:string,
+    fullWidth?:boolean, //todo: should I put this presentation logic here?
     required?:boolean,
     disabled?:boolean,
     multiple?:boolean,
     children?:FormFieldSchema[]
     options?:Options | AsyncOptions | RuntimeAsyncOptions,
-    sideEffect?:(newValue:any,previousValue?:any,formValue?:any)=>ChangeOfSchema|Promise<ChangeOfSchema>,
-    getChildren?:((childValue:any)=>FormFieldSchema[])
-    [reduxFormFieldProps:string]:any 
-    [materialUIComponentProps:string]:any 
-    /** 
-    * other props are passes to the underlying Field component, which can be any valid redux-form Field props, e.g. validate, normalize, ...;
-    * if it is not a valid redux-form prop, it will passed to the underlying widget component, for example, you can add multiLine:true if the type of this field is 'text', which is a prop of material-ui's TextField component.
-    */
+    defaultValue?:any
+    style?:React.CSSProperties,
+    /**
+     * keyPath will keyPath from the root of the form to your deeply nested field. e.g. foo.bar[1].far
+     */
+    listens?:FieldSchamaChangeListeners| ((keyPath:string)=>FieldSchamaChangeListeners),
+    valueCanChangeOnInitialze?:boolean
+    /**
+     * type: "file" only used in 'file' field 
+     * @returns string url
+     * @theme mui/antd
+     * @param file file to upload
+     */
+    onFileChange?:(file:File|FileList)=>Promise<string>,
+    downloadPathPrefix?:string,
+    /**
+     * type: "array"
+     * @theme mui
+     */
+    itemsPerRow?:number
+    /**
+     * type: "autocomplete-text/async/-"
+     * @theme mui
+     */
+    fullResult?:boolean
+    /**
+     * type: "autocomplete-async"
+     * @theme mui
+     */
+    throttle?:number
+    showValueWhenNoEntryIsFound?:boolean
+    /**
+     * type: "select"
+     * @theme mui/antd
+     */
+    loadingText?:string,
+    /**
+     * type: "table-array/array"
+     * @theme mui
+     */
+    hideColumns?:string[]
+    disableDelete?:boolean,
+    disableCreate?:boolean,
+    disableSort?:boolean,
+    disableImport?:boolean
+    /**
+     * type: "table-array"
+     * @theme mui
+     */
+    disableFixSeparatorForExcel?:boolean //we must add sep=, as the first row to prevent excel to change the separator
+    csvColumnSeparator?:string
+    /**
+     * type: "date/datetime"
+     * @theme mui
+     */
+    okLabel?:string
+    cancelLabel?:string
+    locale?:string
+
+    data?:any,
+    [rest:string]:any //the rest are passed to underlying widget component.
 }
 ```
 
