@@ -95,6 +95,7 @@ function FormWithCustomButtons(){
         <ReduxSchemaForm
             form="foo1" 
             schema={schema}
+            noButton
             {...others}
         />
         <CustomSubmitButton>Submit Form</CustomSubmitButton>
