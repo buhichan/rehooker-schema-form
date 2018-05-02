@@ -38,7 +38,7 @@
 ```
 //remember this component is just a wrapper around [redux-form](), so you have to add redux-form's reducer to make it work!
 
-import {ReduxSchemaForm} from "redux-schema-form"
+import {ReduxSchemaForm,injectSubmittable} from "redux-schema-form"
 import "redux-schema-form/src/material"
 
 const schema=[
