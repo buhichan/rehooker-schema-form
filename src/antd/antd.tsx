@@ -5,28 +5,21 @@
 import * as React from "react"
 import {addType, addTypeWithWrapper} from "../field";
 const {Field,FieldArray} =require("redux-form");
-const {Radio} = require("antd/lib");
+import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon} from 'antd';
 const RadioGroup = Radio.Group;
-import { AutoComplete } from 'antd';
-import {Input} from "antd";
+import {Input,Select,DatePicker} from "antd";
 const {TextArea} =Input;
-import { DatePicker } from 'antd';
 const {RangePicker} = DatePicker;
-import {Select} from "antd"
 import {isArray} from "util";
 const Option = Select.Option;
-import {Checkbox} from "antd";
 import {WidgetProps} from "../field";
-import {InputNumber} from "antd";
-import {Tooltip} from "antd";
-const moment = require("moment");
 import {AsyncOptions, Options} from "../form";
-import { Upload, Button, Icon } from 'antd';
 import {RuntimeAsyncOptions} from "../form";
 import {renderFields} from "../render-fields";
 import { setButton } from "../buttons";
 import * as PropTypes from 'prop-types';
 import RCSelect from "rc-select"
+import * as moment from "moment"
 
 RCSelect.propTypes['value'] = PropTypes.any
 Option.propTypes['value'] = PropTypes.any
@@ -137,7 +130,7 @@ class CheckboxInput extends React.Component<WidgetProps,any>{
 
 
 function DateTimeInput(props){
-    const value=props.input.value?new moment(props.input.value):undefined;
+    const value=props.input.value?moment(props.input.value):undefined;
     return <div style={props.fieldSchema.hide?{}:{height:"50px"}}>
         <div>{props.fieldSchema.label}</div>
         <DatePicker
@@ -159,7 +152,7 @@ function DateInput(props){
     let value= null;
     if(props.input.value){
         if(!(props.input.value instanceof moment))
-            value=new moment(props.input.value);
+            value= moment(props.input.value);
     }
 
     return<div
@@ -191,7 +184,7 @@ class DateTimeRangeInput extends React.Component<WidgetProps,any>{
                 showTime={{ format: 'HH:mm' }}
                 format="YYYY/MM/DD HH:mm"
                 placeholder={['开始时间', '结束时间']}
-                defaultValue={[(value&&new moment(value[0],"YYYY/MM/DD HH:mm:ss"))||new moment(),(value&&new moment(value[1],"YYYY/MM/DD HH:mm:ss"))||new moment()]}
+                defaultValue={[(value&&moment(value[0],"YYYY/MM/DD HH:mm:ss"))||moment(),(value&&moment(value[1],"YYYY/MM/DD HH:mm:ss"))||moment()]}
                 onOk={(value)=>{
                     //console.log(value);
                     //this.props.input.onChange(JSON.stringify(value.map(itm=>itm.format("YYYY/MM/DD hh:mm:ss"))));
@@ -292,7 +285,6 @@ class FileInput extends React.Component<WidgetProps,any>{
 
 @(addType("radio") as any)
 class SelectRadio extends (SelectInput as any){
-
     render(){
         const props = this.props;
         return <div>
@@ -300,7 +292,6 @@ class SelectRadio extends (SelectInput as any){
                 {props.fieldSchema.label}
             </div>
             <RadioGroup
-                id={props.input.name}
                 disabled={props.disabled}
                 value={this.props.input.value || false}
                 onChange={(v)=>props.input.onChange(v)}
@@ -313,7 +304,7 @@ class SelectRadio extends (SelectInput as any){
                             whiteSpace:"nowrap",
                             margin:"0 15px 0 0"
                         }} key={option.value} value={option.value} >{option.name}</Radio>
-                    )):<Radio key={"...loading"} value={""} disabled label={"载入中"}/>
+                    )):null
                 }
             </RadioGroup>
             <p style={errorStyle}>{props.meta.error}</p>

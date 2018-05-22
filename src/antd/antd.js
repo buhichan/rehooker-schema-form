@@ -7,28 +7,21 @@ var tslib_1 = require("tslib");
 var React = require("react");
 var field_1 = require("../field");
 var _a = require("redux-form"), Field = _a.Field, FieldArray = _a.FieldArray;
-var Radio = require("antd/lib").Radio;
-var RadioGroup = Radio.Group;
 var antd_1 = require("antd");
+var RadioGroup = antd_1.Radio.Group;
 var antd_2 = require("antd");
 var TextArea = antd_2.Input.TextArea;
-var antd_3 = require("antd");
-var RangePicker = antd_3.DatePicker.RangePicker;
-var antd_4 = require("antd");
+var RangePicker = antd_2.DatePicker.RangePicker;
 var util_1 = require("util");
-var Option = antd_4.Select.Option;
-var antd_5 = require("antd");
-var antd_6 = require("antd");
-var antd_7 = require("antd");
-var moment = require("moment");
-var antd_8 = require("antd");
+var Option = antd_2.Select.Option;
 var render_fields_1 = require("../render-fields");
 var buttons_1 = require("../buttons");
 var PropTypes = require("prop-types");
 var rc_select_1 = require("rc-select");
+var moment = require("moment");
 rc_select_1.default.propTypes['value'] = PropTypes.any;
 Option.propTypes['value'] = PropTypes.any;
-antd_4.Select.propTypes['value'] = PropTypes.any;
+antd_2.Select.propTypes['value'] = PropTypes.any;
 var convertValueToString = function (Comp) { return function (props) {
     var onChange = !props.onChange ? undefined : function (value) {
         props.onChange();
@@ -83,7 +76,7 @@ var SelectInput = /** @class */ (function (_super) {
         var _this = this;
         return React.createElement("div", { style: this.props.fieldSchema.hide ? {} : { height: "50px" } },
             React.createElement("div", null, this.props.fieldSchema.label),
-            React.createElement(antd_4.Select, { showSearch: true, style: { width: "100%" }, disabled: this.props.disabled, mode: this.props.fieldSchema.multiple ? "multiple" : "default", optionFilterProp: "children", value: this.props.fieldSchema.multiple ? (util_1.isArray(this.props.input.value) ? this.props.input.value : []) : this.props.input.value, onChange: function (value) { return _this.props.input.onChange(value); }, filterOption: function (input, option) {
+            React.createElement(antd_2.Select, { showSearch: true, style: { width: "100%" }, disabled: this.props.disabled, mode: this.props.fieldSchema.multiple ? "multiple" : "default", optionFilterProp: "children", value: this.props.fieldSchema.multiple ? (util_1.isArray(this.props.input.value) ? this.props.input.value : []) : this.props.input.value, onChange: function (value) { return _this.props.input.onChange(value); }, filterOption: function (input, option) {
                     return option["props"].children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
                 } }, this.state.options ? this.state.options.map(function (option) { return (React.createElement(Option, { key: option.name, value: option.value }, option.name)); }) : null),
             React.createElement("div", { style: errorStyle }, this.props.meta.error));
@@ -97,15 +90,15 @@ var CheckboxInput = /** @class */ (function (_super) {
     }
     CheckboxInput.prototype.render = function () {
         var _this = this;
-        return React.createElement(antd_5.Checkbox, { style: Object.assign({ width: "100%" }, this.props.fieldSchema.hide ? null : { lineHeight: "50px", height: "50px" }), disabled: this.props.disabled, onChange: function (e) { return _this.props.input.onChange(e.target["checked"]); }, checked: Boolean(this.props.input.value) }, this.props.fieldSchema.label);
+        return React.createElement(antd_1.Checkbox, { style: Object.assign({ width: "100%" }, this.props.fieldSchema.hide ? null : { lineHeight: "50px", height: "50px" }), disabled: this.props.disabled, onChange: function (e) { return _this.props.input.onChange(e.target["checked"]); }, checked: Boolean(this.props.input.value) }, this.props.fieldSchema.label);
     };
     return CheckboxInput;
 }(React.Component));
 function DateTimeInput(props) {
-    var value = props.input.value ? new moment(props.input.value) : undefined;
+    var value = props.input.value ? moment(props.input.value) : undefined;
     return React.createElement("div", { style: props.fieldSchema.hide ? {} : { height: "50px" } },
         React.createElement("div", null, props.fieldSchema.label),
-        React.createElement(antd_3.DatePicker, { showTime: true, format: "YYYY-MM-DD HH:mm:ss", placeholder: "Select Time", defaultValue: value, style: { width: "100%" }, onChange: function (value, dateString) { return props.input.onChange(dateString); } }),
+        React.createElement(antd_2.DatePicker, { showTime: true, format: "YYYY-MM-DD HH:mm:ss", placeholder: "Select Time", defaultValue: value, style: { width: "100%" }, onChange: function (value, dateString) { return props.input.onChange(dateString); } }),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
 function DateInput(props) {
@@ -115,11 +108,11 @@ function DateInput(props) {
     var value = null;
     if (props.input.value) {
         if (!(props.input.value instanceof moment))
-            value = new moment(props.input.value);
+            value = moment(props.input.value);
     }
     return React.createElement("div", { style: props.fieldSchema.hide ? {} : { height: "50px" } },
         React.createElement("div", null, props.fieldSchema.label),
-        React.createElement(antd_3.DatePicker, tslib_1.__assign({}, required, { key: props.fieldSchema.name, value: value, disabled: props.disabled, style: { width: "100%" }, onChange: function (date, dateString) { props.input.onChange(dateString); } })),
+        React.createElement(antd_2.DatePicker, tslib_1.__assign({}, required, { key: props.fieldSchema.name, value: value, disabled: props.disabled, style: { width: "100%" }, onChange: function (date, dateString) { props.input.onChange(dateString); } })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
 var DateTimeRangeInput = /** @class */ (function (_super) {
@@ -132,7 +125,7 @@ var DateTimeRangeInput = /** @class */ (function (_super) {
         //console.log(value);
         return React.createElement("div", { style: this.props.fieldSchema.hide ? {} : { height: "50px" } },
             React.createElement("div", null, this.props.fieldSchema.label),
-            React.createElement(RangePicker, { showTime: { format: 'HH:mm' }, format: "YYYY/MM/DD HH:mm", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && new moment(value[0], "YYYY/MM/DD HH:mm:ss")) || new moment(), (value && new moment(value[1], "YYYY/MM/DD HH:mm:ss")) || new moment()], onOk: function (value) {
+            React.createElement(RangePicker, { showTime: { format: 'HH:mm' }, format: "YYYY/MM/DD HH:mm", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && moment(value[0], "YYYY/MM/DD HH:mm:ss")) || moment(), (value && moment(value[1], "YYYY/MM/DD HH:mm:ss")) || moment()], onOk: function (value) {
                     //console.log(value);
                     //this.props.input.onChange(JSON.stringify(value.map(itm=>itm.format("YYYY/MM/DD hh:mm:ss"))));
                 } }),
@@ -146,7 +139,7 @@ function NumberInput(props) {
     };
     return React.createElement("div", { style: Object.assign({ width: "100%" }, props.fieldSchema.hide ? null : { height: "50px" }) },
         React.createElement("div", null, props.fieldSchema.label),
-        React.createElement(antd_6.InputNumber, tslib_1.__assign({ onBlur: props.input.onBlur }, required, { style: { width: "100%" }, id: props.input.name, min: 0, disabled: props.disabled, value: isNaN(parseFloat(props.input.value)) ? 0 : parseFloat(props.input.value), onChange: function (value) {
+        React.createElement(antd_1.InputNumber, tslib_1.__assign({ onBlur: props.input.onBlur }, required, { style: { width: "100%" }, id: props.input.name, min: 0, disabled: props.disabled, value: isNaN(parseFloat(props.input.value)) ? 0 : parseFloat(props.input.value), onChange: function (value) {
                 if (isNaN(parseFloat(value))) {
                     props.input.onChange(0);
                 }
@@ -202,9 +195,9 @@ var FileInput = /** @class */ (function (_super) {
     }
     FileInput.prototype.render = function () {
         return React.createElement("div", { style: { width: "100%" } },
-            React.createElement(antd_8.Upload, { multiple: true, onChange: this.onChange, action: this.props.fieldSchema.action, customRequest: this.props.fieldSchema.onFileChange ? this.customRequest : undefined },
-                React.createElement(antd_8.Button, null,
-                    React.createElement(antd_8.Icon, { type: "upload" }),
+            React.createElement(antd_1.Upload, { multiple: true, onChange: this.onChange, action: this.props.fieldSchema.action, customRequest: this.props.fieldSchema.onFileChange ? this.customRequest : undefined },
+                React.createElement(antd_1.Button, null,
+                    React.createElement(antd_1.Icon, { type: "upload" }),
                     " ",
                     this.props.fieldSchema.label)));
     };
@@ -219,12 +212,12 @@ var SelectRadio = /** @class */ (function (_super) {
         var props = this.props;
         return React.createElement("div", null,
             React.createElement("div", { style: { paddingLeft: 0 } }, props.fieldSchema.label),
-            React.createElement(RadioGroup, { id: props.input.name, disabled: props.disabled, value: this.props.input.value || false, onChange: function (v) { return props.input.onChange(v); } }, this.state.options ? this.state.options.map(function (option) { return (React.createElement(Radio, { style: {
+            React.createElement(RadioGroup, { disabled: props.disabled, value: this.props.input.value || false, onChange: function (v) { return props.input.onChange(v); } }, this.state.options ? this.state.options.map(function (option) { return (React.createElement(antd_1.Radio, { style: {
                     width: "auto",
                     flex: 1,
                     whiteSpace: "nowrap",
                     margin: "0 15px 0 0"
-                }, key: option.value, value: option.value }, option.name)); }) : React.createElement(Radio, { key: "...loading", value: "", disabled: true, label: "载入中" })),
+                }, key: option.value, value: option.value }, option.name)); }) : null),
             React.createElement("p", { style: errorStyle }, props.meta.error));
     };
     SelectRadio = tslib_1.__decorate([
@@ -357,13 +350,13 @@ var ArrayFieldRenderer = /** @class */ (function (_super) {
                     children = props.fieldSchema.getChildren(props.fields.get(i)).filter(function (x) { return x; });
                 return React.createElement("div", { key: i, className: "array-field-child" },
                     React.createElement("div", { className: "delete-button" },
-                        React.createElement(antd_7.Tooltip, { placement: "topLeft", title: "删除", arrowPointAtCenter: true },
-                            React.createElement(antd_8.Icon, { type: "minus", className: "icon-minus", style: { cursor: "pointer" }, onClick: function () { return props.fields.remove(i); } }))),
+                        React.createElement(antd_1.Tooltip, { placement: "topLeft", title: "删除", arrowPointAtCenter: true },
+                            React.createElement(antd_1.Icon, { type: "minus", className: "icon-minus", style: { cursor: "pointer" }, onClick: function () { return props.fields.remove(i); } }))),
                     render_fields_1.renderFields(props.meta.form, children, props.keyPath + "[" + i + "]"));
             }),
             React.createElement("div", { className: "add-button" },
-                React.createElement(antd_7.Tooltip, { placement: "topLeft", title: "添加", arrowPointAtCenter: true },
-                    React.createElement(antd_8.Icon, { type: "plus", className: "icon-plus", style: { cursor: "pointer" }, onClick: function () { return props.fields.push(); } }))));
+                React.createElement(antd_1.Tooltip, { placement: "topLeft", title: "添加", arrowPointAtCenter: true },
+                    React.createElement(antd_1.Icon, { type: "plus", className: "icon-plus", style: { cursor: "pointer" }, onClick: function () { return props.fields.push(); } }))));
     };
     return ArrayFieldRenderer;
 }(React.Component));
@@ -391,9 +384,9 @@ field_1.addType("autocomplete-async", AutoCompleteAsync);
 buttons_1.setButton(function (props) {
     switch (props.type) {
         case 'submit':
-            return React.createElement(antd_8.Button, { className: "raised-button", style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);
+            return React.createElement(antd_1.Button, { className: "raised-button", style: { margin: "15px" }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);
         case "button":
-            return React.createElement(antd_8.Button, { style: {
+            return React.createElement(antd_1.Button, { style: {
                     backgroundColor: "transparent",
                     margin: "15px"
                 }, onClick: props.onClick, disabled: props.disabled, type: props.type, htmlType: props.type }, props.children);
