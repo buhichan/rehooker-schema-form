@@ -269,9 +269,10 @@ const SelectInput = muiThemeable()(resolvefieldSchemaOptions((props:WidgetProps&
         }}
     >
     {
-        options?options.map((option) => (
-            <MenuItem className="option" key={option.value} value={option.value} primaryText={option.name}/>
-        )):<MenuItem className="option" value={null} primaryText={fieldSchema.loadingText||"载入中"}/>
+        options?options.map((option) => {
+            const {name,value,...rest} = option
+            return <MenuItem className="option" key={value} value={value} primaryText={name} {...rest}/>
+        }):<MenuItem className="option" value={null} primaryText={fieldSchema.loadingText||"载入中"}/>
     }
     </SelectField>
 }))

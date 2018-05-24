@@ -171,7 +171,10 @@ var SelectInput = muiThemeable_1.default()(resolvefieldSchemaOptions(function (p
     return React.createElement(SelectField_1.default, tslib_1.__assign({}, input, { onBlur: function () { return input.onBlur(input.value); }, id: input.name, disabled: fieldSchema.disabled, floatingLabelText: fieldSchema.label, fullWidth: true, errorText: meta.error, floatingLabelFixed: !!fieldSchema.placeholder, hintText: fieldSchema.placeholder, multiple: fieldSchema.multiple, onChange: function (e, i, v) {
             e.target['value'] = v;
             input.onChange(e);
-        } }), options ? options.map(function (option) { return (React.createElement(material_ui_1.MenuItem, { className: "option", key: option.value, value: option.value, primaryText: option.name })); }) : React.createElement(material_ui_1.MenuItem, { className: "option", value: null, primaryText: fieldSchema.loadingText || "载入中" }));
+        } }), options ? options.map(function (option) {
+        var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
+        return React.createElement(material_ui_1.MenuItem, tslib_1.__assign({ className: "option", key: value, value: value, primaryText: name }, rest));
+    }) : React.createElement(material_ui_1.MenuItem, { className: "option", value: null, primaryText: fieldSchema.loadingText || "载入中" }));
 }));
 var dataSourceConfig = { text: "name", value: "value" };
 var BaseAutoComplete = react_jss_1.default({
