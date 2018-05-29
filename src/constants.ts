@@ -1,4 +1,4 @@
-export const fullWidthInputs = "& .field.group,& .field.array,& .field.file,& .field.table-array, & .field.virtual-group, & .field.full-width";
+export const fullWidthInputs = "& .field.textarea, & .field.group,& .field.array,& .field.file,& .field.table-array, & .field.virtual-group, & .field.full-width";
 export const widgetHeight = 85;
 export const mobileMedia = "@media(max-width:768px)";
 export const clearfix = {

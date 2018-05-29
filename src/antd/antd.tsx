@@ -37,7 +37,7 @@ function TextInput(props){
     let required={
         required:props.required
     };
-    return <div style={props.fieldSchema.hide?{}:{height:"50px"}}>
+    return <div>
         <div>{props.fieldSchema.label}</div>
         <Input type={props.type}
                id={props.input.name}
@@ -85,9 +85,7 @@ class SelectInput extends React.Component<WidgetProps,any>{
         this.reload(this.props);
     }
     render(){
-        return <div
-            style={this.props.fieldSchema.hide?{}:{height:"50px"}}
-        >
+        return <div>
             <div>{this.props.fieldSchema.label}</div>
             <Select
                 showSearch
@@ -116,14 +114,14 @@ class SelectInput extends React.Component<WidgetProps,any>{
 }
 
 class CheckboxInput extends React.Component<WidgetProps,any>{
-
     render(){
-        return <Checkbox
-            style={Object.assign({width:"100%"},this.props.fieldSchema.hide?null:{lineHeight:"50px",height:"50px"})}
-            disabled={this.props.disabled}
-            onChange={(e)=>this.props.input.onChange(e.target["checked"])}
-            checked={Boolean(this.props.input.value)}
-        >{this.props.fieldSchema.label}</Checkbox>;
+        return <div style={{width:"100%",marginTop:13}}>
+            <Checkbox
+                disabled={this.props.disabled}
+                onChange={(e)=>this.props.input.onChange(e.target["checked"])}
+                checked={Boolean(this.props.input.value)}
+            >{this.props.fieldSchema.label}</Checkbox>
+        </div>
     }
 }
 
@@ -132,7 +130,7 @@ class CheckboxInput extends React.Component<WidgetProps,any>{
 
 function DateTimeInput(props){
     const value=props.input.value?moment(props.input.value):undefined;
-    return <div style={props.fieldSchema.hide?{}:{height:"50px"}}>
+    return <div>
         <div>{props.fieldSchema.label}</div>
         <DatePicker
             showTime
@@ -156,9 +154,7 @@ function DateInput(props){
             value= moment(props.input.value);
     }
 
-    return<div
-        style={props.fieldSchema.hide?{}:{height:"50px"}}
-    >
+    return<div >
         <div>{props.fieldSchema.label}</div>
         <DatePicker
             {...required as any}
@@ -179,7 +175,7 @@ class DateTimeRangeInput extends React.Component<WidgetProps,any>{
     render(){
         const value = this.props.input.value&&JSON.parse(this.props.input.value);
         //console.log(value);
-        return <div  style={this.props.fieldSchema.hide?{}:{height:"50px"}}>
+        return <div>
             <div>{this.props.fieldSchema.label}</div>
             <RangePicker
                 showTime={{ format: 'HH:mm' }}
@@ -202,11 +198,8 @@ function NumberInput(props){
     let required={
         required:props.required
     };
-    return <div
-        style={Object.assign({width:"100%"},props.fieldSchema.hide?null:{height:"50px"})}
-    >
+    return <div style={{width:"100%"}}>
         <div>{props.fieldSchema.label}</div>
-
         <InputNumber
             onBlur={props.input.onBlur}
             {...required as any}
@@ -333,7 +326,7 @@ class DateRangeInput extends React.Component<WidgetProps,any>{
 
 class TextareaInput extends React.Component<WidgetProps,any>{
     render(){
-        return <div>
+        return <div style={{paddingBottom:15}}>
             <div>{this.props.fieldSchema.label}</div>
             <TextArea disabled={this.props.disabled}
                       value={this.props.input.value}

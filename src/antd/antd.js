@@ -33,7 +33,7 @@ function TextInput(props) {
     var required = {
         required: props.required
     };
-    return React.createElement("div", { style: props.fieldSchema.hide ? {} : { height: "50px" } },
+    return React.createElement("div", null,
         React.createElement("div", null, props.fieldSchema.label),
         React.createElement(antd_2.Input, tslib_1.__assign({ type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, name: props.input.name }, required, { onBlur: props.input.onBlur, disabled: props.disabled, value: props.input.value, onChange: props.input.onChange })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
@@ -74,7 +74,7 @@ var SelectInput = /** @class */ (function (_super) {
     };
     SelectInput.prototype.render = function () {
         var _this = this;
-        return React.createElement("div", { style: this.props.fieldSchema.hide ? {} : { height: "50px" } },
+        return React.createElement("div", null,
             React.createElement("div", null, this.props.fieldSchema.label),
             React.createElement(antd_2.Select, { showSearch: true, style: { width: "100%" }, disabled: this.props.disabled, mode: this.props.fieldSchema.multiple ? "multiple" : "default", optionFilterProp: "children", value: this.props.fieldSchema.multiple ? (util_1.isArray(this.props.input.value) ? this.props.input.value : []) : this.props.input.value, onChange: function (value) { return _this.props.input.onChange(value); }, filterOption: function (input, option) {
                     return option["props"].children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
@@ -93,13 +93,14 @@ var CheckboxInput = /** @class */ (function (_super) {
     }
     CheckboxInput.prototype.render = function () {
         var _this = this;
-        return React.createElement(antd_1.Checkbox, { style: Object.assign({ width: "100%" }, this.props.fieldSchema.hide ? null : { lineHeight: "50px", height: "50px" }), disabled: this.props.disabled, onChange: function (e) { return _this.props.input.onChange(e.target["checked"]); }, checked: Boolean(this.props.input.value) }, this.props.fieldSchema.label);
+        return React.createElement("div", { style: { width: "100%", marginTop: 13 } },
+            React.createElement(antd_1.Checkbox, { disabled: this.props.disabled, onChange: function (e) { return _this.props.input.onChange(e.target["checked"]); }, checked: Boolean(this.props.input.value) }, this.props.fieldSchema.label));
     };
     return CheckboxInput;
 }(React.Component));
 function DateTimeInput(props) {
     var value = props.input.value ? moment(props.input.value) : undefined;
-    return React.createElement("div", { style: props.fieldSchema.hide ? {} : { height: "50px" } },
+    return React.createElement("div", null,
         React.createElement("div", null, props.fieldSchema.label),
         React.createElement(antd_2.DatePicker, { showTime: true, format: "YYYY-MM-DD HH:mm:ss", placeholder: "Select Time", defaultValue: value, style: { width: "100%" }, onChange: function (value, dateString) { return props.input.onChange(dateString); } }),
         React.createElement("div", { style: errorStyle }, props.meta.error));
@@ -113,7 +114,7 @@ function DateInput(props) {
         if (!(props.input.value instanceof moment))
             value = moment(props.input.value);
     }
-    return React.createElement("div", { style: props.fieldSchema.hide ? {} : { height: "50px" } },
+    return React.createElement("div", null,
         React.createElement("div", null, props.fieldSchema.label),
         React.createElement(antd_2.DatePicker, tslib_1.__assign({}, required, { key: props.fieldSchema.name, value: value, disabled: props.disabled, style: { width: "100%" }, onChange: function (date, dateString) { props.input.onChange(dateString); } })),
         React.createElement("div", { style: errorStyle }, props.meta.error));
@@ -126,7 +127,7 @@ var DateTimeRangeInput = /** @class */ (function (_super) {
     DateTimeRangeInput.prototype.render = function () {
         var value = this.props.input.value && JSON.parse(this.props.input.value);
         //console.log(value);
-        return React.createElement("div", { style: this.props.fieldSchema.hide ? {} : { height: "50px" } },
+        return React.createElement("div", null,
             React.createElement("div", null, this.props.fieldSchema.label),
             React.createElement(RangePicker, { showTime: { format: 'HH:mm' }, format: "YYYY/MM/DD HH:mm", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && moment(value[0], "YYYY/MM/DD HH:mm:ss")) || moment(), (value && moment(value[1], "YYYY/MM/DD HH:mm:ss")) || moment()], onOk: function (value) {
                     //console.log(value);
@@ -140,7 +141,7 @@ function NumberInput(props) {
     var required = {
         required: props.required
     };
-    return React.createElement("div", { style: Object.assign({ width: "100%" }, props.fieldSchema.hide ? null : { height: "50px" }) },
+    return React.createElement("div", { style: { width: "100%" } },
         React.createElement("div", null, props.fieldSchema.label),
         React.createElement(antd_1.InputNumber, tslib_1.__assign({ onBlur: props.input.onBlur }, required, { style: { width: "100%" }, id: props.input.name, min: 0, disabled: props.disabled, value: isNaN(parseFloat(props.input.value)) ? 0 : parseFloat(props.input.value), onChange: function (value) {
                 if (isNaN(parseFloat(value))) {
@@ -251,7 +252,7 @@ var TextareaInput = /** @class */ (function (_super) {
     }
     TextareaInput.prototype.render = function () {
         var _this = this;
-        return React.createElement("div", null,
+        return React.createElement("div", { style: { paddingBottom: 15 } },
             React.createElement("div", null, this.props.fieldSchema.label),
             React.createElement(TextArea, { disabled: this.props.disabled, value: this.props.input.value, onChange: function (value) { return _this.props.input.onChange(value); }, autosize: { minRows: 4, maxRows: 8 } }),
             React.createElement("div", { style: errorStyle }, this.props.meta.error));
