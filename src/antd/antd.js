@@ -125,13 +125,13 @@ var DateTimeRangeInput = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     DateTimeRangeInput.prototype.render = function () {
+        var _this = this;
         var value = this.props.input.value && JSON.parse(this.props.input.value);
         //console.log(value);
         return React.createElement("div", null,
             React.createElement("div", null, this.props.fieldSchema.label),
-            React.createElement(RangePicker, { showTime: { format: 'HH:mm' }, format: "YYYY/MM/DD HH:mm", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && moment(value[0], "YYYY/MM/DD HH:mm:ss")) || moment(), (value && moment(value[1], "YYYY/MM/DD HH:mm:ss")) || moment()], onOk: function (value) {
-                    //console.log(value);
-                    //this.props.input.onChange(JSON.stringify(value.map(itm=>itm.format("YYYY/MM/DD hh:mm:ss"))));
+            React.createElement(RangePicker, { showTime: { format: 'HH:mm:ss' }, format: "YYYY-MM-DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (dates, dataStrings) {
+                    _this.props.input.onChange(dataStrings);
                 } }),
             React.createElement("div", { style: errorStyle }, this.props.meta.error));
     };

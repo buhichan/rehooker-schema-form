@@ -171,22 +171,19 @@ function DateInput(props){
 }
 
 class DateTimeRangeInput extends React.Component<WidgetProps,any>{
-
     render(){
         const value = this.props.input.value&&JSON.parse(this.props.input.value);
         //console.log(value);
         return <div>
             <div>{this.props.fieldSchema.label}</div>
             <RangePicker
-                showTime={{ format: 'HH:mm' }}
-                format="YYYY/MM/DD HH:mm"
+                showTime={{ format: 'HH:mm:ss' }}
+                format="YYYY-MM-DD HH:mm:ss"
                 placeholder={['开始时间', '结束时间']}
-                defaultValue={[(value&&moment(value[0],"YYYY/MM/DD HH:mm:ss"))||moment(),(value&&moment(value[1],"YYYY/MM/DD HH:mm:ss"))||moment()]}
-                onOk={(value)=>{
-                    //console.log(value);
-                    //this.props.input.onChange(JSON.stringify(value.map(itm=>itm.format("YYYY/MM/DD hh:mm:ss"))));
-                }
-                }
+                defaultValue={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}
+                onChange={(dates,dataStrings)=>{
+                    this.props.input.onChange(dataStrings);
+                }}
             />
             <div style={errorStyle}>{this.props.meta.error}</div>
         </div>
