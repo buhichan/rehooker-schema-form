@@ -173,28 +173,25 @@ var FileInput = /** @class */ (function (_super) {
     function FileInput() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onChange = function (info) {
-            var fileList = info.fileList;
-            fileList = fileList.map(function (file) {
+            _this.props.input.onChange(info.fileList.map(function (file) {
                 if (file.response && file.response.url) {
                     file.url = file.response.url;
                 }
-                return file;
-            });
-            fileList = fileList.filter(function (file) {
+                return tslib_1.__assign({}, file);
+            }).filter(function (file) {
                 if (file.response && file.response.url) {
                     return file.status === "done";
                 }
                 return true;
-            });
-            _this.props.input.onChange(fileList);
+            }));
         };
         _this.customRequest = function (_a) {
             var onSuccess = _a.onSuccess, onError = _a.onError, onProgress = _a.onProgress, data = _a.data, file = _a.file, filename = _a.filename;
             if (!_this.props.fieldSchema.onFileChange) {
-                setImmediate(function () {
+                setTimeout(function () {
                     onProgress({ percent: 100 });
                     onSuccess(filename, null);
-                });
+                }, 1);
             }
             else {
                 _this.props.fieldSchema.onFileChange(file).then(function (previewUrl) {
@@ -208,7 +205,7 @@ var FileInput = /** @class */ (function (_super) {
     FileInput.prototype.render = function () {
         var _a = this.props.fieldSchema, key = _a.key, label = _a.label, type = _a.type, listens = _a.listens, onFileChange = _a.onFileChange, hide = _a.hide, onChange = _a.onChange, fullWidth = _a.fullWidth, rest = tslib_1.__rest(_a, ["key", "label", "type", "listens", "onFileChange", "hide", "onChange", "fullWidth"]);
         return React.createElement("div", { style: { width: "100%" } },
-            React.createElement(antd_1.Upload, tslib_1.__assign({ multiple: true, onChange: this.onChange, customRequest: this.customRequest }, rest),
+            React.createElement(antd_1.Upload, tslib_1.__assign({ fileList: this.props.input.value || [], multiple: true, onChange: this.onChange, customRequest: this.customRequest }, rest),
                 React.createElement(antd_1.Button, null,
                     React.createElement(antd_1.Icon, { type: "upload" }),
                     " ",

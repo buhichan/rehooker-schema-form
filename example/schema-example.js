@@ -124,8 +124,13 @@ exports.schema = [
     }, {
         key: "file-file",
         type: "file",
-        label: "文件(不上传)",
+        label: "文件(不上传) (single)",
         multiple: false,
+        parse: function (fileList) {
+            if (fileList && fileList.length > 1)
+                return [fileList[1]];
+            return fileList;
+        },
         placeholder: "placeholder"
     }, {
         key: "ajax_select",
