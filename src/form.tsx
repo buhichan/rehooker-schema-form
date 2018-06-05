@@ -42,11 +42,14 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
     valueCanChangeOnInitialze?:boolean
     /**
      * type: "file"
-     * 返回url
+     * return a promise which resolves to url of the uploaded file
+     * onFileChange is optional, when not provided, file should be handled elsewhere.
+     * In antd component, the value of a file field will be Array<{originFileObj:File, url:string, [otherProps:string]:any}>
      * @theme mui/antd
-     * @param file 要上传的文件
+     * @param file The file to upload
      */
-    onFileChange?:(file:File|FileList)=>Promise<string>,
+    onFileChange?:(file:File)=>Promise<string>,
+
     downloadPathPrefix?:string,
     /**
      * type: "array"
@@ -90,7 +93,7 @@ export interface FormFieldSchema extends Partial<BaseFieldProps>{
      */
     okLabel?:string
     cancelLabel?:string
-    locale?:string
+    locale?:any
 
     data?:any,
     [rest:string]:any

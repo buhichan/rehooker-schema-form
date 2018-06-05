@@ -110,7 +110,7 @@ export let schema:FormFieldSchema[] = [
             if(v instanceof File && !v.type.startsWith('image/'))
                 return "只能上传图片"
         },
-        onFileChange(file:File|FileList){
+        onFileChange(file:File){
             return new Promise(r=>{
                 setTimeout(()=>{
                     r("/fake/url")
@@ -120,6 +120,12 @@ export let schema:FormFieldSchema[] = [
         listens:{
             fileIsMultiple:multiple=>({multiple})
         }
+    },{
+        key:"file-file",
+        type:"file",
+        label:"文件(不上传)",
+        multiple:false,
+        placeholder:"placeholder"
     },{
         key:"ajax_select",
         type:"select",

@@ -238,14 +238,14 @@ class FileInput extends React.Component<WidgetProps,any>{
     onChange=(info)=>{
         let fileList = info.fileList;
         fileList = fileList.map(file=>{
-            if(file.response){
+            if(file.response && file.response.url){
                 file.url = file.response.url;
             }
             return file
         });
 
         fileList=fileList.filter(file=>{
-            if(file.response){
+            if(file.response && file.response.url){
                 return file.status==="done";
             }
             return true;
@@ -253,18 +253,36 @@ class FileInput extends React.Component<WidgetProps,any>{
         this.props.input.onChange(fileList)
     };
     customRequest=({onSuccess,onError,onProgress,data,file,filename})=>{
-        this.props.fieldSchema.onFileChange(this.props.input.value).then(previewUrl=>{
-            onProgress({percent:100});
-            onSuccess(previewUrl,null);
-        },(err)=>onError(err))
+        if(!this.props.fieldSchema.onFileChange){
+            setImmediate(()=>{
+                onProgress({percent:100});
+                onSuccess(filename,null);
+            })
+        }else{
+            this.props.fieldSchema.onFileChange(file).then(previewUrl=>{
+                onProgress({percent:100});
+                onSuccess(previewUrl,null);
+            },(err)=>onError(err))
+        }
     };
     render(){
+        const {
+            key,
+            label,
+            type,
+            listens,
+            onFileChange,
+            hide,
+            onChange,
+            fullWidth,
+            ...rest
+        } = this.props.fieldSchema
         return <div style={{width:"100%"}}>
             <Upload
                 multiple={true}
                 onChange={this.onChange}
-                action={this.props.fieldSchema.action}
-                customRequest={this.props.fieldSchema.onFileChange?this.customRequest:undefined}
+                customRequest={this.customRequest}
+                {...rest}
             >
                 <Button>
                     <Icon type="upload" /> {this.props.fieldSchema.label}

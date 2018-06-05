@@ -122,6 +122,12 @@ exports.schema = [
             fileIsMultiple: function (multiple) { return ({ multiple: multiple }); }
         }
     }, {
+        key: "file-file",
+        type: "file",
+        label: "文件(不上传)",
+        multiple: false,
+        placeholder: "placeholder"
+    }, {
         key: "ajax_select",
         type: "select",
         label: "单选(async)",
