@@ -65,7 +65,7 @@ exports.schema = [
     }, {
         key: "mulSel",
         type: "select",
-        multiple: true,
+        multiple:true,
         placeholder: "一般的多选",
         label: "多选",
         options: [

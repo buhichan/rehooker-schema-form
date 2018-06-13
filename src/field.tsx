@@ -83,6 +83,24 @@ export function preRenderField(field:FormFieldSchema, form:string, keyPath:strin
         return <StatelessField key={key} field={field} form={form} keyPath={keyPath} />;
 }
 
+export function getComponentProps(field:FormFieldSchema){
+    const {
+        hide,
+        type,
+        key,
+        label,
+        options,
+        fullWidth,
+        style,
+        children,
+        onChange,
+        listens,
+        onFileChange,
+        ...rest
+    } = field;
+    return rest
+}
+
 export class StatelessField extends React.PureComponent<{field:FormFieldSchema, form:string, keyPath:string}>{
     render() {
         const {field, form, keyPath} = this.props;

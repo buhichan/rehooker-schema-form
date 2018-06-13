@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import {addType, addTypeWithWrapper} from "../field";
+import {addType, addTypeWithWrapper, getComponentProps} from "../field";
 const {Field,FieldArray} =require("redux-form");
 import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon} from 'antd';
 const RadioGroup = Radio.Group;
@@ -34,27 +34,23 @@ const convertValueToString = Comp=>(props)=>{
 
 const errorStyle={color:"red"};
 function TextInput(props){
-    let required={
-        required:props.required
-    };
+    const componentProps:any = getComponentProps(props.fieldSchema)
     return <div>
         <div>{props.fieldSchema.label}</div>
-        <Input type={props.type}
-               id={props.input.name}
-               className="full-width"
-               style={{width:"100%"}}
-               name={props.input.name}
-               {...required as any}
-               onBlur={props.input.onBlur}
-               disabled={props.disabled}
-               value={props.input.value}
-               onChange={props.input.onChange}
-
+        <Input 
+            type={props.type}
+            id={props.input.name}
+            className="full-width"
+            style={{width:"100%"}}
+            name={props.input.name}
+            onBlur={props.input.onBlur}
+            value={props.input.value}
+            onChange={props.input.onChange}
+            {...componentProps}
         />
         <div style={errorStyle}>{props.meta.error}</div>
     </div>
 }
-
 
 class SelectInput extends React.Component<WidgetProps,any>{
     state={
@@ -85,8 +81,9 @@ class SelectInput extends React.Component<WidgetProps,any>{
         this.reload(this.props);
     }
     render(){
+        const componentProps:any = getComponentProps(this.props.fieldSchema)
         return <div>
-            <div>{this.props.fieldSchema.label}</div>
+            <label>{this.props.fieldSchema.label}</label>
             <Select
                 showSearch
                 style={{ width: "100%" }}
@@ -96,10 +93,10 @@ class SelectInput extends React.Component<WidgetProps,any>{
                 value={this.props.fieldSchema.multiple?(isArray(this.props.input.value)?this.props.input.value:[]):this.props.input.value}
                 onChange={(value)=>this.props.input.onChange(value)}
                 filterOption={(input, option) => {
-                    return (option["props"].children as any).toLowerCase().indexOf(input.toLowerCase()) >= 0}}
-
+                    return (option["props"].children as any).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }}
+                {...componentProps}
             >
-
                 {this.state.options?this.state.options.map(option=>{
                     const {name,value,...rest} = option
                     return <Option key={name} value={value} {...rest}>{name}</Option>
@@ -113,16 +110,17 @@ class SelectInput extends React.Component<WidgetProps,any>{
 
 }
 
-class CheckboxInput extends React.Component<WidgetProps,any>{
-    render(){
-        return <div style={{width:"100%",marginTop:13}}>
-            <Checkbox
-                disabled={this.props.disabled}
-                onChange={(e)=>this.props.input.onChange(e.target["checked"])}
-                checked={Boolean(this.props.input.value)}
-            >{this.props.fieldSchema.label}</Checkbox>
-        </div>
-    }
+function CheckboxInput (props:WidgetProps){
+    const componentProps:any = getComponentProps(props.fieldSchema)
+    return <div style={{width:"100%",marginTop:13}}>
+        <label>{this.props.fieldSchema.label}</label>
+        <Checkbox
+            disabled={this.props.disabled}
+            onChange={(e)=>this.props.input.onChange(e.target["checked"])}
+            checked={Boolean(this.props.input.value)}
+            {...componentProps}
+        />
+    </div>
 }
 
 
@@ -130,8 +128,9 @@ class CheckboxInput extends React.Component<WidgetProps,any>{
 
 function DateTimeInput(props){
     const value=props.input.value?moment(props.input.value):undefined;
+    const componentProps:any = getComponentProps(props.fieldSchema)
     return <div>
-        <div>{props.fieldSchema.label}</div>
+        <label>{props.fieldSchema.label}</label>
         <DatePicker
             showTime
             format="YYYY-MM-DD HH:mm:ss"
@@ -139,30 +138,28 @@ function DateTimeInput(props){
             defaultValue={value}
             style={{width:"100%"}}
             onChange={(value,dateString)=>props.input.onChange(dateString)}
+            {...componentProps}
         />
         <div style={errorStyle}>{props.meta.error}</div>
     </div>
 }
 
 function DateInput(props){
-    let required={
-        required:props.required
-    };
     let value= null;
     if(props.input.value){
         if(!(props.input.value instanceof moment))
             value= moment(props.input.value);
     }
-
+    const componentProps:any = getComponentProps(props.fieldSchema)
     return<div >
-        <div>{props.fieldSchema.label}</div>
+        <label>{props.fieldSchema.label}</label>
         <DatePicker
-            {...required as any}
             key={props.fieldSchema.name}
             value={value}
             disabled={props.disabled}
             style={{width:"100%"}}
             onChange={(date,dateString)=>{props.input.onChange(dateString)}}
+            {...componentProps}
         />
         <div style={errorStyle}>
             {props.meta.error}
@@ -173,9 +170,9 @@ function DateInput(props){
 class DateTimeRangeInput extends React.Component<WidgetProps,any>{
     render(){
         const value = this.props.input.value&&JSON.parse(this.props.input.value);
-        //console.log(value);
+        const componentProps:any = getComponentProps(this.props.fieldSchema)
         return <div>
-            <div>{this.props.fieldSchema.label}</div>
+            <label>{this.props.fieldSchema.label}</label>
             <RangePicker
                 showTime={{ format: 'HH:mm:ss' }}
                 format="YYYY-MM-DD HH:mm:ss"
@@ -184,6 +181,7 @@ class DateTimeRangeInput extends React.Component<WidgetProps,any>{
                 onChange={(dates,dataStrings)=>{
                     this.props.input.onChange(dataStrings);
                 }}
+                {...componentProps}
             />
             <div style={errorStyle}>{this.props.meta.error}</div>
         </div>
@@ -195,8 +193,9 @@ function NumberInput(props){
     let required={
         required:props.required
     };
+    const componentProps:any = getComponentProps(props.fieldSchema)
     return <div style={{width:"100%"}}>
-        <div>{props.fieldSchema.label}</div>
+        <label>{props.fieldSchema.label}</label>
         <InputNumber
             onBlur={props.input.onBlur}
             {...required as any}
@@ -210,7 +209,9 @@ function NumberInput(props){
             }else{
                 props.input.onChange(parseFloat(value as any) )
             }
-            }} />
+            }} 
+            {...componentProps}
+        />
         <div style={errorStyle}>{props.meta.error}</div>
 
     </div>
@@ -220,13 +221,15 @@ function NumberInput(props){
 class AutoCompleteSelect extends SelectInput{
     render() {
         const {meta,input,fieldSchema} = this.props;
+        const componentProps:any = getComponentProps(fieldSchema)
         const value = (fieldSchema.options as Options).find(x=>x.value === input.value);
         return <div style={{ width:"100%" }}>
-            <div>{fieldSchema.label}</div>
+            <label>{fieldSchema.label}</label>
             <AutoComplete
                 dataSource={(this.state.options as any || []).map(itm=>({value:itm.value,text:itm.name}))}
                 style={{ width:"100%" }}
                 onSelect={(value)=>input.onChange(value)}
+                {...componentProps}
             />
             <div style={errorStyle}>{this.props.meta.error}</div>
         </div>
@@ -264,24 +267,14 @@ class FileInput extends React.Component<WidgetProps,any>{
         }
     };
     render(){
-        const {
-            key,
-            label,
-            type,
-            listens,
-            onFileChange,
-            hide,
-            onChange,
-            fullWidth,
-            ...rest
-        } = this.props.fieldSchema
+        const componentProps:any = getComponentProps(this.props.fieldSchema)
         return <div style={{width:"100%"}}>
             <Upload
                 fileList={this.props.input.value||[]}
                 multiple={true}
                 onChange={this.onChange}
                 customRequest={this.customRequest}
-                {...rest}
+                {...componentProps}
             >
                 <Button>
                     <Icon type="upload" /> {this.props.fieldSchema.label}
@@ -295,14 +288,16 @@ class FileInput extends React.Component<WidgetProps,any>{
 class SelectRadio extends (SelectInput as any){
     render(){
         const props = this.props;
+        const componentProps:any = getComponentProps(props.fieldSchema)
         return <div>
-            <div style={{paddingLeft:0}}>
+            <label style={{paddingLeft:0}}>
                 {props.fieldSchema.label}
-            </div>
+            </label>
             <RadioGroup
                 disabled={props.disabled}
                 value={this.props.input.value || false}
                 onChange={(v)=>props.input.onChange(v)}
+                {...componentProps}
             >
                 {
                     this.state.options?this.state.options.map((option) => (
@@ -326,12 +321,14 @@ class DateRangeInput extends React.Component<WidgetProps,any>{
         const {value}=this.props.input;
         const from =value?value[0]:undefined;
         const to =value?value[1]:undefined;
+        const componentProps:any = getComponentProps(this.props.fieldSchema)
         return <div >
             <RangePicker
                 defaultValue={[from?moment(from,dateFormat):undefined, to?moment(to,dateFormat):undefined]}
                 disabled={this.props.disabled}
                 format={dateFormat}
                 onChange={(date,dateStrings)=>{this.props.input.onChange(dateStrings)}}
+                {...componentProps}
             />
         </div>
     }
@@ -341,7 +338,7 @@ class DateRangeInput extends React.Component<WidgetProps,any>{
 class TextareaInput extends React.Component<WidgetProps,any>{
     render(){
         return <div style={{paddingBottom:15}}>
-            <div>{this.props.fieldSchema.label}</div>
+            <label>{this.props.fieldSchema.label}</label>
             <TextArea disabled={this.props.disabled}
                       value={this.props.input.value}
                       onChange={(value)=>this.props.input.onChange(value)}
@@ -405,7 +402,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
     render(){
         const {meta,input,fieldSchema} = this.props;
         return <div>
-            <div>{fieldSchema.label}</div>
+            <label>{fieldSchema.label}</label>
             <AutoComplete
                 dataSource={this.state.dataSource}
                 style={{width:"100%"}}
@@ -430,7 +427,7 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
     render(){
         const {input,meta,fieldSchema} = this.props;
         return <div>
-            <div>{fieldSchema.label}</div>
+            <label>{fieldSchema.label}</label>
             <AutoComplete
                 dataSource={(fieldSchema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
                 onSearch={this.onUpdateInput}
