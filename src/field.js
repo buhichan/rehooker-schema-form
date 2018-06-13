@@ -42,6 +42,11 @@ function preRenderField(field, form, keyPath) {
         return React.createElement(StatelessField, { key: key, field: field, form: form, keyPath: keyPath });
 }
 exports.preRenderField = preRenderField;
+function getComponentProps(field) {
+    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "style", "children", "onChange", "listens", "onFileChange"]);
+    return rest;
+}
+exports.getComponentProps = getComponentProps;
 var StatelessField = /** @class */ (function (_super) {
     tslib_1.__extends(StatelessField, _super);
     function StatelessField() {
