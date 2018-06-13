@@ -111,7 +111,7 @@ class SelectInput extends React.Component<WidgetProps,any>{
 
 function CheckboxInput (props:WidgetProps){
     const componentProps:any = getComponentProps(props.fieldSchema)
-    return <div style={{width:"100%",marginTop:13}}>
+    return <div style={{width:"100%"}}>
         <label>{props.fieldSchema.label}</label>
         <Checkbox
             onChange={(e)=>props.input.onChange(e.target["checked"])}

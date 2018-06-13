@@ -87,7 +87,7 @@ var SelectInput = /** @class */ (function (_super) {
 }(React.Component));
 function CheckboxInput(props) {
     var componentProps = field_1.getComponentProps(props.fieldSchema);
-    return React.createElement("div", { style: { width: "100%", marginTop: 13 } },
+    return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, props.fieldSchema.label),
         React.createElement(antd_1.Checkbox, tslib_1.__assign({ onChange: function (e) { return props.input.onChange(e.target["checked"]); }, checked: Boolean(props.input.value) }, componentProps)));
 }
