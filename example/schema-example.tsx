@@ -60,7 +60,8 @@ export let schema:FormFieldSchema[] = [
         type:"checkbox",
         label:"勾选",
         placeholder:"一般的checkbox",
-        required:true
+        required:true,
+        disabled:true
     },{
         key:"mulSel",
         type:"select",

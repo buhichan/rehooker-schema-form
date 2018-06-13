@@ -43,7 +43,7 @@ function preRenderField(field, form, keyPath) {
 }
 exports.preRenderField = preRenderField;
 function getComponentProps(field) {
-    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "style", "children", "onChange", "listens", "onFileChange"]);
+    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "style", "children", "onChange", "listens", "onFileChange", "validate"]);
     return rest;
 }
 exports.getComponentProps = getComponentProps;

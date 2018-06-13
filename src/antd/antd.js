@@ -71,33 +71,32 @@ var SelectInput = /** @class */ (function (_super) {
         this.reload(this.props);
     };
     SelectInput.prototype.render = function () {
-        var _this = this;
-        var componentProps = field_1.getComponentProps(this.props.fieldSchema);
+        var _a = this.props, fieldSchema = _a.fieldSchema, input = _a.input, meta = _a.meta;
+        var componentProps = field_1.getComponentProps(fieldSchema);
         return React.createElement("div", null,
-            React.createElement("label", null, this.props.fieldSchema.label),
-            React.createElement(antd_2.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, disabled: this.props.disabled, mode: this.props.fieldSchema.multiple ? "multiple" : "default", optionFilterProp: "children", value: this.props.fieldSchema.multiple ? (util_1.isArray(this.props.input.value) ? this.props.input.value : []) : this.props.input.value, onChange: function (value) { return _this.props.input.onChange(value); }, filterOption: function (input, option) {
+            React.createElement("label", null, fieldSchema.label),
+            React.createElement(antd_2.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, optionFilterProp: "children", value: fieldSchema.multiple || fieldSchema.mode === "multiple" ? (util_1.isArray(input.value) ? input.value : []) : input.value, onChange: function (value) { return input.onChange(value); }, filterOption: function (input, option) {
                     return option["props"].children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
                 } }, componentProps), this.state.options ? this.state.options.map(function (option) {
                 var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
                 return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
             }) : null),
-            React.createElement("div", { style: errorStyle }, this.props.meta.error));
+            React.createElement("div", { style: errorStyle }, meta.error));
     };
     return SelectInput;
 }(React.Component));
 function CheckboxInput(props) {
-    var _this = this;
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", { style: { width: "100%", marginTop: 13 } },
-        React.createElement("label", null, this.props.fieldSchema.label),
-        React.createElement(antd_1.Checkbox, tslib_1.__assign({ disabled: this.props.disabled, onChange: function (e) { return _this.props.input.onChange(e.target["checked"]); }, checked: Boolean(this.props.input.value) }, componentProps)));
+        React.createElement("label", null, props.fieldSchema.label),
+        React.createElement(antd_1.Checkbox, tslib_1.__assign({ onChange: function (e) { return props.input.onChange(e.target["checked"]); }, checked: Boolean(props.input.value) }, componentProps)));
 }
 function DateTimeInput(props) {
     var value = props.input.value ? moment(props.input.value) : undefined;
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", null,
         React.createElement("label", null, props.fieldSchema.label),
-        React.createElement(antd_2.DatePicker, tslib_1.__assign({ showTime: true, format: "YYYY-MM-DD HH:mm:ss", placeholder: "Select Time", defaultValue: value, style: { width: "100%" }, onChange: function (value, dateString) { return props.input.onChange(dateString); } }, componentProps)),
+        React.createElement(antd_2.DatePicker, tslib_1.__assign({ showTime: true, format: "YYYY-MM-DD HH:mm:ss", defaultValue: value, style: { width: "100%" }, onChange: function (value, dateString) { return props.input.onChange(dateString); } }, componentProps)),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
 function DateInput(props) {
@@ -248,20 +247,13 @@ var DateRangeInput = /** @class */ (function (_super) {
     };
     return DateRangeInput;
 }(React.Component));
-var TextareaInput = /** @class */ (function (_super) {
-    tslib_1.__extends(TextareaInput, _super);
-    function TextareaInput() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    TextareaInput.prototype.render = function () {
-        var _this = this;
-        return React.createElement("div", { style: { paddingBottom: 15 } },
-            React.createElement("label", null, this.props.fieldSchema.label),
-            React.createElement(TextArea, { disabled: this.props.disabled, value: this.props.input.value, onChange: function (value) { return _this.props.input.onChange(value); }, autosize: { minRows: 4, maxRows: 8 } }),
-            React.createElement("div", { style: errorStyle }, this.props.meta.error));
-    };
-    return TextareaInput;
-}(React.Component));
+function TextareaInput(props) {
+    var componentProps = field_1.getComponentProps(props.fieldSchema);
+    return React.createElement("div", { style: { paddingBottom: 15 } },
+        React.createElement("label", null, props.fieldSchema.label),
+        React.createElement(TextArea, tslib_1.__assign({ value: props.input.value, onChange: function (value) { return props.input.onChange(value); }, autosize: { minRows: 4, maxRows: 8 } }, componentProps)),
+        React.createElement("div", { style: errorStyle }, props.meta.error));
+}
 var AutoCompleteAsync = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
     function AutoCompleteAsync() {

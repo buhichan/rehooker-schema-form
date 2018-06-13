@@ -81,17 +81,16 @@ class SelectInput extends React.Component<WidgetProps,any>{
         this.reload(this.props);
     }
     render(){
-        const componentProps:any = getComponentProps(this.props.fieldSchema)
+        const {fieldSchema,input,meta} = this.props
+        const componentProps:any = getComponentProps(fieldSchema)
         return <div>
-            <label>{this.props.fieldSchema.label}</label>
+            <label>{fieldSchema.label}</label>
             <Select
                 showSearch
                 style={{ width: "100%" }}
-                disabled={this.props.disabled}
-                mode={this.props.fieldSchema.multiple?"multiple":"default"}
                 optionFilterProp="children"
-                value={this.props.fieldSchema.multiple?(isArray(this.props.input.value)?this.props.input.value:[]):this.props.input.value}
-                onChange={(value)=>this.props.input.onChange(value)}
+                value={fieldSchema.multiple || fieldSchema.mode==="multiple"?(isArray(input.value)?input.value:[]):input.value}
+                onChange={(value)=>input.onChange(value)}
                 filterOption={(input, option) => {
                     return (option["props"].children as any).toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }}
@@ -103,7 +102,7 @@ class SelectInput extends React.Component<WidgetProps,any>{
                 }):null}
             </Select>
             <div style={errorStyle}>
-                {this.props.meta.error}
+                {meta.error}
             </div>
         </div>
     }
@@ -113,11 +112,10 @@ class SelectInput extends React.Component<WidgetProps,any>{
 function CheckboxInput (props:WidgetProps){
     const componentProps:any = getComponentProps(props.fieldSchema)
     return <div style={{width:"100%",marginTop:13}}>
-        <label>{this.props.fieldSchema.label}</label>
+        <label>{props.fieldSchema.label}</label>
         <Checkbox
-            disabled={this.props.disabled}
-            onChange={(e)=>this.props.input.onChange(e.target["checked"])}
-            checked={Boolean(this.props.input.value)}
+            onChange={(e)=>props.input.onChange(e.target["checked"])}
+            checked={Boolean(props.input.value)}
             {...componentProps}
         />
     </div>
@@ -134,7 +132,6 @@ function DateTimeInput(props){
         <DatePicker
             showTime
             format="YYYY-MM-DD HH:mm:ss"
-            placeholder="Select Time"
             defaultValue={value}
             style={{width:"100%"}}
             onChange={(value,dateString)=>props.input.onChange(dateString)}
@@ -335,18 +332,18 @@ class DateRangeInput extends React.Component<WidgetProps,any>{
 }
 
 
-class TextareaInput extends React.Component<WidgetProps,any>{
-    render(){
-        return <div style={{paddingBottom:15}}>
-            <label>{this.props.fieldSchema.label}</label>
-            <TextArea disabled={this.props.disabled}
-                      value={this.props.input.value}
-                      onChange={(value)=>this.props.input.onChange(value)}
-                      autosize={{minRows:4,maxRows:8}} />
-            <div style={errorStyle}>{this.props.meta.error}</div>
-        </div>
-
-    }
+function TextareaInput (props:WidgetProps){
+    const componentProps:any = getComponentProps(props.fieldSchema)
+    return <div style={{paddingBottom:15}}>
+        <label>{props.fieldSchema.label}</label>
+        <TextArea 
+            value={props.input.value}
+            onChange={(value)=>props.input.onChange(value)}
+            autosize={{minRows:4,maxRows:8}} 
+            {...componentProps}
+        />
+        <div style={errorStyle}>{props.meta.error}</div>
+    </div>
 }
 
 

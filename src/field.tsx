@@ -96,6 +96,7 @@ export function getComponentProps(field:FormFieldSchema){
         onChange,
         listens,
         onFileChange,
+        validate,
         ...rest
     } = field;
     return rest
