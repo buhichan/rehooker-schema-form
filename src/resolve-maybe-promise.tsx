@@ -21,7 +21,7 @@ export class ResolveMaybePromise extends React.PureComponent<{maybePromise:Possi
             })
     }
     componentDidUpdate(this:ResolveMaybePromise,prevProps:typeof this['props']){
-        if(prevProps.maybePromise!==this.props.maybePromise && this.props.maybePromise instanceof Function)
+        if(prevProps.maybePromise!==this.props.maybePromise)
             this.loadOptions(this.props.maybePromise);
     }
     unmounted=false;

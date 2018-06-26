@@ -10,7 +10,6 @@ const RadioGroup = Radio.Group;
 import {Input,Select,DatePicker} from "antd";
 const {TextArea} =Input;
 const {RangePicker} = DatePicker;
-import {isArray} from "util";
 const Option = Select.Option;
 import {WidgetProps} from "../field";
 import {Options} from "../form";
@@ -21,10 +20,13 @@ const PropTypes = require('prop-types')
 const RCSelect = require("rc-select").default
 import * as moment from "moment"
 import { ResolveMaybePromise } from '../resolve-maybe-promise';
+import { isArray } from 'util';
 
 RCSelect.propTypes['value'] = PropTypes.any
 Option.propTypes['value'] = PropTypes.any
 Select.propTypes['value'] = PropTypes.any
+
+const emptyArray:any[] = []
 
 // const convertValueToString = Comp=>(props)=>{
 //     let onChange=!props.onChange?undefined:(value)=>{
@@ -59,23 +61,26 @@ function SelectInput (props:WidgetProps){
     return <div>
         <label>{fieldSchema.label}</label>
         <ResolveMaybePromise maybePromise={fieldSchema.options} >
-            {options=>{
+            {(options)=>{
+                if(options == undefined)
+                    options = emptyArray
+                const value = fieldSchema.multiple||componentProps.mode==="multiple"?(isArray(input.value)?input.value:[]):input.value
                 return <Select
                     showSearch
                     style={{ width: "100%" }}
                     optionFilterProp="children"
                     mode={fieldSchema.multiple?"multiple":"default"}
-                    value={fieldSchema.multiple?(isArray(input.value)?input.value:[]):input.value}
-                    onChange={(value)=>input.onChange(value)}
+                    value={value}
+                    onChange={input.onChange}
                     filterOption={(input, option:React.ReactElement<any>) => {
                         return (option["props"].children as any).toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }}
                     {...componentProps}
                 >
-                    {options?options.map(option=>{
+                    {options.map(option=>{
                         const {name,value,...rest} = option
                         return <Option key={name} value={value} {...rest}>{name}</Option>
-                    }):null}
+                    })}
                 </Select>
             }}
         </ResolveMaybePromise>
@@ -90,7 +95,7 @@ function CheckboxInput (props:WidgetProps){
     return <div style={{width:"100%"}}>
         <label>{props.fieldSchema.label}</label>
         <Checkbox
-            onChange={(e)=>props.input.onChange(e.currentTarget.checked)}
+            onChange={(e)=>props.input.onChange((e.target as HTMLInputElement).checked)}
             checked={Boolean(props.input.value)}
             {...componentProps}
         />
@@ -107,7 +112,7 @@ function DateTimeInput(props:WidgetProps){
         <label>{props.fieldSchema.label}</label>
         <DatePicker
             showTime
-            format="YYYY-MM-DD HH:mm:ss"
+            format={componentProps.dateFormat||"YYYY-MM-DD HH:mm:ss"}
             defaultValue={value}
             style={{width:"100%"}}
             onChange={(_,dateString)=>props.input.onChange(dateString)}
@@ -147,7 +152,7 @@ function DateTimeRangeInput (props:WidgetProps){
         <label>{props.fieldSchema.label}</label>
         <RangePicker
             showTime={{ format: 'HH:mm:ss' }}
-            format="YYYY-MM-DD HH:mm:ss"
+            format={componentProps.dateFormat||"YYYY-MM-DD HH:mm:ss"}
             placeholder={['开始时间', '结束时间']}
             defaultValue={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}
             onChange={(_,dataStrings)=>{
@@ -197,7 +202,7 @@ const AutoCompleteSelect = function(props:WidgetProps){
         <ResolveMaybePromise maybePromise={fieldSchema.options}>
             {options=>{
                 return <AutoComplete
-                    dataSource={options?options.map(itm=>({value:itm.value,text:itm.name})):[]}
+                    dataSource={options?options.map(itm=>({value:itm.value,text:itm.name})):emptyArray}
                     style={{ width:"100%" }}
                     value={input.value}
                     onSelect={(value)=>input.onChange(value)}
@@ -244,7 +249,7 @@ class FileInput extends React.Component<WidgetProps,any>{
         const componentProps = getComponentProps(this.props.fieldSchema)
         return <div style={{width:"100%"}}>
             <Upload
-                fileList={this.props.input.value||[]}
+                fileList={this.props.input.value||emptyArray}
                 multiple={true}
                 onChange={this.onChange}
                 customRequest={this.customRequest}
@@ -288,7 +293,7 @@ function SelectRadio (props:WidgetProps){
 }
 
 function DateRangeInput (props:WidgetProps){
-    const dateFormat = 'YYYY-MM-DD';
+    const dateFormat = props.fieldSchema.dateFormat || 'YYYY-MM-DD';
     const value=props.input.value
     const from =value?value[0]:undefined;
     const to =value?value[1]:undefined;
@@ -367,7 +372,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
     };
     state={
         searchText:"",
-        dataSource:[] as any[]
+        dataSource:emptyArray
     };
     render(){
         const {meta,input,fieldSchema} = this.props;

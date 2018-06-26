@@ -26,7 +26,7 @@ var ResolveMaybePromise = /** @class */ (function (_super) {
             });
     };
     ResolveMaybePromise.prototype.componentDidUpdate = function (prevProps) {
-        if (prevProps.maybePromise !== this.props.maybePromise && this.props.maybePromise instanceof Function)
+        if (prevProps.maybePromise !== this.props.maybePromise)
             this.loadOptions(this.props.maybePromise);
     };
     ResolveMaybePromise.prototype.componentWillUnmount = function () {

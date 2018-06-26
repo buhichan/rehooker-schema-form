@@ -34,7 +34,7 @@ export interface WidgetInjectedProps{
     [propName:string]:any
 }
 
-export interface FormFieldSchema extends Partial<BaseFieldProps>,WidgetInjectedProps{
+export interface FormFieldSchema extends Partial<BaseFieldProps>,Partial<WidgetInjectedProps>{
     key:string,
     label:string,
     type: string | React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>,

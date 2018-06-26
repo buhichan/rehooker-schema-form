@@ -13,7 +13,6 @@ var RadioGroup = antd_1.Radio.Group;
 var antd_2 = require("antd");
 var TextArea = antd_2.Input.TextArea;
 var RangePicker = antd_2.DatePicker.RangePicker;
-var util_1 = require("util");
 var Option = antd_2.Select.Option;
 var render_fields_1 = require("../render-fields");
 var buttons_1 = require("../buttons");
@@ -21,9 +20,11 @@ var PropTypes = require('prop-types');
 var RCSelect = require("rc-select").default;
 var moment = require("moment");
 var resolve_maybe_promise_1 = require("../resolve-maybe-promise");
+var util_1 = require("util");
 RCSelect.propTypes['value'] = PropTypes.any;
 Option.propTypes['value'] = PropTypes.any;
 antd_2.Select.propTypes['value'] = PropTypes.any;
+var emptyArray = [];
 // const convertValueToString = Comp=>(props)=>{
 //     let onChange=!props.onChange?undefined:(value)=>{
 //         props.onChange()
@@ -44,12 +45,15 @@ function SelectInput(props) {
     return React.createElement("div", null,
         React.createElement("label", null, fieldSchema.label),
         React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
-            return React.createElement(antd_2.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, optionFilterProp: "children", mode: fieldSchema.multiple ? "multiple" : "default", value: fieldSchema.multiple ? (util_1.isArray(input.value) ? input.value : []) : input.value, onChange: function (value) { return input.onChange(value); }, filterOption: function (input, option) {
+            if (options == undefined)
+                options = emptyArray;
+            var value = fieldSchema.multiple || componentProps.mode === "multiple" ? (util_1.isArray(input.value) ? input.value : []) : input.value;
+            return React.createElement(antd_2.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, optionFilterProp: "children", mode: fieldSchema.multiple ? "multiple" : "default", value: value, onChange: input.onChange, filterOption: function (input, option) {
                     return option["props"].children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                } }, componentProps), options ? options.map(function (option) {
+                } }, componentProps), options.map(function (option) {
                 var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
                 return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
-            }) : null);
+            }));
         }),
         React.createElement("div", { style: errorStyle }, meta.error));
 }
@@ -57,14 +61,14 @@ function CheckboxInput(props) {
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, props.fieldSchema.label),
-        React.createElement(antd_1.Checkbox, tslib_1.__assign({ onChange: function (e) { return props.input.onChange(e.currentTarget.checked); }, checked: Boolean(props.input.value) }, componentProps)));
+        React.createElement(antd_1.Checkbox, tslib_1.__assign({ onChange: function (e) { return props.input.onChange(e.target.checked); }, checked: Boolean(props.input.value) }, componentProps)));
 }
 function DateTimeInput(props) {
     var value = props.input.value ? moment(props.input.value) : undefined;
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", null,
         React.createElement("label", null, props.fieldSchema.label),
-        React.createElement(antd_2.DatePicker, tslib_1.__assign({ showTime: true, format: "YYYY-MM-DD HH:mm:ss", defaultValue: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.input.onChange(dateString); } }, componentProps)),
+        React.createElement(antd_2.DatePicker, tslib_1.__assign({ showTime: true, format: componentProps.dateFormat || "YYYY-MM-DD HH:mm:ss", defaultValue: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.input.onChange(dateString); } }, componentProps)),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
 function DateInput(props) {
@@ -84,7 +88,7 @@ function DateTimeRangeInput(props) {
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", null,
         React.createElement("label", null, props.fieldSchema.label),
-        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, format: "YYYY-MM-DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
+        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, format: componentProps.dateFormat || "YYYY-MM-DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
                 props.input.onChange(dataStrings);
             } }, componentProps)),
         React.createElement("div", { style: errorStyle }, props.meta.error));
@@ -112,7 +116,7 @@ var AutoCompleteSelect = function (props) {
     return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, fieldSchema.label),
         React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
-            return React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : [], style: { width: "100%" }, value: input.value, onSelect: function (value) { return input.onChange(value); } }, componentProps));
+            return React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: input.value, onSelect: function (value) { return input.onChange(value); } }, componentProps));
         }),
         React.createElement("div", { style: errorStyle }, meta.error));
 };
@@ -153,7 +157,7 @@ var FileInput = /** @class */ (function (_super) {
     FileInput.prototype.render = function () {
         var componentProps = field_1.getComponentProps(this.props.fieldSchema);
         return React.createElement("div", { style: { width: "100%" } },
-            React.createElement(antd_1.Upload, tslib_1.__assign({ fileList: this.props.input.value || [], multiple: true, onChange: this.onChange, customRequest: this.customRequest }, componentProps),
+            React.createElement(antd_1.Upload, tslib_1.__assign({ fileList: this.props.input.value || emptyArray, multiple: true, onChange: this.onChange, customRequest: this.customRequest }, componentProps),
                 React.createElement(antd_1.Button, null,
                     React.createElement(antd_1.Icon, { type: "upload" }),
                     " ",
@@ -174,7 +178,7 @@ function SelectRadio(props) {
         React.createElement("p", { style: errorStyle }, props.meta.error));
 }
 function DateRangeInput(props) {
-    var dateFormat = 'YYYY-MM-DD';
+    var dateFormat = props.fieldSchema.dateFormat || 'YYYY-MM-DD';
     var value = props.input.value;
     var from = value ? value[0] : undefined;
     var to = value ? value[1] : undefined;
@@ -221,7 +225,7 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
         };
         _this.state = {
             searchText: "",
-            dataSource: []
+            dataSource: emptyArray
         };
         return _this;
     }

@@ -105,6 +105,7 @@ export function getComponentProps(field:FormFieldSchema){
         format,
         parse,
         multiple,
+        value,
         ...rest
     } = field;
     return rest
@@ -236,12 +237,12 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
             this.setState(newSchema);
         })
     }
-    componentDidUpdate(nextProps:FieldNodeProps){
-        if(nextProps.values === this.props.values &&
-            nextProps.form===this.props.form &&
-            nextProps.fieldSchema === this.props.fieldSchema)
+    componentDidUpdate(prevProps:FieldNodeProps){
+        if(prevProps.values === this.props.values &&
+            prevProps.form===this.props.form &&
+            prevProps.fieldSchema === this.props.fieldSchema)
             return;
-        this.reload(nextProps);
+        this.reload(this.props);
     }
     render(){
         const {form,keyPath} = this.props;

@@ -42,7 +42,7 @@ function preRenderField(field, form, keyPath) {
 }
 exports.preRenderField = preRenderField;
 function getComponentProps(field) {
-    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple"]);
+    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, value = field.value, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple", "value"]);
     return rest;
 }
 exports.getComponentProps = getComponentProps;
@@ -126,12 +126,12 @@ var StatefulField = /** @class */ (function (_super) {
             _this.setState(newSchema);
         });
     };
-    StatefulField.prototype.componentDidUpdate = function (nextProps) {
-        if (nextProps.values === this.props.values &&
-            nextProps.form === this.props.form &&
-            nextProps.fieldSchema === this.props.fieldSchema)
+    StatefulField.prototype.componentDidUpdate = function (prevProps) {
+        if (prevProps.values === this.props.values &&
+            prevProps.form === this.props.form &&
+            prevProps.fieldSchema === this.props.fieldSchema)
             return;
-        this.reload(nextProps);
+        this.reload(this.props);
     };
     StatefulField.prototype.render = function () {
         var _a = this.props, form = _a.form, keyPath = _a.keyPath;

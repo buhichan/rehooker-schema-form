@@ -1,4 +1,4 @@
-import {FormFieldSchema} from "../form"
+import {WidgetInjectedProps} from "../form"
 
 declare module "../form"{
     interface WidgetInjectedProps{
@@ -57,6 +57,6 @@ declare module "../form"{
         cancelLabel?:string
         locale?:any
 
-        data?:any,  
+        dateFormat?:string
     }
 }
