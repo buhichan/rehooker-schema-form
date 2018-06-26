@@ -11,92 +11,39 @@ import { getDecorator } from './decorate';
 export type Options = {name:string,value:any}[]
 export type AsyncOptions = ()=>Promise<Options>
 export type RuntimeAsyncOptions = (value:any, props?:WidgetProps)=>(Promise<Options>|Options)
-export type FieldSchamaChangeListeners={
+export type FieldListens={
     /**
      * q:what is valuePath here?
      * a:
      * If your formValue is {"foo":{"haha":[{"bar":10032}]}}, then the callback here will receive these arguments:
      * 10032, {bar:10032}, [{bar:10032}], {haha:[{bar:10032}]}, {foo:...}
      */
-    [fieldKey:string]: (value?:any,formValue?:any,dispatch?:any)=>Partial<FormFieldSchema>|Promise<Partial<FormFieldSchema>>|void;
-};
+    to:string|string[]|((keyPath:string)=>string),
+    then:(value?:any|any[],formValue?:any,dispatch?:any)=>Partial<FormFieldSchema&{value:any}>|Promise<Partial<FormFieldSchema>&{value:any}>|void;
+}[]
 
-export interface FormFieldSchema extends Partial<BaseFieldProps>{
-    key:string,
-    type: string | React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>,
-    label:string,
+export interface WidgetInjectedProps{
     hide?:boolean,
-    placeholder?:string,
+    multiple?:boolean,
+    placeholder?:any,
     fullWidth?:boolean, //todo: should I put this presentation logic here?
     required?:boolean,
     disabled?:boolean,
-    multiple?:boolean,
-    children?:FormFieldSchema[]
-    options?:Options | AsyncOptions | RuntimeAsyncOptions,
     defaultValue?:any
     style?:React.CSSProperties,
+    [propName:string]:any
+}
+
+export interface FormFieldSchema extends Partial<BaseFieldProps>,WidgetInjectedProps{
+    key:string,
+    label:string,
+    type: string | React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>,
+    children?:FormFieldSchema[]
+    options?:Options | AsyncOptions | RuntimeAsyncOptions,
     /**
      * keyPath will keyPath from the root of the form to your deeply nested field. e.g. foo.bar[1].far
      */
-    listens?:FieldSchamaChangeListeners| ((keyPath:string)=>FieldSchamaChangeListeners),
-    valueCanChangeOnInitialze?:boolean
-    /**
-     * type: "file"
-     * return a promise which resolves to url of the uploaded file
-     * onFileChange is optional, when not provided, file should be handled elsewhere.
-     * In antd component, the value of a file field will be Array<{originFileObj:File, url:string, [otherProps:string]:any}>
-     * @theme mui/antd
-     * @param file The file to upload
-     */
-    onFileChange?:(file:File)=>Promise<string>,
-
-    downloadPathPrefix?:string,
-    /**
-     * type: "array"
-     * @theme mui
-     */
-    itemsPerRow?:number
-    /**
-     * type: "autocomplete-text/async/-"
-     * @theme mui
-     */
-    fullResult?:boolean
-    /**
-     * type: "autocomplete-async"
-     * @theme mui
-     */
-    throttle?:number
-    showValueWhenNoEntryIsFound?:boolean
-    /**
-     * type: "select"
-     * @theme mui/antd
-     */
-    loadingText?:string,
-    /**
-     * type: "table-array/array"
-     * @theme mui
-     */
-    hideColumns?:string[]
-    disableDelete?:boolean,
-    disableCreate?:boolean,
-    disableSort?:boolean,
-    disableImport?:boolean
-    /**
-     * type: "table-array"
-     * @theme mui
-     */
-    disableFixSeparatorForExcel?:boolean //we must add sep=, as the first row to prevent excel to change the separator
-    csvColumnSeparator?:string
-    /**
-     * type: "date/datetime"
-     * @theme mui
-     */
-    okLabel?:string
-    cancelLabel?:string
-    locale?:any
-
-    data?:any,
-    [rest:string]:any
+    listens?:FieldListens,
 }
 
 @getDecorator()
@@ -131,4 +78,5 @@ type ReduxSchemaFormOwnProps = {
     dispatch?:(...args:any[])=>any,
     disableResubmit?:boolean
 }
+
 type ReduxSchemaFormProps = Partial<ConfigProps&InjectedFormProps<any,any>>&ReduxSchemaFormOwnProps

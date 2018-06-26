@@ -2,7 +2,7 @@
  * Created by buhi on 2017/7/26.
  */
 import * as React from "react"
-import { FormFieldSchema, FieldSchamaChangeListeners} from "./form";
+import { FormFieldSchema, FieldListens} from "./form";
 import {
     change, Field, formValueSelector, getFormValues
 } from "redux-form"
@@ -91,6 +91,11 @@ export function getComponentProps(field:FormFieldSchema){
         label,
         options,
         fullWidth,
+        component,
+        normalize,
+        props,
+        warn,
+        withRef,
         style,
         children,
         onChange,
@@ -164,31 +169,30 @@ interface FieldNodeProps{
     fieldSchema:FormFieldSchema,
     keyPath:string,
 
-    listeners?:FieldSchamaChangeListeners,
+    listeners?:FieldListens,
     values?:any[],
     dispatch?:Function
 }
 
 @((connect as any)(
-    (_:any,p:any)=>{
+    (_:any,p:WidgetProps)=>{
         let listeners = p.fieldSchema.listens;
-        if(typeof listeners === 'function')
-            listeners = listeners(p.keyPath.split(".").slice(0,-1).join("."));
         const formSelector = formValueSelector(p.form);
         return createSelector(
-            Object.keys(listeners).map(key=>{
-                if(key.includes(",")){
-                    const multipleKeys = key.split(",").map(s=>s.trim())
+            listeners.map(({to})=>{
+                if(to instanceof Function)
+                    to = to(p.keyPath.split(".").slice(0,-1).join("."))
+                if(to instanceof Array){
                     return createSelector(
-                        multipleKeys.map(key=>{
+                        to.map(key=>{
                             return (s:any)=>formSelector(s,key) as any
                         }) as any,
                         (...values:any[])=>{
                             return values
                         }
                     )
-                }else 
-                    return (s:any)=>formSelector(s,key) as any
+                }else
+                    return (s:any)=>formSelector(s,to as string) as any
             }) as any,
             (...values:any[])=>{
                 return {
@@ -214,17 +218,17 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
     }
     reload(props:FieldNodeProps,isInitializing?:boolean){
         const state = this.context.store.getState();
-        Promise.all(Object.keys(props.listeners).map((fieldKey,i)=>{
+        Promise.all(Object.keys(props.listeners).map((_,i)=>{
             const formValue = getFormValues(props.form)(state);
-            const res = props.listeners[fieldKey](props.values[i],formValue,props.dispatch);
+            const res = props.listeners[i].then(props.values[i],formValue,props.dispatch);
             if(!(res instanceof Promise))
                 return Promise.resolve(res||{});
             else return res;
         })).then(newSchemas=> {
             if(this.unmounted)
                 return;
-            let newSchema = newSchemas.reduce((old,newSchema)=>({...old,...newSchema||emptyObject}),props.fieldSchema);
-            if(newSchema.hasOwnProperty("value") && (!isInitializing || newSchema.valueCanChangeOnInitialze)){
+            let newSchema:FormFieldSchema&{value?:any} = newSchemas.reduce((old,newSchema)=>({...old,...newSchema||emptyObject}),props.fieldSchema);
+            if(newSchema.hasOwnProperty("value") && (!isInitializing)){
                 newSchema = Object.assign({}, newSchema)
                 props.dispatch(change(props.form,props.keyPath,newSchema.value));
                 delete newSchema['value']

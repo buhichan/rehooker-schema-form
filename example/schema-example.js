@@ -14,18 +14,17 @@ var arrayFieldChildren = [
         label: "货币",
         type: "text",
         hide: true,
-        listens: function (keyPath) {
-            var _a;
-            return _a = {},
-                //keyPath = 'dynamic-array-alter[0,1,2,....]'
-                _a[keyPath + ".array-child"] = function (v) {
+        listens: [
+            {
+                to: function (keyPath) { return keyPath + ".array-child"; },
+                then: function (v) {
                     console.log(arguments);
                     return {
                         hide: !v
                     };
-                },
-                _a;
-        }
+                }
+            }
+        ]
     }
 ];
 exports.schema = [
@@ -85,20 +84,26 @@ exports.schema = [
         type: "date",
         label: "date",
         placeholder: "placeholder",
-        listens: {
-            text: function (v) { return ({
-                placeholder: v
-            }); }
-        }
+        listens: [
+            {
+                to: "text",
+                then: function (v) { return ({
+                    placeholder: v
+                }); }
+            }
+        ]
     }, {
         key: "datetime",
         type: "datetime",
         label: "datetime",
-        listens: {
-            text: function (v) { return ({
-                placeholder: v
-            }); }
-        }
+        listens: [
+            {
+                to: "text",
+                then: function (v) { return ({
+                    placeholder: v
+                }); }
+            }
+        ]
     }, {
         key: "fileIsMultiple",
         type: "checkbox",
@@ -121,9 +126,10 @@ exports.schema = [
                 }, 3000);
             });
         },
-        listens: {
-            fileIsMultiple: function (multiple) { return ({ multiple: multiple }); }
-        }
+        listens: [{
+                to: 'fileIsMultiple',
+                then: function (multiple) { return ({ multiple: multiple }); }
+            }]
     }, {
         key: "file-file",
         type: "file",
@@ -157,9 +163,12 @@ exports.schema = [
                     return undefined;
                 },
                 label: "手机号",
-                listens: {
-                    checkbox: function (v) { return ({ hide: v }); }
-                }
+                listens: [
+                    {
+                        to: "checkbox",
+                        then: function (v) { return ({ hide: v }); }
+                    }
+                ]
             }
         ]
     }, {
@@ -167,9 +176,12 @@ exports.schema = [
         type: "text",
         label: "当单选框为梨子的时候，隐藏",
         placeholder: "placeholder",
-        listens: {
-            select1: function (v, _) { return ({ hide: v === 'pear', value: null }); }
-        }
+        listens: [
+            {
+                to: "select1",
+                then: function (v, _) { return ({ hide: v === 'pear', value: null }); }
+            }
+        ]
     }, {
         key: "nest.1",
         type: "text",
@@ -220,31 +232,34 @@ exports.schema = [
         type: "select",
         label: "有依赖的单选lv2",
         placeholder: "placeholder",
-        listens: {
-            dependant_lv1: function (v) {
-                return {
-                    hide: !v,
-                    options: v === 'animal' ? [
-                        {
-                            name: "狗",
-                            value: "dog"
-                        }, {
-                            name: "猫",
-                            value: "cat"
-                        }
-                    ] : v === 'plant' ? [
-                        {
-                            name: "苹果",
-                            value: "apple"
-                        },
-                        {
-                            name: "梨子",
-                            value: "pear"
-                        }
-                    ] : []
-                };
+        listens: [
+            {
+                to: "dependant_lv1",
+                then: function (v) {
+                    return {
+                        hide: !v,
+                        options: v === 'animal' ? [
+                            {
+                                name: "狗",
+                                value: "dog"
+                            }, {
+                                name: "猫",
+                                value: "cat"
+                            }
+                        ] : v === 'plant' ? [
+                            {
+                                name: "苹果",
+                                value: "apple"
+                            },
+                            {
+                                name: "梨子",
+                                value: "pear"
+                            }
+                        ] : []
+                    };
+                }
             }
-        },
+        ],
         options: [],
         hide: true
     }, {
@@ -254,47 +269,50 @@ exports.schema = [
         placeholder: "placeholder",
         options: [],
         hide: true,
-        listens: {
-            dependant_lv2: function (v) { return ({
-                options: v === 'cat' ? [
-                    { name: 'kitten', value: 'kitten' }, { name: 'cat', value: 'cat' }, { name: 'kitty', value: 'kitty' }
-                ] :
-                    v === 'dog' ?
-                        [{ name: 'dogg1', value: "dogg1" }, { name: 'doggy', value: 'doggy' }, { name: 'puppy', value: 'puppy' }] :
-                        [],
-                value: null,
-                hide: !(v === 'cat' || v === 'dog')
-            }); }
-        }
+        listens: [{
+                to: "dependant_lv2",
+                then: function (v) { return ({
+                    options: v === 'cat' ? [
+                        { name: 'kitten', value: 'kitten' }, { name: 'cat', value: 'cat' }, { name: 'kitty', value: 'kitty' }
+                    ] :
+                        v === 'dog' ?
+                            [{ name: 'dogg1', value: "dogg1" }, { name: 'doggy', value: 'doggy' }, { name: 'puppy', value: 'puppy' }] :
+                            [],
+                    value: null,
+                    hide: !(v === 'cat' || v === 'dog')
+                }); }
+            }]
     }, {
         key: "array",
         type: "array",
-        itemsPerRow: 6,
         placeholder: "placeholder",
         label: "Array(当select是梨子的时候会少一个child)",
-        listens: {
-            select1: function (v) {
-                return {
-                    children: v === 'pear' ? [
-                        {
-                            key: "array-child",
-                            label: "array-child",
-                            type: "text"
-                        }
-                    ] : [
-                        {
-                            key: "array-child",
-                            label: "array-child",
-                            type: "text"
-                        }, {
-                            key: "haha",
-                            label: "dynamic-child",
-                            type: "text"
-                        }
-                    ]
-                };
-            }
-        },
+        listens: [
+            {
+                to: "select1",
+                then: function (v) {
+                    return {
+                        children: v === 'pear' ? [
+                            {
+                                key: "array-child",
+                                label: "array-child",
+                                type: "text"
+                            }
+                        ] : [
+                            {
+                                key: "array-child",
+                                label: "array-child",
+                                type: "text"
+                            }, {
+                                key: "haha",
+                                label: "dynamic-child",
+                                type: "text"
+                            }
+                        ]
+                    };
+                }
+            },
+        ],
         children: []
     }, {
         key: "dynamic-array-alter",
@@ -364,33 +382,35 @@ exports.schema = [
         label: "多重监听",
         placeholder: "placeholder",
         type: "text",
-        listens: {
-            'radio,text': function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
+        listens: [{
+                to: ["radio", 'text'],
+                then: function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i] = arguments[_i];
+                    }
+                    console.log(args);
                 }
-                console.log(args);
-            }
-        }
+            }]
     }, {
         key: "",
         label: "some text",
         type: "virtual-group",
         children: [],
-        listens: {
-            text: function (v) {
-                return {
-                    children: [
-                        {
-                            key: "text",
-                            label: v,
-                            type: 'text'
-                        }
-                    ]
-                };
-            }
-        }
+        listens: [{
+                to: "text",
+                then: function (v) {
+                    return {
+                        children: [
+                            {
+                                key: "text",
+                                label: v,
+                                type: 'text'
+                            }
+                        ]
+                    };
+                }
+            }]
     }
 ];
 //# sourceMappingURL=schema-example.js.map

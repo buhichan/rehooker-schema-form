@@ -42,7 +42,7 @@ function preRenderField(field, form, keyPath) {
 }
 exports.preRenderField = preRenderField;
 function getComponentProps(field) {
-    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple"]);
+    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple"]);
     return rest;
 }
 exports.getComponentProps = getComponentProps;
@@ -107,9 +107,9 @@ var StatefulField = /** @class */ (function (_super) {
     StatefulField.prototype.reload = function (props, isInitializing) {
         var _this = this;
         var state = this.context.store.getState();
-        Promise.all(Object.keys(props.listeners).map(function (fieldKey, i) {
+        Promise.all(Object.keys(props.listeners).map(function (_, i) {
             var formValue = redux_form_1.getFormValues(props.form)(state);
-            var res = props.listeners[fieldKey](props.values[i], formValue, props.dispatch);
+            var res = props.listeners[i].then(props.values[i], formValue, props.dispatch);
             if (!(res instanceof Promise))
                 return Promise.resolve(res || {});
             else
@@ -118,7 +118,7 @@ var StatefulField = /** @class */ (function (_super) {
             if (_this.unmounted)
                 return;
             var newSchema = newSchemas.reduce(function (old, newSchema) { return (tslib_1.__assign({}, old, newSchema || emptyObject)); }, props.fieldSchema);
-            if (newSchema.hasOwnProperty("value") && (!isInitializing || newSchema.valueCanChangeOnInitialze)) {
+            if (newSchema.hasOwnProperty("value") && (!isInitializing)) {
                 newSchema = Object.assign({}, newSchema);
                 props.dispatch(redux_form_1.change(props.form, props.keyPath, newSchema.value));
                 delete newSchema['value'];
@@ -143,13 +143,13 @@ var StatefulField = /** @class */ (function (_super) {
     StatefulField = tslib_1.__decorate([
         react_redux_1.connect(function (_, p) {
             var listeners = p.fieldSchema.listens;
-            if (typeof listeners === 'function')
-                listeners = listeners(p.keyPath.split(".").slice(0, -1).join("."));
             var formSelector = redux_form_1.formValueSelector(p.form);
-            return reselect_1.createSelector(Object.keys(listeners).map(function (key) {
-                if (key.includes(",")) {
-                    var multipleKeys = key.split(",").map(function (s) { return s.trim(); });
-                    return reselect_1.createSelector(multipleKeys.map(function (key) {
+            return reselect_1.createSelector(listeners.map(function (_a) {
+                var to = _a.to;
+                if (to instanceof Function)
+                    to = to(p.keyPath.split(".").slice(0, -1).join("."));
+                if (to instanceof Array) {
+                    return reselect_1.createSelector(to.map(function (key) {
                         return function (s) { return formSelector(s, key); };
                     }), function () {
                         var values = [];
@@ -160,7 +160,7 @@ var StatefulField = /** @class */ (function (_super) {
                     });
                 }
                 else
-                    return function (s) { return formSelector(s, key); };
+                    return function (s) { return formSelector(s, to); };
             }), function () {
                 var values = [];
                 for (var _i = 0; _i < arguments.length; _i++) {

@@ -61,11 +61,12 @@ exports.testTheme = function (themeName, loadTheme, container) {
                 label: "Text2",
                 type: "text",
                 hide: true,
-                listens: {
-                    text1: function (v) { return ({
-                        hide: v !== 'b'
-                    }); }
-                }
+                listens: [{
+                        to: "text1",
+                        then: function (v) { return ({
+                            hide: v !== 'b'
+                        }); }
+                    }]
             }
         ], {
             text1: "a"

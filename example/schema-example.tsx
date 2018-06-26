@@ -13,19 +13,19 @@ const arrayFieldChildren = [
         label:"货币",
         type:"text",
         hide:true,
-        listens:(keyPath:string)=>{
-            return {
-                //keyPath = 'dynamic-array-alter[0,1,2,....]'
-                [keyPath+".array-child"]: function (v:any) {
+        listens:[
+            {
+                to:(keyPath:string)=>keyPath+".array-child",
+                then: function (v:any) {
                     console.log(arguments);
                     return {
                         hide:!v
                     }
                 }
             }
-        }
+        ]
     }
-];
+]
 
 export let schema:FormFieldSchema[] = [
     {
@@ -84,20 +84,26 @@ export let schema:FormFieldSchema[] = [
         type:"date",
         label:"date",
         placeholder:"placeholder",
-        listens:{
-            text:v=>({
-                placeholder:v
-            })
-        }
+        listens:[
+            {
+                to:"text",
+                then:v=>({
+                    placeholder:v
+                })
+            }
+        ]
     },{
         key:"datetime",
         type:"datetime",
         label:"datetime",
-        listens:{
-            text:v=>({
-                placeholder:v
-            })
-        }
+        listens:[
+            {
+                to:"text",
+                then:v=>({
+                    placeholder:v
+                })
+            }
+        ]
     },{
         key:"fileIsMultiple",
         type:"checkbox",
@@ -120,9 +126,10 @@ export let schema:FormFieldSchema[] = [
                 },3000)
             });
         },
-        listens:{
-            fileIsMultiple:multiple=>({multiple})
-        }
+        listens:[{
+            to:'fileIsMultiple',
+            then:multiple=>({multiple})
+        }]
     },{
         key:"file-file",
         type:"file",
@@ -156,9 +163,12 @@ export let schema:FormFieldSchema[] = [
                     return undefined
                 },
                 label:"手机号",
-                listens:{
-                    checkbox:v=>({hide:v})
-                }
+                listens:[
+                    {
+                        to:"checkbox",
+                        then:v=>({hide:v})
+                    }
+                ]
             }
         ]
     },{
@@ -166,9 +176,12 @@ export let schema:FormFieldSchema[] = [
         type:"text",
         label:"当单选框为梨子的时候，隐藏",
         placeholder:"placeholder",
-        listens:{
-            select1:(v,_)=>({hide:v==='pear',value:null})
-        }
+        listens:[
+            {
+                to:"select1",
+                then:(v,_)=>({hide:v==='pear',value:null})
+            }
+        ]
     },{
         key:"nest.1",
         type:"text",
@@ -219,31 +232,34 @@ export let schema:FormFieldSchema[] = [
         type:"select",
         label:"有依赖的单选lv2",
         placeholder:"placeholder",
-        listens:{
-            dependant_lv1:v=>{
-                return{
-                    hide:!v,
-                    options: v==='animal'?[
-                        {
-                            name: "狗",
-                            value: "dog"
-                        }, {
-                            name: "猫",
-                            value: "cat"
-                        }
-                    ]:v==='plant'?[
-                        {
-                            name: "苹果",
-                            value: "apple"
-                        },
-                        {
-                            name: "梨子",
-                            value: "pear"
-                        }
-                    ]:[]
+        listens:[
+            {
+                to:"dependant_lv1",
+                then:v=>{
+                    return{
+                        hide:!v,
+                        options: v==='animal'?[
+                            {
+                                name: "狗",
+                                value: "dog"
+                            }, {
+                                name: "猫",
+                                value: "cat"
+                            }
+                        ]:v==='plant'?[
+                            {
+                                name: "苹果",
+                                value: "apple"
+                            },
+                            {
+                                name: "梨子",
+                                value: "pear"
+                            }
+                        ]:[]
+                    }
                 }
             }
-        },
+        ],
         options:[],
         hide:true
     },{
@@ -253,8 +269,9 @@ export let schema:FormFieldSchema[] = [
         placeholder:"placeholder",
         options:[],
         hide:true,
-        listens:{
-            dependant_lv2:(v)=>({
+        listens:[{
+            to:"dependant_lv2",
+            then:(v)=>({
                 options:v==='cat'?[
                         {name:'kitten',value:'kitten'}, {name:'cat',value:'cat'}, {name:'kitty',value:'kitty'}]:
                     v==='dog'?
@@ -263,36 +280,38 @@ export let schema:FormFieldSchema[] = [
                 value:null,
                 hide:!(v==='cat'||v==='dog')
             })
-        }
+        }]
     },{
         key:"array",
         type:"array",
-        itemsPerRow:6,
         placeholder:"placeholder",
         label:"Array(当select是梨子的时候会少一个child)",
-        listens:{
-            select1:v=>{
-                return {
-                    children:v==='pear'?[
-                        {
-                            key:"array-child",
-                            label:"array-child",
-                            type:"text"
-                        }
-                    ]:[
-                        {
-                            key:"array-child",
-                            label:"array-child",
-                            type:"text"
-                        },{
-                            key:"haha",
-                            label:"dynamic-child",
-                            type:"text"
-                        }
-                    ]
+        listens:[
+            {
+                to:"select1",
+                then:v=>{
+                    return {
+                        children:v==='pear'?[
+                            {
+                                key:"array-child",
+                                label:"array-child",
+                                type:"text"
+                            }
+                        ]:[
+                            {
+                                key:"array-child",
+                                label:"array-child",
+                                type:"text"
+                            },{
+                                key:"haha",
+                                label:"dynamic-child",
+                                type:"text"
+                            }
+                        ]
+                    }
                 }
-            }
-        },
+            },
+        ],
         children:[]
     },{
         key:"dynamic-array-alter",
@@ -359,18 +378,20 @@ export let schema:FormFieldSchema[] = [
         label:"多重监听",
         placeholder:"placeholder",
         type:"text",
-        listens:{
-            'radio,text':(...args:any[])=>{
+        listens:[{
+            to:["radio",'text'],
+            then:(...args:any[])=>{
                 console.log(args)
             }
-        }
+        }]
     },{
         key:"",
         label:"some text",
         type:"virtual-group",
         children:[],
-        listens:{
-            text:v=>{
+        listens:[{
+            to:"text",
+            then:v=>{
                 return {
                     children:[
                         {
@@ -381,6 +402,6 @@ export let schema:FormFieldSchema[] = [
                     ]
                 }
             }
-        }
+        }]
     }
 ];

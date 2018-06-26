@@ -1,7 +1,7 @@
 /**
  * Created by Administrator on 2017/8/8.
  */
-
+///<reference path="./declarations.d.ts" />
 import * as React from "react"
 import {addType, addTypeWithWrapper, getComponentProps} from "../field";
 import {FieldArray, WrappedFieldArrayProps} from "redux-form"
@@ -35,7 +35,7 @@ Select.propTypes['value'] = PropTypes.any
 
 const errorStyle={color:"red"};
 function TextInput(props:WidgetProps){
-    const componentProps:any = getComponentProps(props.fieldSchema)
+    const componentProps = getComponentProps(props.fieldSchema)
     return <div>
         <div>{props.fieldSchema.label}</div>
         <Input 
@@ -55,7 +55,7 @@ function TextInput(props:WidgetProps){
 
 function SelectInput (props:WidgetProps){
     const {fieldSchema,input,meta} = props
-    const componentProps:any = getComponentProps(fieldSchema)
+    const componentProps:any = getComponentProps(props.fieldSchema)
     return <div>
         <label>{fieldSchema.label}</label>
         <ResolveMaybePromise maybePromise={fieldSchema.options} >
@@ -65,7 +65,7 @@ function SelectInput (props:WidgetProps){
                     style={{ width: "100%" }}
                     optionFilterProp="children"
                     mode={fieldSchema.multiple?"multiple":"default"}
-                    value={fieldSchema.multiple || fieldSchema.mode==="multiple"?(isArray(input.value)?input.value:[]):input.value}
+                    value={fieldSchema.multiple?(isArray(input.value)?input.value:[]):input.value}
                     onChange={(value)=>input.onChange(value)}
                     filterOption={(input, option:React.ReactElement<any>) => {
                         return (option["props"].children as any).toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -86,7 +86,7 @@ function SelectInput (props:WidgetProps){
 }
 
 function CheckboxInput (props:WidgetProps){
-    const componentProps:any = getComponentProps(props.fieldSchema)
+    const componentProps = getComponentProps(props.fieldSchema)
     return <div style={{width:"100%"}}>
         <label>{props.fieldSchema.label}</label>
         <Checkbox
@@ -102,7 +102,7 @@ function CheckboxInput (props:WidgetProps){
 
 function DateTimeInput(props:WidgetProps){
     const value=props.input.value?moment(props.input.value):undefined;
-    const componentProps:any = getComponentProps(props.fieldSchema)
+    const componentProps = getComponentProps(props.fieldSchema)
     return <div>
         <label>{props.fieldSchema.label}</label>
         <DatePicker
@@ -123,7 +123,7 @@ function DateInput(props:WidgetProps){
         if(!(props.input.value instanceof moment))
             value= moment(props.input.value);
     }
-    const componentProps:any = getComponentProps(props.fieldSchema)
+    const componentProps = getComponentProps(props.fieldSchema)
     return<div >
         <label>{props.fieldSchema.label}</label>
         <DatePicker
@@ -140,25 +140,23 @@ function DateInput(props:WidgetProps){
     </div>
 }
 
-class DateTimeRangeInput extends React.Component<WidgetProps,any>{
-    render(){
-        const value = this.props.input.value&&JSON.parse(this.props.input.value);
-        const componentProps:any = getComponentProps(this.props.fieldSchema)
-        return <div>
-            <label>{this.props.fieldSchema.label}</label>
-            <RangePicker
-                showTime={{ format: 'HH:mm:ss' }}
-                format="YYYY-MM-DD HH:mm:ss"
-                placeholder={['开始时间', '结束时间']}
-                defaultValue={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}
-                onChange={(_,dataStrings)=>{
-                    this.props.input.onChange(dataStrings);
-                }}
-                {...componentProps}
-            />
-            <div style={errorStyle}>{this.props.meta.error}</div>
-        </div>
-    }
+function DateTimeRangeInput (props:WidgetProps){
+    let value =props.input.value
+    const componentProps = getComponentProps(props.fieldSchema)
+    return <div>
+        <label>{props.fieldSchema.label}</label>
+        <RangePicker
+            showTime={{ format: 'HH:mm:ss' }}
+            format="YYYY-MM-DD HH:mm:ss"
+            placeholder={['开始时间', '结束时间']}
+            defaultValue={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}
+            onChange={(_,dataStrings)=>{
+                props.input.onChange(dataStrings);
+            }}
+            {...componentProps}
+        />
+        <div style={errorStyle}>{props.meta.error}</div>
+    </div>
 }
 
 
@@ -166,7 +164,7 @@ function NumberInput(props:WidgetProps){
     let required={
         required:props.required
     };
-    const componentProps:any = getComponentProps(props.fieldSchema)
+    const componentProps = getComponentProps(props.fieldSchema)
     return <div style={{width:"100%"}}>
         <label>{props.fieldSchema.label}</label>
         <InputNumber
@@ -193,7 +191,7 @@ function NumberInput(props:WidgetProps){
 
 const AutoCompleteSelect = function(props:WidgetProps){
     const {meta,input,fieldSchema} = props;
-    const componentProps:any = getComponentProps(fieldSchema)
+    const componentProps = getComponentProps(props.fieldSchema)
     return <div style={{ width:"100%" }}>
         <label>{fieldSchema.label}</label>
         <ResolveMaybePromise maybePromise={fieldSchema.options}>
@@ -243,7 +241,7 @@ class FileInput extends React.Component<WidgetProps,any>{
         }
     };
     render(){
-        const componentProps:any = getComponentProps(this.props.fieldSchema)
+        const componentProps = getComponentProps(this.props.fieldSchema)
         return <div style={{width:"100%"}}>
             <Upload
                 fileList={this.props.input.value||[]}
@@ -261,7 +259,7 @@ class FileInput extends React.Component<WidgetProps,any>{
 }
 
 function SelectRadio (props:WidgetProps){
-    const componentProps:any = getComponentProps(props.fieldSchema)
+    const componentProps = getComponentProps(props.fieldSchema)
     return <div>
         <label style={{paddingLeft:0}}>
             {props.fieldSchema.label}
@@ -289,28 +287,26 @@ function SelectRadio (props:WidgetProps){
     </div>
 }
 
-class DateRangeInput extends React.Component<WidgetProps,any>{
-    render(){
-        const dateFormat = 'YYYY-MM-DD';
-        const {value}=this.props.input;
-        const from =value?value[0]:undefined;
-        const to =value?value[1]:undefined;
-        const componentProps:any = getComponentProps(this.props.fieldSchema)
-        return <div >
-            <RangePicker
-                defaultValue={[from?moment(from,dateFormat):undefined, to?moment(to,dateFormat):undefined]}
-                disabled={this.props.disabled}
-                format={dateFormat}
-                onChange={(_,dateStrings)=>{this.props.input.onChange(dateStrings)}}
-                {...componentProps}
-            />
-        </div>
-    }
+function DateRangeInput (props:WidgetProps){
+    const dateFormat = 'YYYY-MM-DD';
+    const value=props.input.value
+    const from =value?value[0]:undefined;
+    const to =value?value[1]:undefined;
+    const componentProps = getComponentProps(props.fieldSchema)
+    return <div >
+        <RangePicker
+            defaultValue={[from?moment(from,dateFormat):undefined, to?moment(to,dateFormat):undefined]}
+            disabled={props.disabled}
+            format={dateFormat}
+            onChange={(_,dateStrings)=>{props.input.onChange(dateStrings)}}
+            {...componentProps}
+        />
+    </div>
 }
 
 
 function TextareaInput (props:WidgetProps){
-    const componentProps:any = getComponentProps(props.fieldSchema)
+    const componentProps = getComponentProps(props.fieldSchema)
     return <div style={{paddingBottom:15}}>
         <label>{props.fieldSchema.label}</label>
         <TextArea 
@@ -345,7 +341,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
         return entry?entry.name:value;
     }
     onUpdateInput=(name:string)=>{
-        const throttle = this.props.fieldSchema['throttle']||400;
+        const throttle = this.props.fieldSchema.throttle || 400
         this.setState({
             searchText:name
         });
@@ -423,8 +419,6 @@ class ArrayFieldRenderer extends React.Component<Partial<WidgetProps&WrappedFiel
             {
                 props.fields.map((_, i) => {
                     let children = props.fieldSchema.children;
-                    if(props.fieldSchema.getChildren)
-                        children = props.fieldSchema.getChildren(props.fields.get(i)).filter((x:any)=>x);
                     return <div key={i} className="array-field-child">
                         <div className="delete-button">
                             <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
@@ -480,7 +474,7 @@ addType('text',TextInput);
 addTypeWithWrapper("array",(props)=>{
     return <div>
         <label className="control-label">{props.fieldSchema.label}</label>
-        <FieldArray props={props} keyPath={props.keyPath} name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.getChildren)} component={ArrayFieldRenderer}/>
+        <FieldArray props={props} keyPath={props.keyPath} name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.listens)} component={ArrayFieldRenderer}/>
     </div>
 });
 

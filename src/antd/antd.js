@@ -1,9 +1,10 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 /**
  * Created by Administrator on 2017/8/8.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
+///<reference path="./declarations.d.ts" />
 var React = require("react");
 var field_1 = require("../field");
 var redux_form_1 = require("redux-form");
@@ -39,11 +40,11 @@ function TextInput(props) {
 }
 function SelectInput(props) {
     var fieldSchema = props.fieldSchema, input = props.input, meta = props.meta;
-    var componentProps = field_1.getComponentProps(fieldSchema);
+    var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", null,
         React.createElement("label", null, fieldSchema.label),
         React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
-            return React.createElement(antd_2.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, optionFilterProp: "children", mode: fieldSchema.multiple ? "multiple" : "default", value: fieldSchema.multiple || fieldSchema.mode === "multiple" ? (util_1.isArray(input.value) ? input.value : []) : input.value, onChange: function (value) { return input.onChange(value); }, filterOption: function (input, option) {
+            return React.createElement(antd_2.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, optionFilterProp: "children", mode: fieldSchema.multiple ? "multiple" : "default", value: fieldSchema.multiple ? (util_1.isArray(input.value) ? input.value : []) : input.value, onChange: function (value) { return input.onChange(value); }, filterOption: function (input, option) {
                     return option["props"].children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
                 } }, componentProps), options ? options.map(function (option) {
                 var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
@@ -78,24 +79,16 @@ function DateInput(props) {
         React.createElement(antd_2.DatePicker, tslib_1.__assign({ key: props.fieldSchema.name, value: value, disabled: props.disabled, style: { width: "100%" }, onChange: function (_, dateString) { props.input.onChange(dateString); } }, componentProps)),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-var DateTimeRangeInput = /** @class */ (function (_super) {
-    tslib_1.__extends(DateTimeRangeInput, _super);
-    function DateTimeRangeInput() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    DateTimeRangeInput.prototype.render = function () {
-        var _this = this;
-        var value = this.props.input.value && JSON.parse(this.props.input.value);
-        var componentProps = field_1.getComponentProps(this.props.fieldSchema);
-        return React.createElement("div", null,
-            React.createElement("label", null, this.props.fieldSchema.label),
-            React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, format: "YYYY-MM-DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
-                    _this.props.input.onChange(dataStrings);
-                } }, componentProps)),
-            React.createElement("div", { style: errorStyle }, this.props.meta.error));
-    };
-    return DateTimeRangeInput;
-}(React.Component));
+function DateTimeRangeInput(props) {
+    var value = props.input.value;
+    var componentProps = field_1.getComponentProps(props.fieldSchema);
+    return React.createElement("div", null,
+        React.createElement("label", null, props.fieldSchema.label),
+        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, format: "YYYY-MM-DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
+                props.input.onChange(dataStrings);
+            } }, componentProps)),
+        React.createElement("div", { style: errorStyle }, props.meta.error));
+}
 function NumberInput(props) {
     var required = {
         required: props.required
@@ -115,7 +108,7 @@ function NumberInput(props) {
 }
 var AutoCompleteSelect = function (props) {
     var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
-    var componentProps = field_1.getComponentProps(fieldSchema);
+    var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, fieldSchema.label),
         React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
@@ -180,23 +173,15 @@ function SelectRadio(props) {
             }, key: option.value, value: option.value }, option.name)); }) : null); }),
         React.createElement("p", { style: errorStyle }, props.meta.error));
 }
-var DateRangeInput = /** @class */ (function (_super) {
-    tslib_1.__extends(DateRangeInput, _super);
-    function DateRangeInput() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    DateRangeInput.prototype.render = function () {
-        var _this = this;
-        var dateFormat = 'YYYY-MM-DD';
-        var value = this.props.input.value;
-        var from = value ? value[0] : undefined;
-        var to = value ? value[1] : undefined;
-        var componentProps = field_1.getComponentProps(this.props.fieldSchema);
-        return React.createElement("div", null,
-            React.createElement(RangePicker, tslib_1.__assign({ defaultValue: [from ? moment(from, dateFormat) : undefined, to ? moment(to, dateFormat) : undefined], disabled: this.props.disabled, format: dateFormat, onChange: function (_, dateStrings) { _this.props.input.onChange(dateStrings); } }, componentProps)));
-    };
-    return DateRangeInput;
-}(React.Component));
+function DateRangeInput(props) {
+    var dateFormat = 'YYYY-MM-DD';
+    var value = props.input.value;
+    var from = value ? value[0] : undefined;
+    var to = value ? value[1] : undefined;
+    var componentProps = field_1.getComponentProps(props.fieldSchema);
+    return React.createElement("div", null,
+        React.createElement(RangePicker, tslib_1.__assign({ defaultValue: [from ? moment(from, dateFormat) : undefined, to ? moment(to, dateFormat) : undefined], disabled: props.disabled, format: dateFormat, onChange: function (_, dateStrings) { props.input.onChange(dateStrings); } }, componentProps)));
+}
 function TextareaInput(props) {
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", { style: { paddingBottom: 15 } },
@@ -209,7 +194,7 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
     function AutoCompleteAsync() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onUpdateInput = function (name) {
-            var throttle = _this.props.fieldSchema['throttle'] || 400;
+            var throttle = _this.props.fieldSchema.throttle || 400;
             _this.setState({
                 searchText: name
             });
@@ -294,8 +279,6 @@ var ArrayFieldRenderer = /** @class */ (function (_super) {
         return React.createElement("div", { className: "clearfix array-field-container" },
             props.fields.map(function (_, i) {
                 var children = props.fieldSchema.children;
-                if (props.fieldSchema.getChildren)
-                    children = props.fieldSchema.getChildren(props.fields.get(i)).filter(function (x) { return x; });
                 return React.createElement("div", { key: i, className: "array-field-child" },
                     React.createElement("div", { className: "delete-button" },
                         React.createElement(antd_1.Tooltip, { placement: "topLeft", title: "\u5220\u9664", arrowPointAtCenter: true },
@@ -327,7 +310,7 @@ field_1.addType('text', TextInput);
 field_1.addTypeWithWrapper("array", function (props) {
     return React.createElement("div", null,
         React.createElement("label", { className: "control-label" }, props.fieldSchema.label),
-        React.createElement(redux_form_1.FieldArray, { props: props, keyPath: props.keyPath, name: props.keyPath, rerenderOnEveryChange: Boolean(props.fieldSchema.getChildren), component: ArrayFieldRenderer }));
+        React.createElement(redux_form_1.FieldArray, { props: props, keyPath: props.keyPath, name: props.keyPath, rerenderOnEveryChange: Boolean(props.fieldSchema.listens), component: ArrayFieldRenderer }));
 });
 field_1.addType("autocomplete-async", AutoCompleteAsync);
 buttons_1.setButton(function (props) {

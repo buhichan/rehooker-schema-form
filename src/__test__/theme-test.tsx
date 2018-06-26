@@ -67,11 +67,12 @@ export const testTheme = (themeName:string,loadTheme:Function,container:React.Co
                 label:"Text2",
                 type:"text",
                 hide:true,
-                listens:{
-                    text1:v=>({
+                listens:[{
+                    to:"text1",
+                    then:v=>({
                         hide:v!=='b'
                     })
-                }
+                }]
             }
         ], {
             text1:"a"
