@@ -2,14 +2,13 @@
  * Created by buhi on 2017/7/26.
  */
 import * as React from "react"
-import {Options, FormFieldSchema, FieldSchamaChangeListeners} from "./form";
+import { FormFieldSchema, FieldSchamaChangeListeners} from "./form";
 import {
-    change, Field, FieldArray, formValueSelector, getFormValues, initialize, autofill
+    change, Field, formValueSelector, getFormValues
 } from "redux-form"
 import {renderFields} from "./render-fields";
 import {connect} from "react-redux";
 import {createSelector} from "reselect";
-import * as PropTypes from "prop-types";
 
 export type WidgetProps = {
     fieldSchema?:FormFieldSchema,
@@ -48,32 +47,33 @@ export type WidgetProps = {
 
 type Widget = React.StatelessComponent<WidgetProps> | React.ComponentClass<WidgetProps>
 
-export function addType(name):(widget:Widget)=>void
-export function addType(name,widget:Widget):void
-export function addType(name,widget?) {
-    function addWidgetTypeToRegistration(widget) {
-        customTypes.set(name, props => <div>
-            <Field name={props.keyPath} {...props} component={widget}/>
+export function addType(name:string):(widget:Widget)=>void
+export function addType(name:string,widget:Widget):void
+export function addType(name:string,widget?:Widget) {
+    function addWidgetTypeToRegistration(widget:Widget):any {
+        customTypes.set(name, (props:WidgetProps) => <div>
+            <Field name={props.keyPath} {...props} component={widget as any}/>
         </div>);
         return widget;
     }
     return widget?addWidgetTypeToRegistration(widget):addWidgetTypeToRegistration;
 }
 
-export function addTypeWithWrapper(name,widget){
+export function addTypeWithWrapper(name:string,widget:Widget){
     customTypes.set(name,widget);
 }
+
 let customTypes = new Map();
 
 export function clearTypes(){
     customTypes.clear()
 }
 
-export function getType(name):Widget{
+export function getType(name:string):Widget{
     return customTypes.get(name)
 }
 
-export function preRenderField(field:FormFieldSchema, form:string, keyPath:string){ //keyPath is the old keyPath
+export function preRenderField(field:FormFieldSchema, form:string, keyPath:string):React.ReactNode{ //keyPath is the old keyPath
     const key = field.key||field.label
     if(!key)
         console.warn("必须为此schema设置一个key或者label, 以作为React的key:",field)
@@ -97,6 +97,9 @@ export function getComponentProps(field:FormFieldSchema){
         listens,
         onFileChange,
         validate,
+        format,
+        parse,
+        multiple,
         ...rest
     } = field;
     return rest
@@ -159,15 +162,15 @@ export class StatelessField extends React.PureComponent<{field:FormFieldSchema, 
 interface FieldNodeProps{
     form:string,
     fieldSchema:FormFieldSchema,
-    keyPath,
+    keyPath:string,
 
     listeners?:FieldSchamaChangeListeners,
     values?:any[],
-    dispatch?
+    dispatch?:Function
 }
 
 @((connect as any)(
-    (_,p)=>{
+    (_:any,p:any)=>{
         let listeners = p.fieldSchema.listens;
         if(typeof listeners === 'function')
             listeners = listeners(p.keyPath.split(".").slice(0,-1).join("."));
@@ -178,16 +181,16 @@ interface FieldNodeProps{
                     const multipleKeys = key.split(",").map(s=>s.trim())
                     return createSelector(
                         multipleKeys.map(key=>{
-                            return s=>formSelector(s,key) as any
+                            return (s:any)=>formSelector(s,key) as any
                         }) as any,
-                        (...values)=>{
+                        (...values:any[])=>{
                             return values
                         }
                     )
                 }else 
-                    return s=>formSelector(s,key) as any
+                    return (s:any)=>formSelector(s,key) as any
             }) as any,
-            (...values)=>{
+            (...values:any[])=>{
                 return {
                     values,
                     listeners
@@ -195,14 +198,14 @@ interface FieldNodeProps{
             }
         ) as any
     },
-    dispatch=>({dispatch})
+    (dispatch:any)=>({dispatch})
 ) as any)
 class StatefulField extends React.PureComponent<FieldNodeProps>{
     static contextTypes={
-        store:PropTypes.object
+        store:require("prop-types").object
     };
     state=this.props.fieldSchema;
-    componentWillMount(){
+    componentDidMount(){
         this.reload(this.props,true)
     }
     unmounted = false;
@@ -229,7 +232,7 @@ class StatefulField extends React.PureComponent<FieldNodeProps>{
             this.setState(newSchema);
         })
     }
-    componentWillReceiveProps(nextProps:FieldNodeProps){
+    componentDidUpdate(nextProps:FieldNodeProps){
         if(nextProps.values === this.props.values &&
             nextProps.form===this.props.form &&
             nextProps.fieldSchema === this.props.fieldSchema)

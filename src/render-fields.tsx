@@ -2,10 +2,10 @@
  * Created by buhi on 2017/7/26.
  */
 import * as React from "react"
-import {AsyncOptions, FormFieldSchema} from "./form";
+import {FormFieldSchema} from "./form";
 import {preRenderField} from "./field";
 
-export function renderFields(form,schema:FormFieldSchema[],keyPath:string="", noSchemaNodeWrapper=false){
+export function renderFields(form:string,schema:FormFieldSchema[],keyPath:string="", noSchemaNodeWrapper=false){
     if(!schema)
         return null;
     const children = schema.map(field => {

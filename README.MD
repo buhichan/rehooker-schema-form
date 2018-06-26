@@ -9,11 +9,15 @@
 
 [Demo](https://stackblitz.com/edit/react-pnrkgw?file=index.js)
 
+# Deprecation
+
+- Previously had a widget theme for material-ui 1.0, but it's no longer maintained, should be deprecated.
+
 # Intro
 
 - Accept a `schema` prop to generate form. *Not* json schema but a self-invented one. :P
 - The state of the form is maintained by `redux-form` in `redux` state.
-- Predefined material-ui widget components so you don't have to write in every form.
+- Pre-defined ant-design widget components so you don't have to write in every form.
     - number
     - text
     - password
@@ -27,7 +31,6 @@
     - autocomplete-text
     - array
     - group
-- Also has a set of ant-design theme widgets.
         
 - You can add more widgets using `addType`.
 
@@ -39,7 +42,7 @@
 //remember this component is just a wrapper around [redux-form](), so you have to add redux-form's reducer to make it work!
 
 import {ReduxSchemaForm,injectSubmittable} from "redux-schema-form"
-import "redux-schema-form/src/material"
+import "redux-schema-form/src/ant-design"
 
 const schema=[
     {
@@ -106,7 +109,7 @@ function FormWithCustomButtons(){
 ```
 
 # Limitation
-Material-ui's keyboard navigation is badly written, so it may not be suitable for forms with lots of fields.
+Performance?
     
 # API(props)
 

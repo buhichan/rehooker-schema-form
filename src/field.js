@@ -9,7 +9,6 @@ var redux_form_1 = require("redux-form");
 var render_fields_1 = require("./render-fields");
 var react_redux_1 = require("react-redux");
 var reselect_1 = require("reselect");
-var PropTypes = require("prop-types");
 function addType(name, widget) {
     function addWidgetTypeToRegistration(widget) {
         customTypes.set(name, function (props) { return React.createElement("div", null,
@@ -43,7 +42,7 @@ function preRenderField(field, form, keyPath) {
 }
 exports.preRenderField = preRenderField;
 function getComponentProps(field) {
-    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "style", "children", "onChange", "listens", "onFileChange", "validate"]);
+    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple"]);
     return rest;
 }
 exports.getComponentProps = getComponentProps;
@@ -99,7 +98,7 @@ var StatefulField = /** @class */ (function (_super) {
         _this.unmounted = false;
         return _this;
     }
-    StatefulField.prototype.componentWillMount = function () {
+    StatefulField.prototype.componentDidMount = function () {
         this.reload(this.props, true);
     };
     StatefulField.prototype.componentWillUnmount = function () {
@@ -127,7 +126,7 @@ var StatefulField = /** @class */ (function (_super) {
             _this.setState(newSchema);
         });
     };
-    StatefulField.prototype.componentWillReceiveProps = function (nextProps) {
+    StatefulField.prototype.componentDidUpdate = function (nextProps) {
         if (nextProps.values === this.props.values &&
             nextProps.form === this.props.form &&
             nextProps.fieldSchema === this.props.fieldSchema)
@@ -139,7 +138,7 @@ var StatefulField = /** @class */ (function (_super) {
         return React.createElement(StatelessField, { field: this.state, form: form, keyPath: keyPath });
     };
     StatefulField.contextTypes = {
-        store: PropTypes.object
+        store: require("prop-types").object
     };
     StatefulField = tslib_1.__decorate([
         react_redux_1.connect(function (_, p) {

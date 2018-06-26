@@ -1,4 +1,3 @@
-import { removeListener } from 'cluster';
 import { testTheme } from "../../__test__/theme-test";
 import * as React from 'react';
 

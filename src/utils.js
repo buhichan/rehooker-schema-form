@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.requestFileUpload = function (_a) {
-    var multiple = _a.multiple;
+exports.requestFileUpload = function (multiple) {
     var input;
     input = document.getElementById('hidden-file-input');
     if (!input) {
@@ -12,7 +11,7 @@ exports.requestFileUpload = function (_a) {
         document.body.appendChild(input);
     }
     input.multiple = multiple;
-    var promise = new Promise(function (resolve, reject) {
+    var promise = new Promise(function (resolve, _) {
         input.onchange = function (e) {
             var files = e.target.files;
             resolve({
@@ -24,16 +23,15 @@ exports.requestFileUpload = function (_a) {
     });
     return promise;
 };
-exports.requestDownload = function (_a) {
-    var href = _a.href, download = _a.download;
+exports.requestDownload = function (options) {
     var input = document.getElementById('hidden-anchor');
     if (!input) {
         input = document.createElement('a');
         input.id = 'hidden-anchor';
         document.body.appendChild(input);
     }
-    input.href = href;
-    input.download = download;
+    input.href = options.href;
+    input.download = options.download;
     input.click();
 };
 //# sourceMappingURL=utils.js.map

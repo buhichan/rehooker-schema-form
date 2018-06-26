@@ -1,5 +1,5 @@
 import { clearfix, widgetHeight, fullWidthInputs, mobileMedia } from '../constants';
-import injectJSS from "react-jss"
+const injectJSS = require("react-jss")['default']
 import { pushDecorator } from '../decorate';
 
 const stylesheet = {

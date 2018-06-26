@@ -1,18 +1,18 @@
-window['requestAnimationFrame'] = function(callback) {
+window['requestAnimationFrame'] = function(callback:any) {
     setTimeout(callback, 0);
 } as any
 
 import { FormFieldSchema} from '../..';
 import "jest"
-import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
+import {createStore, combineReducers} from 'redux'
 import {reducer as reduxFormReducer, getFormValues} from "redux-form"
-import {renderIntoDocument,findRenderedDOMComponentWithClass, findRenderedComponentWithType, scryRenderedDOMComponentsWithTag,findRenderedDOMComponentWithTag, Simulate} from "react-dom/test-utils"
+import {renderIntoDocument, scryRenderedDOMComponentsWithTag, Simulate} from "react-dom/test-utils"
 import * as React from 'react';
 import { Store } from 'react-redux';
 import { getType, clearTypes } from '../field';
-import * as PropTypes from "prop-types"
+const PropTypes = require("prop-types")
 
-function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFieldSchema[], initialValues:any, expectation:(wrapper,formValues?:any,store?:Store<any>)=>void){
+function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFieldSchema[], initialValues:any, expectation:(wrapper:any,formValues?:any,store?:Store<any>)=>void){
     const reducer = combineReducers({
         form: reduxFormReducer
     })
@@ -46,7 +46,7 @@ function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFi
     expectation(wrapper,()=>getFormValues("default")(store.getState()),store)
 }
 
-export const testTheme = (themeName,loadTheme,container:React.ComponentClass<any>)=>{
+export const testTheme = (themeName:string,loadTheme:Function,container:React.ComponentClass<any>)=>{
     describe(`Theme: ${themeName}`,()=>{
         clearTypes()
         loadTheme()
@@ -76,12 +76,12 @@ export const testTheme = (themeName,loadTheme,container:React.ComponentClass<any
         ], {
             text1:"a"
         }, (wrapper,getFormValues)=>{
-            const TextInput = getType("text")
+            // const TextInput = getType("text")
             const elements:HTMLInputElement[] = scryRenderedDOMComponentsWithTag(wrapper,"input") as any
             test(`Expect 1 and only 1 'text' type Component to be shown`,()=>{
                 expect(elements.length).toBe(1)
             })
-            const [text1,text2] = elements
+            const [text1] = elements
             test(`Expect 'text' type Component to be initialized`,()=>{
                 expect(text1.value).toBe('a')
             })

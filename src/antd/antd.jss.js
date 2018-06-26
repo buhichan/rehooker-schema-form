@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
+var _a, _b, _c;
 var constants_1 = require("../constants");
-var react_jss_1 = require("react-jss");
+var injectJSS = require("react-jss")['default'];
 var decorate_1 = require("../decorate");
 var stylesheet = (_a = {
         form: tslib_1.__assign({ position: "relative" }, constants_1.clearfix, (_b = { "& *": {
@@ -86,6 +87,5 @@ var stylesheet = (_a = {
         }
     },
     _a);
-decorate_1.pushDecorator(react_jss_1.default(stylesheet));
-var _a, _b, _c;
+decorate_1.pushDecorator(injectJSS(stylesheet));
 //# sourceMappingURL=antd.jss.js.map

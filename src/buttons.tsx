@@ -1,13 +1,9 @@
 import { createSelector } from 'reselect';
 import {connect} from "react-redux"
 import * as React from 'react';
-import {isValid,isPristine,isSubmitting,hasSubmitSucceeded,InjectedFormProps, ConfigProps, submit, reset} from "redux-form"
+import {isValid,isPristine,isSubmitting,hasSubmitSucceeded,InjectedFormProps, submit, reset} from "redux-form"
 
-export const buttons = function(Buttons){
-
-}
-
-export let FormButton = (props)=>{
+export let FormButton = (props:any)=>{
     return <button type={props.type} className={"btn btn-primary"+(props.disabled?" disabled":"")} disabled={props.disabled} onClick={props.onClick}>
         {props.children}
     </button>
@@ -20,7 +16,8 @@ export type ButtonProps = {
     children:any
 }
 
-export const submittable = (disableResubmit)=>({valid,pristine,submitting,submitSucceeded})=>{
+export const submittable = (disableResubmit:boolean)=>(formState:Partial<InjectedFormProps>)=>{
+    const {valid,pristine,submitting,submitSucceeded} = formState
     return valid && !pristine && !submitting && !(disableResubmit && submitSucceeded);
 }
 
@@ -40,8 +37,8 @@ interface InjectSubmittableOptions {
 }
 
 export const injectSubmittable = (options:InjectSubmittableOptions)=>{
-    return Button=>(connect as any)(
-        (s,p)=>{
+    return (Button:React.StatelessComponent<any>|React.ComponentClass<any>)=>(connect as any)(
+        (_:any,p:any)=>{
             return (createSelector as any)(
                 [
                     isValid(p.formName || options.formName),
@@ -49,7 +46,7 @@ export const injectSubmittable = (options:InjectSubmittableOptions)=>{
                     isSubmitting(p.formName || options.formName),
                     hasSubmitSucceeded(p.formName || options.formName)
                 ],
-                (valid,pristine,submitting,submitSucceeded)=>{
+                (valid:boolean,pristine:boolean,submitting:boolean,submitSucceeded:boolean)=>{
                     const disabled = options.submittable ? 
                         !options.submittable(valid,pristine,submitting,submitSucceeded) :
                         !submittable(options.disableResubmit)({valid,pristine,submitting,submitSucceeded})

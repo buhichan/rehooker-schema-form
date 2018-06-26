@@ -15,16 +15,16 @@ var arrayFieldChildren = [
         type: "text",
         hide: true,
         listens: function (keyPath) {
+            var _a;
             return _a = {},
                 //keyPath = 'dynamic-array-alter[0,1,2,....]'
-                _a[keyPath + ".array-child"] = function (v, child) {
+                _a[keyPath + ".array-child"] = function (v) {
                     console.log(arguments);
                     return {
                         hide: !v
                     };
                 },
                 _a;
-            var _a;
         }
     }
 ];
@@ -37,6 +37,7 @@ exports.schema = [
         validate: function (v) {
             if (v !== "a")
                 return "必须是a";
+            return undefined;
         }
     }, {
         key: 'select1',
@@ -111,8 +112,9 @@ exports.schema = [
         validate: function (v) {
             if (v instanceof File && !v.type.startsWith('image/'))
                 return "只能上传图片";
+            return undefined;
         },
-        onFileChange: function (file) {
+        onFileChange: function (_) {
             return new Promise(function (r) {
                 setTimeout(function () {
                     r("/fake/url");
@@ -152,6 +154,7 @@ exports.schema = [
                 validate: function (v) {
                     if (v > 900)
                         return "最大900";
+                    return undefined;
                 },
                 label: "手机号",
                 listens: {
@@ -165,7 +168,7 @@ exports.schema = [
         label: "当单选框为梨子的时候，隐藏",
         placeholder: "placeholder",
         listens: {
-            select1: function (v, formValue) { return ({ hide: v === 'pear', value: null }); }
+            select1: function (v, _) { return ({ hide: v === 'pear', value: null }); }
         }
     }, {
         key: "nest.1",
@@ -193,6 +196,7 @@ exports.schema = [
                 validate: function (v) {
                     if (!/.*@.*\..*/.test(v))
                         return "not a valid email";
+                    return undefined;
                 }
             },
         ]
@@ -300,7 +304,7 @@ exports.schema = [
     }, {
         key: "test-component",
         type: function (props) {
-            var input = props.input, fieldSchema = props.fieldSchema, renderField = props.renderField, meta = props.meta;
+            var input = props.input, fieldSchema = props.fieldSchema;
             return React.createElement("div", null,
                 React.createElement("label", { htmlFor: input.name },
                     fieldSchema.label,
@@ -388,24 +392,5 @@ exports.schema = [
             }
         }
     }
-    //要用这个必须使用table-array-field, 那个又依赖ag-grid-material-preset,因此去掉
-    // {
-    //     key:"tableArray",
-    //     type:"table-array",
-    //     label:"array fiel as table",
-    //     children:arrayFieldChildren
-    // },
-    // {
-    //     key:"multi-autocomplete",
-    //     type:"multi-autocomplete",
-    //     label:"multi-autocomplete",
-    //     options:t=>{
-    //         if(/^\d+$/.test(t))
-    //             return new Promise(resolve=>{
-    //                 setTimeout(()=> resolve(new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))), 1000)
-    //             });
-    //         else return [{name:"0",value:0}];
-    //     }
-    // }
 ];
 //# sourceMappingURL=schema-example.js.map

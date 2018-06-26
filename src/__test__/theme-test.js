@@ -70,12 +70,12 @@ exports.testTheme = function (themeName, loadTheme, container) {
         ], {
             text1: "a"
         }, function (wrapper, getFormValues) {
-            var TextInput = field_1.getType("text");
+            // const TextInput = getType("text")
             var elements = test_utils_1.scryRenderedDOMComponentsWithTag(wrapper, "input");
             test("Expect 1 and only 1 'text' type Component to be shown", function () {
                 expect(elements.length).toBe(1);
             });
-            var text1 = elements[0], text2 = elements[1];
+            var text1 = elements[0];
             test("Expect 'text' type Component to be initialized", function () {
                 expect(text1.value).toBe('a');
             });

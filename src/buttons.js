@@ -5,13 +5,11 @@ var reselect_1 = require("reselect");
 var react_redux_1 = require("react-redux");
 var React = require("react");
 var redux_form_1 = require("redux-form");
-exports.buttons = function (Buttons) {
-};
 exports.FormButton = function (props) {
     return React.createElement("button", { type: props.type, className: "btn btn-primary" + (props.disabled ? " disabled" : ""), disabled: props.disabled, onClick: props.onClick }, props.children);
 };
-exports.submittable = function (disableResubmit) { return function (_a) {
-    var valid = _a.valid, pristine = _a.pristine, submitting = _a.submitting, submitSucceeded = _a.submitSucceeded;
+exports.submittable = function (disableResubmit) { return function (formState) {
+    var valid = formState.valid, pristine = formState.pristine, submitting = formState.submitting, submitSucceeded = formState.submitSucceeded;
     return valid && !pristine && !submitting && !(disableResubmit && submitSucceeded);
 }; };
 function setButton(button) {
@@ -19,7 +17,7 @@ function setButton(button) {
 }
 exports.setButton = setButton;
 exports.injectSubmittable = function (options) {
-    return function (Button) { return react_redux_1.connect(function (s, p) {
+    return function (Button) { return react_redux_1.connect(function (_, p) {
         return reselect_1.createSelector([
             redux_form_1.isValid(p.formName || options.formName),
             redux_form_1.isPristine(p.formName || options.formName),

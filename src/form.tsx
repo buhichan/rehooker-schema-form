@@ -6,7 +6,7 @@ import * as React from 'react';
 import {ConfigProps, InjectedFormProps,BaseFieldProps, reset} from 'redux-form'
 import {WidgetProps} from "./field";
 import {renderFields} from "./render-fields";
-import { pushDecorator, getDecorator } from './decorate';
+import { getDecorator } from './decorate';
 
 export type Options = {name:string,value:any}[]
 export type AsyncOptions = ()=>Promise<Options>

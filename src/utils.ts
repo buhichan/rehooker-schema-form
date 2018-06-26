@@ -1,4 +1,4 @@
-export const requestFileUpload = ({multiple})=>{
+export const requestFileUpload = (multiple:boolean)=>{
     let input:HTMLInputElement
     input = document.getElementById('hidden-file-input') as any
     if(!input){
@@ -9,7 +9,7 @@ export const requestFileUpload = ({multiple})=>{
         document.body.appendChild(input)
     }
     input.multiple = multiple
-    const promise = new Promise((resolve,reject)=>{
+    const promise = new Promise((resolve,_)=>{
         input.onchange = e=>{
             const files = (e.target as HTMLInputElement).files
             resolve({
@@ -22,14 +22,14 @@ export const requestFileUpload = ({multiple})=>{
     return promise
 }
 
-export const requestDownload = ({href,download})=>{
+export const requestDownload = (options:any)=>{
     let input:HTMLAnchorElement = document.getElementById('hidden-anchor') as any
     if(!input){
         input = document.createElement('a')
         input.id = 'hidden-anchor'
         document.body.appendChild(input)
     }
-    input.href=href
-    input.download=download
+    input.href=options.href
+    input.download=options.download
     input.click()
 }

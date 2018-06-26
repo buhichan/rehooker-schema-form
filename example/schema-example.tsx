@@ -13,10 +13,10 @@ const arrayFieldChildren = [
         label:"货币",
         type:"text",
         hide:true,
-        listens:(keyPath)=>{
+        listens:(keyPath:string)=>{
             return {
                 //keyPath = 'dynamic-array-alter[0,1,2,....]'
-                [keyPath+".array-child"]: function (v, child) {
+                [keyPath+".array-child"]: function (v:any) {
                     console.log(arguments);
                     return {
                         hide:!v
@@ -36,6 +36,7 @@ export let schema:FormFieldSchema[] = [
         validate:v=>{
             if(v!=="a")
                 return "必须是a"
+            return undefined
         }
     },{
         key:'select1',
@@ -110,8 +111,9 @@ export let schema:FormFieldSchema[] = [
         validate:(v:File|string)=>{
             if(v instanceof File && !v.type.startsWith('image/'))
                 return "只能上传图片"
+            return undefined
         },
-        onFileChange(file:File){
+        onFileChange(_:File){
             return new Promise(r=>{
                 setTimeout(()=>{
                     r("/fake/url")
@@ -151,6 +153,7 @@ export let schema:FormFieldSchema[] = [
                 validate:v=>{
                     if(v>900)
                         return "最大900"
+                    return undefined
                 },
                 label:"手机号",
                 listens:{
@@ -164,7 +167,7 @@ export let schema:FormFieldSchema[] = [
         label:"当单选框为梨子的时候，隐藏",
         placeholder:"placeholder",
         listens:{
-            select1:(v,formValue)=>({hide:v==='pear',value:null})
+            select1:(v,_)=>({hide:v==='pear',value:null})
         }
     },{
         key:"nest.1",
@@ -192,6 +195,7 @@ export let schema:FormFieldSchema[] = [
                 validate(v){
                     if(!/.*@.*\..*/.test(v))
                         return "not a valid email"
+                    return undefined
                 }
             },
         ]
@@ -298,7 +302,7 @@ export let schema:FormFieldSchema[] = [
     },{
         key:"test-component",
         type:function(props:WidgetProps){
-            const {input,fieldSchema,renderField,meta} = props;
+            const {input,fieldSchema} = props;
             return <div>
                 <label htmlFor={input.name} >
             {fieldSchema.label}
@@ -356,7 +360,7 @@ export let schema:FormFieldSchema[] = [
         placeholder:"placeholder",
         type:"text",
         listens:{
-            'radio,text':(...args)=>{
+            'radio,text':(...args:any[])=>{
                 console.log(args)
             }
         }
@@ -379,23 +383,4 @@ export let schema:FormFieldSchema[] = [
             }
         }
     }
-    //要用这个必须使用table-array-field, 那个又依赖ag-grid-material-preset,因此去掉
-    // {
-    //     key:"tableArray",
-    //     type:"table-array",
-    //     label:"array fiel as table",
-    //     children:arrayFieldChildren
-    // },
-    // {
-    //     key:"multi-autocomplete",
-    //     type:"multi-autocomplete",
-    //     label:"multi-autocomplete",
-    //     options:t=>{
-    //         if(/^\d+$/.test(t))
-    //             return new Promise(resolve=>{
-    //                 setTimeout(()=> resolve(new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))), 1000)
-    //             });
-    //         else return [{name:"0",value:0}];
-    //     }
-    // }
 ];

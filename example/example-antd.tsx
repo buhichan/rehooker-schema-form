@@ -7,7 +7,7 @@ import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import { reducer as reduxFormReducer } from 'redux-form'
 import "../src/antd"
 require("antd/dist/antd.css");
-import {FormFieldSchema, ReduxSchemaForm, injectSubmittable} from "../"
+import {ReduxSchemaForm, injectSubmittable} from "../"
 import {schema} from "./schema-example"
 
 const reducer = combineReducers({
@@ -15,13 +15,13 @@ const reducer = combineReducers({
 
 });
 
-const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
+const composeEnhancers = (window as any)['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
 const middleware = composeEnhancers(applyMiddleware());
 const store = createStore(reducer,{},middleware);
 
 
 @(connect as any)(
-    store=>({
+    (store:any)=>({
         values:store.form.random?store.form.random.values:{}
     })
 )
@@ -33,7 +33,7 @@ class App extends React.PureComponent<any,any>{
         "select": "pear",
         select1:0
     };
-    onSubmit=(values)=>{
+    onSubmit=(values:any)=>{
         if(values.text){
             return new Promise(resolve=>{
                 setTimeout(resolve,3000)
