@@ -1,10 +1,27 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
 /**
  * Created by Administrator on 2017/8/8.
  */
 ///<reference path="./declarations.d.ts" />
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+function fixDefaultExport(a) {
+    if (!a['default'])
+        a['default'] = a;
+}
+[
+    require('antd/lib/auto-complete'),
+    require('antd/lib/radio'),
+    require('antd/lib/checkbox'),
+    require('antd/lib/input-number'),
+    require('antd/lib/tooltip'),
+    require('antd/lib/upload'),
+    require('antd/lib/button'),
+    require('antd/lib/icon'),
+    require('antd/lib/input'),
+    require('antd/lib/select'),
+    require('antd/lib/date-picker')
+].forEach(fixDefaultExport);
 var React = require("react");
 var field_1 = require("../field");
 var redux_form_1 = require("redux-form");

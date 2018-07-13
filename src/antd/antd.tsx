@@ -2,6 +2,26 @@
  * Created by Administrator on 2017/8/8.
  */
 ///<reference path="./declarations.d.ts" />
+
+function fixDefaultExport(a:any){
+    if(!a['default'])        
+        a['default']=a
+}
+
+[
+    require('antd/lib/auto-complete'),
+    require('antd/lib/radio'),
+    require('antd/lib/checkbox'),
+    require('antd/lib/input-number'),
+    require('antd/lib/tooltip'),
+    require('antd/lib/upload'),
+    require('antd/lib/button'),
+    require('antd/lib/icon'),
+    require('antd/lib/input'),
+    require('antd/lib/select'),
+    require('antd/lib/date-picker')
+].forEach(fixDefaultExport)
+
 import * as React from "react"
 import {addType, addTypeWithWrapper, getComponentProps} from "../field";
 import {FieldArray, WrappedFieldArrayProps} from "redux-form"
@@ -16,6 +36,7 @@ import Icon from "antd/lib/icon"
 import Input from "antd/lib/input"
 import Select from "antd/lib/select"
 import DatePicker from "antd/lib/date-picker"
+
 const RadioGroup = Radio.Group;
 const {TextArea} =Input;
 const {RangePicker} = DatePicker;
@@ -31,9 +52,9 @@ import * as moment from "moment"
 import { ResolveMaybePromise } from '../resolve-maybe-promise';
 import { isArray } from 'util';
 
-RCSelect.propTypes['value'] = PropTypes.any
-Option.propTypes['value'] = PropTypes.any
-Select.propTypes['value'] = PropTypes.any
+RCSelect.propTypes['value'] = PropTypes.any;
+Option.propTypes['value'] = PropTypes.any;
+(Select as any).propTypes['value'] = PropTypes.any as any
 
 const emptyArray:any[] = []
 
