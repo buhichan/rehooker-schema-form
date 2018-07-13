@@ -5,17 +5,17 @@
 import * as React from "react"
 import {addType, addTypeWithWrapper, getComponentProps} from "../field";
 import {FieldArray, WrappedFieldArrayProps} from "redux-form"
-import AutoComplete from 'antd/es/auto-complete';
-import Radio from 'antd/es/radio';
-import Checkbox from "antd/es/checkbox";
-import InputNumber from "antd/es/input-number";
-import Tooltip from "antd/es/tooltip"
-import Upload from "antd/es/upload"
-import Button from "antd/es/button"
-import Icon from "antd/es/icon"
-import Input from "antd/es/input"
-import Select from "antd/es/select"
-import DatePicker from "antd/es/date-picker"
+import AutoComplete from 'antd/lib/auto-complete';
+import Radio from 'antd/lib/radio';
+import Checkbox from "antd/lib/checkbox";
+import InputNumber from "antd/lib/input-number";
+import Tooltip from "antd/lib/tooltip"
+import Upload from "antd/lib/upload"
+import Button from "antd/lib/button"
+import Icon from "antd/lib/icon"
+import Input from "antd/lib/input"
+import Select from "antd/lib/select"
+import DatePicker from "antd/lib/date-picker"
 const RadioGroup = Radio.Group;
 const {TextArea} =Input;
 const {RangePicker} = DatePicker;
