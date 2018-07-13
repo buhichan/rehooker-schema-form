@@ -3,54 +3,25 @@
  */
 ///<reference path="./declarations.d.ts" />
 
-function fixDefaultExport(a:any){
-    if(!a['default'])        
-        a['default']=a
-}
-
-[
-    require('antd/lib/auto-complete'),
-    require('antd/lib/radio'),
-    require('antd/lib/checkbox'),
-    require('antd/lib/input-number'),
-    require('antd/lib/tooltip'),
-    require('antd/lib/upload'),
-    require('antd/lib/button'),
-    require('antd/lib/icon'),
-    require('antd/lib/input'),
-    require('antd/lib/select'),
-    require('antd/lib/date-picker')
-].forEach(fixDefaultExport)
-
 import * as React from "react"
 import {addType, addTypeWithWrapper, getComponentProps} from "../field";
 import {FieldArray, WrappedFieldArrayProps} from "redux-form"
-import AutoComplete from 'antd/lib/auto-complete';
-import Radio from 'antd/lib/radio';
-import Checkbox from "antd/lib/checkbox";
-import InputNumber from "antd/lib/input-number";
-import Tooltip from "antd/lib/tooltip"
-import Upload from "antd/lib/upload"
-import Button from "antd/lib/button"
-import Icon from "antd/lib/icon"
-import Input from "antd/lib/input"
-import Select from "antd/lib/select"
-import DatePicker from "antd/lib/date-picker"
-
-const RadioGroup = Radio.Group;
-const {TextArea} =Input;
-const {RangePicker} = DatePicker;
-const Option = Select.Option;
+import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input,Select,DatePicker} from 'antd';
 import {WidgetProps} from "../field";
 import {Options} from "../form";
 import {RuntimeAsyncOptions} from "../form";
 import {renderFields} from "../render-fields";
 import { setButton } from "../buttons";
-const PropTypes = require('prop-types')
-const RCSelect = require("rc-select").default
 import * as moment from "moment"
 import { ResolveMaybePromise } from '../resolve-maybe-promise';
 import { isArray } from 'util';
+
+const RadioGroup = Radio.Group;
+const {TextArea} =Input;
+const {RangePicker} = DatePicker;
+const Option = Select.Option;
+const PropTypes = require('prop-types')
+const RCSelect = require("rc-select").default
 
 RCSelect.propTypes['value'] = PropTypes.any;
 Option.propTypes['value'] = PropTypes.any;

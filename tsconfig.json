@@ -11,6 +11,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitAny": true,
+    "keyofStringsOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitThis": true,
     "noImplicitReturns": true,
