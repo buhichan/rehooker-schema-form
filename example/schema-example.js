@@ -335,16 +335,8 @@ exports.schema = [
         type: "autocomplete",
         label: "自动完成(select)",
         placeholder: "placeholder",
-        options: [
-            { name: "11", value: "11" },
-            { name: "22", value: "22" },
-            { name: "33", value: "33" },
-            { name: '44', value: "44" },
-            { name: "55", value: "55" },
-            { name: "76", value: "66" },
-            { name: "77", value: "77" },
-            { name: "88", value: "88" },
-        ]
+        maxOptionCount: 5,
+        options: new Array(100).fill(0).map(function (_, i) { return ({ name: String(i), value: String(i) }); })
     },
     {
         key: "autocomplete2",

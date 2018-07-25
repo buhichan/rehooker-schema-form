@@ -109,13 +109,16 @@ function NumberInput(props) {
             } }, componentProps)),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-var AutoCompleteSelect = function (props) {
+var defaultAutoCompleteFilter = function (input, element) {
+    return typeof element.props.children === 'string' && element.props.children.includes(input);
+};
+var AutoCompleteDefault = function (props) {
     var meta = props.meta, input = props.input, fieldSchema = props.fieldSchema;
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, fieldSchema.label),
         React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
-            return React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: input.value, onSelect: function (value) { return input.onChange(value); } }, componentProps));
+            return React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: input.value, filterOption: defaultAutoCompleteFilter, onSelect: function (value) { return input.onChange(value); } }, componentProps));
         }),
         React.createElement("div", { style: errorStyle }, meta.error));
 };
@@ -248,7 +251,7 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
         var _a = this.props, meta = _a.meta, input = _a.input, fieldSchema = _a.fieldSchema;
         return React.createElement("div", null,
             React.createElement("label", null, fieldSchema.label),
-            React.createElement(antd_1.AutoComplete, { dataSource: this.state.dataSource, style: { width: "100%" }, onSelect: function (value) { return input.onChange(value); }, disabled: this.props.disabled, onSearch: this.onUpdateInput, filterOption: true }),
+            React.createElement(antd_1.AutoComplete, { dataSource: this.state.dataSource, style: { width: "100%" }, onSelect: function (value) { return input.onChange(value); }, disabled: this.props.disabled, onSearch: this.onUpdateInput, filterOption: false }),
             React.createElement("div", { style: errorStyle }, meta.error));
     };
     return AutoCompleteAsync;
@@ -267,7 +270,7 @@ var AutoCompleteText = /** @class */ (function (_super) {
         var _a = this.props, input = _a.input, meta = _a.meta, fieldSchema = _a.fieldSchema;
         return React.createElement("div", null,
             React.createElement("label", null, fieldSchema.label),
-            React.createElement(antd_1.AutoComplete, { dataSource: fieldSchema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: function (value) { return input.onChange(value); }, filterOption: true }),
+            React.createElement(antd_1.AutoComplete, { dataSource: fieldSchema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: function (value) { return input.onChange(value); }, filterOption: defaultAutoCompleteFilter }),
             React.createElement("div", { style: errorStyle }, meta.error));
     };
     return AutoCompleteText;
@@ -303,7 +306,7 @@ field_1.addType('autocomplete-text', AutoCompleteText);
 field_1.addType('datetime', DateTimeInput);
 field_1.addType('datetimeRange', DateTimeRangeInput);
 field_1.addType('number', NumberInput);
-field_1.addType('autocomplete', AutoCompleteSelect);
+field_1.addType('autocomplete', AutoCompleteDefault);
 field_1.addType("file", FileInput);
 field_1.addType("dateRange", DateRangeInput);
 field_1.addType("textarea", TextareaInput);

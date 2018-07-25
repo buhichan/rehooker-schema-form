@@ -195,8 +195,11 @@ function NumberInput(props:WidgetProps){
     </div>
 }
 
+const defaultAutoCompleteFilter = (input:string,element:any)=>{
+    return typeof element.props.children === 'string' && element.props.children.includes(input)
+}
 
-const AutoCompleteSelect = function(props:WidgetProps){
+const AutoCompleteDefault = function(props:WidgetProps){
     const {meta,input,fieldSchema} = props;
     const componentProps = getComponentProps(props.fieldSchema)
     return <div style={{ width:"100%" }}>
@@ -207,6 +210,7 @@ const AutoCompleteSelect = function(props:WidgetProps){
                     dataSource={options?options.map(itm=>({value:itm.value,text:itm.name})):emptyArray}
                     style={{ width:"100%" }}
                     value={input.value}
+                    filterOption={defaultAutoCompleteFilter}
                     onSelect={(value)=>input.onChange(value)}
                     {...componentProps}
                 />
@@ -386,7 +390,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
                 onSelect={(value)=>input.onChange(value)}
                 disabled={this.props.disabled}
                 onSearch={this.onUpdateInput}
-                filterOption
+                filterOption={false}
             />
             <div style={errorStyle}>
                 {meta.error}
@@ -409,7 +413,7 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
                 dataSource={(fieldSchema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
                 onSearch={this.onUpdateInput}
                 onSelect={(value)=>input.onChange(value)}
-                filterOption
+                filterOption={defaultAutoCompleteFilter}
             />
             <div style={errorStyle}>{meta.error}</div>
         </div>
@@ -466,7 +470,7 @@ addType('datetimeRange',DateTimeRangeInput);
 
 addType('number',NumberInput);
 
-addType('autocomplete',AutoCompleteSelect);
+addType('autocomplete',AutoCompleteDefault);
 
 addType("file",FileInput);
 
