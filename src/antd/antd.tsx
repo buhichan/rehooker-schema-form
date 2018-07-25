@@ -153,6 +153,7 @@ function DateTimeRangeInput (props:WidgetProps){
         <label>{props.fieldSchema.label}</label>
         <RangePicker
             showTime={{ format: 'HH:mm:ss' }}
+            style={{width:"100%"}}
             format={componentProps.dateFormat||"YYYY-MM-DD HH:mm:ss"}
             placeholder={['开始时间', '结束时间']}
             defaultValue={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}

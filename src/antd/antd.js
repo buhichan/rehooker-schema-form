@@ -87,7 +87,7 @@ function DateTimeRangeInput(props) {
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", null,
         React.createElement("label", null, props.fieldSchema.label),
-        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, format: componentProps.dateFormat || "YYYY-MM-DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
+        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: componentProps.dateFormat || "YYYY-MM-DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], defaultValue: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
                 props.input.onChange(dataStrings);
             } }, componentProps)),
         React.createElement("div", { style: errorStyle }, props.meta.error));
