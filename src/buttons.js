@@ -16,8 +16,8 @@ function setButton(button) {
     exports.FormButton = button;
 }
 exports.setButton = setButton;
-var createFormSubmittableSelector = function (formName, disableResubmit, criteria) {
-    if (criteria === void 0) { criteria = exports.submittable; }
+var createFormSubmittableSelector = function (formName, disableResubmit, isSubmittable) {
+    if (isSubmittable === void 0) { isSubmittable = exports.submittable; }
     return reselect_1.createSelector([
         function (s) { return redux_form_1.isValid(formName)(s); },
         function (s) { return redux_form_1.isPristine(formName)(s); },
@@ -26,7 +26,7 @@ var createFormSubmittableSelector = function (formName, disableResubmit, criteri
     ], function (valid, pristine, submitting, submitSucceeded) {
         return {
             formName: formName,
-            disabled: criteria({ disableResubmit: disableResubmit, valid: valid, pristine: pristine, submitting: submitting, submitSucceeded: submitSucceeded })
+            disabled: !isSubmittable({ disableResubmit: disableResubmit, valid: valid, pristine: pristine, submitting: submitting, submitSucceeded: submitSucceeded })
         };
     });
 };
