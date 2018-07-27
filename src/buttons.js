@@ -8,30 +8,43 @@ var redux_form_1 = require("redux-form");
 exports.FormButton = function (props) {
     return React.createElement("button", { type: props.type, className: "btn btn-primary" + (props.disabled ? " disabled" : ""), disabled: props.disabled, onClick: props.onClick }, props.children);
 };
-exports.submittable = function (disableResubmit) { return function (formState) {
-    var valid = formState.valid, pristine = formState.pristine, submitting = formState.submitting, submitSucceeded = formState.submitSucceeded;
+exports.submittable = function (formState) {
+    var valid = formState.valid, pristine = formState.pristine, submitting = formState.submitting, submitSucceeded = formState.submitSucceeded, disableResubmit = formState.disableResubmit;
     return valid && !pristine && !submitting && !(disableResubmit && submitSucceeded);
-}; };
+};
 function setButton(button) {
     exports.FormButton = button;
 }
 exports.setButton = setButton;
+var createFormSubmittableSelector = function (formName, disableResubmit, criteria) {
+    if (criteria === void 0) { criteria = exports.submittable; }
+    return reselect_1.createSelector([
+        function (s) { return redux_form_1.isValid(formName)(s); },
+        function (s) { return redux_form_1.isPristine(formName)(s); },
+        function (s) { return redux_form_1.isSubmitting(formName)(s); },
+        function (s) { return redux_form_1.hasSubmitSucceeded(formName)(s); }
+    ], function (valid, pristine, submitting, submitSucceeded) {
+        return {
+            formName: formName,
+            disabled: criteria({ disableResubmit: disableResubmit, valid: valid, pristine: pristine, submitting: submitting, submitSucceeded: submitSucceeded })
+        };
+    });
+};
+exports.InjectFormSubmittable = react_redux_1.connect(function (_, props) { return createFormSubmittableSelector(props.formName, props.disableResubmit, props.submittable); })(function InjectFormSubmittable(props) {
+    return props.children({
+        disabled: props.disabled,
+        onClick: function () {
+            props.dispatch(props.type === 'submit' ? redux_form_1.submit(props.formName) : redux_form_1.reset(props.formName));
+        }
+    });
+});
+/**
+ *
+ * @deprecated
+ */
 exports.injectSubmittable = function (options) {
     return function (Button) { return react_redux_1.connect(function (_, p) {
-        return reselect_1.createSelector([
-            redux_form_1.isValid(p.formName || options.formName),
-            redux_form_1.isPristine(p.formName || options.formName),
-            redux_form_1.isSubmitting(p.formName || options.formName),
-            redux_form_1.hasSubmitSucceeded(p.formName || options.formName)
-        ], function (valid, pristine, submitting, submitSucceeded) {
-            var disabled = options.submittable ?
-                !options.submittable(valid, pristine, submitting, submitSucceeded) :
-                !exports.submittable(options.disableResubmit)({ valid: valid, pristine: pristine, submitting: submitting, submitSucceeded: submitSucceeded });
-            return {
-                formName: options.formName || p.formName,
-                disabled: disabled
-            };
-        });
+        return createFormSubmittableSelector(p.formName || options.formName, options.disableResubmit, options.submittable);
     })(/** @class */ (function (_super) {
         tslib_1.__extends(ConnectedButton, _super);
         function ConnectedButton() {

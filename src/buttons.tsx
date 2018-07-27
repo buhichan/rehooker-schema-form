@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
-import {connect} from "react-redux"
+import {connect, StatelessComponent} from "react-redux"
 import * as React from 'react';
-import {isValid,isPristine,isSubmitting,hasSubmitSucceeded,InjectedFormProps, submit, reset} from "redux-form"
+import {isValid,isPristine,isSubmitting,hasSubmitSucceeded, submit, reset} from "redux-form"
 
 export let FormButton = (props:any)=>{
     return <button type={props.type} className={"btn btn-primary"+(props.disabled?" disabled":"")} disabled={props.disabled} onClick={props.onClick}>
@@ -16,8 +16,8 @@ export type ButtonProps = {
     children:any
 }
 
-export const submittable = (disableResubmit:boolean)=>(formState:Partial<InjectedFormProps>)=>{
-    const {valid,pristine,submitting,submitSucceeded} = formState
+export const submittable = (formState:{valid?:boolean,pristine?:boolean,submitting?:boolean,submitSucceeded?:boolean,disableResubmit?:boolean})=>{
+    const {valid,pristine,submitting,submitSucceeded, disableResubmit} = formState
     return valid && !pristine && !submitting && !(disableResubmit && submitSucceeded);
 }
 
@@ -27,35 +27,51 @@ export function setButton(button: React.StatelessComponent<ButtonProps>){
 }
 
 interface InjectSubmittableOptions {  
-    formName:string,
+    formName?:string,
     type:"submit"|"reset",
     /**
      *  @deprecated disableResubmit, use submittable instead
      */
     disableResubmit?:boolean
-    submittable?:(valid:boolean,pristine:boolean,submitting:boolean,submitSucceeded:boolean)=>boolean
+    submittable?:typeof submittable
 }
 
+const createFormSubmittableSelector = (formName:string, disableResubmit:boolean, criteria=submittable)=>createSelector<any,any,any,any,any,any>(
+    [
+        s=>isValid(formName)(s),
+        s=>isPristine(formName)(s),
+        s=>isSubmitting(formName)(s),
+        s=>hasSubmitSucceeded(formName)(s)
+    ],
+    (valid:boolean,pristine:boolean,submitting:boolean,submitSucceeded:boolean)=>{
+        return {
+            formName,
+            disabled:criteria({disableResubmit,valid,pristine,submitting,submitSucceeded})
+        }
+    }
+)
+
+export const InjectFormSubmittable:StatelessComponent<InjectSubmittableOptions&{children:(args:{disabled:boolean,onClick:any})=>React.ReactNode}> = (connect as any)(
+    (_:any,props:any)=>createFormSubmittableSelector(props.formName,props.disableResubmit,props.submittable)
+)(
+    function InjectFormSubmittable(props:InjectSubmittableOptions&{dispatch?:any,children:any,disabled:boolean}){
+        return props.children({
+            disabled:props.disabled,
+            onClick:()=>{
+                props.dispatch(props.type==='submit'?submit(props.formName):reset(props.formName))
+            }
+        })
+    }
+)
+
+/**
+ * 
+ * @deprecated
+ */
 export const injectSubmittable = (options:InjectSubmittableOptions)=>{
     return (Button:React.StatelessComponent<any>|React.ComponentClass<any>)=>(connect as any)(
         (_:any,p:any)=>{
-            return (createSelector as any)(
-                [
-                    isValid(p.formName || options.formName),
-                    isPristine(p.formName || options.formName),
-                    isSubmitting(p.formName || options.formName),
-                    hasSubmitSucceeded(p.formName || options.formName)
-                ],
-                (valid:boolean,pristine:boolean,submitting:boolean,submitSucceeded:boolean)=>{
-                    const disabled = options.submittable ? 
-                        !options.submittable(valid,pristine,submitting,submitSucceeded) :
-                        !submittable(options.disableResubmit)({valid,pristine,submitting,submitSucceeded})
-                    return {
-                        formName:options.formName||p.formName,
-                        disabled
-                    }
-                }
-            )
+            return createFormSubmittableSelector(p.formName || options.formName, options.disableResubmit, options.submittable)
         }
     )(class ConnectedButton extends React.PureComponent<any,any>{
         onClick=()=>{

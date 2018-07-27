@@ -62,8 +62,8 @@ export class ReduxSchemaForm extends React.PureComponent<ReduxSchemaFormProps,{}
             {
                 (!this.props.noButton)? <div className="button">
                     <div className="btn-group">
-                        <FormButton type="submit" disabled={!submittable(this.props.disableResubmit)(this.props as any)}>提交</FormButton>
-                        <FormButton type="button" onClick={this.reset} disabled={!submittable(this.props.disableResubmit)(this.props as any)}>重置</FormButton>
+                        <FormButton type="submit" disabled={!submittable(this.props)}>提交</FormButton>
+                        <FormButton type="button" onClick={this.reset} disabled={!submittable(this.props)}>重置</FormButton>
                     </div>
                 </div> : <div />
             }

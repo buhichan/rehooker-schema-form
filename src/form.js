@@ -23,8 +23,8 @@ var ReduxSchemaForm = /** @class */ (function (_super) {
             this.props.children ? React.createElement("div", { className: "children" }, this.props.children) : null,
             (!this.props.noButton) ? React.createElement("div", { className: "button" },
                 React.createElement("div", { className: "btn-group" },
-                    React.createElement(buttons_1.FormButton, { type: "submit", disabled: !buttons_1.submittable(this.props.disableResubmit)(this.props) }, "\u63D0\u4EA4"),
-                    React.createElement(buttons_1.FormButton, { type: "button", onClick: this.reset, disabled: !buttons_1.submittable(this.props.disableResubmit)(this.props) }, "\u91CD\u7F6E"))) : React.createElement("div", null));
+                    React.createElement(buttons_1.FormButton, { type: "submit", disabled: !buttons_1.submittable(this.props) }, "\u63D0\u4EA4"),
+                    React.createElement(buttons_1.FormButton, { type: "button", onClick: this.reset, disabled: !buttons_1.submittable(this.props) }, "\u91CD\u7F6E"))) : React.createElement("div", null));
     };
     ReduxSchemaForm = tslib_1.__decorate([
         decorate_1.getDecorator()
