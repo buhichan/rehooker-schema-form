@@ -37,8 +37,7 @@ interface InjectSubmittableOptions {
 }
 
 type InjectFormSubmittableProps = {  
-    formName?:string,
-    type?:"submit"|"reset",
+    formName:string,
     /**
      *  @deprecated disableResubmit, use submittable instead
      */
