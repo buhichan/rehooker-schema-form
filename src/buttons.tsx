@@ -44,7 +44,7 @@ type InjectFormSubmittableProps = {
      */
     disableResubmit?:boolean
     submittable?:typeof submittable
-    children:(args:{disabled:boolean,onSubmit:any,onReset:any})=>React.ReactNode
+    children?:(args:{disabled:boolean,onSubmit:any,onReset:any})=>React.ReactNode
 }
 
 const createFormSubmittableSelector = (formName:string, disableResubmit:boolean, criteria=submittable)=>createSelector<any,any,any,any,any,any>(
