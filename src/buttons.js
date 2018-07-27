@@ -33,8 +33,11 @@ var createFormSubmittableSelector = function (formName, disableResubmit, criteri
 exports.InjectFormSubmittable = react_redux_1.connect(function (_, props) { return createFormSubmittableSelector(props.formName, props.disableResubmit, props.submittable); })(function InjectFormSubmittable(props) {
     return props.children({
         disabled: props.disabled,
-        onClick: function () {
-            props.dispatch(props.type === 'submit' ? redux_form_1.submit(props.formName) : redux_form_1.reset(props.formName));
+        onSubmit: function () {
+            props.dispatch(redux_form_1.submit(props.formName));
+        },
+        onReset: function () {
+            props.dispatch(redux_form_1.reset(props.formName));
         }
     });
 });

@@ -28,12 +28,23 @@ export function setButton(button: React.StatelessComponent<ButtonProps>){
 
 interface InjectSubmittableOptions {  
     formName?:string,
-    type:"submit"|"reset",
+    type?:"submit"|"reset",
     /**
      *  @deprecated disableResubmit, use submittable instead
      */
     disableResubmit?:boolean
     submittable?:typeof submittable
+}
+
+type InjectFormSubmittableProps = {  
+    formName?:string,
+    type?:"submit"|"reset",
+    /**
+     *  @deprecated disableResubmit, use submittable instead
+     */
+    disableResubmit?:boolean
+    submittable?:typeof submittable
+    children:(args:{disabled:boolean,onSubmit:any,onReset:any})=>React.ReactNode
 }
 
 const createFormSubmittableSelector = (formName:string, disableResubmit:boolean, criteria=submittable)=>createSelector<any,any,any,any,any,any>(
@@ -51,14 +62,17 @@ const createFormSubmittableSelector = (formName:string, disableResubmit:boolean,
     }
 )
 
-export const InjectFormSubmittable:StatelessComponent<InjectSubmittableOptions&{children:(args:{disabled:boolean,onClick:any})=>React.ReactNode}> = (connect as any)(
+export const InjectFormSubmittable:StatelessComponent<InjectFormSubmittableProps> = (connect as any)(
     (_:any,props:any)=>createFormSubmittableSelector(props.formName,props.disableResubmit,props.submittable)
 )(
-    function InjectFormSubmittable(props:InjectSubmittableOptions&{dispatch?:any,children:any,disabled:boolean}){
+    function InjectFormSubmittable(props:InjectFormSubmittableProps&{dispatch?:any,disabled:boolean}){
         return props.children({
             disabled:props.disabled,
-            onClick:()=>{
-                props.dispatch(props.type==='submit'?submit(props.formName):reset(props.formName))
+            onSubmit:()=>{
+                props.dispatch(submit(props.formName))
+            },
+            onReset:()=>{
+                props.dispatch(reset(props.formName))
             }
         })
     }
