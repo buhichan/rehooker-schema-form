@@ -114,7 +114,7 @@ function DateTimeInput(props:WidgetProps){
         <DatePicker
             showTime
             format={componentProps.dateFormat||"YYYY-MM-DD HH:mm:ss"}
-            defaultValue={value}
+            value={value}
             style={{width:"100%"}}
             onChange={(_,dateString)=>props.input.onChange(dateString)}
             {...componentProps}
@@ -156,7 +156,7 @@ function DateTimeRangeInput (props:WidgetProps){
             style={{width:"100%"}}
             format={componentProps.dateFormat||"YYYY-MM-DD HH:mm:ss"}
             placeholder={['开始时间', '结束时间']}
-            defaultValue={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}
+            value={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}
             onChange={(_,dataStrings)=>{
                 props.input.onChange(dataStrings);
             }}
