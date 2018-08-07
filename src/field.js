@@ -108,8 +108,13 @@ var StatefulField = /** @class */ (function (_super) {
         var _this = this;
         var state = this.context.store.getState();
         Promise.all(Object.keys(props.listeners).map(function (_, i) {
-            var formValue = redux_form_1.getFormValues(props.form)(state);
-            var res = props.listeners[i].then(props.values[i], formValue, props.dispatch);
+            var formValues = redux_form_1.getFormValues(props.form)(state);
+            var res = props.listeners[i].then({
+                value: props.values[i],
+                formValues: formValues,
+                dispatch: props.dispatch,
+                keyPath: props.keyPath
+            });
             if (!(res instanceof Promise))
                 return Promise.resolve(res || {});
             else

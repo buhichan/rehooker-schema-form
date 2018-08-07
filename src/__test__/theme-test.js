@@ -63,9 +63,12 @@ exports.testTheme = function (themeName, loadTheme, container) {
                 hide: true,
                 listens: [{
                         to: "text1",
-                        then: function (v) { return ({
-                            hide: v !== 'b'
-                        }); }
+                        then: function (_a) {
+                            var v = _a.value;
+                            return ({
+                                hide: v !== 'b'
+                            });
+                        }
                     }]
             }
         ], {

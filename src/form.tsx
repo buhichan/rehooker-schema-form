@@ -19,7 +19,12 @@ export type FieldListens={
      * 10032, {bar:10032}, [{bar:10032}], {haha:[{bar:10032}]}, {foo:...}
      */
     to:string|string[]|((keyPath:string)=>string),
-    then:(value?:any|any[],formValue?:any,dispatch?:any)=>Partial<FormFieldSchema&{value:any}>|Promise<Partial<FormFieldSchema>&{value:any}>|void;
+    then:(change:{
+        value:any|any[],
+        formValues:any,
+        dispatch:any,
+        keyPath:string
+    })=>Partial<FormFieldSchema&{value:any}>|Promise<Partial<FormFieldSchema>&{value:any}>|void;
 }[]
 
 export interface WidgetInjectedProps{

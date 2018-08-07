@@ -17,10 +17,10 @@ var arrayFieldChildren = [
         listens: [
             {
                 to: function (keyPath) { return keyPath + ".array-child"; },
-                then: function (v) {
+                then: function (p) {
                     console.log(arguments);
                     return {
-                        hide: !v
+                        hide: !p.value
                     };
                 }
             }
@@ -87,9 +87,12 @@ exports.schema = [
         listens: [
             {
                 to: "text",
-                then: function (v) { return ({
-                    placeholder: v
-                }); }
+                then: function (_a) {
+                    var v = _a.value;
+                    return ({
+                        placeholder: v
+                    });
+                }
             }
         ]
     }, {
@@ -99,9 +102,12 @@ exports.schema = [
         listens: [
             {
                 to: "text",
-                then: function (v) { return ({
-                    placeholder: v
-                }); }
+                then: function (_a) {
+                    var v = _a.value;
+                    return ({
+                        placeholder: v
+                    });
+                }
             }
         ]
     }, {
@@ -128,7 +134,10 @@ exports.schema = [
         },
         listens: [{
                 to: 'fileIsMultiple',
-                then: function (multiple) { return ({ multiple: multiple }); }
+                then: function (_a) {
+                    var multiple = _a.value;
+                    return ({ multiple: multiple });
+                }
             }]
     }, {
         key: "file-file",
@@ -166,7 +175,10 @@ exports.schema = [
                 listens: [
                     {
                         to: "checkbox",
-                        then: function (v) { return ({ hide: v }); }
+                        then: function (_a) {
+                            var v = _a.value;
+                            return ({ hide: v });
+                        }
                     }
                 ]
             }
@@ -179,7 +191,10 @@ exports.schema = [
         listens: [
             {
                 to: "select1",
-                then: function (v, _) { return ({ hide: v === 'pear', value: null }); }
+                then: function (_a) {
+                    var v = _a.value;
+                    return ({ hide: v === 'pear', value: null });
+                }
             }
         ]
     }, {
@@ -235,7 +250,8 @@ exports.schema = [
         listens: [
             {
                 to: "dependant_lv1",
-                then: function (v) {
+                then: function (_a) {
+                    var v = _a.value;
                     return {
                         hide: !v,
                         options: v === 'animal' ? [
@@ -271,16 +287,19 @@ exports.schema = [
         hide: true,
         listens: [{
                 to: "dependant_lv2",
-                then: function (v) { return ({
-                    options: v === 'cat' ? [
-                        { name: 'kitten', value: 'kitten' }, { name: 'cat', value: 'cat' }, { name: 'kitty', value: 'kitty' }
-                    ] :
-                        v === 'dog' ?
-                            [{ name: 'dogg1', value: "dogg1" }, { name: 'doggy', value: 'doggy' }, { name: 'puppy', value: 'puppy' }] :
-                            [],
-                    value: null,
-                    hide: !(v === 'cat' || v === 'dog')
-                }); }
+                then: function (_a) {
+                    var v = _a.value;
+                    return ({
+                        options: v === 'cat' ? [
+                            { name: 'kitten', value: 'kitten' }, { name: 'cat', value: 'cat' }, { name: 'kitty', value: 'kitty' }
+                        ] :
+                            v === 'dog' ?
+                                [{ name: 'dogg1', value: "dogg1" }, { name: 'doggy', value: 'doggy' }, { name: 'puppy', value: 'puppy' }] :
+                                [],
+                        value: null,
+                        hide: !(v === 'cat' || v === 'dog')
+                    });
+                }
             }]
     }, {
         key: "array",
@@ -290,7 +309,8 @@ exports.schema = [
         listens: [
             {
                 to: "select1",
-                then: function (v) {
+                then: function (_a) {
+                    var v = _a.value;
                     return {
                         children: v === 'pear' ? [
                             {
@@ -376,12 +396,8 @@ exports.schema = [
         type: "text",
         listens: [{
                 to: ["radio", 'text'],
-                then: function () {
-                    var args = [];
-                    for (var _i = 0; _i < arguments.length; _i++) {
-                        args[_i] = arguments[_i];
-                    }
-                    console.log(args);
+                then: function (props) {
+                    console.log(props);
                 }
             }]
     }, {
@@ -391,7 +407,8 @@ exports.schema = [
         children: [],
         listens: [{
                 to: "text",
-                then: function (v) {
+                then: function (_a) {
+                    var v = _a.value;
                     return {
                         children: [
                             {

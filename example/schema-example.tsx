@@ -2,7 +2,7 @@ import {FormFieldSchema} from "../src/form";
 import {WidgetProps} from "../src/field";
 import * as React from "react"
 
-const arrayFieldChildren = [
+const arrayFieldChildren:FormFieldSchema[] = [
     {
         key:"array-child",
         label:"嵌套字段#1",
@@ -16,10 +16,10 @@ const arrayFieldChildren = [
         listens:[
             {
                 to:(keyPath:string)=>keyPath+".array-child",
-                then: function (v:any) {
+                then: function (p) {
                     console.log(arguments);
                     return {
-                        hide:!v
+                        hide:!p.value
                     }
                 }
             }
@@ -87,7 +87,7 @@ export let schema:FormFieldSchema[] = [
         listens:[
             {
                 to:"text",
-                then:v=>({
+                then:({value:v})=>({
                     placeholder:v
                 })
             }
@@ -99,7 +99,7 @@ export let schema:FormFieldSchema[] = [
         listens:[
             {
                 to:"text",
-                then:v=>({
+                then:({value:v})=>({
                     placeholder:v
                 })
             }
@@ -128,7 +128,7 @@ export let schema:FormFieldSchema[] = [
         },
         listens:[{
             to:'fileIsMultiple',
-            then:multiple=>({multiple})
+            then:({value:multiple})=>({multiple})
         }]
     },{
         key:"file-file",
@@ -166,7 +166,7 @@ export let schema:FormFieldSchema[] = [
                 listens:[
                     {
                         to:"checkbox",
-                        then:v=>({hide:v})
+                        then:({value:v})=>({hide:v})
                     }
                 ]
             }
@@ -179,7 +179,7 @@ export let schema:FormFieldSchema[] = [
         listens:[
             {
                 to:"select1",
-                then:(v,_)=>({hide:v==='pear',value:null})
+                then:({value:v})=>({hide:v==='pear',value:null})
             }
         ]
     },{
@@ -235,7 +235,7 @@ export let schema:FormFieldSchema[] = [
         listens:[
             {
                 to:"dependant_lv1",
-                then:v=>{
+                then:({value:v})=>{
                     return{
                         hide:!v,
                         options: v==='animal'?[
@@ -271,7 +271,7 @@ export let schema:FormFieldSchema[] = [
         hide:true,
         listens:[{
             to:"dependant_lv2",
-            then:(v)=>({
+            then:({value:v})=>({
                 options:v==='cat'?[
                         {name:'kitten',value:'kitten'}, {name:'cat',value:'cat'}, {name:'kitty',value:'kitty'}]:
                     v==='dog'?
@@ -289,7 +289,7 @@ export let schema:FormFieldSchema[] = [
         listens:[
             {
                 to:"select1",
-                then:v=>{
+                then:({value:v})=>{
                     return {
                         children:v==='pear'?[
                             {
@@ -372,8 +372,8 @@ export let schema:FormFieldSchema[] = [
         type:"text",
         listens:[{
             to:["radio",'text'],
-            then:(...args:any[])=>{
-                console.log(args)
+            then:(props)=>{
+                console.log(props)
             }
         }]
     },{
@@ -383,7 +383,7 @@ export let schema:FormFieldSchema[] = [
         children:[],
         listens:[{
             to:"text",
-            then:v=>{
+            then:({value:v})=>{
                 return {
                     children:[
                         {

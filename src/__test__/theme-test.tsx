@@ -69,7 +69,7 @@ export const testTheme = (themeName:string,loadTheme:Function,container:React.Co
                 hide:true,
                 listens:[{
                     to:"text1",
-                    then:v=>({
+                    then:({value:v})=>({
                         hide:v!=='b'
                     })
                 }]
