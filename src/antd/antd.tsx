@@ -56,39 +56,46 @@ function TextInput(props:WidgetProps){
     </div>
 }
 
-function SelectInput (props:WidgetProps){
-    const {fieldSchema,input,meta} = props
-    const componentProps:any = getComponentProps(props.fieldSchema)
-    return <div>
-        <label>{fieldSchema.label}</label>
-        <ResolveMaybePromise maybePromise={fieldSchema.options} >
-            {(options)=>{
-                if(options == undefined)
-                    options = emptyArray
-                const value = fieldSchema.multiple||componentProps.mode==="multiple"?(isArray(input.value)?input.value:[]):input.value
-                return <Select
-                    showSearch
-                    style={{ width: "100%" }}
-                    optionFilterProp="children"
-                    mode={fieldSchema.multiple?"multiple":"default"}
-                    value={value}
-                    onChange={input.onChange}
-                    filterOption={(input, option:React.ReactElement<any>) => {
-                        return (option["props"].children as any).toLowerCase().indexOf(input.toLowerCase()) >= 0
-                    }}
-                    {...componentProps}
-                >
-                    {options.map(option=>{
-                        const {name,value,...rest} = option
-                        return <Option key={name} value={value} {...rest}>{name}</Option>
-                    })}
-                </Select>
-            }}
-        </ResolveMaybePromise>
-        <div style={errorStyle}>
-            {meta.error}
+class SelectInput extends React.PureComponent<WidgetProps>{
+    state={
+        search:""
+    }
+    onSearchChange=(v:string)=>this.setState({search:v})
+    render(){
+        const {fieldSchema,input,meta} = this.props
+        const componentProps:any = getComponentProps(this.props.fieldSchema)
+        return <div>
+            <label>{fieldSchema.label}</label>
+            <ResolveMaybePromise maybePromise={fieldSchema.options} >
+                {(options)=>{
+                    if(options == undefined)
+                        options = emptyArray
+                    console.log("rerender")
+                    const value = fieldSchema.multiple||componentProps.mode==="multiple"?(isArray(input.value)?input.value:[]):input.value
+                    return <Select
+                        showSearch
+                        style={{ width: "100%" }}
+                        onSearch={this.onSearchChange}
+                        mode={fieldSchema.multiple?"multiple":"default"}
+                        value={value}
+                        onChange={input.onChange}
+                        filterOption={false}
+                        {...componentProps}
+                    >
+                        {options.filter((option)=>{
+                            return !this.state.search || option.name.toLowerCase().indexOf(this.state.search.toLowerCase()) >= 0
+                        }).slice(0,fieldSchema.maxOptionCount || Infinity).map(option=>{
+                            const {name,value,...rest} = option
+                            return <Option key={name} value={value} {...rest}>{name}</Option>
+                        })}
+                    </Select>
+                }}
+            </ResolveMaybePromise>
+            <div style={errorStyle}>
+                {meta.error}
+            </div>
         </div>
-    </div>
+    }
 }
 
 function CheckboxInput (props:WidgetProps){

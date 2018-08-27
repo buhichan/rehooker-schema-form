@@ -57,6 +57,14 @@ exports.schema = [
             }
         ]
     }, {
+        key: 'select-long-list',
+        type: "select",
+        label: "单选",
+        mode: "multiple",
+        placeholder: "long list single selection",
+        maxOptionCount: 10,
+        options: new Array(2000).fill(0).map(function (_, i) { return ({ name: "\u9009\u9879" + i, value: "option-" + i }); })
+    }, {
         key: "checkbox",
         type: "checkbox",
         label: "勾选",

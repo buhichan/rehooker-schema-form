@@ -106,6 +106,7 @@ export function getComponentProps(field:FormFieldSchema){
         parse,
         multiple,
         value,
+        maxOptionCount,
         ...rest
     } = field;
     return rest

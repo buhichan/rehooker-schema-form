@@ -38,24 +38,38 @@ function TextInput(props) {
         React.createElement(antd_1.Input, tslib_1.__assign({ type: props.type, id: props.input.name, className: "full-width", style: { width: "100%" }, name: props.input.name, onBlur: props.input.onBlur, value: props.input.value, onChange: props.input.onChange }, componentProps)),
         React.createElement("div", { style: errorStyle }, props.meta.error));
 }
-function SelectInput(props) {
-    var fieldSchema = props.fieldSchema, input = props.input, meta = props.meta;
-    var componentProps = field_1.getComponentProps(props.fieldSchema);
-    return React.createElement("div", null,
-        React.createElement("label", null, fieldSchema.label),
-        React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
-            if (options == undefined)
-                options = emptyArray;
-            var value = fieldSchema.multiple || componentProps.mode === "multiple" ? (util_1.isArray(input.value) ? input.value : []) : input.value;
-            return React.createElement(antd_1.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, optionFilterProp: "children", mode: fieldSchema.multiple ? "multiple" : "default", value: value, onChange: input.onChange, filterOption: function (input, option) {
-                    return option["props"].children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                } }, componentProps), options.map(function (option) {
-                var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
-                return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
-            }));
-        }),
-        React.createElement("div", { style: errorStyle }, meta.error));
-}
+var SelectInput = /** @class */ (function (_super) {
+    tslib_1.__extends(SelectInput, _super);
+    function SelectInput() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            search: ""
+        };
+        _this.onSearchChange = function (v) { return _this.setState({ search: v }); };
+        return _this;
+    }
+    SelectInput.prototype.render = function () {
+        var _this = this;
+        var _a = this.props, fieldSchema = _a.fieldSchema, input = _a.input, meta = _a.meta;
+        var componentProps = field_1.getComponentProps(this.props.fieldSchema);
+        return React.createElement("div", null,
+            React.createElement("label", null, fieldSchema.label),
+            React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
+                if (options == undefined)
+                    options = emptyArray;
+                console.log("rerender");
+                var value = fieldSchema.multiple || componentProps.mode === "multiple" ? (util_1.isArray(input.value) ? input.value : []) : input.value;
+                return React.createElement(antd_1.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, onSearch: _this.onSearchChange, mode: fieldSchema.multiple ? "multiple" : "default", value: value, onChange: input.onChange, filterOption: false }, componentProps), options.filter(function (option) {
+                    return !_this.state.search || option.name.toLowerCase().indexOf(_this.state.search.toLowerCase()) >= 0;
+                }).slice(0, fieldSchema.maxOptionCount || Infinity).map(function (option) {
+                    var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
+                    return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
+                }));
+            }),
+            React.createElement("div", { style: errorStyle }, meta.error));
+    };
+    return SelectInput;
+}(React.PureComponent));
 function CheckboxInput(props) {
     var componentProps = field_1.getComponentProps(props.fieldSchema);
     return React.createElement("div", { style: { width: "100%" } },
