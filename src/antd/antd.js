@@ -204,7 +204,7 @@ function DateRangeInput(props) {
 }
 function TextareaInput(props) {
     var componentProps = field_1.getComponentProps(props.fieldSchema);
-    return React.createElement("div", { style: { paddingBottom: 15 } },
+    return React.createElement("div", null,
         React.createElement("label", null, props.fieldSchema.label),
         React.createElement(TextArea, tslib_1.__assign({ value: props.input.value, onChange: function (value) { return props.input.onChange(value); }, autosize: { minRows: 4, maxRows: 8 } }, componentProps)),
         React.createElement("div", { style: errorStyle }, props.meta.error));

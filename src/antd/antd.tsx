@@ -325,7 +325,7 @@ function DateRangeInput (props:WidgetProps){
 
 function TextareaInput (props:WidgetProps){
     const componentProps = getComponentProps(props.fieldSchema)
-    return <div style={{paddingBottom:15}}>
+    return <div>
         <label>{props.fieldSchema.label}</label>
         <TextArea 
             value={props.input.value}
