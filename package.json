@@ -16,7 +16,7 @@
     "build:demo": "rm -rf ./demo/* && NODE_ENV=production webpack . --theme mui"
   },
   "peerDependencies": {
-    "antd": "^2.*",
+    "antd": "^3.*",
     "moment": "^2.19.2",
     "react": "^16.0.*",
     "react-dom": "^16.0.*",
