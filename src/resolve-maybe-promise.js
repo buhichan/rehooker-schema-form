@@ -20,7 +20,7 @@ var ResolveMaybePromise = /** @class */ (function (_super) {
                     maybePromise: maybePromise
                 }); });
         }
-        else if (rawOptions instanceof Array)
+        else if (Array.isArray(rawOptions))
             this.setState({
                 maybePromise: rawOptions
             });

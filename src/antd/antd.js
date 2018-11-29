@@ -23,6 +23,7 @@ var RCSelect = require("rc-select").default;
 RCSelect.propTypes['value'] = PropTypes.any;
 Option.propTypes['value'] = PropTypes.any;
 antd_1.Select.propTypes['value'] = PropTypes.any;
+var noop = function () { };
 var emptyArray = [];
 // const convertValueToString = Comp=>(props)=>{
 //     let onChange=!props.onChange?undefined:(value)=>{
@@ -45,6 +46,12 @@ var SelectInput = /** @class */ (function (_super) {
         _this.state = {
             search: ""
         };
+        _this.onChange = function (v) {
+            _this.setState({
+                search: ""
+            });
+            _this.props.input.onChange(v);
+        };
         _this.onSearchChange = function (v) { return _this.setState({ search: v }); };
         return _this;
     }
@@ -59,7 +66,7 @@ var SelectInput = /** @class */ (function (_super) {
                     options = emptyArray;
                 console.log("rerender");
                 var value = fieldSchema.multiple || componentProps.mode === "multiple" ? (util_1.isArray(input.value) ? input.value : []) : input.value;
-                return React.createElement(antd_1.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, onSearch: _this.onSearchChange, mode: fieldSchema.multiple ? "multiple" : "default", value: value, onChange: input.onChange, filterOption: false }, componentProps), options.filter(function (option) {
+                return React.createElement(antd_1.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, onSearch: _this.onSearchChange, mode: fieldSchema.multiple ? "multiple" : "default", value: value, onChange: _this.onChange, filterOption: false }, componentProps), options.filter(function (option) {
                     return !_this.state.search || option.name.toLowerCase().indexOf(_this.state.search.toLowerCase()) >= 0;
                 }).slice(0, fieldSchema.maxOptionCount || Infinity).map(function (option) {
                     var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
@@ -132,7 +139,7 @@ var AutoCompleteDefault = function (props) {
     return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, fieldSchema.label),
         React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
-            return React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: input.value, filterOption: defaultAutoCompleteFilter, onSelect: function (value) { return input.onChange(value); } }, componentProps));
+            return React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: input.value, filterOption: defaultAutoCompleteFilter, onSelect: function (value) { return input.onChange(value); } }, componentProps, { onBlur: noop, onFocus: noop }));
         }),
         React.createElement("div", { style: errorStyle }, meta.error));
 };

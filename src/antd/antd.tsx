@@ -27,6 +27,8 @@ RCSelect.propTypes['value'] = PropTypes.any;
 Option.propTypes['value'] = PropTypes.any;
 (Select as any).propTypes['value'] = PropTypes.any as any
 
+const noop = ()=>{}
+
 const emptyArray:any[] = []
 
 // const convertValueToString = Comp=>(props)=>{
@@ -60,6 +62,12 @@ class SelectInput extends React.PureComponent<WidgetProps>{
     state={
         search:""
     }
+    onChange=(v:any)=>{
+        this.setState({
+            search:""
+        })
+        this.props.input.onChange(v)
+    }
     onSearchChange=(v:string)=>this.setState({search:v})
     render(){
         const {fieldSchema,input,meta} = this.props
@@ -78,7 +86,7 @@ class SelectInput extends React.PureComponent<WidgetProps>{
                         onSearch={this.onSearchChange}
                         mode={fieldSchema.multiple?"multiple":"default"}
                         value={value}
-                        onChange={input.onChange}
+                        onChange={this.onChange}
                         filterOption={false}
                         {...componentProps}
                     >
@@ -220,6 +228,8 @@ const AutoCompleteDefault = function(props:WidgetProps){
                     filterOption={defaultAutoCompleteFilter}
                     onSelect={(value)=>input.onChange(value)}
                     {...componentProps}
+                    onBlur={noop}
+                    onFocus={noop}
                 />
             }}
         </ResolveMaybePromise>

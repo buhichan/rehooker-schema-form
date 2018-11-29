@@ -15,7 +15,7 @@ export class ResolveMaybePromise extends React.PureComponent<{maybePromise:Possi
                     maybePromise
                 }))
 
-        }else if (rawOptions instanceof Array)
+        }else if (Array.isArray(rawOptions))
             this.setState({
                 maybePromise:rawOptions
             })
