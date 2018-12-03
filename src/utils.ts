@@ -33,3 +33,24 @@ export const requestDownload = (options:any)=>{
     input.download=options.download
     input.click()
 }
+
+export function deepSet(target:any,keys:(string|number)[],value:any){
+    let parent
+    let p = target
+    for(let i=0; i<keys.length;i++){
+        const key = keys[i]
+        if(p[key] === undefined){
+            if(i < keys.length && typeof keys[i+1] === 'number'){
+                p[key] = []
+            }else
+                p[key] = {}
+        }
+        parent = p
+        p = p[key]
+    }
+    parent[keys[keys.length-1]] = value
+}
+
+export function randomID(){
+    return String(Math.floor(Math.random()*1000000000))
+}

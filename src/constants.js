@@ -1,13 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullWidthInputs = "& .field.textarea, & .field.group,& .field.array,& .field.file,& .field.table-array, & .field.virtual-group, & .field.full-width";
-exports.widgetHeight = 85;
-exports.mobileMedia = "@media(max-width:768px)";
-exports.clearfix = {
-    "&:after": {
-        content: "\" \"",
-        display: "table",
-        clear: "both"
-    },
+exports.isFullWidth = function (field) {
+    return field.fullWidth || typeof field.type === 'string' && ['textarea', 'group', 'array', 'file', 'table-array', 'virtual-group', 'full-width'].includes(field.type);
 };
 //# sourceMappingURL=constants.js.map

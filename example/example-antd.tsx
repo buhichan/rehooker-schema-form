@@ -1,30 +1,15 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { Provider,connect } from 'react-redux'
-if(typeof fetch === 'undefined')
-    require('isomorphic-fetch')
-import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
-import { reducer as reduxFormReducer } from 'redux-form'
 import "../src/antd"
 require("antd/dist/antd.css");
-import {ReduxSchemaForm, injectSubmittable} from "../"
+require("../src/antd/antd-components.css");
 import {schema} from "./schema-example"
+import { createForm, SchemaForm } from '../src/form';
 
-const reducer = combineReducers({
-    form:reduxFormReducer
+const form = createForm()
 
-});
+form.stream.subscribe(console.log)
 
-const composeEnhancers = (window as any)['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
-const middleware = composeEnhancers(applyMiddleware());
-const store = createStore(reducer,{},middleware);
-
-
-@(connect as any)(
-    (store:any)=>({
-        values:store.form.random?store.form.random.values:{}
-    })
-)
 class App extends React.PureComponent<any,any>{
     data={
         state:2,
@@ -33,17 +18,15 @@ class App extends React.PureComponent<any,any>{
         "select": "pear",
         select1:0
     };
-    onSubmit=(values:any)=>{
-        if(values.text){
-            return new Promise(resolve=>{
-                setTimeout(resolve,3000)
-            })
-        }else return true;
+    onSubmit=async (values:any)=>{
+        console.log(values)
+        await new Promise(resolve=>{
+            setTimeout(resolve,3000)
+        })
     };
     render(){
-        return <div>
-            <ReduxSchemaForm form="random" initialValues={this.data} schema={schema} onSubmit={this.onSubmit} />
-            <Button formName="random">CustomSubmitButton</Button>
+        return <div style={{padding:15}}>
+            <SchemaForm form={form} initialValues={this.data} schema={schema} onSubmit={this.onSubmit} />
             <p>诸如数据schema发生变化的需求，不应该由表单这一层来实现！应该是逻辑层实现的功能，这里的表单只要笨笨的就行了</p>
             <pre>
                 <code>
@@ -57,15 +40,7 @@ class App extends React.PureComponent<any,any>{
     }
 }
 
-const Button = injectSubmittable({formName:"1",type:"submit"})(({props,children})=>{
-    return <button {...props}>
-        {children}
-    </button>
-})
-
 ReactDOM.render(
-        <Provider store={store}>
-            <App />
-        </Provider>,
+    <App />,
     document.getElementById('root')
 );

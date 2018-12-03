@@ -1,10 +1,5 @@
-export const fullWidthInputs = "& .field.textarea, & .field.group,& .field.array,& .field.file,& .field.table-array, & .field.virtual-group, & .field.full-width";
-export const widgetHeight = 85;
-export const mobileMedia = "@media(max-width:768px)";
-export const clearfix = {
-    "&:after":{
-        content:"\" \"",
-        display:"table",
-        clear:"both"
-    },
-};
+import { FormFieldSchema } from './form';
+
+export const isFullWidth = (field:FormFieldSchema)=>{
+    return field.fullWidth || typeof field.type === 'string' && ['textarea','group','array','file','table-array','virtual-group','full-width'].includes(field.type)
+}

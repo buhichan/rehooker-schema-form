@@ -4,35 +4,18 @@ window['requestAnimationFrame'] = function(callback:any) {
 
 import { FormFieldSchema} from '../..';
 import "jest"
-import {createStore, combineReducers} from 'redux'
-import {reducer as reduxFormReducer, getFormValues} from "redux-form"
 import {renderIntoDocument, scryRenderedDOMComponentsWithTag, Simulate} from "react-dom/test-utils"
 import * as React from 'react';
-import { Store } from 'react-redux';
 import { getType, clearTypes } from '../field';
-const PropTypes = require("prop-types")
+import { createForm, SchemaForm } from '../form';
 
-function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFieldSchema[], initialValues:any, expectation:(wrapper:any,formValues?:any,store?:Store<any>)=>void){
-    const reducer = combineReducers({
-        form: reduxFormReducer
-    })
-    const store = createStore(reducer,{
-        form:{}
-    })
+function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFieldSchema[], initialValues:any, expectation:(wrapper:any,getformValues?:()=>any)=>void){
+
+    const form = createForm()
     class Form extends React.PureComponent<any,any>{
-        getChildContext(){
-            return {
-                store
-            }
-        }
-        static childContextTypes = {
-            store: PropTypes.object
-          };
         render(){
-            const {ReduxSchemaForm} = require('../../index')
-            const ReduxSchemaFormWithStore = ReduxSchemaForm as any
-            return <ReduxSchemaFormWithStore
-                form="default"
+            return <SchemaForm
+                form={form}
                 schema={schema}
                 initialValues={initialValues}
             />
@@ -43,7 +26,13 @@ function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFi
         <Form />
     </Container>)
 
-    expectation(wrapper,()=>getFormValues("default")(store.getState()),store)
+    let formValues:any
+
+    form.stream.subscribe((v)=>{
+        formValues = v
+    })
+
+    expectation(wrapper,()=>formValues)
 }
 
 export const testTheme = (themeName:string,loadTheme:Function,container:React.ComponentClass<any>)=>{
@@ -68,8 +57,8 @@ export const testTheme = (themeName:string,loadTheme:Function,container:React.Co
                 type:"text",
                 hide:true,
                 listens:[{
-                    to:"text1",
-                    then:({value:v})=>({
+                    to:["text1"],
+                    then:([v])=>({
                         hide:v!=='b'
                     })
                 }]

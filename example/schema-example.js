@@ -16,11 +16,14 @@ var arrayFieldChildren = [
         hide: true,
         listens: [
             {
-                to: function (keyPath) { return keyPath + ".array-child"; },
-                then: function (p) {
+                to: function (keyPath) {
+                    return [keyPath + ".array-child"];
+                },
+                then: function (_a) {
+                    var p = _a[0];
                     console.log(arguments);
                     return {
-                        hide: !p.value
+                        hide: !p
                     };
                 }
             }
@@ -94,13 +97,10 @@ exports.schema = [
         placeholder: "placeholder",
         listens: [
             {
-                to: "text",
-                then: function (_a) {
-                    var v = _a.value;
-                    return ({
-                        placeholder: v
-                    });
-                }
+                to: ["text"],
+                then: function (v) { return ({
+                    placeholder: v
+                }); }
             }
         ]
     }, {
@@ -109,13 +109,10 @@ exports.schema = [
         label: "datetime",
         listens: [
             {
-                to: "text",
-                then: function (_a) {
-                    var v = _a.value;
-                    return ({
-                        placeholder: v
-                    });
-                }
+                to: ["text"],
+                then: function (v) { return ({
+                    placeholder: v
+                }); }
             }
         ]
     }, {
@@ -141,9 +138,9 @@ exports.schema = [
             });
         },
         listens: [{
-                to: 'fileIsMultiple',
+                to: ['fileIsMultiple'],
                 then: function (_a) {
-                    var multiple = _a.value;
+                    var multiple = _a[0];
                     return ({ multiple: multiple });
                 }
             }]
@@ -182,9 +179,9 @@ exports.schema = [
                 label: "手机号",
                 listens: [
                     {
-                        to: "checkbox",
+                        to: ["checkbox"],
                         then: function (_a) {
-                            var v = _a.value;
+                            var v = _a[0];
                             return ({ hide: v });
                         }
                     }
@@ -198,9 +195,9 @@ exports.schema = [
         placeholder: "placeholder",
         listens: [
             {
-                to: "select1",
+                to: ["select1"],
                 then: function (_a) {
-                    var v = _a.value;
+                    var v = _a[0];
                     return ({ hide: v === 'pear', value: null });
                 }
             }
@@ -257,9 +254,9 @@ exports.schema = [
         placeholder: "placeholder",
         listens: [
             {
-                to: "dependant_lv1",
+                to: ["dependant_lv1"],
                 then: function (_a) {
-                    var v = _a.value;
+                    var v = _a[0];
                     return {
                         hide: !v,
                         options: v === 'animal' ? [
@@ -294,9 +291,9 @@ exports.schema = [
         options: [],
         hide: true,
         listens: [{
-                to: "dependant_lv2",
+                to: ["dependant_lv2"],
                 then: function (_a) {
-                    var v = _a.value;
+                    var v = _a[0];
                     return ({
                         options: v === 'cat' ? [
                             { name: 'kitten', value: 'kitten' }, { name: 'cat', value: 'cat' }, { name: 'kitty', value: 'kitty' }
@@ -316,9 +313,9 @@ exports.schema = [
         label: "Array(当select是梨子的时候会少一个child)",
         listens: [
             {
-                to: "select1",
+                to: ["select1"],
                 then: function (_a) {
-                    var v = _a.value;
+                    var v = _a[0];
                     return {
                         children: v === 'pear' ? [
                             {
@@ -350,11 +347,11 @@ exports.schema = [
     }, {
         key: "test-component",
         type: function (props) {
-            var input = props.input, fieldSchema = props.fieldSchema;
+            var value = props.value, onChange = props.onChange, schema = props.schema;
             return React.createElement("div", null,
-                React.createElement("label", { htmlFor: input.name },
-                    fieldSchema.label,
-                    React.createElement("input", tslib_1.__assign({ type: "color" }, input))));
+                React.createElement("label", { htmlFor: schema.key },
+                    schema.label,
+                    React.createElement("input", { type: "color", value: value, onChange: onChange })));
         },
         label: "type也可以是组件"
     },
@@ -369,7 +366,7 @@ exports.schema = [
     {
         key: "autocomplete2",
         type: "autocomplete-async",
-        label: "自动完成",
+        label: "自动完成(async options)",
         placeholder: "placeholder",
         options: function (t) {
             if (/^\d+$/.test(t))
@@ -409,14 +406,14 @@ exports.schema = [
                 }
             }]
     }, {
-        key: "",
+        key: "virtual group, key does not count as key path",
         label: "some text",
         type: "virtual-group",
         children: [],
         listens: [{
-                to: "text",
+                to: ["text"],
                 then: function (_a) {
-                    var v = _a.value;
+                    var v = _a[0];
                     return {
                         children: [
                             {

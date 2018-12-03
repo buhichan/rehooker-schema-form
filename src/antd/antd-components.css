@@ -1,0 +1,117 @@
+:root{
+    --widget-height:85px;
+}
+
+.schema-form:after{
+    content: " ";
+    display:table;
+    clear:both;
+}
+
+.schema-form {
+    position: relative;
+}
+
+.schema-form * {
+    box-sizing: border-box;
+}
+
+.schema-form .array-field-container{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-start
+}
+.schema-form .array-field-container .array-field-child{
+    padding: 10px 0;
+    margin: 10px;
+    border-top: 1px solid #47a8f3;
+    width:calc(50% - 20px);
+}
+.schema-form .array-field-container .array-field-child .field{
+    width:100%;
+}
+.schema-form .field.array .add-button{
+    float:right;
+}
+.schema-form .field.array .delete-button{
+    float:right
+}
+
+.schema-form .field:after {
+    display: table;
+    content: " ";
+    clear: both
+}
+
+.schema-form .field {
+    float: left;
+    width: 50%;
+    padding-left:15px;
+    padding-right:15px;
+    height: var(--widget-height);
+}
+
+.schema-form .field .hidden{
+    display: none
+}
+
+.schema-form .field.full-width {
+    width: 100%;
+    height:auto;
+    min-height:var(--widget-height)
+};
+
+.schema-form .schema-node:after {
+    content: " ";
+    display:table;
+    clear:both;
+}
+
+
+.schema-form div.children, .schema-form div.button {
+    text-align:center;
+    float: left;
+    padding-right:initial;
+    padding-left:initial;
+    height:auto;
+    width: 100%;
+    margin: 20px 0 0;
+    min-height: initial
+}
+
+.schema-form fieldset{
+    width: 100%;
+}
+
+.schema-form div.children fieldset .field:nth-child(2n) {
+    padding:  0 5% 0 calc(10% + 15px);
+}
+
+.schema-form fieldset .field:nth-child(2n+1) {
+    padding:  0 calc(10% + 15px) 0 5%;
+}
+.schema-form>.schema-node>.field>fieldset>legend{
+    position: relative;
+    top: 11px;
+    margin-left:  5%;
+    border-bottom: none;
+    display: inline-block;
+    width: auto;
+    border-top: 1px solid +#47a8f3;
+}
+.schema-form>.schema-node>.field>fieldset {
+    margin:  40px calc(5% - 7.5px);
+    padding:  0 7.5px;
+    background: #f9f9fa;
+    border: none;
+}
+.schema-form>.schema-node>.field>fieldset .full-width{
+    padding:  0 5%;
+}
+
+/*fixme: todo: jss but! https://github.com/cssinjs/jss/issues/446*/
+@media(max-width:768px) { 
+    .schema-form .field, .schema-form .array-field-container .array-field-child {
+        width: 100%
+    }
+}

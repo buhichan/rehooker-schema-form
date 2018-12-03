@@ -1,5 +1,4 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("./antd");
-require("./antd.jss");
+require("./antd-components");
 //# sourceMappingURL=index.js.map

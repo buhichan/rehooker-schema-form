@@ -4,17 +4,14 @@
 ///<reference path="./declarations.d.ts" />
 
 import * as React from "react"
-import {addType, addTypeWithWrapper, getComponentProps} from "../field";
-import {FieldArray, WrappedFieldArrayProps} from "redux-form"
-import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input,Select,DatePicker} from 'antd';
-import {WidgetProps} from "../field";
-import {Options} from "../form";
+import {addType, renderFields} from "../field";
+import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input,Select,DatePicker, Collapse} from 'antd';
+import {Options, WidgetProps} from "../form";
 import {RuntimeAsyncOptions} from "../form";
-import {renderFields} from "../render-fields";
-import { setButton } from "../buttons";
+import { setButton } from "../inject-submittable";
 import * as moment from "moment"
 import { ResolveMaybePromise } from '../resolve-maybe-promise';
-import { isArray } from 'util';
+import { FieldArray } from '../field-array';
 
 const RadioGroup = Radio.Group;
 const {TextArea} =Input;
@@ -27,34 +24,23 @@ RCSelect.propTypes['value'] = PropTypes.any;
 Option.propTypes['value'] = PropTypes.any;
 (Select as any).propTypes['value'] = PropTypes.any as any
 
-const noop = ()=>{}
-
 const emptyArray:any[] = []
-
-// const convertValueToString = Comp=>(props)=>{
-//     let onChange=!props.onChange?undefined:(value)=>{
-//         props.onChange()
-//     }
-//     return <Comp {...props} value={String(props.value)} />
-// }
 
 const errorStyle={color:"red"};
 function TextInput(props:WidgetProps){
-    const componentProps = getComponentProps(props.fieldSchema)
     return <div>
-        <div>{props.fieldSchema.label}</div>
+        <div>{props.schema.label}</div>
         <Input 
-            type={props.type}
-            id={props.input.name}
+            type={props.schema.type}
+            id={props.schema.key}
             className="full-width"
             style={{width:"100%"}}
-            name={props.input.name}
-            onBlur={props.input.onBlur}
-            value={props.input.value}
-            onChange={props.input.onChange}
-            {...componentProps}
+            name={props.schema.name}
+            value={props.value}
+            onChange={props.onChange}
+            {...props.componentProps}
         />
-        <div style={errorStyle}>{props.meta.error}</div>
+        <div style={errorStyle}>{props.error}</div>
     </div>
 }
 
@@ -66,33 +52,32 @@ class SelectInput extends React.PureComponent<WidgetProps>{
         this.setState({
             search:""
         })
-        this.props.input.onChange(v)
+        this.props.onChange(v)
     }
     onSearchChange=(v:string)=>this.setState({search:v})
     render(){
-        const {fieldSchema,input,meta} = this.props
-        const componentProps:any = getComponentProps(this.props.fieldSchema)
+        const {schema,componentProps,value,error} = this.props
         return <div>
-            <label>{fieldSchema.label}</label>
-            <ResolveMaybePromise maybePromise={fieldSchema.options} >
+            <label>{schema.label}</label>
+            <ResolveMaybePromise maybePromise={schema.options} >
                 {(options)=>{
                     if(options == undefined)
                         options = emptyArray
                     console.log("rerender")
-                    const value = fieldSchema.multiple||componentProps.mode==="multiple"?(isArray(input.value)?input.value:[]):input.value
+                    const finalValue = schema.multiple||componentProps.mode==="multiple"?(Array.isArray(value)?value:[]):value
                     return <Select
                         showSearch
                         style={{ width: "100%" }}
                         onSearch={this.onSearchChange}
-                        mode={fieldSchema.multiple?"multiple":"default"}
-                        value={value}
+                        mode={schema.multiple?"multiple":"default"}
+                        value={finalValue}
                         onChange={this.onChange}
                         filterOption={false}
                         {...componentProps}
                     >
                         {options.filter((option)=>{
                             return !this.state.search || option.name.toLowerCase().indexOf(this.state.search.toLowerCase()) >= 0
-                        }).slice(0,fieldSchema.maxOptionCount || Infinity).map(option=>{
+                        }).slice(0,schema.maxOptionCount || Infinity).map(option=>{
                             const {name,value,...rest} = option
                             return <Option key={name} value={value} {...rest}>{name}</Option>
                         })}
@@ -100,20 +85,19 @@ class SelectInput extends React.PureComponent<WidgetProps>{
                 }}
             </ResolveMaybePromise>
             <div style={errorStyle}>
-                {meta.error}
+                {error}
             </div>
         </div>
     }
 }
 
 function CheckboxInput (props:WidgetProps){
-    const componentProps = getComponentProps(props.fieldSchema)
-    return <div style={{width:"100%"}}>
-        <label>{props.fieldSchema.label}</label>
+    return <div style={{width:"100%",paddingTop:20}}>
+        <label style={{marginRight:15}}>{props.schema.label}</label>
         <Checkbox
-            onChange={(e)=>props.input.onChange((e.target as HTMLInputElement).checked)}
-            checked={Boolean(props.input.value)}
-            {...componentProps}
+            onChange={(e)=>props.onChange((e.target as HTMLInputElement).checked)}
+            checked={Boolean(props.value)}
+            {...props.componentProps}
         />
     </div>
 }
@@ -122,90 +106,79 @@ function CheckboxInput (props:WidgetProps){
 
 
 function DateTimeInput(props:WidgetProps){
-    const value=props.input.value?moment(props.input.value):undefined;
-    const componentProps = getComponentProps(props.fieldSchema)
+    const value=props.value?moment(props.value):undefined;
     return <div>
-        <label>{props.fieldSchema.label}</label>
+        <label>{props.schema.label}</label>
         <DatePicker
             showTime
-            format={componentProps.dateFormat||"YYYY-MM-DD HH:mm:ss"}
+            format={props.componentProps.dateFormat||"YYYY/MM/DD HH:mm:ss"}
             value={value}
             style={{width:"100%"}}
-            onChange={(_,dateString)=>props.input.onChange(dateString)}
-            {...componentProps}
+            onChange={(_,dateString)=>props.onChange(dateString)}
+            {...props.componentProps}
         />
-        <div style={errorStyle}>{props.meta.error}</div>
+        <div style={errorStyle}>{props.error}</div>
     </div>
 }
 
 function DateInput(props:WidgetProps){
     let value= null;
-    if(props.input.value){
-        if(!(props.input.value instanceof moment))
-            value= moment(props.input.value);
+    if(props.value){
+        if(!(props.value instanceof moment))
+            value= moment(props.value);
     }
-    const componentProps = getComponentProps(props.fieldSchema)
     return<div >
-        <label>{props.fieldSchema.label}</label>
+        <label>{props.schema.label}</label>
         <DatePicker
-            key={props.fieldSchema.name}
+            key={props.schema.name}
             value={value}
-            disabled={props.disabled}
             style={{width:"100%"}}
-            onChange={(_,dateString)=>{props.input.onChange(dateString)}}
-            {...componentProps}
+            onChange={(_,dateString)=>{props.onChange(dateString)}}
+            {...props.componentProps}
         />
         <div style={errorStyle}>
-            {props.meta.error}
+            {props.error}
         </div>
     </div>
 }
 
 function DateTimeRangeInput (props:WidgetProps){
-    let value =props.input.value
-    const componentProps = getComponentProps(props.fieldSchema)
+    let value =props.value
     return <div>
-        <label>{props.fieldSchema.label}</label>
+        <label>{props.schema.label}</label>
         <RangePicker
             showTime={{ format: 'HH:mm:ss' }}
             style={{width:"100%"}}
-            format={componentProps.dateFormat||"YYYY-MM-DD HH:mm:ss"}
+            format={props.componentProps.dateFormat||"YYYY/MM/DD HH:mm:ss"}
             placeholder={['开始时间', '结束时间']}
             value={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}
             onChange={(_,dataStrings)=>{
-                props.input.onChange(dataStrings);
+                props.onChange(dataStrings);
             }}
-            {...componentProps}
+            {...props.componentProps}
         />
-        <div style={errorStyle}>{props.meta.error}</div>
+        <div style={errorStyle}>{props.error}</div>
     </div>
 }
 
 
 function NumberInput(props:WidgetProps){
-    let required={
-        required:props.required
-    };
-    const componentProps = getComponentProps(props.fieldSchema)
     return <div style={{width:"100%"}}>
-        <label>{props.fieldSchema.label}</label>
+        <label>{props.schema.label}</label>
         <InputNumber
-            onBlur={props.input.onBlur}
-            {...required as any}
             style={{width:"100%"}}
-            id={props.input.name}
+            id={props.schema.key}
             min={0}
-            disabled={props.disabled}
-            value={isNaN(parseFloat(props.input.value))?0:parseFloat(props.input.value)}
+            value={isNaN(parseFloat(props.value))?0:parseFloat(props.value)}
             onChange={(value)=>{if(isNaN(parseFloat(value as any))){
-                props.input.onChange(0)
+                props.onChange(0)
             }else{
-                props.input.onChange(parseFloat(value as any) )
+                props.onChange(parseFloat(value as any) )
             }
             }} 
-            {...componentProps}
+            {...props.componentProps}
         />
-        <div style={errorStyle}>{props.meta.error}</div>
+        <div style={errorStyle}>{props.error}</div>
 
     </div>
 }
@@ -215,32 +188,29 @@ const defaultAutoCompleteFilter = (input:string,element:any)=>{
 }
 
 const AutoCompleteDefault = function(props:WidgetProps){
-    const {meta,input,fieldSchema} = props;
-    const componentProps = getComponentProps(props.fieldSchema)
+    const {error,value,onChange,schema} = props;
     return <div style={{ width:"100%" }}>
-        <label>{fieldSchema.label}</label>
-        <ResolveMaybePromise maybePromise={fieldSchema.options}>
+        <label>{schema.label}</label>
+        <ResolveMaybePromise maybePromise={schema.options}>
             {options=>{
                 return <AutoComplete
                     dataSource={options?options.map(itm=>({value:itm.value,text:itm.name})):emptyArray}
                     style={{ width:"100%" }}
-                    value={input.value}
+                    value={value}
                     filterOption={defaultAutoCompleteFilter}
-                    onSelect={(value)=>input.onChange(value)}
-                    {...componentProps}
-                    onBlur={noop}
-                    onFocus={noop}
+                    onSelect={onChange}
+                    {...props.componentProps}
                 />
             }}
         </ResolveMaybePromise>
-        <div style={errorStyle}>{meta.error}</div>
+        <div style={errorStyle}>{error}</div>
     </div>
 }
 
 
 class FileInput extends React.Component<WidgetProps,any>{
     onChange=(info:any)=>{
-        this.props.input.onChange((info.fileList as any[]).map(file=>{
+        this.props.onChange((info.fileList as any[]).map(file=>{
             if(file.response && file.response.url){
                 file.url = file.response.url;
             }
@@ -256,30 +226,29 @@ class FileInput extends React.Component<WidgetProps,any>{
     };
     customRequest=(customRequestParams:any)=>{
         const {onSuccess,onError,onProgress,file,filename} = customRequestParams
-        if(!this.props.fieldSchema.onFileChange){
+        if(!this.props.schema.onFileChange){
             setTimeout(()=>{
                 onProgress({percent:100});
                 onSuccess(filename,null);
             },1)
         }else{
-            this.props.fieldSchema.onFileChange(file).then(previewUrl=>{
+            this.props.schema.onFileChange(file).then(previewUrl=>{
                 onProgress({percent:100});
                 onSuccess(previewUrl,null);
             },(err)=>onError(err))
         }
     };
     render(){
-        const componentProps = getComponentProps(this.props.fieldSchema)
         return <div style={{width:"100%"}}>
             <Upload
-                fileList={this.props.input.value||emptyArray}
+                fileList={this.props.value||emptyArray}
                 multiple={true}
                 onChange={this.onChange}
                 customRequest={this.customRequest}
-                {...componentProps}
+                {...this.props.componentProps}
             >
                 <Button>
-                    <Icon type="upload" /> {this.props.fieldSchema.label}
+                    <Icon type="upload" /> {this.props.schema.label}
                 </Button>
             </Upload>
         </div>
@@ -287,17 +256,15 @@ class FileInput extends React.Component<WidgetProps,any>{
 }
 
 function SelectRadio (props:WidgetProps){
-    const componentProps = getComponentProps(props.fieldSchema)
     return <div>
         <label style={{paddingLeft:0}}>
-            {props.fieldSchema.label}
+            {props.schema.label}
         </label>
-        <ResolveMaybePromise maybePromise={props.fieldSchema.options}>
+        <ResolveMaybePromise maybePromise={props.schema.options}>
             {options=><RadioGroup
-                disabled={props.disabled}
-                value={props.input.value || false}
-                onChange={(v)=>props.input.onChange(v)}
-                {...componentProps}
+                value={props.value || false}
+                onChange={(v)=>props.onChange(v)}
+                {...props.componentProps}
             >
                 {
                     options?options.map((option) => (
@@ -311,39 +278,36 @@ function SelectRadio (props:WidgetProps){
                 }
             </RadioGroup>}
         </ResolveMaybePromise>
-        <p style={errorStyle}>{props.meta.error}</p>
+        <p style={errorStyle}>{props.error}</p>
     </div>
 }
 
 function DateRangeInput (props:WidgetProps){
-    const dateFormat = props.fieldSchema.dateFormat || 'YYYY-MM-DD';
-    const value=props.input.value
+    const dateFormat = props.schema.dateFormat || 'YYYY/MM/DD';
+    const value=props.value
     const from =value?value[0]:undefined;
     const to =value?value[1]:undefined;
-    const componentProps = getComponentProps(props.fieldSchema)
     return <div >
         <RangePicker
             defaultValue={[from?moment(from,dateFormat):undefined, to?moment(to,dateFormat):undefined]}
-            disabled={props.disabled}
             format={dateFormat}
-            onChange={(_,dateStrings)=>{props.input.onChange(dateStrings)}}
-            {...componentProps}
+            onChange={(_,dateStrings)=>{props.onChange(dateStrings)}}
+            {...props.componentProps}
         />
     </div>
 }
 
 
 function TextareaInput (props:WidgetProps){
-    const componentProps = getComponentProps(props.fieldSchema)
-    return <div>
-        <label>{props.fieldSchema.label}</label>
+    return <div style={{marginBottom:16}}>
+        <label>{props.schema.label}</label>
         <TextArea 
-            value={props.input.value}
-            onChange={(value)=>props.input.onChange(value)}
+            value={props.value}
+            onChange={(value)=>props.onChange(value)}
             autosize={{minRows:4,maxRows:8}} 
-            {...componentProps}
+            {...props.componentProps}
         />
-        <div style={errorStyle}>{props.meta.error}</div>
+        <div style={errorStyle}>{props.error}</div>
     </div>
 }
 
@@ -359,9 +323,9 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
         this.$isMounted=false;
     }
     componentWillReceiveProps(this:AutoCompleteAsync,nextProps:typeof this['props']){
-        if(nextProps.input.value!==this.props.input.value)
+        if(nextProps.value!==this.props.value)
             this.setState({
-                searchText:this.findName(nextProps.input.value)
+                searchText:this.findName(nextProps.value)
             })
     }
     findName(value:any){
@@ -369,7 +333,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
         return entry?entry.name:value;
     }
     onUpdateInput=(name:string)=>{
-        const throttle = this.props.fieldSchema.throttle || 400
+        const throttle = this.props.schema.throttle || 400
         this.setState({
             searchText:name
         });
@@ -377,7 +341,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
             clearTimeout(this.pendingUpdate);
         this.pendingUpdate = setTimeout(()=>{
             this.fetchingQuery = name;
-            const result = (this.props.fieldSchema.options as RuntimeAsyncOptions)(name,this.props);
+            const result = (this.props.schema.options as RuntimeAsyncOptions)(name,this.props);
             if(result instanceof Promise)
                 result.then(options=>{
                     if(this.fetchingQuery === name && this.$isMounted)
@@ -391,26 +355,26 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
         },throttle);
     };
     onSelected=(params:any)=>{
-        this.props.input.onChange(params.value)
+        this.props.onChange(params.value)
     };
     state={
         searchText:"",
         dataSource:emptyArray
     };
     render(){
-        const {meta,input,fieldSchema} = this.props;
+        const {error,onChange,schema,componentProps} = this.props;
         return <div>
-            <label>{fieldSchema.label}</label>
+            <label>{schema.label}</label>
             <AutoComplete
                 dataSource={this.state.dataSource}
                 style={{width:"100%"}}
-                onSelect={(value)=>input.onChange(value)}
-                disabled={this.props.disabled}
+                onSelect={onChange}
                 onSearch={this.onUpdateInput}
                 filterOption={false}
+                {...componentProps}
             />
             <div style={errorStyle}>
-                {meta.error}
+                {error}
             </div>
         </div>
     }
@@ -419,56 +383,69 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
 
 class AutoCompleteText extends React.Component<WidgetProps,any>{
     onUpdateInput=(name:string)=>{
-        const entry = (this.props.fieldSchema.options as Options).find(x=>x.name===name);
-        return this.props.input.onChange(entry?entry.value:name);
+        const entry = (this.props.schema.options as Options).find(x=>x.name===name);
+        return this.props.onChange(entry?entry.value:name);
     };
     render(){
-        const {input,meta,fieldSchema} = this.props;
+        const {componentProps,onChange,error,schema} = this.props;
         return <div>
-            <label>{fieldSchema.label}</label>
+            <label>{schema.label}</label>
             <AutoComplete
-                dataSource={(fieldSchema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
+                dataSource={(schema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
                 onSearch={this.onUpdateInput}
-                onSelect={(value)=>input.onChange(value)}
+                onSelect={onChange}
                 filterOption={defaultAutoCompleteFilter}
+                {...componentProps}
             />
-            <div style={errorStyle}>{meta.error}</div>
+            <div style={errorStyle}>{error}</div>
         </div>
     }
 }
 
-
-
-class ArrayFieldRenderer extends React.Component<Partial<WidgetProps&WrappedFieldArrayProps<any>>,any>{
-    render(){
-        const props = this.props;
-
-        return <div className="clearfix array-field-container">
+function GroupRenderer({form,schema,keyPath,componentProps}:WidgetProps){
+    return <Collapse defaultActiveKey={["0"]} style={{marginBottom:15}} {...componentProps}>
+        <Collapse.Panel key={"0"} header={schema.label}>
             {
-                props.fields.map((_, i) => {
-                    let children = props.fieldSchema.children;
-                    return <div key={i} className="array-field-child">
-                        <div className="delete-button">
-                            <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
-                                <Icon type="minus" className="icon-minus" style={{cursor:"pointer"}} onClick={() => props.fields.remove(i)}/>
-                            </Tooltip>
-
-                        </div>
-                        {
-                            renderFields(props.meta.form,children,props.keyPath+"["+i+"]")
-                        }
-                    </div>
-                })
+                renderFields(form, schema.children, keyPath +"." + schema.key)
             }
+        </Collapse.Panel>
+    </Collapse>
+}
+
+function ArrayFieldRenderer(props:WidgetProps){
+    return <FieldArray {...props}>
+        {(keys,add,remove,renderChild)=><>
+            <label>{props.schema.label}</label>
             <div className="add-button">
                 <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
-                    <Icon type="plus"  className="icon-plus" style={{cursor:"pointer"}} onClick={() => props.fields.push(props.fieldSchema.defaultValue||{})}/>
+                    <Button icon="plus" onClick={add}/>
                 </Tooltip>
             </div>
-        </div>
-    }
+            <Collapse style={{marginBottom:16,marginTop:16}}>
+            {
+                keys.map((id,index) => {
+                    return <Collapse.Panel forceRender showArrow={false} key={id} header={<div>
+                            {props.schema.label+" #"+index}
+                            <div className="delete-button" onClick={e=>e.stopPropagation()}>
+                                <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
+                                    <Icon type="close" style={{cursor:"pointer",marginRight:8}} onClick={() => remove(id)}/>
+                                </Tooltip>
+                            </div>
+                        </div>}>
+                        <div key={id} className="array-field-child">
+                            {
+                                renderChild(id)
+                            }
+                        </div>
+                    </Collapse.Panel>
+                })
+            }
+            </Collapse>
+        </>}
+    </FieldArray>
 }
 
+addType("group",GroupRenderer)
 
 addType('text',TextInput);
 addType('select',SelectInput);
@@ -499,42 +476,36 @@ addType("textarea",TextareaInput);
 addType("password",TextInput);
 addType("email",TextInput);
 addType('text',TextInput);
-addTypeWithWrapper("array",(props)=>{
-    return <div>
-        <label className="control-label">{props.fieldSchema.label}</label>
-        <FieldArray props={props} keyPath={props.keyPath} name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.listens)} component={ArrayFieldRenderer}/>
-    </div>
-});
+
+addType("array",ArrayFieldRenderer);
 
 addType("autocomplete-async",AutoCompleteAsync);
 
-setButton(function(props:any){
-    switch (props.type) {
-        case 'submit':
-            return <Button
-                className="raised-button"
-                style={{margin: "15px"}}
-                onClick={props.onClick}
-                disabled={props.disabled}
-                type={props.type}
-                htmlType={props.type}
-            >
-                {props.children}
-            </Button>;
-        case "button":
-            return <Button
+setButton(props=>{
+    return <div style={{textAlign:"center",float:"left",margin:15,width:"100%"}}>
+        <Button.Group>
+            <Button
                 style={{
                     backgroundColor: "transparent",
-                    margin: "15px"
                 }}
-                onClick={props.onClick}
+                onClick={props.onReset}
                 disabled={props.disabled}
-                type={props.type}
-                htmlType={props.type}
+                type={"default"}
+                htmlType={'reset'}
             >
-                {props.children}
+                重置
             </Button>
-        default:
-            return null;
-    }
-});
+            <Button
+                className="raised-button"
+                onClick={props.onSubmit}
+                icon={props.submitSucceeded?"check":undefined}
+                disabled={props.disabled}
+                type={'primary'}
+                loading={props.submitting}
+                htmlType={'submit'}
+            >
+                提交
+            </Button>
+        </Button.Group>
+    </div>
+})

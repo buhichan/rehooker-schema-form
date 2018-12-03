@@ -1,7 +1,7 @@
 {
-  "name": "redux-schema-form",
-  "version": "3.0.0-beta.9",
-  "description": "use redux-form like formly",
+  "name": "rehooker-schema-form",
+  "version": "0.0.1",
+  "description": "form component",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -17,18 +17,16 @@
   },
   "peerDependencies": {
     "antd": "^3.*",
-    "moment": "^2.19.2",
-    "react": "^16.0.*",
-    "react-dom": "^16.0.*",
-    "react-jss": "6.*",
-    "react-redux": "*",
-    "redux": "*",
-    "reselect": "*",
+    "moment": "^2.*",
+    "react": "*",
+    "react-dom": "*",
+    "react-jss": "*",
+    "rehooker": "^0.0.4",
     "tslib": "*"
   },
   "keywords": [
-    "redux-form",
-    "angular-formly"
+    "react",
+    "form"
   ],
   "author": "YS",
   "license": "MIT",
@@ -36,11 +34,9 @@
     "@types/jest": "^21.1.6",
     "@types/node": "^10.3.6",
     "@types/prop-types": "^15.5.6",
-    "@types/react": "^16.*",
-    "@types/react-dom": "^16.*",
-    "@types/react-redux": "^4.4.35",
+    "@types/react": "^16.7.11",
+    "@types/react-dom": "^16.0.11",
     "@types/react-test-renderer": "^16.0.0",
-    "@types/redux-form": "^7.3.0",
     "antd": "^3.10.9",
     "awesome-typescript-loader": "^3.0.3",
     "copy-webpack-plugin": "^3.0.1",
@@ -56,18 +52,19 @@
     "null-loader": "^0.1.1",
     "postcss-loader": "^0.13.0",
     "raw-loader": "^0.5.1",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
+    "react-dom": "^16.7.0-alpha.2||^16.7.0",
     "react-jss": "6.*",
-    "react-redux": "^5.0.6",
+    "rehooker": "git+ssh://git@github.com:buhichan/rehooker.git",
     "style-loader": "^0.13.1",
     "tslib": "^1.8.0",
     "typescript": "^3.1.6",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   },
-  "dependencies": {
-    "redux-form": "^7.4.2",
-    "reselect": "*"
+  "dependencies": {},
+  "resolutions": {
+    "react": "^16.7.0-alpha.2 || ^16.7.0",
+    "react-dom": "^16.7.0-alpha.2 || ^16.7.0",
+    "@types/react": "16.7.*"
   }
 }

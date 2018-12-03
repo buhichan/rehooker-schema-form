@@ -1,5 +1,4 @@
-import {FormFieldSchema} from "../src/form";
-import {WidgetProps} from "../src/field";
+import {FormFieldSchema, WidgetProps} from "../src/form";
 import * as React from "react"
 
 const arrayFieldChildren:FormFieldSchema[] = [
@@ -15,11 +14,13 @@ const arrayFieldChildren:FormFieldSchema[] = [
         hide:true,
         listens:[
             {
-                to:(keyPath:string)=>keyPath+".array-child",
-                then: function (p) {
+                to:keyPath=>{
+                    return [keyPath+".array-child"]
+                },
+                then: function ([p]) {
                     console.log(arguments);
                     return {
-                        hide:!p.value
+                        hide:!p
                     }
                 }
             }
@@ -94,8 +95,8 @@ export let schema:FormFieldSchema[] = [
         placeholder:"placeholder",
         listens:[
             {
-                to:"text",
-                then:({value:v})=>({
+                to:["text"],
+                then:(v)=>({
                     placeholder:v
                 })
             }
@@ -106,8 +107,8 @@ export let schema:FormFieldSchema[] = [
         label:"datetime",
         listens:[
             {
-                to:"text",
-                then:({value:v})=>({
+                to:["text"],
+                then:(v)=>({
                     placeholder:v
                 })
             }
@@ -135,8 +136,8 @@ export let schema:FormFieldSchema[] = [
             });
         },
         listens:[{
-            to:'fileIsMultiple',
-            then:({value:multiple})=>({multiple})
+            to:['fileIsMultiple'],
+            then:([multiple])=>({multiple:multiple})
         }]
     },{
         key:"file-file",
@@ -173,8 +174,8 @@ export let schema:FormFieldSchema[] = [
                 label:"手机号",
                 listens:[
                     {
-                        to:"checkbox",
-                        then:({value:v})=>({hide:v})
+                        to:["checkbox"],
+                        then:([v])=>({hide:v})
                     }
                 ]
             }
@@ -186,8 +187,8 @@ export let schema:FormFieldSchema[] = [
         placeholder:"placeholder",
         listens:[
             {
-                to:"select1",
-                then:({value:v})=>({hide:v==='pear',value:null})
+                to:["select1"],
+                then:([v])=>({hide:v==='pear',value:null})
             }
         ]
     },{
@@ -242,8 +243,8 @@ export let schema:FormFieldSchema[] = [
         placeholder:"placeholder",
         listens:[
             {
-                to:"dependant_lv1",
-                then:({value:v})=>{
+                to:["dependant_lv1"],
+                then:([v])=>{
                     return{
                         hide:!v,
                         options: v==='animal'?[
@@ -278,8 +279,8 @@ export let schema:FormFieldSchema[] = [
         options:[],
         hide:true,
         listens:[{
-            to:"dependant_lv2",
-            then:({value:v})=>({
+            to:["dependant_lv2"],
+            then:([v])=>({
                 options:v==='cat'?[
                         {name:'kitten',value:'kitten'}, {name:'cat',value:'cat'}, {name:'kitty',value:'kitty'}]:
                     v==='dog'?
@@ -296,8 +297,8 @@ export let schema:FormFieldSchema[] = [
         label:"Array(当select是梨子的时候会少一个child)",
         listens:[
             {
-                to:"select1",
-                then:({value:v})=>{
+                to:["select1"],
+                then:([v])=>{
                     return {
                         children:v==='pear'?[
                             {
@@ -329,11 +330,11 @@ export let schema:FormFieldSchema[] = [
     },{
         key:"test-component",
         type:function(props:WidgetProps){
-            const {input,fieldSchema} = props;
+            const {value,onChange,schema} = props;
             return <div>
-                <label htmlFor={input.name} >
-            {fieldSchema.label}
-            <input type="color" {...input} />
+                <label htmlFor={schema.key} >
+                {schema.label}
+            <input type="color" value={value} onChange={onChange} />
             </label>
             </div>
         },
@@ -350,7 +351,7 @@ export let schema:FormFieldSchema[] = [
     {
         key:"autocomplete2",
         type:"autocomplete-async",
-        label:"自动完成",
+        label:"自动完成(async options)",
         placeholder:"placeholder",
         options:t=>{
             if(/^\d+$/.test(t))
@@ -385,13 +386,13 @@ export let schema:FormFieldSchema[] = [
             }
         }]
     },{
-        key:"",
+        key:"virtual group, key does not count as key path",
         label:"some text",
         type:"virtual-group",
         children:[],
         listens:[{
-            to:"text",
-            then:({value:v})=>{
+            to:["text"],
+            then:([v])=>{
                 return {
                     children:[
                         {

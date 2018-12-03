@@ -5,42 +5,29 @@ window['requestAnimationFrame'] = function (callback) {
     setTimeout(callback, 0);
 };
 require("jest");
-var redux_1 = require("redux");
-var redux_form_1 = require("redux-form");
 var test_utils_1 = require("react-dom/test-utils");
 var React = require("react");
 var field_1 = require("../field");
-var PropTypes = require("prop-types");
+var form_1 = require("../form");
 function describeTestWithStore(Container, schema, initialValues, expectation) {
-    var reducer = redux_1.combineReducers({
-        form: redux_form_1.reducer
-    });
-    var store = redux_1.createStore(reducer, {
-        form: {}
-    });
+    var form = form_1.createForm();
     var Form = /** @class */ (function (_super) {
         tslib_1.__extends(Form, _super);
         function Form() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
-        Form.prototype.getChildContext = function () {
-            return {
-                store: store
-            };
-        };
         Form.prototype.render = function () {
-            var ReduxSchemaForm = require('../../index').ReduxSchemaForm;
-            var ReduxSchemaFormWithStore = ReduxSchemaForm;
-            return React.createElement(ReduxSchemaFormWithStore, { form: "default", schema: schema, initialValues: initialValues });
-        };
-        Form.childContextTypes = {
-            store: PropTypes.object
+            return React.createElement(form_1.SchemaForm, { form: form, schema: schema, initialValues: initialValues });
         };
         return Form;
     }(React.PureComponent));
     var wrapper = test_utils_1.renderIntoDocument(React.createElement(Container, null,
         React.createElement(Form, null)));
-    expectation(wrapper, function () { return redux_form_1.getFormValues("default")(store.getState()); }, store);
+    var formValues;
+    form.stream.subscribe(function (v) {
+        formValues = v;
+    });
+    expectation(wrapper, function () { return formValues; });
 }
 exports.testTheme = function (themeName, loadTheme, container) {
     describe("Theme: " + themeName, function () {
@@ -62,9 +49,9 @@ exports.testTheme = function (themeName, loadTheme, container) {
                 type: "text",
                 hide: true,
                 listens: [{
-                        to: "text1",
+                        to: ["text1"],
                         then: function (_a) {
-                            var v = _a.value;
+                            var v = _a[0];
                             return ({
                                 hide: v !== 'b'
                             });

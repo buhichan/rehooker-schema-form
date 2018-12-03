@@ -1,2 +1,1 @@
-import "./antd"
-import "./antd.jss"
+import "./antd-components"

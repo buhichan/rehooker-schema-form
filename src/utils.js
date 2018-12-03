@@ -34,4 +34,26 @@ exports.requestDownload = function (options) {
     input.download = options.download;
     input.click();
 };
+function deepSet(target, keys, value) {
+    var parent;
+    var p = target;
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (p[key] === undefined) {
+            if (i < keys.length && typeof keys[i + 1] === 'number') {
+                p[key] = [];
+            }
+            else
+                p[key] = {};
+        }
+        parent = p;
+        p = p[key];
+    }
+    parent[keys[keys.length - 1]] = value;
+}
+exports.deepSet = deepSet;
+function randomID() {
+    return String(Math.floor(Math.random() * 1000000000));
+}
+exports.randomID = randomID;
 //# sourceMappingURL=utils.js.map

@@ -1,12 +1,12 @@
 /**
  * Created by YS on 2016/10/31.
  */
-import { FormButton, submittable } from './buttons';
+import { FormButtons } from './inject-submittable';
 import * as React from 'react';
-import {ConfigProps, InjectedFormProps,BaseFieldProps, reset} from 'redux-form'
-import {WidgetProps} from "./field";
-import {renderFields} from "./render-fields";
-import { getDecorator } from './decorate';
+import {renderFields} from "./field";
+import {Store, createStore, useSource} from "rehooker"
+import { initialize, submit } from './mutations';
+import { map } from 'rxjs/operators';
 
 export type Options = {name:string,value:any}[]
 export type AsyncOptions = ()=>Promise<Options>
@@ -18,13 +18,8 @@ export type FieldListens={
      * If your formValue is {"foo":{"haha":[{"bar":10032}]}}, then the callback here will receive these arguments:
      * 10032, {bar:10032}, [{bar:10032}], {haha:[{bar:10032}]}, {foo:...}
      */
-    to:string|string[]|((keyPath:string)=>string),
-    then:(change:{
-        value:any|any[],
-        formValues:any,
-        dispatch:any,
-        keyPath:string
-    })=>Partial<FormFieldSchema&{value:any}>|Promise<Partial<FormFieldSchema>&{value:any}>|void;
+    to:string[]|((keyPath:string)=>string[]),
+    then:(values:any[])=>Partial<FormFieldSchema&{value:any}>|Promise<Partial<FormFieldSchema>&{value:any}>|void;
 }[]
 
 export interface WidgetInjectedProps{
@@ -34,54 +29,101 @@ export interface WidgetInjectedProps{
     fullWidth?:boolean, //todo: should I put this presentation logic here?
     required?:boolean,
     disabled?:boolean,
-    defaultValue?:any
-    style?:React.CSSProperties,
     [propName:string]:any
 }
 
-export interface FormFieldSchema extends Partial<BaseFieldProps>,Partial<WidgetInjectedProps>{
+export type WidgetProps = {
+    schema:FormFieldSchema,
+    form:Store<FormState>,
+    onChange:(e:any)=>void
+    value:any
+    componentProps:any,
+    keyPath:string,
+    error:any
+    meta:any
+}
+
+export type FormFieldSchema = WidgetInjectedProps & {
     key:string,
     label:string,
     type: string | React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>,
     children?:FormFieldSchema[]
-    options?:Options | AsyncOptions | RuntimeAsyncOptions,
     /**
      * keyPath will keyPath from the root of the form to your deeply nested field. e.g. foo.bar[1].far
      */
     listens?:FieldListens,
+    validate?:(value:any,formValue:any)=>string|undefined|null,
+    parse?:(v:any)=>any,
+    format?:(v:any)=>any,
+    style?:React.CSSProperties,
+    defaultValue?:any // set when mount
+    options?:Options | AsyncOptions | RuntimeAsyncOptions,
 }
 
-@getDecorator()
-export class ReduxSchemaForm extends React.PureComponent<ReduxSchemaFormProps,{}>{
-    reset=()=>this.props.dispatch(reset(this.props.form))
-    render(){
-        const formClass = this.props.classes&&this.props.classes.form?this.props.classes.form:""
-        return <form id={this.props.form} className={"redux-schema-form form-horizontal "+formClass} onSubmit={this.props.handleSubmit as any}>
-            {renderFields(
-                this.props.form,
-                this.props.schema
-            )}
-            {this.props.children?<div className="children">
-                {this.props.children}
-            </div>:null}
-            {
-                (!this.props.noButton)? <div className="button">
-                    <div className="btn-group">
-                        <FormButton type="submit" disabled={!submittable(this.props)}>提交</FormButton>
-                        <FormButton type="button" onClick={this.reset} disabled={!submittable(this.props)}>重置</FormButton>
-                    </div>
-                </div> : <div />
-            }
-        </form>
+export type FormState = {
+    submitting:boolean,
+    submitSucceeded:boolean,
+    errors:{
+        [key:string]:string
     }
+    values:{
+        [key:string]:any
+    }
+    meta:{
+        [key:string]:{
+            schema:FormFieldSchema
+        }
+    }
+    onSubmit:Function,
+    initialValues:any
 }
 
-type ReduxSchemaFormOwnProps = {
+// const store = createStore({})
+
+export type SchemaFormProps = {
     schema:FormFieldSchema[],
     noButton?:boolean,
-    classes?:any,
-    dispatch?:(...args:any[])=>any,
-    disableResubmit?:boolean
+    form:Store<FormState>,
+    initialValues?:any
+    onSubmit?:(values:any)=>void | Promise<void>,
 }
 
-type ReduxSchemaFormProps = Partial<ConfigProps&InjectedFormProps<any,any>>&ReduxSchemaFormOwnProps
+const defaultFormState:FormState = {
+    submitting:false,
+    submitSucceeded:false,
+    initialValues:undefined,
+    onSubmit:()=>{},
+    meta:{},
+    errors:{},
+    values:undefined
+}
+
+export function createForm(){
+    return createStore(defaultFormState)
+}
+
+
+
+export function SchemaForm(props:SchemaFormProps){
+    const handleSubmit = React.useMemo(()=>(e:React.FormEvent)=>{
+        e.preventDefault()
+        submit(props.form.next)
+    },[props.form])
+    React.useEffect(()=>{
+        props.form.next(initialize(props.initialValues,props.onSubmit))
+    },[props.initialValues,props.onSubmit])
+    React.useEffect(()=>{
+        return ()=>{
+            props.form.next(()=>{
+                return defaultFormState
+            })
+        }
+    },[props.form])
+    const initialized = useSource(props.form.stream,map(x=>x.values))
+    return <form className="schema-form" onSubmit={handleSubmit}>
+        {!initialized ? null : renderFields(props.form,props.schema,"")}
+        {
+            (!props.noButton)? <FormButtons form={props.form} /> : null
+        }
+    </form>
+}
