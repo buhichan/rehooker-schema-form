@@ -4367,8 +4367,8 @@ regjsparser@^0.1.4:
     jsesc "~0.5.0"
 
 "rehooker@git+ssh://git@github.com:buhichan/rehooker.git":
-  version "0.0.4"
-  resolved "git+ssh://git@github.com:buhichan/rehooker.git#67e9ad79f30a22d17a083feede0d24a45b5c2c59"
+  version "0.0.5"
+  resolved "git+ssh://git@github.com:buhichan/rehooker.git#0649bfad0a36ce5640dbb555a209cd30ea217560"
   dependencies:
     react "*"
     rxjs "^6.3.3"

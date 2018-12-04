@@ -21,11 +21,13 @@ function FormButtons(props) {
     var res = rehooker_1.useSource(props.form.stream, operators_1.map(function (s) {
         var values = s.values;
         var pristine = s.initialValues &&
-            values && Object.keys(values).every(function (k) {
-            var v1 = values[k];
-            var v2 = s.initialValues[k];
-            return v1 === v2 || !v1 && !v2;
-        });
+            values &&
+            Object.keys(values).length === Object.keys(s.initialValues).length &&
+            Object.keys(values).every(function (k) {
+                var v1 = values[k];
+                var v2 = s.initialValues[k];
+                return v1 === v2 || !v1 && !v2;
+            });
         var hasError = Object.keys(s.errors).length !== 0;
         return {
             submittable: !hasError &&

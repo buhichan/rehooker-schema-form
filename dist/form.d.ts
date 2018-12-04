@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Store } from "rehooker";
+import { Store, Mutation } from "rehooker";
+import { OperatorFunction } from 'rxjs';
 export declare type Options = {
     name: string;
     value: any;
@@ -79,5 +80,5 @@ export declare type SchemaFormProps = {
     initialValues?: any;
     onSubmit?: (values: any) => void | Promise<void>;
 };
-export declare function createForm(): Store<FormState>;
+export declare function createForm(middleware?: OperatorFunction<Mutation<FormState>, Mutation<FormState>>): Store<FormState>;
 export declare function SchemaForm(props: SchemaFormProps): JSX.Element;

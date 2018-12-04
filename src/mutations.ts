@@ -1,7 +1,6 @@
 import { FormState, FormFieldSchema } from './form';
 import { randomID, deepSet } from './utils';
 
-
 export class SubmissionError{
     constructor(public error:any){}
 }
@@ -24,20 +23,25 @@ export function registerField(schema:FormFieldSchema,keyPath:string){
 export function unregisterField(schema:FormFieldSchema,keyPath:string){
     return((f:FormState)=>{
         const key = (keyPath +"." + schema.key).slice(1)
-        f.values && delete f.values[key]
-        f.errors && delete f.errors[key]
-        f.meta && delete f.meta[key]
+        if( 
+            !(f.values && key in f.values) && 
+            !(f.errors && key in f.errors) && 
+            !(f.meta && key in f.meta)
+        ){
+            //no change to make
+            return f
+        }
+        if(f.values){
+            delete f.values[key]
+        }
+        if(f.errors){
+            delete f.errors[key]
+        }
+        if(f.meta){
+            delete f.meta[key]
+        }
         return {
-            ...f,
-            values:{
-                ...f.values
-            },
-            errors:{
-                ...f.errors
-            },
-            meta:{
-                ...f.meta
-            }
+            ...f
         }
     })
 }

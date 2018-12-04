@@ -18,8 +18,8 @@ var defaultFormState = {
     errors: {},
     values: undefined
 };
-function createForm() {
-    return rehooker_1.createStore(defaultFormState);
+function createForm(middleware) {
+    return rehooker_1.createStore(defaultFormState, middleware);
 }
 exports.createForm = createForm;
 function SchemaForm(props) {
@@ -30,13 +30,9 @@ function SchemaForm(props) {
     React.useEffect(function () {
         props.form.next(mutations_1.initialize(props.initialValues, props.onSubmit || (function () { })));
     }, [props.initialValues, props.onSubmit]);
-    React.useEffect(function () {
-        return function () {
-            props.form.next(function () {
-                return defaultFormState;
-            });
-        };
-    }, [props.form]);
+    React.useEffect(function () { return function () {
+        props.form.next(function () { return defaultFormState; });
+    }; }, [props.form]);
     var initialized = rehooker_1.useSource(props.form.stream, operators_1.map(function (x) { return x.values; }));
     return React.createElement("form", { className: "schema-form", onSubmit: handleSubmit },
         !initialized ? null : field_1.renderFields(props.form, props.schema, ""),

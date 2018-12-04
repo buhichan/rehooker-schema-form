@@ -22,10 +22,22 @@ exports.registerField = registerField;
 function unregisterField(schema, keyPath) {
     return (function (f) {
         var key = (keyPath + "." + schema.key).slice(1);
-        f.values && delete f.values[key];
-        f.errors && delete f.errors[key];
-        f.meta && delete f.meta[key];
-        return tslib_1.__assign({}, f, { values: tslib_1.__assign({}, f.values), errors: tslib_1.__assign({}, f.errors), meta: tslib_1.__assign({}, f.meta) });
+        if (!(f.values && key in f.values) &&
+            !(f.errors && key in f.errors) &&
+            !(f.meta && key in f.meta)) {
+            //no change to make
+            return f;
+        }
+        if (f.values) {
+            delete f.values[key];
+        }
+        if (f.errors) {
+            delete f.errors[key];
+        }
+        if (f.meta) {
+            delete f.meta[key];
+        }
+        return tslib_1.__assign({}, f);
     });
 }
 exports.unregisterField = unregisterField;

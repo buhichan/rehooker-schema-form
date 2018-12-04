@@ -22,21 +22,7 @@ export declare function registerField(schema: FormFieldSchema, keyPath: string):
     onSubmit: Function;
     initialValues: any;
 };
-export declare function unregisterField(schema: FormFieldSchema, keyPath: string): (f: FormState) => {
-    values: {};
-    errors: {
-        [x: string]: string;
-    };
-    meta: {
-        [x: string]: {
-            schema: FormFieldSchema;
-        };
-    };
-    submitting: boolean;
-    submitSucceeded: boolean;
-    onSubmit: Function;
-    initialValues: any;
-};
+export declare function unregisterField(schema: FormFieldSchema, keyPath: string): (f: FormState) => FormState;
 export declare function submit(dispatch: (m: (s: FormState) => FormState) => void): void;
 export declare function reset(f: FormState): {
     values: any;

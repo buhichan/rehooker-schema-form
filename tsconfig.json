@@ -26,6 +26,7 @@
   "exclude": [
     "node_modules",
     "demo",
+    "dist",
     "__test__"
   ]
 }

@@ -4,9 +4,10 @@
 import { FormButtons } from './inject-submittable';
 import * as React from 'react';
 import {renderFields} from "./field";
-import {Store, createStore, useSource} from "rehooker"
+import {Store, createStore, useSource, Mutation} from "rehooker"
 import { initialize, submit } from './mutations';
 import { map } from 'rxjs/operators';
+import { OperatorFunction } from 'rxjs';
 
 export type Options = {name:string,value:any}[]
 export type AsyncOptions = ()=>Promise<Options>
@@ -98,11 +99,9 @@ const defaultFormState:FormState = {
     values:undefined
 }
 
-export function createForm(){
-    return createStore(defaultFormState)
+export function createForm(middleware?:OperatorFunction<Mutation<FormState>,Mutation<FormState>>){
+    return createStore(defaultFormState,middleware)
 }
-
-
 
 export function SchemaForm(props:SchemaFormProps){
     const handleSubmit = React.useMemo(()=>(e:React.FormEvent)=>{
@@ -112,12 +111,8 @@ export function SchemaForm(props:SchemaFormProps){
     React.useEffect(()=>{
         props.form.next(initialize(props.initialValues,props.onSubmit || (()=>{})))
     },[props.initialValues,props.onSubmit])
-    React.useEffect(()=>{
-        return ()=>{
-            props.form.next(()=>{
-                return defaultFormState
-            })
-        }
+    React.useEffect(()=>()=>{
+        props.form.next(()=>defaultFormState)
     },[props.form])
     const initialized = useSource(props.form.stream,map(x=>x.values))
     return <form className="schema-form" onSubmit={handleSubmit}>
