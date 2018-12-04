@@ -10,17 +10,17 @@ var SubmissionError = /** @class */ (function () {
 }());
 exports.SubmissionError = SubmissionError;
 function registerField(schema, keyPath) {
-    return (function (f) {
+    return function registerField(f) {
         var _a;
         var key = (keyPath + "." + schema.key).slice(1);
         return tslib_1.__assign({}, f, { meta: tslib_1.__assign({}, f.meta, (_a = {}, _a[key] = {
                 schema: schema
             }, _a)) });
-    });
+    };
 }
 exports.registerField = registerField;
 function unregisterField(schema, keyPath) {
-    return (function (f) {
+    return function unregisterField(f) {
         var key = (keyPath + "." + schema.key).slice(1);
         if (!(f.values && key in f.values) &&
             !(f.errors && key in f.errors) &&
@@ -38,11 +38,11 @@ function unregisterField(schema, keyPath) {
             delete f.meta[key];
         }
         return tslib_1.__assign({}, f);
-    });
+    };
 }
 exports.unregisterField = unregisterField;
 function submit(dispatch) {
-    return dispatch(function (f) {
+    return dispatch(function submit(f) {
         var values = f.values;
         if (!values)
             return f;
@@ -61,11 +61,11 @@ function submit(dispatch) {
         var maybePromise = f.onSubmit && f.onSubmit(finalValue);
         if (maybePromise instanceof Promise) {
             maybePromise.then(function () {
-                dispatch(function (f) {
+                dispatch(function submitSucceed(f) {
                     return tslib_1.__assign({}, f, { submitting: false, submitSucceed: true });
                 });
             }).catch(function (error) {
-                dispatch(function (f) {
+                dispatch(function submitFailed(f) {
                     return tslib_1.__assign({}, f, { errors: error instanceof SubmissionError ? tslib_1.__assign({}, f.errors, error.error) : f.errors, submitting: false, submitSucceed: false });
                 });
                 throw error;
@@ -80,7 +80,7 @@ function reset(f) {
 }
 exports.reset = reset;
 function changeValue(schema, keyPath, valueOrEvent) {
-    return (function (s) {
+    return function changeValue(s) {
         var _a, _b;
         var newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent;
         var key = (keyPath + "." + schema.key).slice(1);
@@ -92,7 +92,7 @@ function changeValue(schema, keyPath, valueOrEvent) {
             delete s.errors[key];
         }
         return tslib_1.__assign({}, s, { errors: tslib_1.__assign({}, s.errors), values: tslib_1.__assign({}, s.values, (_b = {}, _b[key] = schema.parse ? schema.parse(newValue) : newValue, _b)) });
-    });
+    };
 }
 exports.changeValue = changeValue;
 function initialize(initialValues, onSubmit) {
@@ -111,21 +111,21 @@ function initialize(initialValues, onSubmit) {
             map[keyPath.join(".")] = value;
         }
     }
-    return (function (f) {
+    return function initialize(f) {
         var initialValuesMap = {};
         initialValues && traverseValues(initialValuesMap, initialValues, []);
         return tslib_1.__assign({}, f, { onSubmit: onSubmit, values: f.values === undefined ? initialValuesMap : f.values, initialValues: initialValuesMap });
-    });
+    };
 }
 exports.initialize = initialize;
 function addArrayItem(schema, keyPath, oldKeys) {
-    return function (f) {
+    return function addArrayItem(f) {
         return changeValue(schema, keyPath, (oldKeys || []).concat(utils_1.randomID()))(f);
     };
 }
 exports.addArrayItem = addArrayItem;
 function removeArrayItem(schema, keyPath, oldKeys, removedKey) {
-    return function (f) {
+    return function removeArrayItem(f) {
         var i = oldKeys.indexOf(removedKey);
         var copy = oldKeys.slice();
         copy.splice(i, 1);

@@ -6,7 +6,7 @@ export class SubmissionError{
 }
 
 export function registerField(schema:FormFieldSchema,keyPath:string){
-    return ((f:FormState)=>{
+    return function registerField(f:FormState){
         const key = (keyPath + "." + schema.key).slice(1)
         return {
             ...f,
@@ -17,11 +17,11 @@ export function registerField(schema:FormFieldSchema,keyPath:string){
                 }
             }
         }
-    })
+    }
 }
 
 export function unregisterField(schema:FormFieldSchema,keyPath:string){
-    return((f:FormState)=>{
+    return function unregisterField(f:FormState){
         const key = (keyPath +"." + schema.key).slice(1)
         if( 
             !(f.values && key in f.values) && 
@@ -43,11 +43,11 @@ export function unregisterField(schema:FormFieldSchema,keyPath:string){
         return {
             ...f
         }
-    })
+    }
 }
 
 export function submit(dispatch:(m:(s:FormState)=>FormState)=>void){
-    return dispatch((f:FormState)=>{
+    return dispatch(function submit(f:FormState){
         const values = f.values
         if(!values)
             return f
@@ -66,7 +66,7 @@ export function submit(dispatch:(m:(s:FormState)=>FormState)=>void){
         const maybePromise = f.onSubmit && f.onSubmit(finalValue)
         if(maybePromise instanceof Promise){
             maybePromise.then(()=>{
-                dispatch(f=>{
+                dispatch(function submitSucceed(f){
                     return {
                         ...f,
                         submitting:false,
@@ -74,7 +74,7 @@ export function submit(dispatch:(m:(s:FormState)=>FormState)=>void){
                     }
                 })
             }).catch((error:Error|SubmissionError)=>{
-                dispatch(f=>{
+                dispatch(function submitFailed(f){
                     return {
                         ...f,
                         errors:error instanceof SubmissionError ? {
@@ -103,7 +103,7 @@ export function reset(f:FormState){
 }
 
 export function changeValue(schema:FormFieldSchema,keyPath:string,valueOrEvent:any){
-    return ((s:FormState)=>{
+    return function changeValue(s:FormState){
         const newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent?valueOrEvent.target.value :valueOrEvent
         const key = (keyPath+"."+schema.key).slice(1)
         const error = schema.validate && schema.validate(newValue,s.values) || undefined
@@ -125,7 +125,7 @@ export function changeValue(schema:FormFieldSchema,keyPath:string,valueOrEvent:a
                 [key]:schema.parse?schema.parse(newValue):newValue,
             }
         }
-    })
+    }
 }
 
 export function initialize(initialValues:any, onSubmit:Function){
@@ -142,7 +142,7 @@ export function initialize(initialValues:any, onSubmit:Function){
             map[keyPath.join(".")] = value
         }
     }
-    return ((f:FormState)=>{
+    return function initialize(f:FormState){
         const initialValuesMap = {}
         initialValues && traverseValues(initialValuesMap,initialValues, [])
         return {
@@ -151,17 +151,17 @@ export function initialize(initialValues:any, onSubmit:Function){
             values: f.values === undefined ? initialValuesMap : f.values,
             initialValues:initialValuesMap,
         }
-    })
+    }
 }
 
 export function addArrayItem(schema:FormFieldSchema, keyPath:string, oldKeys:string[]){
-    return (f:FormState)=>{
+    return function addArrayItem(f:FormState){
         return changeValue(schema, keyPath, (oldKeys || [] ).concat(randomID()))(f)
     }
 }
 
 export function removeArrayItem(schema:FormFieldSchema, keyPath:string, oldKeys:string[], removedKey:string){
-    return (f:FormState)=>{
+    return function removeArrayItem(f:FormState){
         const i = oldKeys.indexOf(removedKey)
         const copy = oldKeys.slice()
         copy.splice(i,1)
