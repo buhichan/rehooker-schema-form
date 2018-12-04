@@ -2,7 +2,7 @@ window['requestAnimationFrame'] = function(callback:any) {
     setTimeout(callback, 0);
 } as any
 
-import { FormFieldSchema} from '../..';
+import { FormFieldSchema} from '..';
 import "jest"
 import {renderIntoDocument, scryRenderedDOMComponentsWithTag, Simulate} from "react-dom/test-utils"
 import * as React from 'react';

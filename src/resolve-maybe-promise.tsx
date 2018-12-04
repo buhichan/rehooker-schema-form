@@ -1,6 +1,6 @@
 import * as React from "react"
 import { AsyncOptions, Options } from './form';
-import { FormFieldSchema } from '../index';
+import { FormFieldSchema } from './index';
 
 type PossibleOptions = FormFieldSchema['options']
 

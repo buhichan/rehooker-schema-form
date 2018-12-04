@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "declaration": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "importHelpers": true,
@@ -24,6 +25,7 @@
   },
   "exclude": [
     "node_modules",
-    "example"
+    "demo",
+    "__test__"
   ]
 }

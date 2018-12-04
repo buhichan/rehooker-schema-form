@@ -130,7 +130,7 @@ export function initialize(initialValues:any, onSubmit:Function){
             const itemIDs = new Array(value.length).fill(null).map(()=>randomID())
             map[keyPath.join(".")] = itemIDs
             value.forEach((v,i)=>traverseValues(map,v,keyPath.concat(itemIDs[i])))
-        }else if(typeof value === "object"){
+        }else if(value != undefined && typeof value === "object"){
             Object.keys(value).forEach(k=>{
                 traverseValues(map,value[k],keyPath.concat(k))
             })

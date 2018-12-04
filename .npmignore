@@ -1,8 +1,9 @@
-example
 .idea
+.vscode
 tsconfig.json
 webpack.config.js
 README.MD
 yarn.lock
 demo
 __test__
+src

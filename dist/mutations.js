@@ -90,7 +90,7 @@ function initialize(initialValues, onSubmit) {
             map[keyPath.join(".")] = itemIDs_1;
             value.forEach(function (v, i) { return traverseValues(map, v, keyPath.concat(itemIDs_1[i])); });
         }
-        else if (typeof value === "object") {
+        else if (value != undefined && typeof value === "object") {
             Object.keys(value).forEach(function (k) {
                 traverseValues(map, value[k], keyPath.concat(k));
             });
