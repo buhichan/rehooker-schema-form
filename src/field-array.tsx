@@ -19,7 +19,8 @@ export function FieldArray(props:FieldArrayProps){
 
     return <>
         {props.children(props.value || [],add,remove, (id)=>{
-            return renderFields(props.form,props.schema.children,props.keyPath+"."+props.schema.key+"."+id)
+            const children =  props.schema.children as Exclude<typeof props.schema.children, undefined>
+            return renderFields(props.form,children,props.keyPath+"."+props.schema.key+"."+id)
         })}
     </>
 }

@@ -2,10 +2,10 @@
   "name": "rehooker-schema-form",
   "version": "0.0.1",
   "description": "form component",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:buhichan/redux-schema-form.git"
+    "url": "git@github.com:buhichan/redux-schema-form.git#rehooker"
   },
   "scripts": {
     "build": "tsc -p .",

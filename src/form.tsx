@@ -68,7 +68,7 @@ export type FormState = {
     }
     values:{
         [key:string]:any
-    }
+    } | undefined
     meta:{
         [key:string]:{
             schema:FormFieldSchema
@@ -110,7 +110,7 @@ export function SchemaForm(props:SchemaFormProps){
         submit(props.form.next)
     },[props.form])
     React.useEffect(()=>{
-        props.form.next(initialize(props.initialValues,props.onSubmit))
+        props.form.next(initialize(props.initialValues,props.onSubmit || (()=>{})))
     },[props.initialValues,props.onSubmit])
     React.useEffect(()=>{
         return ()=>{

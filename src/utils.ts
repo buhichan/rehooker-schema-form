@@ -13,7 +13,7 @@ export const requestFileUpload = (multiple:boolean)=>{
         input.onchange = e=>{
             const files = (e.target as HTMLInputElement).files
             resolve({
-                files:Array.from(files),
+                files:Array.from(files || []),
                 clear:()=>document.body.removeChild(input)
             })
         }

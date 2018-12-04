@@ -45,9 +45,11 @@ export function unregisterField(schema:FormFieldSchema,keyPath:string){
 export function submit(dispatch:(m:(s:FormState)=>FormState)=>void){
     return dispatch((f:FormState)=>{
         const values = f.values
+        if(!values)
+            return f
         const arrayKeys = Object.keys(f.meta).filter(x=>f.meta[x].schema.type === 'array')
         const mapItemIDToIndex = arrayKeys.reduce((map,key)=>{
-            const value = f.values[key]
+            const value = values[key]
             value instanceof Array && value.forEach((x,i)=>{
                 map[x] = i
             })

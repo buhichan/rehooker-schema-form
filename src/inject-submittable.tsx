@@ -31,7 +31,9 @@ export type ButtonProps = {
 }
 
 export function setButton(buttons:InjectFormSubmittableProps['children']){
-    FormButtonsImpl = buttons
+    if(buttons){
+        FormButtonsImpl = buttons
+    }
 }
 
 type InjectFormSubmittableProps = {  
@@ -40,20 +42,15 @@ type InjectFormSubmittableProps = {
      *  @deprecated disableResubmit, use submittable instead
      */
     disableResubmit?:boolean
-    submittable?:(formState:FormState)=>boolean,
     children?:typeof FormButtonsImpl
 }
 
 export function FormButtons(props:InjectFormSubmittableProps){
     const res = useSource(props.form.stream,map(s=>{
-        if(props.submittable)
-            return {
-                submittable:props.submittable(s)
-            }
+        const values = s.values
         const pristine = s.initialValues &&
-            s.values && 
-            Object.keys(s.values).every(k=>{
-                const v1 = s.values[k]
+            values && Object.keys(values).every(k=>{
+                const v1 = values[k]
                 const v2 = s.initialValues[k]
                 return v1 === v2 || !v1 && !v2
             })

@@ -9,7 +9,7 @@ import * as React from 'react';
 import { getType, clearTypes } from '../field';
 import { createForm, SchemaForm } from '../form';
 
-function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFieldSchema[], initialValues:any, expectation:(wrapper:any,getformValues?:()=>any)=>void){
+function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFieldSchema[], initialValues:any, expectation:(wrapper:any,getformValues:()=>any)=>void){
 
     const form = createForm()
     class Form extends React.PureComponent<any,any>{

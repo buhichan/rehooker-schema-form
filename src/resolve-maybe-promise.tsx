@@ -4,9 +4,9 @@ import { FormFieldSchema } from '../index';
 
 type PossibleOptions = FormFieldSchema['options']
 
-export class ResolveMaybePromise extends React.PureComponent<{maybePromise:PossibleOptions,children:(maybepromise:Options)=>React.ReactElement<any>}>{
+export class ResolveMaybePromise extends React.PureComponent<{maybePromise:PossibleOptions,children:(maybepromise:Options | null)=>React.ReactElement<any>}>{
     state={
-        maybePromise:null as Options
+        maybePromise:null as Options | null
     };
     loadOptions(rawOptions:PossibleOptions){
         if(typeof rawOptions=== 'function'){

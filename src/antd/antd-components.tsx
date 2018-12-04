@@ -21,7 +21,7 @@ const PropTypes = require('prop-types')
 const RCSelect = require("rc-select").default
 
 RCSelect.propTypes['value'] = PropTypes.any;
-Option.propTypes['value'] = PropTypes.any;
+Option.propTypes && ( Option.propTypes['value'] = PropTypes.any );
 (Select as any).propTypes['value'] = PropTypes.any as any
 
 const emptyArray:any[] = []
@@ -315,7 +315,7 @@ function TextareaInput (props:WidgetProps){
 class AutoCompleteAsync extends React.Component<WidgetProps,any>{
     pendingUpdate:any;
     fetchingQuery:any;
-    $isMounted:boolean;
+    $isMounted=false;
     componentDidMount(){
         this.$isMounted=true;
     }
@@ -406,7 +406,7 @@ function GroupRenderer({form,schema,keyPath,componentProps}:WidgetProps){
     return <Collapse defaultActiveKey={["0"]} style={{marginBottom:15}} {...componentProps}>
         <Collapse.Panel key={"0"} header={schema.label}>
             {
-                renderFields(form, schema.children, keyPath +"." + schema.key)
+                renderFields(form, schema.children || [], keyPath +"." + schema.key)
             }
         </Collapse.Panel>
     </Collapse>

@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+      "target": "es5",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "importHelpers": true,
+      "sourceMap": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "removeComments": false,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noImplicitAny": true,
+      "keyofStringsOnly": true,
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitThis": true,
+      "noImplicitReturns": true,
+      "allowJs": false,
+      "allowSyntheticDefaultImports": true,
+      "jsx":"react",
+      "lib":["es6","scripthost","dom","es2016.array.include","es2015.promise"]
+    },
+    "exclude": [
+      "node_modules",
+    ]
+  }

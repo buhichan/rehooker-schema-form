@@ -30,7 +30,7 @@ export function renderFields(form:Store<FormState>,schema:FormFieldSchema[],keyP
 
 type Widget = React.StatelessComponent<WidgetProps> | React.ComponentClass<WidgetProps>
 
-export function addType(name:string,widget?:Widget) {
+export function addType(name:string,widget:Widget) {
     widgetRegistration.set(name, widget);
 }
 
@@ -40,7 +40,7 @@ export function clearTypes(){
     widgetRegistration.clear()
 }
 
-export function getType(name:string):Widget{
+export function getType(name:string):Widget|undefined{
     return widgetRegistration.get(name)
 }
 
@@ -85,7 +85,7 @@ export function useFieldState(form:Store<FormState>,schema:FormFieldSchema,keyPa
         skipWhile(x=>x.values === undefined),
         map(s=>{
             const key = (keyPath+"."+schema.key).slice(1)
-            const value = s.values[key]
+            const value = s.values && s.values[key]
             return {
                 value:schema.format?schema.format(value):value,
                 error:s.errors[key],
@@ -133,21 +133,25 @@ const StatelessField = React.memo( function StatelessField(props:FieldProps){
     }
     switch (schema.type) {
         //这里不可能存在getChildren还没有被执行的情况
-        case "virtual-group":
+        case "virtual-group":{
+            const children = schema.children as Exclude<typeof schema.children, undefined>;
             return <>
-                {renderFields(form, schema.children, keyPath)}
+                {renderFields(form, children, keyPath)}
             </>
-        case "group":
+        }
+        case "group":{
+            const children = schema.children as Exclude<typeof schema.children, undefined>;
             return <div className={className} style={schema.style}>
                 <fieldset>
                     <legend>{schema.label}</legend>
                     <div className="schema-node">
                     {
-                        renderFields(form, schema.children, keyPath +"." + schema.key)
+                        renderFields(form, children, keyPath +"." + schema.key)
                     }
                     </div>
                 </fieldset>
             </div>
+        }
         default:
             return <div className="field">
                 <span>not supported widget type: {JSON.stringify(schema)}</span>
@@ -158,19 +162,20 @@ const StatelessField = React.memo( function StatelessField(props:FieldProps){
 
 const StatefulField = React.memo(function StatefulField(props:FieldProps){
     const [schema,setSchema] = React.useState(props.schema)
+    const listens = schema.listens as Exclude<typeof schema.listens, undefined>
     React.useEffect(()=>{
         const $value = props.form.stream.pipe(
             skipWhile(x=>x.values === undefined),
             map(x=>x.values),
             distinct(),
         )
-        const $change = merge(...schema.listens.map((x)=>{
+        const $change = merge(...listens.map((x)=>{
             let listenTo = typeof x.to === 'function' ? x.to(props.keyPath.slice(1)) : x.to
             return combineLatest(
                 listenTo.map(x=>{
                     return $value.pipe(
                         map(v=>{
-                            return v[x]
+                            return v && v[x]
                         }),
                         distinctUntilChanged()
                     )
