@@ -26,6 +26,7 @@ function SchemaForm(props) {
     var handleSubmit = React.useMemo(function () { return function (e) {
         e.preventDefault();
         mutations_1.submit(props.form.next);
+        return false;
     }; }, [props.form]);
     React.useEffect(function () {
         props.form.next(mutations_1.initialize(props.initialValues, props.onSubmit || (function () { })));

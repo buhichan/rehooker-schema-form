@@ -107,6 +107,7 @@ export function SchemaForm(props:SchemaFormProps){
     const handleSubmit = React.useMemo(()=>(e:React.FormEvent)=>{
         e.preventDefault()
         submit(props.form.next)
+        return false
     },[props.form])
     React.useEffect(()=>{
         props.form.next(initialize(props.initialValues,props.onSubmit || (()=>{})))
