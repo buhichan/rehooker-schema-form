@@ -5,8 +5,8 @@ declare type FormButtonsProps = {
     disabled: boolean;
     submitSucceeded: boolean;
     submitting: boolean;
-    onSubmit: () => void;
-    onReset: () => void;
+    onSubmit: (e?: any) => void;
+    onReset: (e?: any) => void;
 };
 declare let FormButtonsImpl: (props: FormButtonsProps) => JSX.Element;
 export declare type ButtonProps = {

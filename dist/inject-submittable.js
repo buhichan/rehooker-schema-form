@@ -44,10 +44,16 @@ function FormButtons(props) {
         disabled: !res.submittable,
         submitting: res.submitting,
         submitSucceeded: res.submitSucceeded,
-        onSubmit: function () {
+        onSubmit: function (e) {
+            if (e && e.preventDefault) {
+                e.preventDefault();
+            }
             mutations_1.submit(props.form.next);
         },
-        onReset: function () {
+        onReset: function (e) {
+            if (e && e.preventDefault) {
+                e.preventDefault();
+            }
             props.form.next(mutations_1.reset);
         }
     };

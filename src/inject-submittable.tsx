@@ -5,7 +5,11 @@ import { map } from 'rxjs/operators';
 import { submit, reset } from './mutations';
 
 type FormButtonsProps = {
-    disabled:boolean,submitSucceeded:boolean,submitting:boolean,onSubmit:()=>void,onReset:()=>void
+    disabled:boolean,
+    submitSucceeded:boolean,
+    submitting:boolean,
+    onSubmit:(e?:any)=>void,
+    onReset:(e?:any)=>void
 }
 
 let FormButtonsImpl = (props:FormButtonsProps)=>{
@@ -72,10 +76,16 @@ export function FormButtons(props:InjectFormSubmittableProps){
         disabled:!res.submittable,
         submitting:res.submitting,
         submitSucceeded: res.submitSucceeded,
-        onSubmit:()=>{
+        onSubmit:(e:any)=>{
+            if(e && e.preventDefault){
+                e.preventDefault()
+            }
             submit(props.form.next)
         },
-        onReset:()=>{
+        onReset:(e:any)=>{
+            if(e && e.preventDefault){
+                e.preventDefault()
+            }
             props.form.next(reset)
         }
     }
