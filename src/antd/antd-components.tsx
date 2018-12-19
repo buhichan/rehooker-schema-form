@@ -30,16 +30,18 @@ const errorStyle={color:"red"};
 function TextInput(props:WidgetProps){
     return <div>
         <div>{props.schema.label}</div>
-        <Input 
-            type={props.schema.type}
-            id={props.schema.key}
-            className="full-width"
-            style={{width:"100%"}}
-            name={props.schema.name}
-            value={props.value}
-            onChange={props.onChange}
-            {...props.componentProps}
-        />
+        <div>
+            <Input 
+                type={props.schema.type}
+                id={props.schema.key}
+                className="full-width"
+                style={{width:"100%"}}
+                name={props.schema.name}
+                value={props.value}
+                onChange={props.onChange}
+                {...props.componentProps}
+            />
+        </div>
         <div style={errorStyle}>{props.error}</div>
     </div>
 }
@@ -59,6 +61,7 @@ class SelectInput extends React.PureComponent<WidgetProps>{
         const {schema,componentProps,value,error} = this.props
         return <div>
             <label>{schema.label}</label>
+            <div>
             <ResolveMaybePromise maybePromise={schema.options} >
                 {(options)=>{
                     if(options == undefined)
@@ -66,7 +69,6 @@ class SelectInput extends React.PureComponent<WidgetProps>{
                     const finalValue = schema.multiple||componentProps.mode==="multiple"?(Array.isArray(value)?value:[]):value
                     return <Select
                         showSearch
-                        style={{ width: "100%" }}
                         onSearch={this.onSearchChange}
                         mode={schema.multiple?"multiple":"default"}
                         value={finalValue}
@@ -83,6 +85,7 @@ class SelectInput extends React.PureComponent<WidgetProps>{
                     </Select>
                 }}
             </ResolveMaybePromise>
+            </div>
             <div style={errorStyle}>
                 {error}
             </div>
@@ -91,13 +94,15 @@ class SelectInput extends React.PureComponent<WidgetProps>{
 }
 
 function CheckboxInput (props:WidgetProps){
-    return <div style={{width:"100%",paddingTop:20}}>
-        <label style={{marginRight:15}}>{props.schema.label}</label>
-        <Checkbox
-            onChange={(e)=>props.onChange((e.target as HTMLInputElement).checked)}
-            checked={Boolean(props.value)}
-            {...props.componentProps}
-        />
+    return <div>
+        <label>{props.schema.label}</label>
+        <div>
+            <Checkbox
+                onChange={(e)=>props.onChange((e.target as HTMLInputElement).checked)}
+                checked={Boolean(props.value)}
+                {...props.componentProps}
+            />
+        </div>
     </div>
 }
 
@@ -108,14 +113,16 @@ function DateTimeInput(props:WidgetProps){
     const value=props.value?moment(props.value):undefined;
     return <div>
         <label>{props.schema.label}</label>
-        <DatePicker
-            showTime
-            format={props.componentProps.dateFormat||"YYYY/MM/DD HH:mm:ss"}
-            value={value}
-            style={{width:"100%"}}
-            onChange={(_,dateString)=>props.onChange(dateString)}
-            {...props.componentProps}
-        />
+        <div>
+            <DatePicker
+                showTime
+                format={props.componentProps.dateFormat||"YYYY/MM/DD HH:mm:ss"}
+                value={value}
+                style={{width:"100%"}}
+                onChange={(_,dateString)=>props.onChange(dateString)}
+                {...props.componentProps}
+            />
+        </div>
         <div style={errorStyle}>{props.error}</div>
     </div>
 }
@@ -128,6 +135,7 @@ function DateInput(props:WidgetProps){
     }
     return<div >
         <label>{props.schema.label}</label>
+        <div>
         <DatePicker
             key={props.schema.name}
             value={value}
@@ -135,6 +143,7 @@ function DateInput(props:WidgetProps){
             onChange={(_,dateString)=>{props.onChange(dateString)}}
             {...props.componentProps}
         />
+        </div>
         <div style={errorStyle}>
             {props.error}
         </div>
@@ -145,6 +154,7 @@ function DateTimeRangeInput (props:WidgetProps){
     let value =props.value
     return <div>
         <label>{props.schema.label}</label>
+        <div>
         <RangePicker
             showTime={{ format: 'HH:mm:ss' }}
             style={{width:"100%"}}
@@ -156,6 +166,7 @@ function DateTimeRangeInput (props:WidgetProps){
             }}
             {...props.componentProps}
         />
+        </div>
         <div style={errorStyle}>{props.error}</div>
     </div>
 }
@@ -164,6 +175,7 @@ function DateTimeRangeInput (props:WidgetProps){
 function NumberInput(props:WidgetProps){
     return <div style={{width:"100%"}}>
         <label>{props.schema.label}</label>
+        <div>
         <InputNumber
             style={{width:"100%"}}
             id={props.schema.key}
@@ -177,6 +189,7 @@ function NumberInput(props:WidgetProps){
             }} 
             {...props.componentProps}
         />
+        </div>
         <div style={errorStyle}>{props.error}</div>
 
     </div>
@@ -190,6 +203,7 @@ const AutoCompleteDefault = function(props:WidgetProps){
     const {error,value,onChange,schema} = props;
     return <div style={{ width:"100%" }}>
         <label>{schema.label}</label>
+        <div>
         <ResolveMaybePromise maybePromise={schema.options}>
             {options=>{
                 return <AutoComplete
@@ -202,6 +216,7 @@ const AutoCompleteDefault = function(props:WidgetProps){
                 />
             }}
         </ResolveMaybePromise>
+        </div>
         <div style={errorStyle}>{error}</div>
     </div>
 }
@@ -238,18 +253,22 @@ class FileInput extends React.Component<WidgetProps,any>{
         }
     };
     render(){
-        return <div style={{width:"100%"}}>
-            <Upload
-                fileList={this.props.value||emptyArray}
-                multiple={true}
-                onChange={this.onChange}
-                customRequest={this.customRequest}
-                {...this.props.componentProps}
-            >
-                <Button>
-                    <Icon type="upload" /> {this.props.schema.label}
-                </Button>
-            </Upload>
+        return <div>
+            <div>
+                <Upload
+                    fileList={this.props.value||emptyArray}
+                    multiple={true}
+                    onChange={this.onChange}
+                    customRequest={this.customRequest}
+                    {...this.props.componentProps}
+                >
+                    <Button>
+                        <Icon type="upload" />
+                        <span>{this.props.schema.label}</span>
+                    </Button>
+                </Upload>
+            </div>
+            <div style={{color:"red"}}>{this.props.meta.error}</div>
         </div>
     }
 }
@@ -259,6 +278,7 @@ function SelectRadio (props:WidgetProps){
         <label style={{paddingLeft:0}}>
             {props.schema.label}
         </label>
+        <div>
         <ResolveMaybePromise maybePromise={props.schema.options}>
             {options=><RadioGroup
                 value={props.value || false}
@@ -277,7 +297,8 @@ function SelectRadio (props:WidgetProps){
                 }
             </RadioGroup>}
         </ResolveMaybePromise>
-        <p style={errorStyle}>{props.error}</p>
+        </div>
+        <div style={errorStyle}>{props.error}</div>
     </div>
 }
 
@@ -287,12 +308,16 @@ function DateRangeInput (props:WidgetProps){
     const from =value?value[0]:undefined;
     const to =value?value[1]:undefined;
     return <div >
+        <label>{props.schema.label}</label>
+        <div>
         <RangePicker
             defaultValue={[from?moment(from,dateFormat):undefined, to?moment(to,dateFormat):undefined]}
             format={dateFormat}
             onChange={(_,dateStrings)=>{props.onChange(dateStrings)}}
             {...props.componentProps}
         />
+        </div>
+        <div style={errorStyle}>{props.meta.error}</div>
     </div>
 }
 
@@ -300,12 +325,14 @@ function DateRangeInput (props:WidgetProps){
 function TextareaInput (props:WidgetProps){
     return <div style={{marginBottom:16}}>
         <label>{props.schema.label}</label>
-        <TextArea 
-            value={props.value}
-            onChange={(value)=>props.onChange(value)}
-            autosize={{minRows:4,maxRows:8}} 
-            {...props.componentProps}
-        />
+        <div>
+            <TextArea 
+                value={props.value}
+                onChange={(value)=>props.onChange(value)}
+                autosize={{minRows:4,maxRows:8}} 
+                {...props.componentProps}
+            />
+        </div>
         <div style={errorStyle}>{props.error}</div>
     </div>
 }
@@ -364,6 +391,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
         const {error,onChange,schema,componentProps} = this.props;
         return <div>
             <label>{schema.label}</label>
+            <div>
             <AutoComplete
                 dataSource={this.state.dataSource}
                 style={{width:"100%"}}
@@ -372,6 +400,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
                 filterOption={false}
                 {...componentProps}
             />
+            </div>
             <div style={errorStyle}>
                 {error}
             </div>
@@ -389,6 +418,7 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
         const {componentProps,onChange,error,schema} = this.props;
         return <div>
             <label>{schema.label}</label>
+            <div>
             <AutoComplete
                 dataSource={(schema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
                 onSearch={this.onUpdateInput}
@@ -396,6 +426,7 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
                 filterOption={defaultAutoCompleteFilter}
                 {...componentProps}
             />
+            </div>
             <div style={errorStyle}>{error}</div>
         </div>
     }

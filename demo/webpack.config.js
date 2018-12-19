@@ -11,15 +11,12 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const i = process.argv.findIndex(x=>x === "--theme");
-
-const theme = i&&i<process.argv.length?process.argv[i+1]:"mui";
 
 let NODE_ENV = process.env.NODE_ENV;
 
 const config = {
     entry: {
-        "main":[`./example/example-${theme}.tsx`]
+        "main":[`./demo/example-antd.tsx`]
     },
     output: {
         path:  __dirname +"/demo",
@@ -44,13 +41,13 @@ const config = {
         new webpack.optimize.DedupePlugin(),
         new ExtractTextPlugin('[name].css'),
         new HtmlWebpackPlugin({
-            template: './example/index.html',
+            template: './demo/index.html',
             inject: 'body'
         }),
         new CopyWebpackPlugin([
             {
-                from:"./example/options.json",
-                to:"example/options.json"
+                from:"./demo/options.json",
+                to:"options.json"
             }
         ])
     ],

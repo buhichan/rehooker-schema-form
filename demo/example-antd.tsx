@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import "../src/antd"
 require("antd/dist/antd.css");
-require("../src/antd/antd-components.css");
+require("../styles/antd-components.css");
 import {schema} from "./schema-example"
 import { createForm, SchemaForm } from '../src/form';
 

@@ -26,7 +26,8 @@ var errorStyle = { color: "red" };
 function TextInput(props) {
     return React.createElement("div", null,
         React.createElement("div", null, props.schema.label),
-        React.createElement(antd_1.Input, tslib_1.__assign({ type: props.schema.type, id: props.schema.key, className: "full-width", style: { width: "100%" }, name: props.schema.name, value: props.value, onChange: props.onChange }, props.componentProps)),
+        React.createElement("div", null,
+            React.createElement(antd_1.Input, tslib_1.__assign({ type: props.schema.type, id: props.schema.key, className: "full-width", style: { width: "100%" }, name: props.schema.name, value: props.value, onChange: props.onChange }, props.componentProps))),
         React.createElement("div", { style: errorStyle }, props.error));
 }
 var SelectInput = /** @class */ (function (_super) {
@@ -50,31 +51,34 @@ var SelectInput = /** @class */ (function (_super) {
         var _a = this.props, schema = _a.schema, componentProps = _a.componentProps, value = _a.value, error = _a.error;
         return React.createElement("div", null,
             React.createElement("label", null, schema.label),
-            React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
-                if (options == undefined)
-                    options = emptyArray;
-                var finalValue = schema.multiple || componentProps.mode === "multiple" ? (Array.isArray(value) ? value : []) : value;
-                return React.createElement(antd_1.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, onSearch: _this.onSearchChange, mode: schema.multiple ? "multiple" : "default", value: finalValue, onChange: _this.onChange, filterOption: false }, componentProps), options.filter(function (option) {
-                    return !_this.state.search || option.name.toLowerCase().indexOf(_this.state.search.toLowerCase()) >= 0;
-                }).slice(0, schema.maxOptionCount || Infinity).map(function (option) {
-                    var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
-                    return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
-                }));
-            }),
+            React.createElement("div", null,
+                React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
+                    if (options == undefined)
+                        options = emptyArray;
+                    var finalValue = schema.multiple || componentProps.mode === "multiple" ? (Array.isArray(value) ? value : []) : value;
+                    return React.createElement(antd_1.Select, tslib_1.__assign({ showSearch: true, onSearch: _this.onSearchChange, mode: schema.multiple ? "multiple" : "default", value: finalValue, onChange: _this.onChange, filterOption: false }, componentProps), options.filter(function (option) {
+                        return !_this.state.search || option.name.toLowerCase().indexOf(_this.state.search.toLowerCase()) >= 0;
+                    }).slice(0, schema.maxOptionCount || Infinity).map(function (option) {
+                        var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
+                        return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
+                    }));
+                })),
             React.createElement("div", { style: errorStyle }, error));
     };
     return SelectInput;
 }(React.PureComponent));
 function CheckboxInput(props) {
-    return React.createElement("div", { style: { width: "100%", paddingTop: 20 } },
-        React.createElement("label", { style: { marginRight: 15 } }, props.schema.label),
-        React.createElement(antd_1.Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, checked: Boolean(props.value) }, props.componentProps)));
+    return React.createElement("div", null,
+        React.createElement("label", null, props.schema.label),
+        React.createElement("div", null,
+            React.createElement(antd_1.Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, checked: Boolean(props.value) }, props.componentProps))));
 }
 function DateTimeInput(props) {
     var value = props.value ? moment(props.value) : undefined;
     return React.createElement("div", null,
         React.createElement("label", null, props.schema.label),
-        React.createElement(antd_1.DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); } }, props.componentProps)),
+        React.createElement("div", null,
+            React.createElement(antd_1.DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); } }, props.componentProps))),
         React.createElement("div", { style: errorStyle }, props.error));
 }
 function DateInput(props) {
@@ -85,29 +89,32 @@ function DateInput(props) {
     }
     return React.createElement("div", null,
         React.createElement("label", null, props.schema.label),
-        React.createElement(antd_1.DatePicker, tslib_1.__assign({ key: props.schema.name, value: value, style: { width: "100%" }, onChange: function (_, dateString) { props.onChange(dateString); } }, props.componentProps)),
+        React.createElement("div", null,
+            React.createElement(antd_1.DatePicker, tslib_1.__assign({ key: props.schema.name, value: value, style: { width: "100%" }, onChange: function (_, dateString) { props.onChange(dateString); } }, props.componentProps))),
         React.createElement("div", { style: errorStyle }, props.error));
 }
 function DateTimeRangeInput(props) {
     var value = props.value;
     return React.createElement("div", null,
         React.createElement("label", null, props.schema.label),
-        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], value: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
-                props.onChange(dataStrings);
-            } }, props.componentProps)),
+        React.createElement("div", null,
+            React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], value: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
+                    props.onChange(dataStrings);
+                } }, props.componentProps))),
         React.createElement("div", { style: errorStyle }, props.error));
 }
 function NumberInput(props) {
     return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, props.schema.label),
-        React.createElement(antd_1.InputNumber, tslib_1.__assign({ style: { width: "100%" }, id: props.schema.key, min: 0, value: isNaN(parseFloat(props.value)) ? 0 : parseFloat(props.value), onChange: function (value) {
-                if (isNaN(parseFloat(value))) {
-                    props.onChange(0);
-                }
-                else {
-                    props.onChange(parseFloat(value));
-                }
-            } }, props.componentProps)),
+        React.createElement("div", null,
+            React.createElement(antd_1.InputNumber, tslib_1.__assign({ style: { width: "100%" }, id: props.schema.key, min: 0, value: isNaN(parseFloat(props.value)) ? 0 : parseFloat(props.value), onChange: function (value) {
+                    if (isNaN(parseFloat(value))) {
+                        props.onChange(0);
+                    }
+                    else {
+                        props.onChange(parseFloat(value));
+                    }
+                } }, props.componentProps))),
         React.createElement("div", { style: errorStyle }, props.error));
 }
 var defaultAutoCompleteFilter = function (input, element) {
@@ -117,9 +124,10 @@ var AutoCompleteDefault = function (props) {
     var error = props.error, value = props.value, onChange = props.onChange, schema = props.schema;
     return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, schema.label),
-        React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
-            return React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange }, props.componentProps));
-        }),
+        React.createElement("div", null,
+            React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
+                return React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange }, props.componentProps));
+            })),
         React.createElement("div", { style: errorStyle }, error));
 };
 var FileInput = /** @class */ (function (_super) {
@@ -157,25 +165,27 @@ var FileInput = /** @class */ (function (_super) {
         return _this;
     }
     FileInput.prototype.render = function () {
-        return React.createElement("div", { style: { width: "100%" } },
-            React.createElement(antd_1.Upload, tslib_1.__assign({ fileList: this.props.value || emptyArray, multiple: true, onChange: this.onChange, customRequest: this.customRequest }, this.props.componentProps),
-                React.createElement(antd_1.Button, null,
-                    React.createElement(antd_1.Icon, { type: "upload" }),
-                    " ",
-                    this.props.schema.label)));
+        return React.createElement("div", null,
+            React.createElement("div", null,
+                React.createElement(antd_1.Upload, tslib_1.__assign({ fileList: this.props.value || emptyArray, multiple: true, onChange: this.onChange, customRequest: this.customRequest }, this.props.componentProps),
+                    React.createElement(antd_1.Button, null,
+                        React.createElement(antd_1.Icon, { type: "upload" }),
+                        React.createElement("span", null, this.props.schema.label)))),
+            React.createElement("div", { style: { color: "red" } }, this.props.meta.error));
     };
     return FileInput;
 }(React.Component));
 function SelectRadio(props) {
     return React.createElement("div", null,
         React.createElement("label", { style: { paddingLeft: 0 } }, props.schema.label),
-        React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value || false, onChange: function (v) { return props.onChange(v); } }, props.componentProps), options ? options.map(function (option) { return (React.createElement(antd_1.Radio, { style: {
-                width: "auto",
-                flex: 1,
-                whiteSpace: "nowrap",
-                margin: "0 15px 0 0"
-            }, key: option.value, value: option.value }, option.name)); }) : null); }),
-        React.createElement("p", { style: errorStyle }, props.error));
+        React.createElement("div", null,
+            React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value || false, onChange: function (v) { return props.onChange(v); } }, props.componentProps), options ? options.map(function (option) { return (React.createElement(antd_1.Radio, { style: {
+                    width: "auto",
+                    flex: 1,
+                    whiteSpace: "nowrap",
+                    margin: "0 15px 0 0"
+                }, key: option.value, value: option.value }, option.name)); }) : null); })),
+        React.createElement("div", { style: errorStyle }, props.error));
 }
 function DateRangeInput(props) {
     var dateFormat = props.schema.dateFormat || 'YYYY/MM/DD';
@@ -183,12 +193,16 @@ function DateRangeInput(props) {
     var from = value ? value[0] : undefined;
     var to = value ? value[1] : undefined;
     return React.createElement("div", null,
-        React.createElement(RangePicker, tslib_1.__assign({ defaultValue: [from ? moment(from, dateFormat) : undefined, to ? moment(to, dateFormat) : undefined], format: dateFormat, onChange: function (_, dateStrings) { props.onChange(dateStrings); } }, props.componentProps)));
+        React.createElement("label", null, props.schema.label),
+        React.createElement("div", null,
+            React.createElement(RangePicker, tslib_1.__assign({ defaultValue: [from ? moment(from, dateFormat) : undefined, to ? moment(to, dateFormat) : undefined], format: dateFormat, onChange: function (_, dateStrings) { props.onChange(dateStrings); } }, props.componentProps))),
+        React.createElement("div", { style: errorStyle }, props.meta.error));
 }
 function TextareaInput(props) {
     return React.createElement("div", { style: { marginBottom: 16 } },
         React.createElement("label", null, props.schema.label),
-        React.createElement(TextArea, tslib_1.__assign({ value: props.value, onChange: function (value) { return props.onChange(value); }, autosize: { minRows: 4, maxRows: 8 } }, props.componentProps)),
+        React.createElement("div", null,
+            React.createElement(TextArea, tslib_1.__assign({ value: props.value, onChange: function (value) { return props.onChange(value); }, autosize: { minRows: 4, maxRows: 8 } }, props.componentProps))),
         React.createElement("div", { style: errorStyle }, props.error));
 }
 var AutoCompleteAsync = /** @class */ (function (_super) {
@@ -248,7 +262,8 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
         var _a = this.props, error = _a.error, onChange = _a.onChange, schema = _a.schema, componentProps = _a.componentProps;
         return React.createElement("div", null,
             React.createElement("label", null, schema.label),
-            React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: this.state.dataSource, style: { width: "100%" }, onSelect: onChange, onSearch: this.onUpdateInput, filterOption: false }, componentProps)),
+            React.createElement("div", null,
+                React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: this.state.dataSource, style: { width: "100%" }, onSelect: onChange, onSearch: this.onUpdateInput, filterOption: false }, componentProps))),
             React.createElement("div", { style: errorStyle }, error));
     };
     return AutoCompleteAsync;
@@ -267,7 +282,8 @@ var AutoCompleteText = /** @class */ (function (_super) {
         var _a = this.props, componentProps = _a.componentProps, onChange = _a.onChange, error = _a.error, schema = _a.schema;
         return React.createElement("div", null,
             React.createElement("label", null, schema.label),
-            React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: schema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: onChange, filterOption: defaultAutoCompleteFilter }, componentProps)),
+            React.createElement("div", null,
+                React.createElement(antd_1.AutoComplete, tslib_1.__assign({ dataSource: schema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: onChange, filterOption: defaultAutoCompleteFilter }, componentProps))),
             React.createElement("div", { style: errorStyle }, error));
     };
     return AutoCompleteText;

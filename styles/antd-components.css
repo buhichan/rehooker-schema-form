@@ -1,5 +1,5 @@
 :root{
-    --widget-height:85px;
+    --widget-height:auto;
 }
 
 .schema-form:after{
@@ -45,10 +45,19 @@
 
 .schema-form .field {
     float: left;
-    width: 50%;
-    padding-left:15px;
-    padding-right:15px;
+    width: 100%;
     height: var(--widget-height);
+    margin-bottom: 8px;
+}
+.schema-form .field:not(.full-width)>*>*:first-child {
+    width: 120px;
+    display: inline-block;
+    vertical-align: top;
+}
+.schema-form .field:not(.full-width)>*>*:nth-child(2) {
+    width: calc(100% - 120px);
+    display: inline-block;
+    vertical-align: top;
 }
 
 .schema-form .field .hidden{
