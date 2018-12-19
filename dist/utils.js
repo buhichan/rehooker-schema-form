@@ -49,7 +49,8 @@ function deepSet(target, keys, value) {
         parent = p;
         p = p[key];
     }
-    parent[keys[keys.length - 1]] = value;
+    if (typeof parent === 'object')
+        parent[keys[keys.length - 1]] = value;
 }
 exports.deepSet = deepSet;
 function randomID() {

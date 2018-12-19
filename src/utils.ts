@@ -48,7 +48,8 @@ export function deepSet(target:any,keys:(string|number)[],value:any){
         parent = p
         p = p[key]
     }
-    parent[keys[keys.length-1]] = value
+    if(typeof parent === 'object')
+        parent[keys[keys.length-1]] = value
 }
 
 export function randomID(){
