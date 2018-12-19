@@ -39,7 +39,7 @@ export function deepSet(target:any,keys:(string|number)[],value:any){
     let p = target
     for(let i=0; i<keys.length;i++){
         const key = keys[i]
-        if(p[key] === undefined){
+        if(typeof p === 'object' && p[key] === undefined){
             if(i < keys.length && typeof keys[i+1] === 'number'){
                 p[key] = []
             }else
