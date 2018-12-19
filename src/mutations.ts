@@ -130,11 +130,11 @@ export function changeValue(schema:FormFieldSchema,keyPath:string,valueOrEvent:a
 
 export function initialize(initialValues:any, onSubmit:Function){
     function traverseValues(map:any,value:any,keyPath:string[]){
-        if(value instanceof Array){
+        if(Array.isArray(value) && value.length > 0 && typeof value[0] === 'object'){
             const itemIDs = new Array(value.length).fill(null).map(()=>randomID())
             map[keyPath.join(".")] = itemIDs
             value.forEach((v,i)=>traverseValues(map,v,keyPath.concat(itemIDs[i])))
-        }else if(value != undefined && typeof value === "object"){
+        }else if(value != undefined && typeof value === "object" && !Array.isArray(value)){
             Object.keys(value).forEach(k=>{
                 traverseValues(map,value[k],keyPath.concat(k))
             })

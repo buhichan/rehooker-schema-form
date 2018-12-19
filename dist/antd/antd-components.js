@@ -53,7 +53,6 @@ var SelectInput = /** @class */ (function (_super) {
             React.createElement(resolve_maybe_promise_1.ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
                 if (options == undefined)
                     options = emptyArray;
-                console.log("rerender");
                 var finalValue = schema.multiple || componentProps.mode === "multiple" ? (Array.isArray(value) ? value : []) : value;
                 return React.createElement(antd_1.Select, tslib_1.__assign({ showSearch: true, style: { width: "100%" }, onSearch: _this.onSearchChange, mode: schema.multiple ? "multiple" : "default", value: finalValue, onChange: _this.onChange, filterOption: false }, componentProps), options.filter(function (option) {
                     return !_this.state.search || option.name.toLowerCase().indexOf(_this.state.search.toLowerCase()) >= 0;

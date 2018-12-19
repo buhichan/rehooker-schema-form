@@ -199,6 +199,5 @@ const StatefulField = React.memo(function StatefulField(props:FieldProps){
         })
         return sub.unsubscribe.bind(sub)
     },[props.form, schema.listeners])
-    console.log("render "+props.keyPath+"."+props.schema.key)
     return <StatelessField schema={schema} form={props.form} keyPath={props.keyPath} />
 })

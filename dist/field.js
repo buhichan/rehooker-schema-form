@@ -136,7 +136,6 @@ var StatefulField = React.memo(function StatefulField(props) {
         });
         return sub.unsubscribe.bind(sub);
     }, [props.form, schema.listeners]);
-    console.log("render " + props.keyPath + "." + props.schema.key);
     return React.createElement(StatelessField, { schema: schema, form: props.form, keyPath: props.keyPath });
 });
 //# sourceMappingURL=field.js.map

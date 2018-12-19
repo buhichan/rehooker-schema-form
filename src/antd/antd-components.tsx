@@ -63,7 +63,6 @@ class SelectInput extends React.PureComponent<WidgetProps>{
                 {(options)=>{
                     if(options == undefined)
                         options = emptyArray
-                    console.log("rerender")
                     const finalValue = schema.multiple||componentProps.mode==="multiple"?(Array.isArray(value)?value:[]):value
                     return <Select
                         showSearch

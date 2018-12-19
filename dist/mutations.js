@@ -97,12 +97,12 @@ function changeValue(schema, keyPath, valueOrEvent) {
 exports.changeValue = changeValue;
 function initialize(initialValues, onSubmit) {
     function traverseValues(map, value, keyPath) {
-        if (value instanceof Array) {
+        if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
             var itemIDs_1 = new Array(value.length).fill(null).map(function () { return utils_1.randomID(); });
             map[keyPath.join(".")] = itemIDs_1;
             value.forEach(function (v, i) { return traverseValues(map, v, keyPath.concat(itemIDs_1[i])); });
         }
-        else if (value != undefined && typeof value === "object") {
+        else if (value != undefined && typeof value === "object" && !Array.isArray(value)) {
             Object.keys(value).forEach(function (k) {
                 traverseValues(map, value[k], keyPath.concat(k));
             });
