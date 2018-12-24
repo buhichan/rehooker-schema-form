@@ -42,7 +42,7 @@ export declare function getComponentProps(field: FormFieldSchema): {
     dateFormat?: string | undefined;
     defaultValue?: any;
 };
-export declare function useFieldState(form: Store<FormState>, schema: FormFieldSchema, keyPath: string): {
+export declare function useFieldState(form: Store<FormState>, fieldKey: string, keyPath: string, format?: (v: any) => any): {
     value: any;
     error: string;
     meta: {

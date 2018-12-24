@@ -47,22 +47,22 @@ function getComponentProps(field) {
     return rest;
 }
 exports.getComponentProps = getComponentProps;
-function useFieldState(form, schema, keyPath) {
+function useFieldState(form, fieldKey, keyPath, format) {
     return rehooker_1.useSource(form.stream, function (ob) { return ob.pipe(operators_1.skipWhile(function (x) { return x.values === undefined; }), operators_1.map(function (s) {
-        var key = (keyPath + "." + schema.key).slice(1);
+        var key = (keyPath + "." + fieldKey).slice(1);
         var value = s.values && s.values[key];
         return {
-            value: schema.format ? schema.format(value) : value,
+            value: format ? format(value) : value,
             error: s.errors[key],
             meta: s.meta[key]
         };
-    }, operators_1.debounceTime(24))); }, [form, schema.format]);
+    }, operators_1.debounceTime(24))); }, [form, fieldKey, keyPath, format]);
 }
 exports.useFieldState = useFieldState;
 var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
     var componentProps = getComponentProps(schema);
-    var fieldState = useFieldState(form, schema, keyPath);
+    var fieldState = useFieldState(form, schema.key, keyPath, schema.format);
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
         form.next(mutations_1.changeValue(schema, keyPath, valueOrEvent));
     }; }, [form, schema.parse]);
@@ -128,10 +128,10 @@ var StatefulField = React.memo(function StatefulField(props) {
         }));
         var sub = $change.subscribe(function (change) {
             if (change instanceof Promise) {
-                change.then(function (change) { return setSchema(tslib_1.__assign({}, schema, change)); });
+                change.then(function (change) { return setSchema(tslib_1.__assign({}, props.schema, change)); });
             }
             else if (change) {
-                setSchema(tslib_1.__assign({}, schema, change));
+                setSchema(tslib_1.__assign({}, props.schema, change));
             }
         });
         return sub.unsubscribe.bind(sub);

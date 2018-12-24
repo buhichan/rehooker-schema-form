@@ -80,26 +80,26 @@ export function getComponentProps(field:FormFieldSchema){
     return rest
 }
 
-export function useFieldState(form:Store<FormState>,schema:FormFieldSchema,keyPath:string){
+export function useFieldState(form:Store<FormState>,fieldKey:string,keyPath:string,format?:(v:any)=>any){
     return useSource(form.stream,ob=>ob.pipe(
         skipWhile(x=>x.values === undefined),
         map(s=>{
-            const key = (keyPath+"."+schema.key).slice(1)
+            const key = (keyPath+"."+fieldKey).slice(1)
             const value = s.values && s.values[key]
             return {
-                value:schema.format?schema.format(value):value,
+                value:format?format(value):value,
                 error:s.errors[key],
                 meta:s.meta[key]
             }
         },
         debounceTime(24)
-    )),[form,schema.format])
+    )),[form,fieldKey,keyPath,format])
 }
 
 const StatelessField = React.memo( function StatelessField(props:FieldProps){
     const {schema, form, keyPath} = props;
     const componentProps = getComponentProps(schema)
-    const fieldState = useFieldState(form,schema,keyPath)
+    const fieldState = useFieldState(form,schema.key,keyPath,schema.format)
     const onChange = React.useMemo(()=>(valueOrEvent:any)=>{
         form.next(changeValue(schema,keyPath,valueOrEvent))
     },[form,schema.parse])
@@ -187,12 +187,12 @@ const StatefulField = React.memo(function StatefulField(props:FieldProps){
         const sub = $change.subscribe(change=>{
             if(change instanceof Promise){
                 change.then(change=>setSchema({
-                    ...schema,
+                    ...props.schema,
                     ...change
                 }))
             }else if(change){
                 setSchema({
-                    ...schema,
+                    ...props.schema,
                     ...change
                 })
             }
