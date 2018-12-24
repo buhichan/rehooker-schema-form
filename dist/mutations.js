@@ -79,19 +79,19 @@ function reset(f) {
     return tslib_1.__assign({}, f, { values: f.initialValues });
 }
 exports.reset = reset;
-function changeValue(schema, keyPath, valueOrEvent) {
+function changeValue(name, keyPath, valueOrEvent, validate, parse) {
     return function changeValue(s) {
         var _a, _b;
         var newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent;
-        var key = (keyPath + "." + schema.key).slice(1);
-        var error = schema.validate && schema.validate(newValue, s.values) || undefined;
+        var finalKey = (keyPath + "." + name).slice(1);
+        var error = validate && validate(newValue, s.values) || undefined;
         if (error) {
-            s.errors = tslib_1.__assign({}, s.errors, (_a = {}, _a[key] = error, _a));
+            s.errors = tslib_1.__assign({}, s.errors, (_a = {}, _a[finalKey] = error, _a));
         }
         else {
-            delete s.errors[key];
+            delete s.errors[finalKey];
         }
-        return tslib_1.__assign({}, s, { errors: tslib_1.__assign({}, s.errors), values: tslib_1.__assign({}, s.values, (_b = {}, _b[key] = schema.parse ? schema.parse(newValue) : newValue, _b)) });
+        return tslib_1.__assign({}, s, { errors: tslib_1.__assign({}, s.errors), values: tslib_1.__assign({}, s.values, (_b = {}, _b[finalKey] = parse ? parse(newValue) : newValue, _b)) });
     };
 }
 exports.changeValue = changeValue;
@@ -118,13 +118,13 @@ function initialize(initialValues, onSubmit) {
     };
 }
 exports.initialize = initialize;
-function addArrayItem(schema, keyPath, oldKeys) {
+function addArrayItem(key, keyPath, oldKeys) {
     return function addArrayItem(f) {
-        return changeValue(schema, keyPath, (oldKeys || []).concat(utils_1.randomID()))(f);
+        return changeValue(key, keyPath, (oldKeys || []).concat(utils_1.randomID()))(f);
     };
 }
 exports.addArrayItem = addArrayItem;
-function removeArrayItem(schema, keyPath, oldKeys, removedKey) {
+function removeArrayItem(key, keyPath, oldKeys, removedKey) {
     return function removeArrayItem(f) {
         var i = oldKeys.indexOf(removedKey);
         var copy = oldKeys.slice();
@@ -137,7 +137,7 @@ function removeArrayItem(schema, keyPath, oldKeys, removedKey) {
                 }
             }, {});
         }
-        var s1 = changeValue(schema, keyPath, copy)(f);
+        var s1 = changeValue(key, keyPath, copy)(f);
         return tslib_1.__assign({}, s1, { errors: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), values: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), meta: filterKey(tslib_1.__assign({}, f.meta, s1.meta)) });
     };
 }

@@ -64,8 +64,8 @@ var StatelessField = React.memo(function StatelessField(props) {
     var componentProps = getComponentProps(schema);
     var fieldState = useFieldState(form, schema.key, keyPath, schema.format);
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
-        form.next(mutations_1.changeValue(schema, keyPath, valueOrEvent));
-    }; }, [form, schema.parse]);
+        form.next(mutations_1.changeValue(schema.key, keyPath, valueOrEvent, schema.validate, schema.parse));
+    }; }, [form, schema.validate, schema.parse]);
     React.useEffect(function () {
         props.form.next(mutations_1.registerField(schema, keyPath));
         return function () { return props.form.next(mutations_1.unregisterField(schema, keyPath)); };

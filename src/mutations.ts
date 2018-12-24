@@ -102,18 +102,18 @@ export function reset(f:FormState){
     }
 }
 
-export function changeValue(schema:FormFieldSchema,keyPath:string,valueOrEvent:any){
+export function changeValue(name:string,keyPath:string,valueOrEvent:any,validate?:FormFieldSchema['validate'],parse?:FormFieldSchema['parse']){
     return function changeValue(s:FormState){
         const newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent?valueOrEvent.target.value :valueOrEvent
-        const key = (keyPath+"."+schema.key).slice(1)
-        const error = schema.validate && schema.validate(newValue,s.values) || undefined
+        const finalKey = (keyPath+"."+name).slice(1)
+        const error = validate && validate(newValue,s.values) || undefined
         if(error){
             s.errors = {
                 ...s.errors,
-                [key]:error
+                [finalKey]:error
             }
         }else{
-            delete s.errors[key]
+            delete s.errors[finalKey]
         }
         return {
             ...s,
@@ -122,7 +122,7 @@ export function changeValue(schema:FormFieldSchema,keyPath:string,valueOrEvent:a
             },
             values:{
                 ...s.values,
-                [key]:schema.parse?schema.parse(newValue):newValue,
+                [finalKey]:parse?parse(newValue):newValue,
             }
         }
     }
@@ -154,13 +154,13 @@ export function initialize(initialValues:any, onSubmit:Function){
     }
 }
 
-export function addArrayItem(schema:FormFieldSchema, keyPath:string, oldKeys:string[]){
+export function addArrayItem(key:string, keyPath:string, oldKeys:string[]){
     return function addArrayItem(f:FormState){
-        return changeValue(schema, keyPath, (oldKeys || [] ).concat(randomID()))(f)
+        return changeValue(key, keyPath, (oldKeys || []).concat(randomID()))(f)
     }
 }
 
-export function removeArrayItem(schema:FormFieldSchema, keyPath:string, oldKeys:string[], removedKey:string){
+export function removeArrayItem(key:string, keyPath:string, oldKeys:string[], removedKey:string){
     return function removeArrayItem(f:FormState){
         const i = oldKeys.indexOf(removedKey)
         const copy = oldKeys.slice()
@@ -173,7 +173,7 @@ export function removeArrayItem(schema:FormFieldSchema, keyPath:string, oldKeys:
                 }
             },{} as any)
         }
-        const s1 = changeValue(schema,keyPath,copy)(f)
+        const s1 = changeValue(key,keyPath,copy)(f)
         return {
             ...s1,
             errors:filterKey({

@@ -39,7 +39,7 @@ export declare function reset(f: FormState): {
     onSubmit: Function;
     initialValues: any;
 };
-export declare function changeValue(schema: FormFieldSchema, keyPath: string, valueOrEvent: any): (s: FormState) => {
+export declare function changeValue(name: string, keyPath: string, valueOrEvent: any, validate?: FormFieldSchema['validate'], parse?: FormFieldSchema['parse']): (s: FormState) => {
     errors: {
         [x: string]: string;
     };
@@ -71,7 +71,7 @@ export declare function initialize(initialValues: any, onSubmit: Function): (f: 
         };
     };
 };
-export declare function addArrayItem(schema: FormFieldSchema, keyPath: string, oldKeys: string[]): (f: FormState) => {
+export declare function addArrayItem(key: string, keyPath: string, oldKeys: string[]): (f: FormState) => {
     errors: {
         [x: string]: string;
     };
@@ -86,7 +86,7 @@ export declare function addArrayItem(schema: FormFieldSchema, keyPath: string, o
     onSubmit: Function;
     initialValues: any;
 };
-export declare function removeArrayItem(schema: FormFieldSchema, keyPath: string, oldKeys: string[], removedKey: string): (f: FormState) => {
+export declare function removeArrayItem(key: string, keyPath: string, oldKeys: string[], removedKey: string): (f: FormState) => {
     errors: any;
     values: any;
     meta: any;
