@@ -18,7 +18,7 @@ export type FieldListens={
      * If your formValue is {"foo":{"haha":[{"bar":10032}]}}, then the callback here will receive these arguments:
      * 10032, {bar:10032}, [{bar:10032}], {haha:[{bar:10032}]}, {foo:...}
      */
-    to:string|string[]|((keyPath:string)=>string),
+    to:string|string[]|((keyPath:string)=>string|string[]),
     then:(change:{
         value:any|any[],
         formValues:any,
