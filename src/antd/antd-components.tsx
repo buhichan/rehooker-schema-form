@@ -443,7 +443,7 @@ function GroupRenderer({form,schema,keyPath,componentProps}:WidgetProps){
 }
 
 function ArrayFieldRenderer(props:WidgetProps){
-    return <FieldArray key={props.keyPath+"."+props.schema.key} form={props.form} value={props.value}>
+    return <FieldArray name={props.keyPath+"."+props.schema.key} form={props.form} value={props.value}>
         {(keys,add,remove)=><>
             <label>{props.schema.label}</label>
             <div className="add-button">

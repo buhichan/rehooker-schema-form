@@ -5,21 +5,21 @@ import { Store } from 'rehooker';
 
 type FieldArrayProps = {
     form:Store<FormState>
-    key:string,
+    name:string,
     value:string[],
     children:(childKeys:string[], add:()=>void, remove:(key:string)=>void)=>React.ReactNode
 }
 
 export function FieldArray(props:FieldArrayProps){
     const add = React.useMemo(()=>()=>{
-        props.form.next(addArrayItem(props.key,props.value))
-    },[props.key,props.value])
+        props.form.next(addArrayItem(props.name,props.value))
+    },[props.name,props.value])
 
     const remove = React.useMemo(()=>(id:string)=>{
-        props.form.next(removeArrayItem(props.key,props.value,id))
-    },[props.key, props.value])
+        props.form.next(removeArrayItem(props.name,props.value,id))
+    },[props.name, props.value])
 
     return <>
-        {props.children( (props.value || []).map(id=>props.key+"."+id),add,remove ) }
+        {props.children( (props.value || []).map(id=>props.name+"."+id),add,remove ) }
     </>
 }
