@@ -443,8 +443,8 @@ function GroupRenderer({form,schema,keyPath,componentProps}:WidgetProps){
 }
 
 function ArrayFieldRenderer(props:WidgetProps){
-    return <FieldArray {...props}>
-        {(keys,add,remove,renderChild)=><>
+    return <FieldArray key={props.keyPath+"."+props.schema.key} form={props.form} value={props.value}>
+        {(keys,add,remove)=><>
             <label>{props.schema.label}</label>
             <div className="add-button">
                 <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
@@ -464,7 +464,7 @@ function ArrayFieldRenderer(props:WidgetProps){
                         </div>}>
                         <div key={id} className="array-field-child">
                             {
-                                renderChild(id)
+                                props.schema.children && renderFields(props.form,props.schema.children,id)
                             }
                         </div>
                     </Collapse.Panel>

@@ -1,26 +1,25 @@
 import * as React from 'react';
-import { WidgetProps } from './form';
 import { addArrayItem, removeArrayItem } from './mutations';
-import { renderFields } from './field';
+import { FormState } from './form';
+import { Store } from 'rehooker';
 
-type FieldArrayProps = WidgetProps & {
-    value:string[]
-    children:(keys:string[], add:()=>void, remove:(key:string)=>void, renderChild:(key:string)=>React.ReactNode)=>React.ReactNode
+type FieldArrayProps = {
+    form:Store<FormState>
+    key:string,
+    value:string[],
+    children:(childKeys:string[], add:()=>void, remove:(key:string)=>void)=>React.ReactNode
 }
 
 export function FieldArray(props:FieldArrayProps){
     const add = React.useMemo(()=>()=>{
-        props.form.next(addArrayItem(props.schema.key,props.keyPath,props.value))
-    },[props.schema,props.value])
+        props.form.next(addArrayItem(props.key,props.value))
+    },[props.key,props.value])
 
     const remove = React.useMemo(()=>(id:string)=>{
-        props.form.next(removeArrayItem(props.schema.key,props.keyPath,props.value,id))
-    },[props.schema, props.value])
+        props.form.next(removeArrayItem(props.key,props.value,id))
+    },[props.key, props.value])
 
     return <>
-        {props.children(props.value || [],add,remove, (id)=>{
-            const children =  props.schema.children as Exclude<typeof props.schema.children, undefined>
-            return renderFields(props.form,children,props.keyPath+"."+props.schema.key+"."+id)
-        })}
+        {props.children( (props.value || []).map(id=>props.key+"."+id),add,remove ) }
     </>
 }

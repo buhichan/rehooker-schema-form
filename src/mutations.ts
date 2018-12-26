@@ -51,7 +51,7 @@ export function submit(dispatch:(m:(s:FormState)=>FormState)=>void){
         const values = f.values
         if(!values)
             return f
-        const arrayKeys = Object.keys(f.meta).filter(x=>f.meta[x].schema.type === 'array')
+        const arrayKeys = values[arrayKeySymbol as any] as string[]
         const mapItemIDToIndex = arrayKeys.reduce((map,key)=>{
             const value = values[key]
             value instanceof Array && value.forEach((x,i)=>{
@@ -102,10 +102,10 @@ export function reset(f:FormState){
     }
 }
 
-export function changeValue(name:string,keyPath:string,valueOrEvent:any,validate?:FormFieldSchema['validate'],parse?:FormFieldSchema['parse']){
+export function changeValue(key:string,valueOrEvent:any,validate?:FormFieldSchema['validate'],parse?:FormFieldSchema['parse']){
     return function changeValue(s:FormState){
         const newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent?valueOrEvent.target.value :valueOrEvent
-        const finalKey = (keyPath+"."+name).slice(1)
+        const finalKey = key.slice(1)
         const error = validate && validate(newValue,s.values) || undefined
         if(error){
             s.errors = {
@@ -128,23 +128,30 @@ export function changeValue(name:string,keyPath:string,valueOrEvent:any,validate
     }
 }
 
+const arrayKeySymbol = Symbol.for("arrayKeys")
+
 export function initialize(initialValues:any, onSubmit:Function){
-    function traverseValues(map:any,value:any,keyPath:string[]){
-        if(Array.isArray(value) && value.length > 0 && typeof value[0] === 'object'){
-            const itemIDs = new Array(value.length).fill(null).map(()=>randomID())
-            map[keyPath.join(".")] = itemIDs
-            value.forEach((v,i)=>traverseValues(map,v,keyPath.concat(itemIDs[i])))
-        }else if(value != undefined && typeof value === "object" && !Array.isArray(value)){
-            Object.keys(value).forEach(k=>{
-                traverseValues(map,value[k],keyPath.concat(k))
-            })
-        }else{
-            map[keyPath.join(".")] = value
-        }
-    }
     return function initialize(f:FormState){
-        const initialValuesMap = {}
-        initialValues && traverseValues(initialValuesMap,initialValues, [])
+        const initialValuesMap:Record<string,any> = {}
+        const arrayKeys:string[] = []
+        function traverseValues(value:any,keyPath:string[],){
+            if(Array.isArray(value) && value.length > 0 && typeof value[0] === 'object'){
+                const itemIDs = new Array(value.length).fill(null).map(()=>randomID())
+                value.forEach((v,i)=>traverseValues(v,keyPath.concat(itemIDs[i])))
+                arrayKeys.push(keyPath.join("."))
+                initialValuesMap[keyPath.join(".")] = itemIDs
+            }else if(value != undefined && typeof value === "object" && !Array.isArray(value)){
+                Object.keys(value).forEach(k=>{
+                    traverseValues(value[k],keyPath.concat(k))
+                })
+            }else{
+                initialValuesMap[keyPath.join(".")] = value
+            }
+        }
+        initialValues && traverseValues(initialValues, [])
+        Object.defineProperty(initialValuesMap,arrayKeySymbol,{
+            value:arrayKeys
+        })
         return {
             ...f,
             onSubmit:onSubmit,
@@ -154,13 +161,13 @@ export function initialize(initialValues:any, onSubmit:Function){
     }
 }
 
-export function addArrayItem(key:string, keyPath:string, oldKeys:string[]){
+export function addArrayItem(key:string, oldKeys:string[]){
     return function addArrayItem(f:FormState){
-        return changeValue(key, keyPath, (oldKeys || []).concat(randomID()))(f)
+        return changeValue(key, (oldKeys || []).concat(randomID()))(f)
     }
 }
 
-export function removeArrayItem(key:string, keyPath:string, oldKeys:string[], removedKey:string){
+export function removeArrayItem(key:string, oldKeys:string[], removedKey:string){
     return function removeArrayItem(f:FormState){
         const i = oldKeys.indexOf(removedKey)
         const copy = oldKeys.slice()
@@ -173,7 +180,7 @@ export function removeArrayItem(key:string, keyPath:string, oldKeys:string[], re
                 }
             },{} as any)
         }
-        const s1 = changeValue(key,keyPath,copy)(f)
+        const s1 = changeValue(key,copy)(f)
         return {
             ...s1,
             errors:filterKey({

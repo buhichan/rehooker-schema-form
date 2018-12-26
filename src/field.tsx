@@ -101,7 +101,7 @@ const StatelessField = React.memo( function StatelessField(props:FieldProps){
     const componentProps = getComponentProps(schema)
     const fieldState = useFieldState(form,schema.key,keyPath,schema.format)
     const onChange = React.useMemo(()=>(valueOrEvent:any)=>{
-        form.next(changeValue(schema.key,keyPath,valueOrEvent,schema.validate,schema.parse))
+        form.next(changeValue(keyPath+"."+schema.key,valueOrEvent,schema.validate,schema.parse))
     },[form,schema.validate,schema.parse])
     React.useEffect(()=>{
         props.form.next(registerField(schema,keyPath))

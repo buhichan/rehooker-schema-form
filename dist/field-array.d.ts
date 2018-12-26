@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { WidgetProps } from './form';
-declare type FieldArrayProps = WidgetProps & {
+import { FormState } from './form';
+import { Store } from 'rehooker';
+declare type FieldArrayProps = {
+    form: Store<FormState>;
+    key: string;
     value: string[];
-    children: (keys: string[], add: () => void, remove: (key: string) => void, renderChild: (key: string) => React.ReactNode) => React.ReactNode;
+    children: (childKeys: string[], add: () => void, remove: (key: string) => void) => React.ReactNode;
 };
 export declare function FieldArray(props: FieldArrayProps): JSX.Element;
 export {};

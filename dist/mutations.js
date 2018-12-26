@@ -46,7 +46,7 @@ function submit(dispatch) {
         var values = f.values;
         if (!values)
             return f;
-        var arrayKeys = Object.keys(f.meta).filter(function (x) { return f.meta[x].schema.type === 'array'; });
+        var arrayKeys = values[arrayKeySymbol];
         var mapItemIDToIndex = arrayKeys.reduce(function (map, key) {
             var value = values[key];
             value instanceof Array && value.forEach(function (x, i) {
@@ -79,11 +79,11 @@ function reset(f) {
     return tslib_1.__assign({}, f, { values: f.initialValues });
 }
 exports.reset = reset;
-function changeValue(name, keyPath, valueOrEvent, validate, parse) {
+function changeValue(key, valueOrEvent, validate, parse) {
     return function changeValue(s) {
         var _a, _b;
         var newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent;
-        var finalKey = (keyPath + "." + name).slice(1);
+        var finalKey = key.slice(1);
         var error = validate && validate(newValue, s.values) || undefined;
         if (error) {
             s.errors = tslib_1.__assign({}, s.errors, (_a = {}, _a[finalKey] = error, _a));
@@ -95,36 +95,42 @@ function changeValue(name, keyPath, valueOrEvent, validate, parse) {
     };
 }
 exports.changeValue = changeValue;
+var arrayKeySymbol = Symbol.for("arrayKeys");
 function initialize(initialValues, onSubmit) {
-    function traverseValues(map, value, keyPath) {
-        if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
-            var itemIDs_1 = new Array(value.length).fill(null).map(function () { return utils_1.randomID(); });
-            map[keyPath.join(".")] = itemIDs_1;
-            value.forEach(function (v, i) { return traverseValues(map, v, keyPath.concat(itemIDs_1[i])); });
-        }
-        else if (value != undefined && typeof value === "object" && !Array.isArray(value)) {
-            Object.keys(value).forEach(function (k) {
-                traverseValues(map, value[k], keyPath.concat(k));
-            });
-        }
-        else {
-            map[keyPath.join(".")] = value;
-        }
-    }
     return function initialize(f) {
         var initialValuesMap = {};
-        initialValues && traverseValues(initialValuesMap, initialValues, []);
+        var arrayKeys = [];
+        function traverseValues(value, keyPath) {
+            if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
+                var itemIDs_1 = new Array(value.length).fill(null).map(function () { return utils_1.randomID(); });
+                value.forEach(function (v, i) { return traverseValues(v, keyPath.concat(itemIDs_1[i])); });
+                arrayKeys.push(keyPath.join("."));
+                initialValuesMap[keyPath.join(".")] = itemIDs_1;
+            }
+            else if (value != undefined && typeof value === "object" && !Array.isArray(value)) {
+                Object.keys(value).forEach(function (k) {
+                    traverseValues(value[k], keyPath.concat(k));
+                });
+            }
+            else {
+                initialValuesMap[keyPath.join(".")] = value;
+            }
+        }
+        initialValues && traverseValues(initialValues, []);
+        Object.defineProperty(initialValuesMap, arrayKeySymbol, {
+            value: arrayKeys
+        });
         return tslib_1.__assign({}, f, { onSubmit: onSubmit, values: f.values === undefined ? initialValuesMap : f.values, initialValues: initialValuesMap });
     };
 }
 exports.initialize = initialize;
-function addArrayItem(key, keyPath, oldKeys) {
+function addArrayItem(key, oldKeys) {
     return function addArrayItem(f) {
-        return changeValue(key, keyPath, (oldKeys || []).concat(utils_1.randomID()))(f);
+        return changeValue(key, (oldKeys || []).concat(utils_1.randomID()))(f);
     };
 }
 exports.addArrayItem = addArrayItem;
-function removeArrayItem(key, keyPath, oldKeys, removedKey) {
+function removeArrayItem(key, oldKeys, removedKey) {
     return function removeArrayItem(f) {
         var i = oldKeys.indexOf(removedKey);
         var copy = oldKeys.slice();
@@ -137,7 +143,7 @@ function removeArrayItem(key, keyPath, oldKeys, removedKey) {
                 }
             }, {});
         }
-        var s1 = changeValue(key, keyPath, copy)(f);
+        var s1 = changeValue(key, copy)(f);
         return tslib_1.__assign({}, s1, { errors: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), values: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), meta: filterKey(tslib_1.__assign({}, f.meta, s1.meta)) });
     };
 }

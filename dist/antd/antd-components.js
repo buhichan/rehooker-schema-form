@@ -294,7 +294,7 @@ function GroupRenderer(_a) {
         React.createElement(antd_1.Collapse.Panel, { key: "0", header: schema.label }, field_1.renderFields(form, schema.children || [], keyPath + "." + schema.key)));
 }
 function ArrayFieldRenderer(props) {
-    return React.createElement(field_array_1.FieldArray, tslib_1.__assign({}, props), function (keys, add, remove, renderChild) { return React.createElement(React.Fragment, null,
+    return React.createElement(field_array_1.FieldArray, { key: props.keyPath + "." + props.schema.key, form: props.form, value: props.value }, function (keys, add, remove) { return React.createElement(React.Fragment, null,
         React.createElement("label", null, props.schema.label),
         React.createElement("div", { className: "add-button" },
             React.createElement(antd_1.Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
@@ -305,7 +305,7 @@ function ArrayFieldRenderer(props) {
                     React.createElement("div", { className: "delete-button", onClick: function (e) { return e.stopPropagation(); } },
                         React.createElement(antd_1.Tooltip, { placement: "topLeft", title: "\u5220\u9664", arrowPointAtCenter: true },
                             React.createElement(antd_1.Icon, { type: "close", style: { cursor: "pointer", marginRight: 8 }, onClick: function () { return remove(id); } })))) },
-                React.createElement("div", { key: id, className: "array-field-child" }, renderChild(id)));
+                React.createElement("div", { key: id, className: "array-field-child" }, props.schema.children && field_1.renderFields(props.form, props.schema.children, id)));
         }))); });
 }
 field_1.addType("group", GroupRenderer);
