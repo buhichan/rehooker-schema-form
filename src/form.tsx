@@ -76,7 +76,8 @@ export type FormState = {
         }
     }
     onSubmit:Function,
-    initialValues:any
+    initialValues:any,
+    arrayKeys:string[]
 }
 
 // const store = createStore({})
@@ -96,7 +97,8 @@ const defaultFormState:FormState = {
     onSubmit:()=>{},
     meta:{},
     errors:{},
-    values:undefined
+    values:undefined,
+    arrayKeys:[],
 }
 
 export function createForm(middleware?:OperatorFunction<Mutation<FormState>,Mutation<FormState>>){

@@ -51,15 +51,14 @@ export function submit(dispatch:(m:(s:FormState)=>FormState)=>void){
         const values = f.values
         if(!values)
             return f
-        const arrayKeys = values[arrayKeySymbol as any] as string[]
-        const mapItemIDToIndex = arrayKeys.reduce((map,key)=>{
+        const mapItemIDToIndex = f.arrayKeys.reduce((map,key)=>{
             const value = values[key]
             value instanceof Array && value.forEach((x,i)=>{
                 map[x] = i
             })
             return map
         },{} as {[name:string]:number})
-        const finalValue = Object.keys(values).filter(x=>!arrayKeys.includes(x)).reduce((res,key)=>{
+        const finalValue = Object.keys(values).filter(x=>!f.arrayKeys.includes(x)).reduce((res,key)=>{
             deepSet(res,key.split(".").map(x=>x in mapItemIDToIndex ? mapItemIDToIndex[x] : x),values[key])
             return res
         },{})
@@ -128,8 +127,6 @@ export function changeValue(key:string,valueOrEvent:any,validate?:FormFieldSchem
     }
 }
 
-const arrayKeySymbol = Symbol.for("arrayKeys")
-
 export function initialize(initialValues:any, onSubmit:Function){
     return function initialize(f:FormState){
         const initialValuesMap:Record<string,any> = {}
@@ -149,11 +146,9 @@ export function initialize(initialValues:any, onSubmit:Function){
             }
         }
         initialValues && traverseValues(initialValues, [])
-        Object.defineProperty(initialValuesMap,arrayKeySymbol,{
-            value:arrayKeys
-        })
         return {
             ...f,
+            arrayKeys,
             onSubmit:onSubmit,
             values: f.values === undefined ? initialValuesMap : f.values,
             initialValues:initialValuesMap,

@@ -47,22 +47,22 @@ function getComponentProps(field) {
     return rest;
 }
 exports.getComponentProps = getComponentProps;
-function useFieldState(form, fieldKey, keyPath, format) {
+function useFieldState(form, name, format) {
     return rehooker_1.useSource(form.stream, function (ob) { return ob.pipe(operators_1.skipWhile(function (x) { return x.values === undefined; }), operators_1.map(function (s) {
-        var key = (keyPath + "." + fieldKey).slice(1);
+        var key = name.slice(1); //name always begin with dot
         var value = s.values && s.values[key];
         return {
             value: format ? format(value) : value,
             error: s.errors[key],
             meta: s.meta[key]
         };
-    }, operators_1.debounceTime(24))); }, [form, fieldKey, keyPath, format]);
+    }, operators_1.debounceTime(24))); }, [form, name, format]);
 }
 exports.useFieldState = useFieldState;
 var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
     var componentProps = getComponentProps(schema);
-    var fieldState = useFieldState(form, schema.key, keyPath, schema.format);
+    var fieldState = useFieldState(form, keyPath + "." + schema.key, schema.format);
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
         form.next(mutations_1.changeValue(keyPath + "." + schema.key, valueOrEvent, schema.validate, schema.parse));
     }; }, [form, schema.validate, schema.parse]);
@@ -119,7 +119,7 @@ var StatefulField = React.memo(function StatefulField(props) {
     React.useEffect(function () {
         var $value = props.form.stream.pipe(operators_1.skipWhile(function (x) { return x.values === undefined; }), operators_1.map(function (x) { return x.values; }), operators_1.distinct());
         var $change = rxjs_1.merge.apply(void 0, listens.map(function (x) {
-            var listenTo = typeof x.to === 'function' ? x.to(props.keyPath.slice(1)) : x.to;
+            var listenTo = typeof x.to === 'function' ? x.to(props.keyPath) : x.to;
             return rxjs_1.combineLatest(listenTo.map(function (x) {
                 return $value.pipe(operators_1.map(function (v) {
                     return v && v[x];

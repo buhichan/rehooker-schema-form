@@ -21,6 +21,7 @@ export declare function registerField(schema: FormFieldSchema, keyPath: string):
     } | undefined;
     onSubmit: Function;
     initialValues: any;
+    arrayKeys: string[];
 };
 export declare function unregisterField(schema: FormFieldSchema, keyPath: string): (f: FormState) => FormState;
 export declare function submit(dispatch: (m: (s: FormState) => FormState) => void): void;
@@ -38,6 +39,7 @@ export declare function reset(f: FormState): {
     };
     onSubmit: Function;
     initialValues: any;
+    arrayKeys: string[];
 };
 export declare function changeValue(key: string, valueOrEvent: any, validate?: FormFieldSchema['validate'], parse?: FormFieldSchema['parse']): (s: FormState) => {
     errors: {
@@ -53,8 +55,10 @@ export declare function changeValue(key: string, valueOrEvent: any, validate?: F
     };
     onSubmit: Function;
     initialValues: any;
+    arrayKeys: string[];
 };
 export declare function initialize(initialValues: any, onSubmit: Function): (f: FormState) => {
+    arrayKeys: string[];
     onSubmit: Function;
     values: {
         [key: string]: any;
@@ -85,6 +89,7 @@ export declare function addArrayItem(key: string, oldKeys: string[]): (f: FormSt
     };
     onSubmit: Function;
     initialValues: any;
+    arrayKeys: string[];
 };
 export declare function removeArrayItem(key: string, oldKeys: string[], removedKey: string): (f: FormState) => {
     errors: any;
@@ -94,4 +99,5 @@ export declare function removeArrayItem(key: string, oldKeys: string[], removedK
     submitSucceeded: boolean;
     onSubmit: Function;
     initialValues: any;
+    arrayKeys: string[];
 };

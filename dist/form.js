@@ -16,7 +16,8 @@ var defaultFormState = {
     onSubmit: function () { },
     meta: {},
     errors: {},
-    values: undefined
+    values: undefined,
+    arrayKeys: [],
 };
 function createForm(middleware) {
     return rehooker_1.createStore(defaultFormState, middleware);

@@ -46,15 +46,14 @@ function submit(dispatch) {
         var values = f.values;
         if (!values)
             return f;
-        var arrayKeys = values[arrayKeySymbol];
-        var mapItemIDToIndex = arrayKeys.reduce(function (map, key) {
+        var mapItemIDToIndex = f.arrayKeys.reduce(function (map, key) {
             var value = values[key];
             value instanceof Array && value.forEach(function (x, i) {
                 map[x] = i;
             });
             return map;
         }, {});
-        var finalValue = Object.keys(values).filter(function (x) { return !arrayKeys.includes(x); }).reduce(function (res, key) {
+        var finalValue = Object.keys(values).filter(function (x) { return !f.arrayKeys.includes(x); }).reduce(function (res, key) {
             utils_1.deepSet(res, key.split(".").map(function (x) { return x in mapItemIDToIndex ? mapItemIDToIndex[x] : x; }), values[key]);
             return res;
         }, {});
@@ -95,7 +94,6 @@ function changeValue(key, valueOrEvent, validate, parse) {
     };
 }
 exports.changeValue = changeValue;
-var arrayKeySymbol = Symbol.for("arrayKeys");
 function initialize(initialValues, onSubmit) {
     return function initialize(f) {
         var initialValuesMap = {};
@@ -117,10 +115,7 @@ function initialize(initialValues, onSubmit) {
             }
         }
         initialValues && traverseValues(initialValues, []);
-        Object.defineProperty(initialValuesMap, arrayKeySymbol, {
-            value: arrayKeys
-        });
-        return tslib_1.__assign({}, f, { onSubmit: onSubmit, values: f.values === undefined ? initialValuesMap : f.values, initialValues: initialValuesMap });
+        return tslib_1.__assign({}, f, { arrayKeys: arrayKeys, onSubmit: onSubmit, values: f.values === undefined ? initialValuesMap : f.values, initialValues: initialValuesMap });
     };
 }
 exports.initialize = initialize;

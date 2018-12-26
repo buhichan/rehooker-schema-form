@@ -80,11 +80,11 @@ export function getComponentProps(field:FormFieldSchema){
     return rest
 }
 
-export function useFieldState(form:Store<FormState>,fieldKey:string,keyPath:string,format?:(v:any)=>any){
+export function useFieldState(form:Store<FormState>,name:string,format?:(v:any)=>any){
     return useSource(form.stream,ob=>ob.pipe(
         skipWhile(x=>x.values === undefined),
         map(s=>{
-            const key = (keyPath+"."+fieldKey).slice(1)
+            const key = name.slice(1) //name always begin with dot
             const value = s.values && s.values[key]
             return {
                 value:format?format(value):value,
@@ -93,13 +93,13 @@ export function useFieldState(form:Store<FormState>,fieldKey:string,keyPath:stri
             }
         },
         debounceTime(24)
-    )),[form,fieldKey,keyPath,format])
+    )),[form,name,format])
 }
 
 const StatelessField = React.memo( function StatelessField(props:FieldProps){
     const {schema, form, keyPath} = props;
     const componentProps = getComponentProps(schema)
-    const fieldState = useFieldState(form,schema.key,keyPath,schema.format)
+    const fieldState = useFieldState(form,keyPath+"."+schema.key,schema.format)
     const onChange = React.useMemo(()=>(valueOrEvent:any)=>{
         form.next(changeValue(keyPath+"."+schema.key,valueOrEvent,schema.validate,schema.parse))
     },[form,schema.validate,schema.parse])
@@ -170,7 +170,7 @@ const StatefulField = React.memo(function StatefulField(props:FieldProps){
             distinct(),
         )
         const $change = merge(...listens.map((x)=>{
-            let listenTo = typeof x.to === 'function' ? x.to(props.keyPath.slice(1)) : x.to
+            let listenTo = typeof x.to === 'function' ? x.to(props.keyPath) : x.to
             return combineLatest(
                 listenTo.map(x=>{
                     return $value.pipe(

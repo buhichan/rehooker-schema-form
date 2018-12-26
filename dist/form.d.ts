@@ -72,6 +72,7 @@ export declare type FormState = {
     };
     onSubmit: Function;
     initialValues: any;
+    arrayKeys: string[];
 };
 export declare type SchemaFormProps = {
     schema: FormFieldSchema[];
