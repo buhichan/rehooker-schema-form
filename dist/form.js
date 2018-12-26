@@ -30,7 +30,9 @@ function SchemaForm(props) {
         return false;
     }; }, [props.form]);
     React.useEffect(function () {
-        props.form.next(mutations_1.initialize(props.initialValues, props.onSubmit || (function () { })));
+        props.form.next(function (s) {
+            return mutations_1.initialize(props.initialValues, props.onSubmit || (function () { }))(s);
+        });
     }, [props.initialValues, props.onSubmit]);
     React.useEffect(function () { return function () {
         props.form.next(function () { return defaultFormState; });

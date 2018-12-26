@@ -60,9 +60,7 @@ export declare function changeValue(key: string, valueOrEvent: any, validate?: F
 export declare function initialize(initialValues: any, onSubmit: Function): (f: FormState) => {
     arrayKeys: string[];
     onSubmit: Function;
-    values: {
-        [key: string]: any;
-    };
+    values: Record<string, any>;
     initialValues: Record<string, any>;
     submitting: boolean;
     submitSucceeded: boolean;

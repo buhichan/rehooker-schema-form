@@ -115,7 +115,7 @@ function initialize(initialValues, onSubmit) {
             }
         }
         initialValues && traverseValues(initialValues, []);
-        return tslib_1.__assign({}, f, { arrayKeys: arrayKeys, onSubmit: onSubmit, values: f.values === undefined ? initialValuesMap : f.values, initialValues: initialValuesMap });
+        return tslib_1.__assign({}, f, { arrayKeys: arrayKeys, onSubmit: onSubmit, values: initialValuesMap, initialValues: initialValuesMap });
     };
 }
 exports.initialize = initialize;

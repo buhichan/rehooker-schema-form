@@ -150,7 +150,7 @@ export function initialize(initialValues:any, onSubmit:Function){
             ...f,
             arrayKeys,
             onSubmit:onSubmit,
-            values: f.values === undefined ? initialValuesMap : f.values,
+            values:initialValuesMap,
             initialValues:initialValuesMap,
         }
     }

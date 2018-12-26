@@ -112,7 +112,9 @@ export function SchemaForm(props:SchemaFormProps){
         return false
     },[props.form])
     React.useEffect(()=>{
-        props.form.next(initialize(props.initialValues,props.onSubmit || (()=>{})))
+        props.form.next(s=>{
+            return initialize(props.initialValues,props.onSubmit || (()=>{})) (s)
+        })
     },[props.initialValues,props.onSubmit])
     React.useEffect(()=>()=>{
         props.form.next(()=>defaultFormState)
