@@ -46,6 +46,20 @@ function submit(dispatch) {
         var values = f.values;
         if (!values)
             return f;
+        var errors = Object.keys(f.meta).reduce(function (errors, key) {
+            var value = f.values && f.values[key];
+            var validate = f.meta[key].schema && f.meta[key].schema.validate;
+            if (typeof validate === 'function') {
+                var error = validate(value, f.values);
+                if (typeof error === 'string') {
+                    errors[key] = error;
+                }
+            }
+            return errors;
+        }, {});
+        if (Object.keys(errors).length > 0) {
+            return tslib_1.__assign({}, f, { errors: errors });
+        }
         var mapItemIDToIndex = f.arrayKeys.reduce(function (map, key) {
             var value = values[key];
             value instanceof Array && value.forEach(function (x, i) {

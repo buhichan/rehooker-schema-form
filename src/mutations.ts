@@ -51,6 +51,23 @@ export function submit(dispatch:(m:(s:FormState)=>FormState)=>void){
         const values = f.values
         if(!values)
             return f
+        const errors = Object.keys(f.meta).reduce((errors,key)=>{
+            const value = f.values && f.values[key]
+            const validate = f.meta[key].schema && f.meta[key].schema.validate
+            if(typeof validate === 'function'){
+                const error = validate(value,f.values)
+                if(typeof error === 'string'){
+                    errors[key] = error
+                }
+            }
+            return errors
+        },{} as Record<string,string>)
+        if(Object.keys(errors).length > 0){
+            return {
+                ...f,
+                errors,
+            }
+        }
         const mapItemIDToIndex = f.arrayKeys.reduce((map,key)=>{
             const value = values[key]
             value instanceof Array && value.forEach((x,i)=>{
