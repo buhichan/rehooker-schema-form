@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.requestFileUpload = function (multiple) {
+export var requestFileUpload = function (multiple) {
     var input;
     input = document.getElementById('hidden-file-input');
     if (!input) {
@@ -23,7 +21,7 @@ exports.requestFileUpload = function (multiple) {
     });
     return promise;
 };
-exports.requestDownload = function (options) {
+export var requestDownload = function (options) {
     var input = document.getElementById('hidden-anchor');
     if (!input) {
         input = document.createElement('a');
@@ -34,7 +32,7 @@ exports.requestDownload = function (options) {
     input.download = options.download;
     input.click();
 };
-function deepSet(target, keys, value) {
+export function deepSet(target, keys, value) {
     var parent;
     var p = target;
     for (var i = 0; i < keys.length; i++) {
@@ -52,9 +50,7 @@ function deepSet(target, keys, value) {
     if (typeof parent === 'object')
         parent[keys[keys.length - 1]] = value;
 }
-exports.deepSet = deepSet;
-function randomID() {
+export function randomID() {
     return String(Math.floor(Math.random() * 1000000000));
 }
-exports.randomID = randomID;
 //# sourceMappingURL=utils.js.map

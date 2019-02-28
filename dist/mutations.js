@@ -1,15 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var utils_1 = require("./utils");
+import * as tslib_1 from "tslib";
+import { randomID, deepSet } from './utils';
 var SubmissionError = /** @class */ (function () {
     function SubmissionError(error) {
         this.error = error;
     }
     return SubmissionError;
 }());
-exports.SubmissionError = SubmissionError;
-function registerField(schema, keyPath) {
+export { SubmissionError };
+export function registerField(schema, keyPath) {
     return function registerField(f) {
         var _a;
         var key = (keyPath + "." + schema.key).slice(1);
@@ -18,8 +16,7 @@ function registerField(schema, keyPath) {
             }, _a)) });
     };
 }
-exports.registerField = registerField;
-function unregisterField(schema, keyPath) {
+export function unregisterField(schema, keyPath) {
     return function unregisterField(f) {
         var key = (keyPath + "." + schema.key).slice(1);
         if (!(f.values && key in f.values) &&
@@ -40,8 +37,7 @@ function unregisterField(schema, keyPath) {
         return tslib_1.__assign({}, f);
     };
 }
-exports.unregisterField = unregisterField;
-function submit(dispatch) {
+export function submit(dispatch) {
     return dispatch(function submit(f) {
         var values = f.values;
         if (!values)
@@ -68,7 +64,7 @@ function submit(dispatch) {
             return map;
         }, {});
         var finalValue = Object.keys(values).filter(function (x) { return !f.arrayKeys.includes(x); }).reduce(function (res, key) {
-            utils_1.deepSet(res, key.split(".").map(function (x) { return x in mapItemIDToIndex ? mapItemIDToIndex[x] : x; }), values[key]);
+            deepSet(res, key.split(".").map(function (x) { return x in mapItemIDToIndex ? mapItemIDToIndex[x] : x; }), values[key]);
             return res;
         }, {});
         var maybePromise = f.onSubmit && f.onSubmit(finalValue);
@@ -87,12 +83,10 @@ function submit(dispatch) {
         return tslib_1.__assign({}, f, { submitting: true });
     });
 }
-exports.submit = submit;
-function reset(f) {
+export function reset(f) {
     return tslib_1.__assign({}, f, { values: f.initialValues });
 }
-exports.reset = reset;
-function changeValue(key, valueOrEvent, validate, parse) {
+export function changeValue(key, valueOrEvent, validate, parse) {
     return function changeValue(s) {
         var _a, _b;
         var newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent;
@@ -107,14 +101,13 @@ function changeValue(key, valueOrEvent, validate, parse) {
         return tslib_1.__assign({}, s, { errors: tslib_1.__assign({}, s.errors), values: tslib_1.__assign({}, s.values, (_b = {}, _b[finalKey] = parse ? parse(newValue) : newValue, _b)) });
     };
 }
-exports.changeValue = changeValue;
-function initialize(initialValues, onSubmit) {
+export function initialize(initialValues, onSubmit) {
     return function initialize(f) {
         var initialValuesMap = {};
         var arrayKeys = [];
         function traverseValues(value, keyPath) {
             if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
-                var itemIDs_1 = new Array(value.length).fill(null).map(function () { return utils_1.randomID(); });
+                var itemIDs_1 = new Array(value.length).fill(null).map(function () { return randomID(); });
                 value.forEach(function (v, i) { return traverseValues(v, keyPath.concat(itemIDs_1[i])); });
                 arrayKeys.push(keyPath.join("."));
                 initialValuesMap[keyPath.join(".")] = itemIDs_1;
@@ -132,14 +125,12 @@ function initialize(initialValues, onSubmit) {
         return tslib_1.__assign({}, f, { arrayKeys: arrayKeys, onSubmit: onSubmit, values: initialValuesMap, initialValues: initialValuesMap });
     };
 }
-exports.initialize = initialize;
-function addArrayItem(key, oldKeys) {
+export function addArrayItem(key, oldKeys) {
     return function addArrayItem(f) {
-        return changeValue(key, (oldKeys || []).concat(utils_1.randomID()))(f);
+        return changeValue(key, (oldKeys || []).concat(randomID()))(f);
     };
 }
-exports.addArrayItem = addArrayItem;
-function removeArrayItem(key, oldKeys, removedKey) {
+export function removeArrayItem(key, oldKeys, removedKey) {
     return function removeArrayItem(f) {
         var i = oldKeys.indexOf(removedKey);
         var copy = oldKeys.slice();
@@ -156,5 +147,4 @@ function removeArrayItem(key, oldKeys, removedKey) {
         return tslib_1.__assign({}, s1, { errors: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), values: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), meta: filterKey(tslib_1.__assign({}, f.meta, s1.meta)) });
     };
 }
-exports.removeArrayItem = removeArrayItem;
 //# sourceMappingURL=mutations.js.map
