@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var React = require("react");
+import * as tslib_1 from "tslib";
+import * as React from "react";
 var ResolveMaybePromise = /** @class */ (function (_super) {
     tslib_1.__extends(ResolveMaybePromise, _super);
     function ResolveMaybePromise() {
@@ -40,5 +38,5 @@ var ResolveMaybePromise = /** @class */ (function (_super) {
     };
     return ResolveMaybePromise;
 }(React.PureComponent));
-exports.ResolveMaybePromise = ResolveMaybePromise;
+export { ResolveMaybePromise };
 //# sourceMappingURL=resolve-maybe-promise.js.map

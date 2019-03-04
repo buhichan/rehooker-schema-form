@@ -1,12 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
+import * as tslib_1 from "tslib";
 var _a, _b, _c;
-var constants_1 = require("../constants");
+import { clearfix, widgetHeight, fullWidthInputs, mobileMedia } from '../constants';
 var injectJSS = require("react-jss")['default'];
-var decorate_1 = require("../decorate");
+import { pushDecorator } from '../decorate';
 var stylesheet = (_a = {
-        form: tslib_1.__assign({ position: "relative" }, constants_1.clearfix, (_b = { "& *": {
+        form: tslib_1.__assign({ position: "relative" }, clearfix, (_b = { "& *": {
                     boxSizing: "border-box",
                 }, "& .btn-group": {}, "& .array-field-container": {
                     display: "flex",
@@ -38,15 +36,15 @@ var stylesheet = (_a = {
                     paddingRight: "10%",
                     paddingLeft: "10%",
                     width: "50%",
-                    height: constants_1.widgetHeight,
+                    height: widgetHeight,
                     "&.hidden": {
                         display: "none"
                     },
-                } }, _b[constants_1.fullWidthInputs] = {
+                } }, _b[fullWidthInputs] = {
             width: "100%",
             height: "auto",
-            minHeight: constants_1.widgetHeight
-        }, _b["& .schema-node"] = constants_1.clearfix, _b["& div.children, & div.button"] = {
+            minHeight: widgetHeight
+        }, _b["& .schema-node"] = clearfix, _b["& div.children, & div.button"] = {
             textAlign: "center",
             float: "left",
             paddingRight: "initial",
@@ -74,12 +72,12 @@ var stylesheet = (_a = {
                 background: "#f9f9fa",
                 border: "none"
             },
-            _c[constants_1.fullWidthInputs] = {
+            _c[fullWidthInputs] = {
                 padding: " 0 5%",
             },
             _c), _b))
     },
-    _a[constants_1.mobileMedia] = {
+    _a[mobileMedia] = {
         "form": {
             "& .field, & .array-field-container .array-field-child": {
                 width: "100%"
@@ -87,5 +85,5 @@ var stylesheet = (_a = {
         }
     },
     _a);
-decorate_1.pushDecorator(injectJSS(stylesheet));
+pushDecorator(injectJSS(stylesheet));
 //# sourceMappingURL=antd.jss.js.map

@@ -1,8 +1,6 @@
-"use strict";
 var _this = this;
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var React = require("react");
+import * as tslib_1 from "tslib";
+import * as React from "react";
 var arrayFieldChildren = [
     {
         key: "array-child",
@@ -27,7 +25,7 @@ var arrayFieldChildren = [
         ]
     }
 ];
-exports.schema = [
+export var schema = [
     {
         key: "text",
         type: "text",

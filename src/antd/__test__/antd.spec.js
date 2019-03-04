@@ -1,9 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var theme_test_1 = require("../../__test__/theme-test");
-var React = require("react");
-theme_test_1.testTheme("ant.design theme", function () {
+import * as tslib_1 from "tslib";
+import { testTheme } from "../../__test__/theme-test";
+import * as React from 'react';
+testTheme("ant.design theme", function () {
     window['matchMedia'] = function () { return ({
         matches: true
     }); };

@@ -1,28 +1,25 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var reselect_1 = require("reselect");
-var react_redux_1 = require("react-redux");
-var React = require("react");
-var redux_form_1 = require("redux-form");
-exports.FormButton = function (props) {
+import * as tslib_1 from "tslib";
+import { createSelector } from 'reselect';
+import { connect } from "react-redux";
+import * as React from 'react';
+import { isValid, isPristine, isSubmitting, hasSubmitSucceeded, submit, reset } from "redux-form";
+export var FormButton = function (props) {
     return React.createElement("button", { type: props.type, className: "btn btn-primary" + (props.disabled ? " disabled" : ""), disabled: props.disabled, onClick: props.onClick }, props.children);
 };
-exports.submittable = function (formState) {
+export var submittable = function (formState) {
     var valid = formState.valid, pristine = formState.pristine, submitting = formState.submitting, submitSucceeded = formState.submitSucceeded, disableResubmit = formState.disableResubmit;
     return valid && !pristine && !submitting && !(disableResubmit && submitSucceeded);
 };
-function setButton(button) {
-    exports.FormButton = button;
+export function setButton(button) {
+    FormButton = button;
 }
-exports.setButton = setButton;
 var createFormSubmittableSelector = function (formName, disableResubmit, isSubmittable) {
-    if (isSubmittable === void 0) { isSubmittable = exports.submittable; }
-    return reselect_1.createSelector([
-        function (s) { return redux_form_1.isValid(formName)(s); },
-        function (s) { return redux_form_1.isPristine(formName)(s); },
-        function (s) { return redux_form_1.isSubmitting(formName)(s); },
-        function (s) { return redux_form_1.hasSubmitSucceeded(formName)(s); }
+    if (isSubmittable === void 0) { isSubmittable = submittable; }
+    return createSelector([
+        function (s) { return isValid(formName)(s); },
+        function (s) { return isPristine(formName)(s); },
+        function (s) { return isSubmitting(formName)(s); },
+        function (s) { return hasSubmitSucceeded(formName)(s); }
     ], function (valid, pristine, submitting, submitSucceeded) {
         return {
             formName: formName,
@@ -30,14 +27,14 @@ var createFormSubmittableSelector = function (formName, disableResubmit, isSubmi
         };
     });
 };
-exports.InjectFormSubmittable = react_redux_1.connect(function (_, props) { return createFormSubmittableSelector(props.formName, props.disableResubmit, props.submittable); })(function InjectFormSubmittable(props) {
+export var InjectFormSubmittable = connect(function (_, props) { return createFormSubmittableSelector(props.formName, props.disableResubmit, props.submittable); })(function InjectFormSubmittable(props) {
     return props.children({
         disabled: props.disabled,
         onSubmit: function () {
-            props.dispatch(redux_form_1.submit(props.formName));
+            props.dispatch(submit(props.formName));
         },
         onReset: function () {
-            props.dispatch(redux_form_1.reset(props.formName));
+            props.dispatch(reset(props.formName));
         }
     });
 });
@@ -45,15 +42,15 @@ exports.InjectFormSubmittable = react_redux_1.connect(function (_, props) { retu
  *
  * @deprecated
  */
-exports.injectSubmittable = function (options) {
-    return function (Button) { return react_redux_1.connect(function (_, p) {
+export var injectSubmittable = function (options) {
+    return function (Button) { return connect(function (_, p) {
         return createFormSubmittableSelector(p.formName || options.formName, options.disableResubmit, options.submittable);
     })(/** @class */ (function (_super) {
         tslib_1.__extends(ConnectedButton, _super);
         function ConnectedButton() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
             _this.onClick = function () {
-                _this.props.dispatch(options.type === 'submit' ? redux_form_1.submit(_this.props.formName) : redux_form_1.reset(_this.props.formName));
+                _this.props.dispatch(options.type === 'submit' ? submit(_this.props.formName) : reset(_this.props.formName));
             };
             return _this;
         }

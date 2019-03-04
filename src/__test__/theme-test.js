@@ -1,21 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
+import * as tslib_1 from "tslib";
 window['requestAnimationFrame'] = function (callback) {
     setTimeout(callback, 0);
 };
-require("jest");
-var redux_1 = require("redux");
-var redux_form_1 = require("redux-form");
-var test_utils_1 = require("react-dom/test-utils");
-var React = require("react");
-var field_1 = require("../field");
+import "jest";
+import { createStore, combineReducers } from 'redux';
+import { reducer as reduxFormReducer, getFormValues } from "redux-form";
+import { renderIntoDocument, scryRenderedDOMComponentsWithTag, Simulate } from "react-dom/test-utils";
+import * as React from 'react';
+import { getType, clearTypes } from '../field';
 var PropTypes = require("prop-types");
 function describeTestWithStore(Container, schema, initialValues, expectation) {
-    var reducer = redux_1.combineReducers({
-        form: redux_form_1.reducer
+    var reducer = combineReducers({
+        form: reduxFormReducer
     });
-    var store = redux_1.createStore(reducer, {
+    var store = createStore(reducer, {
         form: {}
     });
     var Form = /** @class */ (function (_super) {
@@ -38,17 +36,17 @@ function describeTestWithStore(Container, schema, initialValues, expectation) {
         };
         return Form;
     }(React.PureComponent));
-    var wrapper = test_utils_1.renderIntoDocument(React.createElement(Container, null,
+    var wrapper = renderIntoDocument(React.createElement(Container, null,
         React.createElement(Form, null)));
-    expectation(wrapper, function () { return redux_form_1.getFormValues("default")(store.getState()); }, store);
+    expectation(wrapper, function () { return getFormValues("default")(store.getState()); }, store);
 }
-exports.testTheme = function (themeName, loadTheme, container) {
+export var testTheme = function (themeName, loadTheme, container) {
     describe("Theme: " + themeName, function () {
-        field_1.clearTypes();
+        clearTypes();
         loadTheme();
         test("Expect 'text' type to be defined", function () {
             //findRenderedComponentWithType does not work with Stateless Component
-            var TextInput = field_1.getType("text");
+            var TextInput = getType("text");
             expect(!!TextInput).toBeTruthy();
         });
         describeTestWithStore(container, [
@@ -75,7 +73,7 @@ exports.testTheme = function (themeName, loadTheme, container) {
             text1: "a"
         }, function (wrapper, getFormValues) {
             // const TextInput = getType("text")
-            var elements = test_utils_1.scryRenderedDOMComponentsWithTag(wrapper, "input");
+            var elements = scryRenderedDOMComponentsWithTag(wrapper, "input");
             test("Expect 1 and only 1 'text' type Component to be shown", function () {
                 expect(elements.length).toBe(1);
             });
@@ -88,16 +86,16 @@ exports.testTheme = function (themeName, loadTheme, container) {
             });
             test("Expect form state to updated", function () {
                 text1.value = "b";
-                test_utils_1.Simulate.change(text1, {});
+                Simulate.change(text1, {});
                 expect(getFormValues().text1).toBe('b');
             });
             test("Expect listening field to be updated by listened field", function () {
                 text1.value = "b";
-                test_utils_1.Simulate.change(text1, {});
+                Simulate.change(text1, {});
                 expect(getFormValues().text1).toBe('b');
             });
             test("Expect the second 'text' type Component to be rendered now", function () {
-                var elements = test_utils_1.scryRenderedDOMComponentsWithTag(wrapper, "input");
+                var elements = scryRenderedDOMComponentsWithTag(wrapper, "input");
                 expect(elements.length).toBe(2);
             });
         });

@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.requestFileUpload = function (multiple) {
+export var requestFileUpload = function (multiple) {
     var input;
     input = document.getElementById('hidden-file-input');
     if (!input) {
@@ -23,7 +21,7 @@ exports.requestFileUpload = function (multiple) {
     });
     return promise;
 };
-exports.requestDownload = function (options) {
+export var requestDownload = function (options) {
     var input = document.getElementById('hidden-anchor');
     if (!input) {
         input = document.createElement('a');

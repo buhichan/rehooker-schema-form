@@ -1,9 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullWidthInputs = "& .field.textarea, & .field.group,& .field.array,& .field.file,& .field.table-array, & .field.virtual-group, & .field.full-width";
-exports.widgetHeight = 85;
-exports.mobileMedia = "@media(max-width:768px)";
-exports.clearfix = {
+export var fullWidthInputs = "& .field.textarea, & .field.group,& .field.array,& .field.file,& .field.table-array, & .field.virtual-group, & .field.full-width";
+export var widgetHeight = 85;
+export var mobileMedia = "@media(max-width:768px)";
+export var clearfix = {
     "&:after": {
         content: "\" \"",
         display: "table",
