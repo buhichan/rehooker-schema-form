@@ -137,7 +137,7 @@ var AutoCompleteDefault = function (props) {
     return React.createElement("div", { style: { width: "100%" } },
         React.createElement("label", null, fieldSchema.label),
         React.createElement(ResolveMaybePromise, { maybePromise: fieldSchema.options }, function (options) {
-            return React.createElement(AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: input.value, filterOption: defaultAutoCompleteFilter, onSelect: function (value) { return input.onChange(value); } }, componentProps, { onBlur: noop, onFocus: noop }));
+            return React.createElement(AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: input.value, filterOption: defaultAutoCompleteFilter, onSelect: function (value) { return input.onChange(value); } }, componentProps));
         }),
         React.createElement("div", { style: errorStyle }, meta.error));
 };

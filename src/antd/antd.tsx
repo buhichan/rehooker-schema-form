@@ -228,8 +228,6 @@ const AutoCompleteDefault = function(props:WidgetProps){
                     filterOption={defaultAutoCompleteFilter}
                     onSelect={(value)=>input.onChange(value)}
                     {...componentProps}
-                    onBlur={noop}
-                    onFocus={noop}
                 />
             }}
         </ResolveMaybePromise>
