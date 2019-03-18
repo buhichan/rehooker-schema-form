@@ -6,7 +6,7 @@ import * as React from "react";
 import { useSource } from 'rehooker';
 import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
 import { combineLatest, merge } from 'rxjs';
-import { registerField, unregisterField, changeValue } from './mutations';
+import { registerField, unregisterField, changeValue, startValidation } from './mutations';
 import { isFullWidth } from './constants';
 /**
  * Created by buhi on 2017/7/26.
@@ -58,6 +58,9 @@ var StatelessField = React.memo(function StatelessField(props) {
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
         form.next(changeValue(keyPath + "." + schema.key, valueOrEvent, schema.validate, schema.parse));
     }; }, [form, schema.validate, schema.parse]);
+    var onBlur = React.useMemo(function () { return function () {
+        form.next(startValidation(keyPath + "." + schema.key, schema.validate));
+    }; }, [form, schema.validate, schema.parse]);
     React.useEffect(function () {
         props.form.next(registerField(schema, keyPath));
         return function () { return props.form.next(unregisterField(schema, keyPath)); };
@@ -72,18 +75,19 @@ var StatelessField = React.memo(function StatelessField(props) {
     var className = "field " + typeName
         + (isFullWidth(schema) ? " full-width" : "")
         + (componentProps.required ? " required" : "")
-        + (componentProps.disabled ? " disabled" : "");
+        + (componentProps.disabled ? " disabled" : "")
+        + (fieldState.error ? " invalid" : " valid");
     if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
         var StoredWidget = widgetRegistration.get(schema.type);
         if (StoredWidget) {
             return React.createElement("div", { className: className, style: schema.style },
-                React.createElement(StoredWidget, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange })));
+                React.createElement(StoredWidget, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur })));
         }
     }
     else if (typeof schema.type === 'function') {
         var Comp = schema.type;
         return React.createElement("div", { className: className, style: schema.style },
-            React.createElement(Comp, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange })));
+            React.createElement(Comp, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur })));
     }
     switch (schema.type) {
         //这里不可能存在getChildren还没有被执行的情况

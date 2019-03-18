@@ -160,7 +160,7 @@ exports.schema = [
         type: "select",
         label: "单选(async)",
         options: function () {
-            return fetch("/example/options.json").then(function (res) { return res.json(); });
+            return fetch("/options.json").then(function (res) { return res.json(); });
         }
     }, {
         key: "group1",

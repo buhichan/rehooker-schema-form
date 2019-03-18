@@ -6,8 +6,8 @@ import { FormFieldSchema} from '..';
 import "jest"
 import {renderIntoDocument, scryRenderedDOMComponentsWithTag, Simulate} from "react-dom/test-utils"
 import * as React from 'react';
-import { getType, clearTypes } from '../field';
-import { createForm, SchemaForm } from '../form';
+import { getType, clearTypes } from '../dist/field';
+import { createForm, SchemaForm } from '../dist/form';
 
 function describeTestWithStore(Container:React.ComponentClass<any>,schema:FormFieldSchema[], initialValues:any, expectation:(wrapper:any,getformValues:()=>any)=>void){
 

@@ -3,88 +3,57 @@
  */
 "use strict";
 const path=require('path');
-path.isAbsolute = require('path-is-absolute');
-require('es6-promise').polyfill();
 
 const webpack = require("webpack");
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 
 let NODE_ENV = process.env.NODE_ENV;
 
-const config = {
+module.exports = {
     entry: {
-        "main":[`./demo/example-antd.tsx`]
+        "main":[`./example-antd.tsx`]
     },
+    mode:NODE_ENV,
     output: {
-        path:  __dirname +"/demo",
+        path:  __dirname +"/",
         publicPath: "/",
         filename: NODE_ENV === 'production' ? "[name].[chunkHash].js" : "[name].js",
         chunkFilename: NODE_ENV==='development' ? '[name].[chunkHash].js' : '[name].js'
     },
     module: {
-        loaders: [{
+        rules: [{
             test: /\.tsx?$/,
-            loader: "awesome-typescript-loader",
-            exclude: /node_modules/
+            use: "awesome-typescript-loader",
         },{
             test: /\.css$/,
-            loader: ExtractTextPlugin.extract('style', 'css?sourceMap&-url!postcss')
+            use: ["style-loader","css-loader"],
         },{
             test: /\.html$/,
-            loader: 'raw'
+            use: 'raw-loader'
         }]
     },
     plugins: [
-        new webpack.optimize.DedupePlugin(),
-        new ExtractTextPlugin('[name].css'),
         new HtmlWebpackPlugin({
-            template: './demo/index.html',
+            template: './index.html',
             inject: 'body'
         }),
         new CopyWebpackPlugin([
             {
-                from:"./demo/options.json",
+                from:"./options.json",
                 to:"options.json"
             }
-        ])
+        ]),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': NODE_ENV==='development'?"'development'":"'produdction'"
+        })
     ],
     devServer:{
         contentBase: '.',
         stats:'minimal'
     },
     resolve:{
-        extensions: ['', '.js', '.ts', '.jsx', '.tsx', '.css', '.html'],
-        modulesDirectories:['node_modules'],
-        alias: {
-            react: path.resolve('./node_modules/react'),
-            'react-dom': path.resolve('./node_modules/react-dom'),
-            'redux-form': path.resolve('./node_modules/redux-form'),
-            "redux":path.resolve('./node_modules/redux'),
-            "immutable":path.resolve('./node_modules/immutable'),
-            "react-redux":path.resolve('./node_modules/react-redux')
-        },
-    }
-};
-
-config.plugins.push(
-    new webpack.DefinePlugin({
-        'process.env.NODE_ENV': NODE_ENV==='development'?"'development'":"'produdction'"
-    })
-);
-
-switch(NODE_ENV){
-    case "development": {
-        config.devtools = 'inline-source-map';
-        break;
-    }
-    case "production": {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin());
-        config.devtools = 'source-map';
-        break;
+        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.html']
     }
 }
-
-module.exports = config;

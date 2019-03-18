@@ -118,6 +118,32 @@ export function reset(f:FormState){
     }
 }
 
+export function startValidation(key:string,validate?:FormFieldSchema['validate']){
+    return function startValidation(s:FormState){
+        if(s.values){
+            const finalKey = key.slice(1)
+            const value = s.values[finalKey]
+            const error = validate && validate(value,s.values) || undefined
+            if(error){
+                s.errors = {
+                    ...s.errors,
+                    [finalKey]:error
+                }
+            }else{
+                delete s.errors[finalKey]
+            }
+            return {
+                ...s,
+                errors: {
+                    ...s.errors
+                }
+            }
+        }else{
+            return s
+        }
+    }
+}
+
 export function changeValue(key:string,valueOrEvent:any,validate?:FormFieldSchema['validate'],parse?:FormFieldSchema['parse']){
     return function changeValue(s:FormState){
         const newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent?valueOrEvent.target.value :valueOrEvent

@@ -36,7 +36,8 @@ export interface WidgetInjectedProps{
 export type WidgetProps = {
     schema:FormFieldSchema,
     form:Store<FormState>,
-    onChange:(e:any)=>void
+    onChange:(e:any)=>void,
+    onBlur:(e:any)=>void,
     value:any
     componentProps:any,
     keyPath:string,

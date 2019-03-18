@@ -41,6 +41,7 @@ export declare function reset(f: FormState): {
     initialValues: any;
     arrayKeys: string[];
 };
+export declare function startValidation(key: string, validate?: FormFieldSchema['validate']): (s: FormState) => FormState;
 export declare function changeValue(key: string, valueOrEvent: any, validate?: FormFieldSchema['validate'], parse?: FormFieldSchema['parse']): (s: FormState) => {
     errors: {
         [x: string]: string;

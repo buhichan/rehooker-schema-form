@@ -26,12 +26,16 @@ Option.propTypes && ( Option.propTypes['value'] = PropTypes.any );
 
 const emptyArray:any[] = []
 
-const errorStyle={color:"red"};
+function ErrorText({children}:{children:React.ReactText}){
+    return children ? <div className="error-text" >{children}</div> : null
+}
+
 function TextInput(props:WidgetProps){
     return <div>
         <div>{props.schema.label}</div>
         <div>
             <Input 
+                error={props.error}
                 type={props.schema.type}
                 id={props.schema.key}
                 className="full-width"
@@ -39,10 +43,11 @@ function TextInput(props:WidgetProps){
                 name={props.schema.name}
                 value={props.value}
                 onChange={props.onChange}
+                onBlur={props.onBlur}
                 {...props.componentProps}
             />
         </div>
-        <div style={errorStyle}>{props.error}</div>
+        <ErrorText>{props.error}</ErrorText>
     </div>
 }
 
@@ -58,7 +63,7 @@ class SelectInput extends React.PureComponent<WidgetProps>{
     }
     onSearchChange=(v:string)=>this.setState({search:v})
     render(){
-        const {schema,componentProps,value,error} = this.props
+        const {schema,componentProps,value,error,onBlur} = this.props
         return <div>
             <label>{schema.label}</label>
             <div>
@@ -73,6 +78,7 @@ class SelectInput extends React.PureComponent<WidgetProps>{
                         mode={schema.multiple?"multiple":"default"}
                         value={finalValue}
                         onChange={this.onChange}
+                        onBlur={onBlur}
                         filterOption={false}
                         {...componentProps}
                     >
@@ -86,9 +92,9 @@ class SelectInput extends React.PureComponent<WidgetProps>{
                 }}
             </ResolveMaybePromise>
             </div>
-            <div style={errorStyle}>
+            <ErrorText>
                 {error}
-            </div>
+            </ErrorText>
         </div>
     }
 }
@@ -99,6 +105,7 @@ function CheckboxInput (props:WidgetProps){
         <div>
             <Checkbox
                 onChange={(e)=>props.onChange((e.target as HTMLInputElement).checked)}
+                onBlur={props.onBlur}
                 checked={Boolean(props.value)}
                 {...props.componentProps}
             />
@@ -120,10 +127,11 @@ function DateTimeInput(props:WidgetProps){
                 value={value}
                 style={{width:"100%"}}
                 onChange={(_,dateString)=>props.onChange(dateString)}
+                onBlur={props.onBlur}
                 {...props.componentProps}
             />
         </div>
-        <div style={errorStyle}>{props.error}</div>
+        <ErrorText>{props.error}</ErrorText>
     </div>
 }
 
@@ -141,12 +149,13 @@ function DateInput(props:WidgetProps){
             value={value}
             style={{width:"100%"}}
             onChange={(_,dateString)=>{props.onChange(dateString)}}
+            onBlur={props.onBlur}
             {...props.componentProps}
         />
         </div>
-        <div style={errorStyle}>
+        <ErrorText>
             {props.error}
-        </div>
+        </ErrorText>
     </div>
 }
 
@@ -164,10 +173,11 @@ function DateTimeRangeInput (props:WidgetProps){
             onChange={(_,dataStrings)=>{
                 props.onChange(dataStrings);
             }}
+            onBlur={props.onBlur}
             {...props.componentProps}
         />
         </div>
-        <div style={errorStyle}>{props.error}</div>
+        <ErrorText>{props.error}</ErrorText>
     </div>
 }
 
@@ -181,16 +191,18 @@ function NumberInput(props:WidgetProps){
             id={props.schema.key}
             min={0}
             value={isNaN(parseFloat(props.value))?0:parseFloat(props.value)}
-            onChange={(value)=>{if(isNaN(parseFloat(value as any))){
-                props.onChange(0)
-            }else{
-                props.onChange(parseFloat(value as any) )
-            }
+            onChange={(value)=>{
+                if(isNaN(parseFloat(value as any))){
+                    props.onChange(0)
+                }else{
+                    props.onChange(parseFloat(value as any) )
+                }
             }} 
+            onBlur={props.onBlur}
             {...props.componentProps}
         />
         </div>
-        <div style={errorStyle}>{props.error}</div>
+        <ErrorText>{props.error}</ErrorText>
 
     </div>
 }
@@ -212,12 +224,13 @@ const AutoCompleteDefault = function(props:WidgetProps){
                     value={value}
                     filterOption={defaultAutoCompleteFilter}
                     onSelect={onChange}
+                    onBlur={props.onBlur}
                     {...props.componentProps}
                 />
             }}
         </ResolveMaybePromise>
         </div>
-        <div style={errorStyle}>{error}</div>
+        <ErrorText>{error}</ErrorText>
     </div>
 }
 
@@ -260,6 +273,7 @@ class FileInput extends React.Component<WidgetProps,any>{
                     multiple={true}
                     onChange={this.onChange}
                     customRequest={this.customRequest}
+                    onBlur={this.props.onBlur}
                     {...this.props.componentProps}
                 >
                     <Button>
@@ -283,6 +297,7 @@ function SelectRadio (props:WidgetProps){
             {options=><RadioGroup
                 value={props.value || false}
                 onChange={(v)=>props.onChange(v)}
+                onBlur={props.onBlur}
                 {...props.componentProps}
             >
                 {
@@ -298,7 +313,7 @@ function SelectRadio (props:WidgetProps){
             </RadioGroup>}
         </ResolveMaybePromise>
         </div>
-        <div style={errorStyle}>{props.error}</div>
+        <ErrorText>{props.error}</ErrorText>
     </div>
 }
 
@@ -314,10 +329,11 @@ function DateRangeInput (props:WidgetProps){
             defaultValue={[from?moment(from,dateFormat):undefined, to?moment(to,dateFormat):undefined]}
             format={dateFormat}
             onChange={(_,dateStrings)=>{props.onChange(dateStrings)}}
+            onBlur={props.onBlur}
             {...props.componentProps}
         />
         </div>
-        <div style={errorStyle}>{props.meta.error}</div>
+        <ErrorText>{props.meta.error}</ErrorText>
     </div>
 }
 
@@ -329,11 +345,12 @@ function TextareaInput (props:WidgetProps){
             <TextArea 
                 value={props.value}
                 onChange={(value)=>props.onChange(value)}
+                onBlur={props.onBlur}
                 autosize={{minRows:4,maxRows:8}} 
                 {...props.componentProps}
             />
         </div>
-        <div style={errorStyle}>{props.error}</div>
+        <ErrorText>{props.error}</ErrorText>
     </div>
 }
 
@@ -388,7 +405,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
         dataSource:emptyArray
     };
     render(){
-        const {error,onChange,schema,componentProps} = this.props;
+        const {error,onChange,schema,onBlur,componentProps} = this.props;
         return <div>
             <label>{schema.label}</label>
             <div>
@@ -397,13 +414,14 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
                 style={{width:"100%"}}
                 onSelect={onChange}
                 onSearch={this.onUpdateInput}
+                onBlur={onBlur}
                 filterOption={false}
                 {...componentProps}
             />
             </div>
-            <div style={errorStyle}>
+            <ErrorText>
                 {error}
-            </div>
+            </ErrorText>
         </div>
     }
 }
@@ -415,19 +433,20 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
         return this.props.onChange(entry?entry.value:name);
     };
     render(){
-        const {componentProps,onChange,error,schema} = this.props;
+        const {componentProps,onChange,onBlur,error,schema} = this.props;
         return <div>
             <label>{schema.label}</label>
             <div>
-            <AutoComplete
-                dataSource={(schema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
-                onSearch={this.onUpdateInput}
-                onSelect={onChange}
-                filterOption={defaultAutoCompleteFilter}
-                {...componentProps}
-            />
+                <AutoComplete
+                    dataSource={(schema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
+                    onSearch={this.onUpdateInput}
+                    onSelect={onChange}
+                    onBlur={onBlur}
+                    filterOption={defaultAutoCompleteFilter}
+                    {...componentProps}
+                />
             </div>
-            <div style={errorStyle}>{error}</div>
+            <ErrorText>{error}</ErrorText>
         </div>
     }
 }

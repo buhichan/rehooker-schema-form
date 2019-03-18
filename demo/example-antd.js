@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
 var ReactDOM = require("react-dom");
-require("../src/antd");
+require("../dist/antd");
 require("antd/dist/antd.css");
-require("../src/antd/antd-components.css");
+require("../styles/antd-components.css");
 var schema_example_1 = require("./schema-example");
-var form_1 = require("../src/form");
+var form_1 = require("../dist/form");
 var form = form_1.createForm();
 form.stream.subscribe(console.log);
 var App = /** @class */ (function (_super) {

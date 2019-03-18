@@ -6,7 +6,7 @@ import { FormFieldSchema, FieldListens, FormState, WidgetProps} from "./form";
 import { useSource, Store } from 'rehooker';
 import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
 import { combineLatest,merge } from 'rxjs';
-import { registerField, unregisterField, changeValue } from './mutations';
+import { registerField, unregisterField, changeValue, startValidation } from './mutations';
 import { isFullWidth } from './constants';
 /**
  * Created by buhi on 2017/7/26.
@@ -103,6 +103,11 @@ const StatelessField = React.memo( function StatelessField(props:FieldProps){
     const onChange = React.useMemo(()=>(valueOrEvent:any)=>{
         form.next(changeValue(keyPath+"."+schema.key,valueOrEvent,schema.validate,schema.parse))
     },[form,schema.validate,schema.parse])
+
+    const onBlur = React.useMemo(()=>()=>{
+        form.next(startValidation(keyPath+"."+schema.key,schema.validate))
+    },[form,schema.validate,schema.parse])
+
     React.useEffect(()=>{
         props.form.next(registerField(schema,keyPath))
         return ()=>props.form.next(unregisterField(schema,keyPath))
@@ -118,17 +123,18 @@ const StatelessField = React.memo( function StatelessField(props:FieldProps){
         + (isFullWidth(schema)?" full-width":"")
         + (componentProps.required?" required":"")
         + (componentProps.disabled?" disabled":"")
+        + (fieldState.error ? " invalid":" valid")
     if(typeof schema.type === 'string' && widgetRegistration.has(schema.type)){
         const StoredWidget = widgetRegistration.get(schema.type);
         if (StoredWidget) {
             return <div className={className} style={schema.style}>
-                <StoredWidget form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange}/>
+                <StoredWidget form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur}/>
             </div>
         }
     } else if (typeof schema.type === 'function'){
         const Comp = schema.type
         return <div className={className} style={schema.style}>
-            <Comp form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} />
+            <Comp form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
         </div>
     }
     switch (schema.type) {

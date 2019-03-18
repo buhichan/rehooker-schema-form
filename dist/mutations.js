@@ -86,6 +86,26 @@ export function submit(dispatch) {
 export function reset(f) {
     return tslib_1.__assign({}, f, { values: f.initialValues });
 }
+export function startValidation(key, validate) {
+    return function startValidation(s) {
+        var _a;
+        if (s.values) {
+            var finalKey = key.slice(1);
+            var value = s.values[finalKey];
+            var error = validate && validate(value, s.values) || undefined;
+            if (error) {
+                s.errors = tslib_1.__assign({}, s.errors, (_a = {}, _a[finalKey] = error, _a));
+            }
+            else {
+                delete s.errors[finalKey];
+            }
+            return tslib_1.__assign({}, s, { errors: tslib_1.__assign({}, s.errors) });
+        }
+        else {
+            return s;
+        }
+    };
+}
 export function changeValue(key, valueOrEvent, validate, parse) {
     return function changeValue(s) {
         var _a, _b;
