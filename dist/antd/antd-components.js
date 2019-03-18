@@ -180,7 +180,7 @@ function SelectRadio(props) {
     return React.createElement("div", null,
         React.createElement("label", { style: { paddingLeft: 0 } }, props.schema.label),
         React.createElement("div", null,
-            React.createElement(ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value || false, onChange: function (v) { return props.onChange(v); }, onBlur: props.onBlur }, props.componentProps), options ? options.map(function (option) { return (React.createElement(Radio, { style: {
+            React.createElement(ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value, onChange: function (v) { return props.onChange(v); }, onBlur: props.onBlur }, props.componentProps), options ? options.map(function (option) { return (React.createElement(Radio, { style: {
                     width: "auto",
                     flex: 1,
                     whiteSpace: "nowrap",

@@ -295,7 +295,7 @@ function SelectRadio (props:WidgetProps){
         <div>
         <ResolveMaybePromise maybePromise={props.schema.options}>
             {options=><RadioGroup
-                value={props.value || false}
+                value={props.value}
                 onChange={(v)=>props.onChange(v)}
                 onBlur={props.onBlur}
                 {...props.componentProps}
