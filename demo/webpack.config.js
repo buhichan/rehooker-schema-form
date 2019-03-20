@@ -9,15 +9,15 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 
-let NODE_ENV = process.env.NODE_ENV;
+let NODE_ENV = "development";
 
 module.exports = {
     entry: {
-        "main":[`./example-antd.tsx`]
+        "main":[__dirname+`/example-antd.tsx`]
     },
     mode:NODE_ENV,
     output: {
-        path:  __dirname +"/",
+        path:  __dirname +"/build/",
         publicPath: "/",
         filename: NODE_ENV === 'production' ? "[name].[chunkHash].js" : "[name].js",
         chunkFilename: NODE_ENV==='development' ? '[name].[chunkHash].js' : '[name].js'
@@ -36,12 +36,12 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './index.html',
+            template: __dirname+'/index.html',
             inject: 'body'
         }),
         new CopyWebpackPlugin([
             {
-                from:"./options.json",
+                from:__dirname+"/options.json",
                 to:"options.json"
             }
         ]),

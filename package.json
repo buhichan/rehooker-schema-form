@@ -12,7 +12,8 @@
     "test": "jest",
     "version": "npm run build && git add -A",
     "postversion": "git push && git push --tags",
-    "dev": "(cd demo && NODE_ENV=development webpack-dev-server --config ./webpack.config.js --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9013)"
+    "dev": "(cd demo && NODE_ENV=development webpack-dev-server --config ./webpack.config.js --devtool=source-map --host=0.0.0.0 --history-api-fallback --inline --progress --port 9013)",
+    "build:demo":"NODE_ENV=development webpack -c demo/webpack.config.js"
   },
   "peerDependencies": {
     "antd": "^3.*",
