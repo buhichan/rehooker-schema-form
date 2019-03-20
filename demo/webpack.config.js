@@ -18,7 +18,7 @@ module.exports = {
     mode:NODE_ENV,
     output: {
         path:  __dirname +"/build/",
-        publicPath: "/demo/build/",
+        publicPath: "/rehooker-schema-form/demo/build/",
         filename: NODE_ENV === 'production' ? "[name].[chunkHash].js" : "[name].js",
         chunkFilename: NODE_ENV==='development' ? '[name].[chunkHash].js' : '[name].js'
     },

@@ -155,7 +155,7 @@ export let schema:FormFieldSchema[] = [
         type:"select",
         label:"单选(async)",
         options:()=>{
-            return fetch("/options.json").then(res=>res.json())
+            return fetch("options.json").then(res=>res.json())
         }
     },{
         key:"group1",
