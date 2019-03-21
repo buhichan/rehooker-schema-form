@@ -89,6 +89,7 @@ export type SchemaFormProps = {
     form:Store<FormState>,
     initialValues?:any
     onSubmit?:(values:any)=>void | Promise<void>,
+    disableInitialize?:boolean
 }
 
 const defaultFormState:FormState = {
@@ -113,9 +114,11 @@ export function SchemaForm(props:SchemaFormProps){
         return false
     },[props.form])
     React.useEffect(()=>{
-        props.form.next(s=>{
-            return initialize(props.initialValues,props.onSubmit || (()=>{})) (s)
-        })
+        if(!props.disableInitialize){
+            props.form.next(s=>{
+                return initialize(props.initialValues,props.onSubmit || (()=>{})) (s)
+            })
+        }
     },[props.initialValues,props.onSubmit])
     React.useEffect(()=>()=>{
         props.form.next(()=>defaultFormState)

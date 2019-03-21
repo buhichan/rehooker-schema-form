@@ -81,6 +81,7 @@ export declare type SchemaFormProps = {
     form: Store<FormState>;
     initialValues?: any;
     onSubmit?: (values: any) => void | Promise<void>;
+    disableInitialize?: boolean;
 };
 export declare function createForm(middleware?: OperatorFunction<Mutation<FormState>, Mutation<FormState>>): Store<FormState>;
 export declare function SchemaForm(props: SchemaFormProps): JSX.Element;
