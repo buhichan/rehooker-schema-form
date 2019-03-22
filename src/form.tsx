@@ -79,6 +79,7 @@ export type FormState = {
     onSubmit:Function,
     initialValues:any,
     arrayKeys:string[]
+    initialized:boolean
 }
 
 // const store = createStore({})
@@ -90,6 +91,7 @@ export type SchemaFormProps = {
     initialValues?:any
     onSubmit?:(values:any)=>void | Promise<void>,
     disableInitialize?:boolean
+    disableDestruction?:boolean
 }
 
 const defaultFormState:FormState = {
@@ -101,6 +103,7 @@ const defaultFormState:FormState = {
     errors:{},
     values:undefined,
     arrayKeys:[],
+    initialized:false,
 }
 
 export function createForm(middleware?:OperatorFunction<Mutation<FormState>,Mutation<FormState>>){
@@ -116,12 +119,16 @@ export function SchemaForm(props:SchemaFormProps){
     React.useEffect(()=>{
         if(!props.disableInitialize){
             props.form.next(s=>{
-                return initialize(props.initialValues,props.onSubmit || (()=>{})) (s)
+                return initialize(props.initialValues,props.onSubmit || noopSubmit) (s)
             })
         }
     },[props.initialValues,props.onSubmit])
     React.useEffect(()=>()=>{
-        props.form.next(()=>defaultFormState)
+        if(!props.disableDestruction){
+            props.form.next(function destroyOnUnmounnt(){
+                return defaultFormState 
+            })
+        }
     },[props.form])
     const initialized = useSource(props.form.stream,map(x=>x.values))
     return <form className="schema-form" onSubmit={handleSubmit}>
@@ -130,4 +137,8 @@ export function SchemaForm(props:SchemaFormProps){
             (!props.noButton)? <FormButtons form={props.form} /> : null
         }
     </form>
+}
+
+const noopSubmit = ()=>{
+    console.warn("You see this because you pass no submit function!")
 }

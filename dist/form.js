@@ -16,6 +16,7 @@ var defaultFormState = {
     errors: {},
     values: undefined,
     arrayKeys: [],
+    initialized: false,
 };
 export function createForm(middleware) {
     return createStore(defaultFormState, middleware);
@@ -29,16 +30,23 @@ export function SchemaForm(props) {
     React.useEffect(function () {
         if (!props.disableInitialize) {
             props.form.next(function (s) {
-                return initialize(props.initialValues, props.onSubmit || (function () { }))(s);
+                return initialize(props.initialValues, props.onSubmit || noopSubmit)(s);
             });
         }
     }, [props.initialValues, props.onSubmit]);
     React.useEffect(function () { return function () {
-        props.form.next(function () { return defaultFormState; });
+        if (!props.disableDestruction) {
+            props.form.next(function destroyOnUnmounnt() {
+                return defaultFormState;
+            });
+        }
     }; }, [props.form]);
     var initialized = useSource(props.form.stream, map(function (x) { return x.values; }));
     return React.createElement("form", { className: "schema-form", onSubmit: handleSubmit },
         !initialized ? null : renderFields(props.form, props.schema, ""),
         (!props.noButton) ? React.createElement(FormButtons, { form: props.form }) : null);
 }
+var noopSubmit = function () {
+    console.warn("You see this because you pass no submit function!");
+};
 //# sourceMappingURL=form.js.map

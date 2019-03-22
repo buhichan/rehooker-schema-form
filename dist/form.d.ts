@@ -74,6 +74,7 @@ export declare type FormState = {
     onSubmit: Function;
     initialValues: any;
     arrayKeys: string[];
+    initialized: boolean;
 };
 export declare type SchemaFormProps = {
     schema: FormFieldSchema[];
@@ -82,6 +83,7 @@ export declare type SchemaFormProps = {
     initialValues?: any;
     onSubmit?: (values: any) => void | Promise<void>;
     disableInitialize?: boolean;
+    disableDestruction?: boolean;
 };
 export declare function createForm(middleware?: OperatorFunction<Mutation<FormState>, Mutation<FormState>>): Store<FormState>;
 export declare function SchemaForm(props: SchemaFormProps): JSX.Element;
