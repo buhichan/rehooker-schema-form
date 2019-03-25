@@ -190,9 +190,9 @@ const StatefulField = React.memo(function StatefulField(props:FieldProps){
                 map(x.then),
             )
         }))
-        const sub = $change.subscribe(change=>{
+        const subscription = $change.subscribe(change=>{
             if(change instanceof Promise){
-                change.then(change=>setSchema({
+                change.then(change=> !subscription.closed && setSchema({
                     ...props.schema,
                     ...change
                 }))
@@ -203,7 +203,7 @@ const StatefulField = React.memo(function StatefulField(props:FieldProps){
                 })
             }
         })
-        return sub.unsubscribe.bind(sub)
+        return ()=>subscription.unsubscribe()
     },[props.form, schema.listeners])
     return <StatelessField schema={schema} form={props.form} keyPath={props.keyPath} />
 })
