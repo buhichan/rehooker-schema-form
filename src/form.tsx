@@ -60,6 +60,8 @@ export type FormFieldSchema = WidgetInjectedProps & {
     style?:React.CSSProperties,
     defaultValue?:any // set when mount
     options?:Options | AsyncOptions | RuntimeAsyncOptions,
+
+    wrapperProps?:any // used as antd's Form.Item props
 }
 
 export type FormState = {

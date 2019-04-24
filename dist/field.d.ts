@@ -41,6 +41,7 @@ export declare function getComponentProps(field: FormFieldSchema): {
     locale?: any;
     dateFormat?: string | undefined;
     defaultValue?: any;
+    wrapperProps?: any;
 };
 export declare function useFieldState(form: Store<FormState>, name: string, format?: (v: any) => any): {
     value: any;

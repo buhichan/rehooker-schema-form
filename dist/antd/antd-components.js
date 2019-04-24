@@ -5,7 +5,7 @@
 import * as tslib_1 from "tslib";
 import * as React from "react";
 import { addType, renderFields } from "../field";
-import { AutoComplete, Radio, Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input, Select, DatePicker, Collapse } from 'antd';
+import { AutoComplete, Radio, Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input, Select, DatePicker, Collapse, Form } from 'antd';
 import { setButton } from "../inject-submittable";
 import * as moment from "moment";
 import { ResolveMaybePromise } from '../resolve-maybe-promise';
@@ -24,12 +24,12 @@ function ErrorText(_a) {
     var children = _a.children;
     return children ? React.createElement("div", { className: "error-text" }, children) : null;
 }
+function InputWraper(props) {
+    return React.createElement(Form.Item, tslib_1.__assign({ help: props.error, required: props.schema.required, validateStatus: props.error ? "error" : undefined, label: props.schema.label, hasFeedback: !!props.error }, props.schema.wrapperProps), props.children);
+}
 function TextInput(props) {
-    return React.createElement("div", null,
-        React.createElement("div", null, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(Input, tslib_1.__assign({ error: props.error, type: props.schema.type, id: props.schema.key, className: "full-width", style: { width: "100%" }, name: props.schema.name, value: props.value, onChange: props.onChange, onBlur: props.onBlur }, props.componentProps))),
-        React.createElement(ErrorText, null, props.error));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(Input, tslib_1.__assign({ type: props.schema.type, id: props.schema.key, className: "full-width", style: { width: "100%" }, name: props.schema.name, value: props.value, onChange: props.onChange, onBlur: props.onBlur }, props.componentProps)));
 }
 var SelectInput = /** @class */ (function (_super) {
     tslib_1.__extends(SelectInput, _super);
@@ -49,38 +49,30 @@ var SelectInput = /** @class */ (function (_super) {
     }
     SelectInput.prototype.render = function () {
         var _this = this;
-        var _a = this.props, schema = _a.schema, componentProps = _a.componentProps, value = _a.value, error = _a.error, onBlur = _a.onBlur;
-        return React.createElement("div", null,
-            React.createElement("label", null, schema.label),
-            React.createElement("div", null,
-                React.createElement(ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
-                    if (options == undefined)
-                        options = emptyArray;
-                    var finalValue = schema.multiple || componentProps.mode === "multiple" ? (Array.isArray(value) ? value : []) : value;
-                    return React.createElement(Select, tslib_1.__assign({ showSearch: true, onSearch: _this.onSearchChange, mode: schema.multiple ? "multiple" : "default", value: finalValue, onChange: _this.onChange, onBlur: onBlur, filterOption: false }, componentProps), options.filter(function (option) {
-                        return !_this.state.search || option.name.toLowerCase().indexOf(_this.state.search.toLowerCase()) >= 0;
-                    }).slice(0, schema.maxOptionCount || Infinity).map(function (option) {
-                        var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
-                        return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
-                    }));
-                })),
-            React.createElement(ErrorText, null, error));
+        var _a = this.props, schema = _a.schema, componentProps = _a.componentProps, value = _a.value, onBlur = _a.onBlur;
+        return React.createElement(InputWraper, tslib_1.__assign({}, this.props),
+            React.createElement(ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
+                if (options == undefined)
+                    options = emptyArray;
+                var finalValue = schema.multiple || componentProps.mode === "multiple" ? (Array.isArray(value) ? value : []) : value;
+                return React.createElement(Select, tslib_1.__assign({ showSearch: true, onSearch: _this.onSearchChange, mode: schema.multiple ? "multiple" : "default", value: finalValue, onChange: _this.onChange, onBlur: onBlur, filterOption: false }, componentProps), options.filter(function (option) {
+                    return !_this.state.search || option.name.toLowerCase().indexOf(_this.state.search.toLowerCase()) >= 0;
+                }).slice(0, schema.maxOptionCount || Infinity).map(function (option) {
+                    var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
+                    return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
+                }));
+            }));
     };
     return SelectInput;
 }(React.PureComponent));
 function CheckboxInput(props) {
-    return React.createElement("div", null,
-        React.createElement("label", null, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, onBlur: props.onBlur, checked: Boolean(props.value) }, props.componentProps))));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, onBlur: props.onBlur, checked: Boolean(props.value) }, props.componentProps)));
 }
 function DateTimeInput(props) {
     var value = props.value ? moment(props.value) : undefined;
-    return React.createElement("div", null,
-        React.createElement("label", null, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); }, onBlur: props.onBlur }, props.componentProps))),
-        React.createElement(ErrorText, null, props.error));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); }, onBlur: props.onBlur }, props.componentProps)));
 }
 function DateInput(props) {
     var value = null;
@@ -88,48 +80,36 @@ function DateInput(props) {
         if (!(props.value instanceof moment))
             value = moment(props.value);
     }
-    return React.createElement("div", null,
-        React.createElement("label", null, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(DatePicker, tslib_1.__assign({ key: props.schema.name, value: value, style: { width: "100%" }, onChange: function (_, dateString) { props.onChange(dateString); }, onBlur: props.onBlur }, props.componentProps))),
-        React.createElement(ErrorText, null, props.error));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(DatePicker, tslib_1.__assign({ key: props.schema.name, value: value, style: { width: "100%" }, onChange: function (_, dateString) { props.onChange(dateString); }, onBlur: props.onBlur }, props.componentProps)));
 }
 function DateTimeRangeInput(props) {
     var value = props.value;
-    return React.createElement("div", null,
-        React.createElement("label", null, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], value: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
-                    props.onChange(dataStrings);
-                }, onBlur: props.onBlur }, props.componentProps))),
-        React.createElement(ErrorText, null, props.error));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], value: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
+                props.onChange(dataStrings);
+            }, onBlur: props.onBlur }, props.componentProps)));
 }
 function NumberInput(props) {
-    return React.createElement("div", { style: { width: "100%" } },
-        React.createElement("label", null, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(InputNumber, tslib_1.__assign({ style: { width: "100%" }, id: props.schema.key, min: 0, value: isNaN(parseFloat(props.value)) ? 0 : parseFloat(props.value), onChange: function (value) {
-                    if (isNaN(parseFloat(value))) {
-                        props.onChange(0);
-                    }
-                    else {
-                        props.onChange(parseFloat(value));
-                    }
-                }, onBlur: props.onBlur }, props.componentProps))),
-        React.createElement(ErrorText, null, props.error));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(InputNumber, tslib_1.__assign({ style: { width: "100%" }, id: props.schema.key, min: 0, value: isNaN(parseFloat(props.value)) ? 0 : parseFloat(props.value), onChange: function (value) {
+                if (isNaN(parseFloat(value))) {
+                    props.onChange(0);
+                }
+                else {
+                    props.onChange(parseFloat(value));
+                }
+            }, onBlur: props.onBlur }, props.componentProps)));
 }
 var defaultAutoCompleteFilter = function (input, element) {
     return typeof element.props.children === 'string' && element.props.children.includes(input);
 };
 var AutoCompleteDefault = function (props) {
-    var error = props.error, value = props.value, onChange = props.onChange, schema = props.schema;
-    return React.createElement("div", { style: { width: "100%" } },
-        React.createElement("label", null, schema.label),
-        React.createElement("div", null,
-            React.createElement(ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
-                return React.createElement(AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange, onBlur: props.onBlur }, props.componentProps));
-            })),
-        React.createElement(ErrorText, null, error));
+    var value = props.value, onChange = props.onChange, schema = props.schema;
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
+            return React.createElement(AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange, onBlur: props.onBlur }, props.componentProps));
+        }));
 };
 var FileInput = /** @class */ (function (_super) {
     tslib_1.__extends(FileInput, _super);
@@ -166,45 +146,36 @@ var FileInput = /** @class */ (function (_super) {
         return _this;
     }
     FileInput.prototype.render = function () {
-        return React.createElement("div", null,
+        return React.createElement("div", { style: { paddingLeft: "var(--schema-form-label-width)" } },
             React.createElement("div", null,
                 React.createElement(Upload, tslib_1.__assign({ fileList: this.props.value || emptyArray, multiple: true, onChange: this.onChange, customRequest: this.customRequest, onBlur: this.props.onBlur }, this.props.componentProps),
                     React.createElement(Button, null,
                         React.createElement(Icon, { type: "upload" }),
                         React.createElement("span", null, this.props.schema.label)))),
-            React.createElement("div", { style: { color: "red" } }, this.props.meta.error));
+            React.createElement(ErrorText, null, this.props.meta.error));
     };
     return FileInput;
 }(React.Component));
 function SelectRadio(props) {
-    return React.createElement("div", null,
-        React.createElement("label", { style: { paddingLeft: 0 } }, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value, onChange: function (v) { return props.onChange(v); }, onBlur: props.onBlur }, props.componentProps), options ? options.map(function (option) { return (React.createElement(Radio, { style: {
-                    width: "auto",
-                    flex: 1,
-                    whiteSpace: "nowrap",
-                    margin: "0 15px 0 0"
-                }, key: option.value, value: option.value }, option.name)); }) : null); })),
-        React.createElement(ErrorText, null, props.error));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value, onChange: function (v) { return props.onChange(v); }, onBlur: props.onBlur }, props.componentProps), options ? options.map(function (option) { return (React.createElement(Radio, { style: {
+                width: "auto",
+                flex: 1,
+                whiteSpace: "nowrap",
+                margin: "0 15px 0 0"
+            }, key: option.value, value: option.value }, option.name)); }) : null); }));
 }
 function DateRangeInput(props) {
     var dateFormat = props.schema.dateFormat || 'YYYY/MM/DD';
     var value = props.value;
     var from = value ? value[0] : undefined;
     var to = value ? value[1] : undefined;
-    return React.createElement("div", null,
-        React.createElement("label", null, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(RangePicker, tslib_1.__assign({ defaultValue: [from ? moment(from, dateFormat) : undefined, to ? moment(to, dateFormat) : undefined], format: dateFormat, onChange: function (_, dateStrings) { props.onChange(dateStrings); }, onBlur: props.onBlur }, props.componentProps))),
-        React.createElement(ErrorText, null, props.meta.error));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(RangePicker, tslib_1.__assign({ defaultValue: [from ? moment(from, dateFormat) : undefined, to ? moment(to, dateFormat) : undefined], format: dateFormat, onChange: function (_, dateStrings) { props.onChange(dateStrings); }, onBlur: props.onBlur }, props.componentProps)));
 }
 function TextareaInput(props) {
-    return React.createElement("div", { style: { marginBottom: 16 } },
-        React.createElement("label", null, props.schema.label),
-        React.createElement("div", null,
-            React.createElement(TextArea, tslib_1.__assign({ value: props.value, onChange: function (value) { return props.onChange(value); }, onBlur: props.onBlur, autosize: { minRows: 4, maxRows: 8 } }, props.componentProps))),
-        React.createElement(ErrorText, null, props.error));
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(TextArea, tslib_1.__assign({ value: props.value, onChange: function (value) { return props.onChange(value); }, onBlur: props.onBlur, autosize: { minRows: 4, maxRows: 8 } }, props.componentProps)));
 }
 var AutoCompleteAsync = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
@@ -260,12 +231,9 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
         return entry ? entry.name : value;
     };
     AutoCompleteAsync.prototype.render = function () {
-        var _a = this.props, error = _a.error, onChange = _a.onChange, schema = _a.schema, onBlur = _a.onBlur, componentProps = _a.componentProps;
-        return React.createElement("div", null,
-            React.createElement("label", null, schema.label),
-            React.createElement("div", null,
-                React.createElement(AutoComplete, tslib_1.__assign({ dataSource: this.state.dataSource, style: { width: "100%" }, onSelect: onChange, onSearch: this.onUpdateInput, onBlur: onBlur, filterOption: false }, componentProps))),
-            React.createElement(ErrorText, null, error));
+        var _a = this.props, onChange = _a.onChange, onBlur = _a.onBlur, componentProps = _a.componentProps;
+        return React.createElement(InputWraper, tslib_1.__assign({}, this.props),
+            React.createElement(AutoComplete, tslib_1.__assign({ dataSource: this.state.dataSource, style: { width: "100%" }, onSelect: onChange, onSearch: this.onUpdateInput, onBlur: onBlur, filterOption: false }, componentProps)));
     };
     return AutoCompleteAsync;
 }(React.Component));
@@ -280,12 +248,9 @@ var AutoCompleteText = /** @class */ (function (_super) {
         return _this;
     }
     AutoCompleteText.prototype.render = function () {
-        var _a = this.props, componentProps = _a.componentProps, onChange = _a.onChange, onBlur = _a.onBlur, error = _a.error, schema = _a.schema;
-        return React.createElement("div", null,
-            React.createElement("label", null, schema.label),
-            React.createElement("div", null,
-                React.createElement(AutoComplete, tslib_1.__assign({ dataSource: schema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: onChange, onBlur: onBlur, filterOption: defaultAutoCompleteFilter }, componentProps))),
-            React.createElement(ErrorText, null, error));
+        var _a = this.props, componentProps = _a.componentProps, onChange = _a.onChange, onBlur = _a.onBlur, schema = _a.schema;
+        return React.createElement(InputWraper, tslib_1.__assign({}, this.props),
+            React.createElement(AutoComplete, tslib_1.__assign({ dataSource: schema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: onChange, onBlur: onBlur, filterOption: defaultAutoCompleteFilter }, componentProps)));
     };
     return AutoCompleteText;
 }(React.Component));

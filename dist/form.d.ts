@@ -56,6 +56,7 @@ export declare type FormFieldSchema = WidgetInjectedProps & {
     style?: React.CSSProperties;
     defaultValue?: any;
     options?: Options | AsyncOptions | RuntimeAsyncOptions;
+    wrapperProps?: any;
 };
 export declare type FormState = {
     submitting: boolean;

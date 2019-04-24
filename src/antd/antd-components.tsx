@@ -5,7 +5,7 @@
 
 import * as React from "react"
 import {addType, renderFields} from "../field";
-import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input,Select,DatePicker, Collapse} from 'antd';
+import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input,Select,DatePicker, Collapse, Form} from 'antd';
 import {Options, WidgetProps} from "../form";
 import {RuntimeAsyncOptions} from "../form";
 import { setButton } from "../inject-submittable";
@@ -30,25 +30,26 @@ function ErrorText({children}:{children:React.ReactText}){
     return children ? <div className="error-text" >{children}</div> : null
 }
 
+function InputWraper(props:WidgetProps & {children:React.ReactNode}){
+    return <Form.Item help={props.error} required={props.schema.required} validateStatus={props.error ? "error" : undefined} label={props.schema.label} hasFeedback={!!props.error} {...props.schema.wrapperProps}>
+        {props.children}
+    </Form.Item>
+}
+
 function TextInput(props:WidgetProps){
-    return <div>
-        <div>{props.schema.label}</div>
-        <div>
-            <Input 
-                error={props.error}
-                type={props.schema.type}
-                id={props.schema.key}
-                className="full-width"
-                style={{width:"100%"}}
-                name={props.schema.name}
-                value={props.value}
-                onChange={props.onChange}
-                onBlur={props.onBlur}
-                {...props.componentProps}
-            />
-        </div>
-        <ErrorText>{props.error}</ErrorText>
-    </div>
+    return <InputWraper {...props}>
+        <Input 
+            type={props.schema.type}
+            id={props.schema.key}
+            className="full-width"
+            style={{width:"100%"}}
+            name={props.schema.name}
+            value={props.value}
+            onChange={props.onChange}
+            onBlur={props.onBlur}
+            {...props.componentProps}
+        />
+    </InputWraper>
 }
 
 class SelectInput extends React.PureComponent<WidgetProps>{
@@ -63,10 +64,8 @@ class SelectInput extends React.PureComponent<WidgetProps>{
     }
     onSearchChange=(v:string)=>this.setState({search:v})
     render(){
-        const {schema,componentProps,value,error,onBlur} = this.props
-        return <div>
-            <label>{schema.label}</label>
-            <div>
+        const {schema,componentProps,value,onBlur} = this.props
+        return <InputWraper {...this.props}>
             <ResolveMaybePromise maybePromise={schema.options} >
                 {(options)=>{
                     if(options == undefined)
@@ -91,26 +90,19 @@ class SelectInput extends React.PureComponent<WidgetProps>{
                     </Select>
                 }}
             </ResolveMaybePromise>
-            </div>
-            <ErrorText>
-                {error}
-            </ErrorText>
-        </div>
+        </InputWraper>
     }
 }
 
 function CheckboxInput (props:WidgetProps){
-    return <div>
-        <label>{props.schema.label}</label>
-        <div>
-            <Checkbox
-                onChange={(e)=>props.onChange((e.target as HTMLInputElement).checked)}
-                onBlur={props.onBlur}
-                checked={Boolean(props.value)}
-                {...props.componentProps}
-            />
-        </div>
-    </div>
+    return <InputWraper {...props}>
+        <Checkbox
+            onChange={(e)=>props.onChange((e.target as HTMLInputElement).checked)}
+            onBlur={props.onBlur}
+            checked={Boolean(props.value)}
+            {...props.componentProps}
+        />
+    </InputWraper>
 }
 
 
@@ -118,21 +110,17 @@ function CheckboxInput (props:WidgetProps){
 
 function DateTimeInput(props:WidgetProps){
     const value=props.value?moment(props.value):undefined;
-    return <div>
-        <label>{props.schema.label}</label>
-        <div>
-            <DatePicker
-                showTime
-                format={props.componentProps.dateFormat||"YYYY/MM/DD HH:mm:ss"}
-                value={value}
-                style={{width:"100%"}}
-                onChange={(_,dateString)=>props.onChange(dateString)}
-                onBlur={props.onBlur}
-                {...props.componentProps}
-            />
-        </div>
-        <ErrorText>{props.error}</ErrorText>
-    </div>
+    return <InputWraper {...props}>
+        <DatePicker
+            showTime
+            format={props.componentProps.dateFormat||"YYYY/MM/DD HH:mm:ss"}
+            value={value}
+            style={{width:"100%"}}
+            onChange={(_,dateString)=>props.onChange(dateString)}
+            onBlur={props.onBlur}
+            {...props.componentProps}
+        />
+    </InputWraper>
 }
 
 function DateInput(props:WidgetProps){
@@ -141,9 +129,7 @@ function DateInput(props:WidgetProps){
         if(!(props.value instanceof moment))
             value= moment(props.value);
     }
-    return<div >
-        <label>{props.schema.label}</label>
-        <div>
+    return<InputWraper {...props}>
         <DatePicker
             key={props.schema.name}
             value={value}
@@ -152,18 +138,12 @@ function DateInput(props:WidgetProps){
             onBlur={props.onBlur}
             {...props.componentProps}
         />
-        </div>
-        <ErrorText>
-            {props.error}
-        </ErrorText>
-    </div>
+    </InputWraper>
 }
 
 function DateTimeRangeInput (props:WidgetProps){
     let value =props.value
-    return <div>
-        <label>{props.schema.label}</label>
-        <div>
+    return <InputWraper {...props}>
         <RangePicker
             showTime={{ format: 'HH:mm:ss' }}
             style={{width:"100%"}}
@@ -176,16 +156,12 @@ function DateTimeRangeInput (props:WidgetProps){
             onBlur={props.onBlur}
             {...props.componentProps}
         />
-        </div>
-        <ErrorText>{props.error}</ErrorText>
-    </div>
+    </InputWraper>
 }
 
 
 function NumberInput(props:WidgetProps){
-    return <div style={{width:"100%"}}>
-        <label>{props.schema.label}</label>
-        <div>
+    return <InputWraper {...props} >
         <InputNumber
             style={{width:"100%"}}
             id={props.schema.key}
@@ -201,10 +177,7 @@ function NumberInput(props:WidgetProps){
             onBlur={props.onBlur}
             {...props.componentProps}
         />
-        </div>
-        <ErrorText>{props.error}</ErrorText>
-
-    </div>
+    </InputWraper>
 }
 
 const defaultAutoCompleteFilter = (input:string,element:any)=>{
@@ -212,10 +185,8 @@ const defaultAutoCompleteFilter = (input:string,element:any)=>{
 }
 
 const AutoCompleteDefault = function(props:WidgetProps){
-    const {error,value,onChange,schema} = props;
-    return <div style={{ width:"100%" }}>
-        <label>{schema.label}</label>
-        <div>
+    const {value,onChange,schema} = props;
+    return <InputWraper {...props}>
         <ResolveMaybePromise maybePromise={schema.options}>
             {options=>{
                 return <AutoComplete
@@ -229,9 +200,7 @@ const AutoCompleteDefault = function(props:WidgetProps){
                 />
             }}
         </ResolveMaybePromise>
-        </div>
-        <ErrorText>{error}</ErrorText>
-    </div>
+    </InputWraper>
 }
 
 
@@ -266,7 +235,7 @@ class FileInput extends React.Component<WidgetProps,any>{
         }
     };
     render(){
-        return <div>
+        return <div style={{paddingLeft:"var(--schema-form-label-width)"}}>
             <div>
                 <Upload
                     fileList={this.props.value||emptyArray}
@@ -282,17 +251,13 @@ class FileInput extends React.Component<WidgetProps,any>{
                     </Button>
                 </Upload>
             </div>
-            <div style={{color:"red"}}>{this.props.meta.error}</div>
+            <ErrorText>{this.props.meta.error}</ErrorText>
         </div>
     }
 }
 
 function SelectRadio (props:WidgetProps){
-    return <div>
-        <label style={{paddingLeft:0}}>
-            {props.schema.label}
-        </label>
-        <div>
+    return <InputWraper {...props}>
         <ResolveMaybePromise maybePromise={props.schema.options}>
             {options=><RadioGroup
                 value={props.value}
@@ -312,9 +277,7 @@ function SelectRadio (props:WidgetProps){
                 }
             </RadioGroup>}
         </ResolveMaybePromise>
-        </div>
-        <ErrorText>{props.error}</ErrorText>
-    </div>
+    </InputWraper>
 }
 
 function DateRangeInput (props:WidgetProps){
@@ -322,9 +285,7 @@ function DateRangeInput (props:WidgetProps){
     const value=props.value
     const from =value?value[0]:undefined;
     const to =value?value[1]:undefined;
-    return <div >
-        <label>{props.schema.label}</label>
-        <div>
+    return <InputWraper {...props}>
         <RangePicker
             defaultValue={[from?moment(from,dateFormat):undefined, to?moment(to,dateFormat):undefined]}
             format={dateFormat}
@@ -332,26 +293,20 @@ function DateRangeInput (props:WidgetProps){
             onBlur={props.onBlur}
             {...props.componentProps}
         />
-        </div>
-        <ErrorText>{props.meta.error}</ErrorText>
-    </div>
+    </InputWraper>
 }
 
 
 function TextareaInput (props:WidgetProps){
-    return <div style={{marginBottom:16}}>
-        <label>{props.schema.label}</label>
-        <div>
-            <TextArea 
-                value={props.value}
-                onChange={(value)=>props.onChange(value)}
-                onBlur={props.onBlur}
-                autosize={{minRows:4,maxRows:8}} 
-                {...props.componentProps}
-            />
-        </div>
-        <ErrorText>{props.error}</ErrorText>
-    </div>
+    return <InputWraper {...props}>
+        <TextArea 
+            value={props.value}
+            onChange={(value)=>props.onChange(value)}
+            onBlur={props.onBlur}
+            autosize={{minRows:4,maxRows:8}} 
+            {...props.componentProps}
+        />
+    </InputWraper>
 }
 
 
@@ -405,10 +360,8 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
         dataSource:emptyArray
     };
     render(){
-        const {error,onChange,schema,onBlur,componentProps} = this.props;
-        return <div>
-            <label>{schema.label}</label>
-            <div>
+        const {onChange,onBlur,componentProps} = this.props;
+        return <InputWraper {...this.props}>
             <AutoComplete
                 dataSource={this.state.dataSource}
                 style={{width:"100%"}}
@@ -418,11 +371,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
                 filterOption={false}
                 {...componentProps}
             />
-            </div>
-            <ErrorText>
-                {error}
-            </ErrorText>
-        </div>
+        </InputWraper>
     }
 }
 
@@ -433,21 +382,17 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
         return this.props.onChange(entry?entry.value:name);
     };
     render(){
-        const {componentProps,onChange,onBlur,error,schema} = this.props;
-        return <div>
-            <label>{schema.label}</label>
-            <div>
-                <AutoComplete
-                    dataSource={(schema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
-                    onSearch={this.onUpdateInput}
-                    onSelect={onChange}
-                    onBlur={onBlur}
-                    filterOption={defaultAutoCompleteFilter}
-                    {...componentProps}
-                />
-            </div>
-            <ErrorText>{error}</ErrorText>
-        </div>
+        const {componentProps,onChange,onBlur,schema} = this.props;
+        return <InputWraper {...this.props}>
+            <AutoComplete
+                dataSource={(schema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
+                onSearch={this.onUpdateInput}
+                onSelect={onChange}
+                onBlur={onBlur}
+                filterOption={defaultAutoCompleteFilter}
+                {...componentProps}
+            />
+        </InputWraper>
     }
 }
 

@@ -44,6 +44,7 @@ export let schema:FormFieldSchema[] = [
         type:"select",
         label:"单选",
         placeholder:"一般的单选",
+        required:true,
         options:[
             {
                 name:"苹果",
@@ -56,7 +57,13 @@ export let schema:FormFieldSchema[] = [
                 name:"哈哈",
                 value:0
             }
-        ]
+        ],
+        validate:v=>{
+            if(v === 0){
+                return "不能是0"
+            }
+            return null
+        }
     },{
         key:'select-long-list',
         type:"select",

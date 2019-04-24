@@ -47,8 +47,8 @@
 .schema-form .field {
     float: left;
     width: 100%;
-    height: var(--widget-height);
-    margin-bottom: 8px;
+    /* height: var(--widget-height); */
+    /* margin-bottom: 8px; */
 }
 
 .schema-form .field:not(.full-width)>*>*:first-child {
