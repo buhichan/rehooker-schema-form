@@ -147,15 +147,14 @@ export function startValidation(key:string,validate?:FormFieldSchema['validate']
 export function changeValue(key:string,valueOrEvent:any,validate?:FormFieldSchema['validate'],parse?:FormFieldSchema['parse']){
     return function changeValue(s:FormState){
         const newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent?valueOrEvent.target.value :valueOrEvent
-        const finalKey = key.slice(1)
         const error = validate && validate(newValue,s.values) || undefined
         if(error){
             s.errors = {
                 ...s.errors,
-                [finalKey]:error
+                [key]:error
             }
         }else{
-            delete s.errors[finalKey]
+            delete s.errors[key]
         }
         return {
             ...s,
@@ -164,7 +163,7 @@ export function changeValue(key:string,valueOrEvent:any,validate?:FormFieldSchem
             },
             values:{
                 ...s.values,
-                [finalKey]:parse?parse(newValue):newValue,
+                [key]:parse?parse(newValue):newValue,
             }
         }
     }
@@ -201,7 +200,7 @@ export function initialize(initialValues:any, onSubmit:Function){
 
 export function addArrayItem(key:string, oldKeys:string[]){
     return function addArrayItem(f:FormState){
-        return changeValue(key, (oldKeys || []).concat(randomID()))(f)
+        return changeValue(key.slice(1) /** it begins with dot */, (oldKeys || []).concat(randomID()))(f)
     }
 }
 

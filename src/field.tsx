@@ -101,7 +101,7 @@ const StatelessField = React.memo( function StatelessField(props:FieldProps){
     const componentProps = getComponentProps(schema)
     const fieldState = useFieldState(form,keyPath+"."+schema.key,schema.format)
     const onChange = React.useMemo(()=>(valueOrEvent:any)=>{
-        form.next(changeValue(keyPath+"."+schema.key,valueOrEvent,schema.validate,schema.parse))
+        form.next(changeValue( (keyPath+"."+schema.key).slice(1) /** it begins with dot */ ,valueOrEvent,schema.validate,schema.parse))
     },[form,schema.validate,schema.parse])
 
     const onBlur = React.useMemo(()=>()=>{

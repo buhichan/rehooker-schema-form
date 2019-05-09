@@ -1,17 +1,19 @@
-import * as tslib_1 from "tslib";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 /**
  * Created by buhi on 2017/7/26.
  */
-import * as React from "react";
-import { useSource } from 'rehooker';
-import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
-import { combineLatest, merge } from 'rxjs';
-import { registerField, unregisterField, changeValue, startValidation } from './mutations';
-import { isFullWidth } from './constants';
+var React = require("react");
+var rehooker_1 = require("rehooker");
+var operators_1 = require("rxjs/operators");
+var rxjs_1 = require("rxjs");
+var mutations_1 = require("./mutations");
+var constants_1 = require("./constants");
 /**
  * Created by buhi on 2017/7/26.
  */
-export function renderFields(form, schema, keyPath) {
+function renderFields(form, schema, keyPath) {
     if (!schema)
         return null;
     return schema.map(function (field) {
@@ -26,22 +28,27 @@ export function renderFields(form, schema, keyPath) {
             return React.createElement(StatelessField, { form: form, key: key, schema: field, keyPath: keyPath });
     });
 }
-export function addType(name, widget) {
+exports.renderFields = renderFields;
+function addType(name, widget) {
     widgetRegistration.set(name, widget);
 }
+exports.addType = addType;
 var widgetRegistration = new Map();
-export function clearTypes() {
+function clearTypes() {
     widgetRegistration.clear();
 }
-export function getType(name) {
+exports.clearTypes = clearTypes;
+function getType(name) {
     return widgetRegistration.get(name);
 }
-export function getComponentProps(field) {
+exports.getType = getType;
+function getComponentProps(field) {
     var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, value = field.value, maxOptionCount = field.maxOptionCount, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple", "value", "maxOptionCount"]);
     return rest;
 }
-export function useFieldState(form, name, format) {
-    return useSource(form.stream, function (ob) { return ob.pipe(skipWhile(function (x) { return x.values === undefined; }), map(function (s) {
+exports.getComponentProps = getComponentProps;
+function useFieldState(form, name, format) {
+    return rehooker_1.useSource(form.stream, function (ob) { return ob.pipe(operators_1.skipWhile(function (x) { return x.values === undefined; }), operators_1.map(function (s) {
         var key = name.slice(1); //name always begin with dot
         var value = s.values && s.values[key];
         return {
@@ -49,21 +56,22 @@ export function useFieldState(form, name, format) {
             error: s.errors[key],
             meta: s.meta[key]
         };
-    }, debounceTime(24))); }, [form, name, format]);
+    }, operators_1.debounceTime(24))); }, [form, name, format]);
 }
+exports.useFieldState = useFieldState;
 var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
     var componentProps = getComponentProps(schema);
     var fieldState = useFieldState(form, keyPath + "." + schema.key, schema.format);
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
-        form.next(changeValue((keyPath + "." + schema.key).slice(1) /** it begins with dot */, valueOrEvent, schema.validate, schema.parse));
+        form.next(mutations_1.changeValue((keyPath + "." + schema.key).slice(1) /** it begins with dot */, valueOrEvent, schema.validate, schema.parse));
     }; }, [form, schema.validate, schema.parse]);
     var onBlur = React.useMemo(function () { return function () {
-        form.next(startValidation(keyPath + "." + schema.key, schema.validate));
+        form.next(mutations_1.startValidation(keyPath + "." + schema.key, schema.validate));
     }; }, [form, schema.validate, schema.parse]);
     React.useEffect(function () {
-        props.form.next(registerField(schema, keyPath));
-        return function () { return props.form.next(unregisterField(schema, keyPath)); };
+        props.form.next(mutations_1.registerField(schema, keyPath));
+        return function () { return props.form.next(mutations_1.unregisterField(schema, keyPath)); };
     }, []);
     if (!fieldState)
         return null;
@@ -73,7 +81,7 @@ var StatelessField = React.memo(function StatelessField(props) {
     if (typeof schema.type !== 'string')
         typeName = "";
     var className = "field " + typeName
-        + (isFullWidth(schema) ? " full-width" : "")
+        + (constants_1.isFullWidth(schema) ? " full-width" : "")
         + (componentProps.required ? " required" : "")
         + (componentProps.disabled ? " disabled" : "")
         + (fieldState.error ? " invalid" : " valid");
@@ -113,14 +121,14 @@ var StatefulField = React.memo(function StatefulField(props) {
     var _a = React.useState(props.schema), schema = _a[0], setSchema = _a[1];
     var listens = schema.listens;
     React.useEffect(function () {
-        var $value = props.form.stream.pipe(skipWhile(function (x) { return x.values === undefined; }), map(function (x) { return x.values; }), distinct());
-        var $change = merge.apply(void 0, listens.map(function (x) {
+        var $value = props.form.stream.pipe(operators_1.skipWhile(function (x) { return x.values === undefined; }), operators_1.map(function (x) { return x.values; }), operators_1.distinct());
+        var $change = rxjs_1.merge.apply(void 0, listens.map(function (x) {
             var listenTo = typeof x.to === 'function' ? x.to(props.keyPath) : x.to;
-            return combineLatest(listenTo.map(function (x) {
-                return $value.pipe(map(function (v) {
+            return rxjs_1.combineLatest(listenTo.map(function (x) {
+                return $value.pipe(operators_1.map(function (v) {
                     return v && v[x];
-                }), distinctUntilChanged());
-            })).pipe(map(x.then));
+                }), operators_1.distinctUntilChanged());
+            })).pipe(operators_1.map(x.then));
         }));
         var subscription = $change.subscribe(function (change) {
             if (change instanceof Promise) {
