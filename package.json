@@ -21,7 +21,7 @@
     "react": "*",
     "react-dom": "*",
     "react-jss": "*",
-    "rehooker": "^0.0.4",
+    "rehooker": "^0.0.9",
     "tslib": "*"
   },
   "keywords": [
@@ -46,7 +46,7 @@
     "raw-loader": "^1.0.0",
     "react-dom": "^16.7.0-alpha.2||^16.7.0",
     "react-jss": "6.*",
-    "rehooker": "git+ssh://git@github.com:buhichan/rehooker.git",
+    "rehooker": "^0.0.9",
     "style-loader": "^0.23.1",
     "tslib": "^1.8.0",
     "typescript": "^3.3.3333",

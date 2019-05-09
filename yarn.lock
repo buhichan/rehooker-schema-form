@@ -5784,9 +5784,10 @@ regex-not@^1.0.0, regex-not@^1.0.2:
     extend-shallow "^3.0.2"
     safe-regex "^1.1.0"
 
-"rehooker@git+ssh://git@github.com:buhichan/rehooker.git":
-  version "0.0.5"
-  resolved "git+ssh://git@github.com:buhichan/rehooker.git#0649bfad0a36ce5640dbb555a209cd30ea217560"
+rehooker@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/rehooker/-/rehooker-0.0.9.tgz#7af34e74c41c4e1099750f22f56d4de839117cb3"
+  integrity sha512-95pPaep924Seh/RIYfLW5DODON1/HiZmDUD+U5gkCoeX91SoFK92W87jbIjcklgJDG5S8h5MoMXPFNyHjiPCzQ==
   dependencies:
     react "*"
     rxjs "^6.3.3"
