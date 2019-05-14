@@ -7,37 +7,32 @@ var SubmissionError = /** @class */ (function () {
     return SubmissionError;
 }());
 export { SubmissionError };
-export function registerField(schema, keyPath) {
+export function registerField(key, schema) {
     return function registerField(f) {
         var _a;
-        var key = (keyPath + "." + schema.key).slice(1);
         return tslib_1.__assign({}, f, { meta: tslib_1.__assign({}, f.meta, (_a = {}, _a[key] = {
                 schema: schema
             }, _a)) });
     };
 }
-export function unregisterField(schema, keyPath) {
+export function unregisterField(key) {
     return function unregisterField(f) {
-        var key = (keyPath + "." + schema.key).slice(1);
         if (!(f.values && key in f.values) &&
             !(f.errors && key in f.errors) &&
             !(f.meta && key in f.meta)) {
             //no change to make
             return f;
         }
-        if (f.values) {
-            f.values = deleteKey(f.values, key);
-        }
-        if (f.errors) {
-            f.errors = deleteKey(f.errors, key);
-        }
-        if (f.meta) {
-            f.meta = deleteKey(f.meta, key);
-        }
-        return tslib_1.__assign({}, f);
+        return tslib_1.__assign({}, f, f.values ? {
+            values: deleteKey(f.values, key)
+        } : {}, f.errors ? {
+            errors: deleteKey(f.errors, key)
+        } : {}, f.meta ? {
+            meta: deleteKey(f.meta, key)
+        } : {});
     };
 }
-export function submit(dispatch) {
+export function submit(dispatch, submitFunc) {
     return dispatch(function submit(f) {
         var values = f.values;
         if (!values)
@@ -67,15 +62,20 @@ export function submit(dispatch) {
             deepSet(res, key.split(".").map(function (x) { return x in mapItemIDToIndex ? mapItemIDToIndex[x] : x; }), values[key]);
             return res;
         }, {});
-        var maybePromise = f.onSubmit && f.onSubmit(finalValue);
+        var maybePromise = submitFunc(finalValue);
         if (maybePromise instanceof Promise) {
+            //setTimeout 是为了避免立刻提交产生的执行顺序的问题
             maybePromise.then(function () {
-                dispatch(function submitSucceed(f) {
-                    return tslib_1.__assign({}, f, { submitting: false, submitSucceed: true });
+                setTimeout(function () {
+                    dispatch(function submitSucceed(f) {
+                        return tslib_1.__assign({}, f, { submitting: false, submitSucceeded: true });
+                    });
                 });
             }).catch(function (error) {
-                dispatch(function submitFailed(f) {
-                    return tslib_1.__assign({}, f, { errors: error instanceof SubmissionError ? tslib_1.__assign({}, f.errors, error.error) : f.errors, submitting: false, submitSucceed: false });
+                setTimeout(function () {
+                    dispatch(function submitFailed(f) {
+                        return tslib_1.__assign({}, f, { errors: error instanceof SubmissionError ? tslib_1.__assign({}, f.errors, error.error) : f.errors, submitting: false, submitSucceeded: false });
+                    });
                 });
                 throw error;
             });
@@ -90,10 +90,9 @@ export function startValidation(key, validate) {
     return function startValidation(s) {
         var _a;
         if (s.values) {
-            var finalKey = key.slice(1);
-            var value = s.values[finalKey];
+            var value = s.values[key];
             var newError = validate && validate(value, s.values) || undefined;
-            return tslib_1.__assign({}, s, { errors: newError ? tslib_1.__assign({}, s.errors, (_a = {}, _a[finalKey] = newError, _a)) : deleteKey(s.errors, finalKey) });
+            return tslib_1.__assign({}, s, { errors: newError ? tslib_1.__assign({}, s.errors, (_a = {}, _a[key] = newError, _a)) : deleteKey(s.errors, key) });
         }
         else {
             return s;
@@ -108,16 +107,18 @@ export function changeValue(key, valueOrEvent, validate, parse) {
         return tslib_1.__assign({}, s, { errors: newError ? tslib_1.__assign({}, s.errors, (_a = {}, _a[key] = newError, _a)) : deleteKey(s.errors, key), values: tslib_1.__assign({}, s.values, (_b = {}, _b[key] = parse ? parse(newValue) : newValue, _b)) });
     };
 }
-export function initialize(initialValues, onSubmit) {
+export function initialize(initialValues, schema) {
     return function initialize(f) {
         var initialValuesMap = {};
         var arrayKeys = [];
         function traverseValues(value, keyPath) {
-            if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
-                var itemIDs_1 = new Array(value.length).fill(null).map(function () { return randomID(); });
-                value.forEach(function (v, i) { return traverseValues(v, keyPath.concat(itemIDs_1[i])); });
-                arrayKeys.push(keyPath.join("."));
-                initialValuesMap[keyPath.join(".")] = itemIDs_1;
+            var keyPathStr = keyPath.join(".");
+            if (arrayKeys.includes(keyPathStr)) {
+                var itemIDs_1 = f.values && keyPathStr in f.values ? f.values[keyPathStr] : new Array(value.length).fill(null).map(function () { return randomID(); });
+                if (value instanceof Array) {
+                    value.forEach(function (v, i) { return traverseValues(v, keyPath.concat(itemIDs_1[i])); });
+                }
+                initialValuesMap[keyPathStr] = itemIDs_1;
             }
             else if (value != undefined && typeof value === "object" && !Array.isArray(value)) {
                 Object.keys(value).forEach(function (k) {
@@ -125,33 +126,44 @@ export function initialize(initialValues, onSubmit) {
                 });
             }
             else {
-                initialValuesMap[keyPath.join(".")] = value;
+                initialValuesMap[keyPathStr] = value;
             }
         }
+        function traverseSchema(schema, keyPath) {
+            schema.forEach(function (x) {
+                if (x.type === 'array') {
+                    arrayKeys.push(keyPath.concat(x.key).join("."));
+                    x.children && traverseSchema(x.children, keyPath.concat(x.key));
+                }
+            });
+        }
+        traverseSchema(schema, []);
         initialValues && traverseValues(initialValues, []);
-        return tslib_1.__assign({}, f, { arrayKeys: arrayKeys, onSubmit: onSubmit, values: initialValuesMap, initialValues: initialValuesMap });
+        return tslib_1.__assign({}, f, { arrayKeys: arrayKeys,
+            schema: schema, values: initialValuesMap, initialValues: initialValuesMap, initialized: true });
     };
 }
 export function addArrayItem(key, oldKeys) {
     return function addArrayItem(f) {
-        return changeValue(key.slice(1) /** it begins with dot */, (oldKeys || []).concat(randomID()))(f);
+        return changeValue(key, (oldKeys || []).concat(randomID()))(f);
     };
 }
-export function removeArrayItem(key, oldKeys, removedKey) {
+export function removeArrayItem(key, oldKeys, removedId) {
     return function removeArrayItem(f) {
-        var i = oldKeys.indexOf(removedKey);
+        var i = oldKeys.indexOf(removedId);
         var copy = oldKeys.slice();
         copy.splice(i, 1);
+        var removedKeyPath = key + "." + removedId;
         function filterKey(oldMap) {
             return Object.keys(oldMap).reduce(function (newV, k) {
-                if (!(k.includes(removedKey))) {
+                if (!(k.includes(removedKeyPath))) {
                     newV[k] = oldMap[k];
-                    return newV;
                 }
+                return newV;
             }, {});
         }
         var s1 = changeValue(key, copy)(f);
-        return tslib_1.__assign({}, s1, { errors: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), values: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), meta: filterKey(tslib_1.__assign({}, f.meta, s1.meta)) });
+        return tslib_1.__assign({}, s1, { errors: filterKey(tslib_1.__assign({}, s1.errors)), values: filterKey(tslib_1.__assign({}, s1.values)), meta: filterKey(tslib_1.__assign({}, s1.meta)) });
     };
 }
 function deleteKey(obj, key) {

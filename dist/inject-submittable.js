@@ -2,7 +2,7 @@ import * as tslib_1 from "tslib";
 import * as React from 'react';
 import { useSource } from 'rehooker';
 import { map } from 'rxjs/operators';
-import { submit, reset } from './mutations';
+import { submit, reset } from '.';
 var FormButtonsImpl = function (props) {
     return React.createElement("div", { className: "button" },
         React.createElement("div", { className: "btn-group" },
@@ -23,14 +23,15 @@ export function FormButtons(props) {
             Object.keys(values).every(function (k) {
                 var v1 = values[k];
                 var v2 = s.initialValues[k];
-                return v1 === v2 || !v1 && !v2;
+                return v1 === v2 || v1 == undefined && v2 == undefined;
             });
         var hasError = Object.keys(s.errors).length !== 0;
+        var submittable = !hasError &&
+            !pristine &&
+            !s.submitting &&
+            !(props.disableResubmit && s.submitSucceeded);
         return {
-            submittable: !hasError &&
-                !pristine &&
-                !s.submitting &&
-                !(props.disableResubmit && s.submitSucceeded),
+            submittable: submittable,
             submitting: s.submitting,
             submitSucceeded: s.submitSucceeded
         };
@@ -45,7 +46,7 @@ export function FormButtons(props) {
             if (e && e.preventDefault) {
                 e.preventDefault();
             }
-            submit(props.form.next);
+            submit(props.form.next, props.onSubmit);
         },
         onReset: function (e) {
             if (e && e.preventDefault) {

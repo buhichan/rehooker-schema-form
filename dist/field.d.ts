@@ -43,7 +43,7 @@ export declare function getComponentProps(field: FormFieldSchema): {
     defaultValue?: any;
     wrapperProps?: any;
 };
-export declare function useFieldState(form: Store<FormState>, name: string, format?: (v: any) => any): {
+export declare function useFieldState(form: Store<FormState>, key: string, format?: (v: any) => any): {
     value: any;
     error: string;
     meta: {

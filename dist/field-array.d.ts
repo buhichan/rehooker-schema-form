@@ -3,9 +3,12 @@ import { FormState } from './form';
 import { Store } from 'rehooker';
 declare type FieldArrayProps = {
     form: Store<FormState>;
-    name: string;
+    name: string; /** begins with a dot */
     value: string[];
-    children: (childKeys: string[], add: () => void, remove: (key: string) => void) => React.ReactNode;
+    children: (childKeys: {
+        key: string;
+        remove: () => void;
+    }[], add: () => void) => React.ReactNode;
 };
 export declare function FieldArray(props: FieldArrayProps): JSX.Element;
 export {};

@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { FormState } from './form';
 import { Store } from 'rehooker';
+import { FormState } from './form';
 declare type FormButtonsProps = {
     disabled: boolean;
     submitSucceeded: boolean;
@@ -25,6 +25,7 @@ declare type InjectFormSubmittableProps = {
      */
     disableResubmit?: boolean;
     children?: typeof FormButtonsImpl;
+    onSubmit: (formValues: any) => Promise<void>;
 };
 export declare function FormButtons(props: InjectFormSubmittableProps): JSX.Element | null;
 export {};

@@ -36,11 +36,6 @@ exports.schema = [
         type: "text",
         placeholder: "一般的文本,带验证",
         label: "文本属性",
-        validate: function (v) {
-            if (v !== "a")
-                return "必须是a";
-            return undefined;
-        }
     }, {
         key: 'select1',
         type: "select",
@@ -60,12 +55,6 @@ exports.schema = [
                 value: 0
             }
         ],
-        validate: function (v) {
-            if (v === 0) {
-                return "不能是0";
-            }
-            return null;
-        }
     }, {
         key: 'select-long-list',
         type: "select",
@@ -132,11 +121,11 @@ exports.schema = [
         label: "文件",
         multiple: true,
         placeholder: "placeholder",
-        validate: function (v) {
-            if (v instanceof File && !v.type.startsWith('image/'))
-                return "只能上传图片";
-            return undefined;
-        },
+        // validate:(v:File|string)=>{
+        //     if(v instanceof File && !v.type.startsWith('image/'))
+        //         return "只能上传图片"
+        //     return undefined
+        // },
         onFileChange: function (_) {
             return new Promise(function (r) {
                 setTimeout(function () {
@@ -178,11 +167,11 @@ exports.schema = [
                 type: "number",
                 key: "phone",
                 placeholder: "placeholder",
-                validate: function (v) {
-                    if (v > 900)
-                        return "最大900";
-                    return undefined;
-                },
+                // validate:v=>{
+                //     if(v>900)
+                //         return "最大900"
+                //     return undefined
+                // },
                 label: "手机号",
                 listens: [
                     {
@@ -232,11 +221,6 @@ exports.schema = [
                 type: "email",
                 fullWidth: true,
                 label: "email with validation",
-                validate: function (v) {
-                    if (!/.*@.*\..*/.test(v))
-                        return "not a valid email";
-                    return undefined;
-                }
             },
         ]
     }, {

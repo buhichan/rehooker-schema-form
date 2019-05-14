@@ -5784,10 +5784,9 @@ regex-not@^1.0.0, regex-not@^1.0.2:
     extend-shallow "^3.0.2"
     safe-regex "^1.1.0"
 
-rehooker@^0.0.9:
+rehooker@buhichan/rehooker:
   version "0.0.9"
-  resolved "https://registry.yarnpkg.com/rehooker/-/rehooker-0.0.9.tgz#7af34e74c41c4e1099750f22f56d4de839117cb3"
-  integrity sha512-95pPaep924Seh/RIYfLW5DODON1/HiZmDUD+U5gkCoeX91SoFK92W87jbIjcklgJDG5S8h5MoMXPFNyHjiPCzQ==
+  resolved "https://codeload.github.com/buhichan/rehooker/tar.gz/a67a0a1b4bbf0afab55d7f496778f3909ab9a1a5"
   dependencies:
     react "*"
     rxjs "^6.3.3"

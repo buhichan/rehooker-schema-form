@@ -78,7 +78,6 @@ export type FormState = {
             schema:FormFieldSchema
         }
     }
-    onSubmit:Function,
     initialValues:any,
     arrayKeys:string[]
     initialized:boolean
@@ -91,7 +90,7 @@ export type SchemaFormProps = {
     noButton?:boolean,
     form:Store<FormState>,
     initialValues?:any
-    onSubmit?:(values:any)=>void | Promise<void>,
+    onSubmit?:(values:any)=>Promise<void>,
     disableInitialize?:boolean
     disableDestruction?:boolean
 }
@@ -100,7 +99,6 @@ const defaultFormState:FormState = {
     submitting:false,
     submitSucceeded:false,
     initialValues:undefined,
-    onSubmit:()=>{},
     meta:{},
     errors:{},
     values:undefined,
@@ -115,16 +113,16 @@ export function createForm(middleware?:OperatorFunction<Mutation<FormState>,Muta
 export function SchemaForm(props:SchemaFormProps){
     const handleSubmit = React.useMemo(()=>(e:React.FormEvent)=>{
         e.preventDefault()
-        submit(props.form.next)
+        submit(props.form.next,props.onSubmit || noopSubmit)
         return false
     },[props.form])
     React.useEffect(()=>{
         if(!props.disableInitialize){
             props.form.next(s=>{
-                return initialize(props.initialValues,props.onSubmit || noopSubmit) (s)
+                return initialize(props.initialValues,props.schema) (s)
             })
         }
-    },[props.initialValues,props.onSubmit])
+    },[props.initialValues,props.schema,props.onSubmit])
     React.useEffect(()=>()=>{
         if(!props.disableDestruction){
             props.form.next(function destroyOnUnmounnt(){
@@ -136,11 +134,11 @@ export function SchemaForm(props:SchemaFormProps){
     return <form className="schema-form" onSubmit={handleSubmit}>
         {!initialized ? null : renderFields(props.form,props.schema,"")}
         {
-            (!props.noButton)? <FormButtons form={props.form} /> : null
+            (!props.noButton)? <FormButtons onSubmit={props.onSubmit || noopSubmit} form={props.form} /> : null
         }
     </form>
 }
 
 const noopSubmit = ()=>{
-    console.warn("You see this because you pass no submit function!")
+    return Promise.resolve()
 }

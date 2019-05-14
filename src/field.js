@@ -47,9 +47,8 @@ function getComponentProps(field) {
     return rest;
 }
 exports.getComponentProps = getComponentProps;
-function useFieldState(form, name, format) {
+function useFieldState(form, key, format) {
     return rehooker_1.useSource(form.stream, function (ob) { return ob.pipe(operators_1.skipWhile(function (x) { return x.values === undefined; }), operators_1.map(function (s) {
-        var key = name.slice(1); //name always begin with dot
         var value = s.values && s.values[key];
         return {
             value: format ? format(value) : value,
@@ -62,16 +61,17 @@ exports.useFieldState = useFieldState;
 var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
     var componentProps = getComponentProps(schema);
-    var fieldState = useFieldState(form, keyPath + "." + schema.key, schema.format);
+    var finalKey = (keyPath + "." + schema.key).slice(1); /** it begins with dot */
+    var fieldState = useFieldState(form, finalKey, schema.format);
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
-        form.next(mutations_1.changeValue((keyPath + "." + schema.key).slice(1) /** it begins with dot */, valueOrEvent, schema.validate, schema.parse));
+        form.next(mutations_1.changeValue(finalKey, valueOrEvent, schema.validate, schema.parse));
     }; }, [form, schema.validate, schema.parse]);
     var onBlur = React.useMemo(function () { return function () {
-        form.next(mutations_1.startValidation(keyPath + "." + schema.key, schema.validate));
+        form.next(mutations_1.startValidation(finalKey, schema.validate));
     }; }, [form, schema.validate, schema.parse]);
     React.useEffect(function () {
-        props.form.next(mutations_1.registerField(schema, keyPath));
-        return function () { return props.form.next(mutations_1.unregisterField(schema, keyPath)); };
+        props.form.next(mutations_1.registerField(finalKey, schema));
+        return function () { return props.form.next(mutations_1.unregisterField(finalKey)); };
     }, []);
     if (!fieldState)
         return null;

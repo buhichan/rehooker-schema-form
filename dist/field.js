@@ -40,9 +40,8 @@ export function getComponentProps(field) {
     var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, value = field.value, maxOptionCount = field.maxOptionCount, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple", "value", "maxOptionCount"]);
     return rest;
 }
-export function useFieldState(form, name, format) {
+export function useFieldState(form, key, format) {
     return useSource(form.stream, function (ob) { return ob.pipe(skipWhile(function (x) { return x.values === undefined; }), map(function (s) {
-        var key = name.slice(1); //name always begin with dot
         var value = s.values && s.values[key];
         return {
             value: format ? format(value) : value,
@@ -54,16 +53,17 @@ export function useFieldState(form, name, format) {
 var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
     var componentProps = getComponentProps(schema);
-    var fieldState = useFieldState(form, keyPath + "." + schema.key, schema.format);
+    var finalKey = (keyPath + "." + schema.key).slice(1); /** it begins with dot */
+    var fieldState = useFieldState(form, finalKey, schema.format);
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
-        form.next(changeValue((keyPath + "." + schema.key).slice(1) /** it begins with dot */, valueOrEvent, schema.validate, schema.parse));
+        form.next(changeValue(finalKey, valueOrEvent, schema.validate, schema.parse));
     }; }, [form, schema.validate, schema.parse]);
     var onBlur = React.useMemo(function () { return function () {
-        form.next(startValidation(keyPath + "." + schema.key, schema.validate));
+        form.next(startValidation(finalKey, schema.validate));
     }; }, [form, schema.validate, schema.parse]);
     React.useEffect(function () {
-        props.form.next(registerField(schema, keyPath));
-        return function () { return props.form.next(unregisterField(schema, keyPath)); };
+        props.form.next(registerField(finalKey, schema));
+        return function () { return props.form.next(unregisterField(finalKey)); };
     }, []);
     if (!fieldState)
         return null;

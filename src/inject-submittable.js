@@ -4,7 +4,7 @@ var tslib_1 = require("tslib");
 var React = require("react");
 var rehooker_1 = require("rehooker");
 var operators_1 = require("rxjs/operators");
-var mutations_1 = require("./mutations");
+var _1 = require(".");
 var FormButtonsImpl = function (props) {
     return React.createElement("div", { className: "button" },
         React.createElement("div", { className: "btn-group" },
@@ -26,14 +26,15 @@ function FormButtons(props) {
             Object.keys(values).every(function (k) {
                 var v1 = values[k];
                 var v2 = s.initialValues[k];
-                return v1 === v2 || !v1 && !v2;
+                return v1 === v2 || v1 == undefined && v2 == undefined;
             });
         var hasError = Object.keys(s.errors).length !== 0;
+        var submittable = !hasError &&
+            !pristine &&
+            !s.submitting &&
+            !(props.disableResubmit && s.submitSucceeded);
         return {
-            submittable: !hasError &&
-                !pristine &&
-                !s.submitting &&
-                !(props.disableResubmit && s.submitSucceeded),
+            submittable: submittable,
             submitting: s.submitting,
             submitSucceeded: s.submitSucceeded
         };
@@ -48,13 +49,13 @@ function FormButtons(props) {
             if (e && e.preventDefault) {
                 e.preventDefault();
             }
-            mutations_1.submit(props.form.next);
+            _1.submit(props.form.next, props.onSubmit);
         },
         onReset: function (e) {
             if (e && e.preventDefault) {
                 e.preventDefault();
             }
-            props.form.next(mutations_1.reset);
+            props.form.next(_1.reset);
         }
     };
     if (!props.children)

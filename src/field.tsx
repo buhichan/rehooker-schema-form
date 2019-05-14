@@ -80,11 +80,10 @@ export function getComponentProps(field:FormFieldSchema){
     return rest
 }
 
-export function useFieldState(form:Store<FormState>,name:string,format?:(v:any)=>any){
+export function useFieldState(form:Store<FormState>,key:string,format?:(v:any)=>any){
     return useSource(form.stream,ob=>ob.pipe(
         skipWhile(x=>x.values === undefined),
         map(s=>{
-            const key = name.slice(1) //name always begin with dot
             const value = s.values && s.values[key]
             return {
                 value:format?format(value):value,
@@ -99,18 +98,23 @@ export function useFieldState(form:Store<FormState>,name:string,format?:(v:any)=
 const StatelessField = React.memo( function StatelessField(props:FieldProps){
     const {schema, form, keyPath} = props;
     const componentProps = getComponentProps(schema)
-    const fieldState = useFieldState(form,keyPath+"."+schema.key,schema.format)
+
+    const finalKey = (keyPath+"."+schema.key).slice(1) /** it begins with dot */
+
+    const fieldState = useFieldState(form,finalKey,schema.format)
+
+
     const onChange = React.useMemo(()=>(valueOrEvent:any)=>{
-        form.next(changeValue( (keyPath+"."+schema.key).slice(1) /** it begins with dot */ ,valueOrEvent,schema.validate,schema.parse))
+        form.next(changeValue(  finalKey,valueOrEvent,schema.validate,schema.parse))
     },[form,schema.validate,schema.parse])
 
     const onBlur = React.useMemo(()=>()=>{
-        form.next(startValidation(keyPath+"."+schema.key,schema.validate))
+        form.next(startValidation(finalKey,schema.validate))
     },[form,schema.validate,schema.parse])
 
     React.useEffect(()=>{
-        props.form.next(registerField(schema,keyPath))
-        return ()=>props.form.next(unregisterField(schema,keyPath))
+        props.form.next(registerField(finalKey,schema))
+        return ()=>props.form.next(unregisterField(finalKey))
     },[])
     if(!fieldState)
         return null

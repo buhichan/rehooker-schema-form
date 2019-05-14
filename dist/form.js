@@ -11,7 +11,6 @@ var defaultFormState = {
     submitting: false,
     submitSucceeded: false,
     initialValues: undefined,
-    onSubmit: function () { },
     meta: {},
     errors: {},
     values: undefined,
@@ -24,16 +23,16 @@ export function createForm(middleware) {
 export function SchemaForm(props) {
     var handleSubmit = React.useMemo(function () { return function (e) {
         e.preventDefault();
-        submit(props.form.next);
+        submit(props.form.next, props.onSubmit || noopSubmit);
         return false;
     }; }, [props.form]);
     React.useEffect(function () {
         if (!props.disableInitialize) {
             props.form.next(function (s) {
-                return initialize(props.initialValues, props.onSubmit || noopSubmit)(s);
+                return initialize(props.initialValues, props.schema)(s);
             });
         }
-    }, [props.initialValues, props.onSubmit]);
+    }, [props.initialValues, props.schema, props.onSubmit]);
     React.useEffect(function () { return function () {
         if (!props.disableDestruction) {
             props.form.next(function destroyOnUnmounnt() {
@@ -44,9 +43,9 @@ export function SchemaForm(props) {
     var initialized = useSource(props.form.stream, map(function (x) { return x.values; }));
     return React.createElement("form", { className: "schema-form", onSubmit: handleSubmit },
         !initialized ? null : renderFields(props.form, props.schema, ""),
-        (!props.noButton) ? React.createElement(FormButtons, { form: props.form }) : null);
+        (!props.noButton) ? React.createElement(FormButtons, { onSubmit: props.onSubmit || noopSubmit, form: props.form }) : null);
 }
 var noopSubmit = function () {
-    console.warn("You see this because you pass no submit function!");
+    return Promise.resolve();
 };
 //# sourceMappingURL=form.js.map

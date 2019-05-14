@@ -72,7 +72,6 @@ export declare type FormState = {
             schema: FormFieldSchema;
         };
     };
-    onSubmit: Function;
     initialValues: any;
     arrayKeys: string[];
     initialized: boolean;
@@ -82,7 +81,7 @@ export declare type SchemaFormProps = {
     noButton?: boolean;
     form: Store<FormState>;
     initialValues?: any;
-    onSubmit?: (values: any) => void | Promise<void>;
+    onSubmit?: (values: any) => Promise<void>;
     disableInitialize?: boolean;
     disableDestruction?: boolean;
 };

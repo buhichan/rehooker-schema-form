@@ -3,7 +3,7 @@ export declare class SubmissionError {
     error: any;
     constructor(error: any);
 }
-export declare function registerField(schema: FormFieldSchema, keyPath: string): (f: FormState) => {
+export declare function registerField(key: string, schema: FormFieldSchema): (f: FormState) => {
     meta: {
         [x: string]: {
             schema: FormFieldSchema;
@@ -19,13 +19,12 @@ export declare function registerField(schema: FormFieldSchema, keyPath: string):
     values: {
         [key: string]: any;
     } | undefined;
-    onSubmit: Function;
     initialValues: any;
     arrayKeys: string[];
     initialized: boolean;
 };
-export declare function unregisterField(schema: FormFieldSchema, keyPath: string): (f: FormState) => FormState;
-export declare function submit(dispatch: (m: (s: FormState) => FormState) => void): void;
+export declare function unregisterField(key: string): (f: FormState) => FormState;
+export declare function submit(dispatch: (m: (s: FormState) => FormState) => void, submitFunc: (formValue: any) => Promise<void>): void;
 export declare function reset(f: FormState): {
     values: any;
     submitting: boolean;
@@ -38,7 +37,6 @@ export declare function reset(f: FormState): {
             schema: FormFieldSchema;
         };
     };
-    onSubmit: Function;
     initialValues: any;
     arrayKeys: string[];
     initialized: boolean;
@@ -56,16 +54,16 @@ export declare function changeValue(key: string, valueOrEvent: any, validate?: F
             schema: FormFieldSchema;
         };
     };
-    onSubmit: Function;
     initialValues: any;
     arrayKeys: string[];
     initialized: boolean;
 };
-export declare function initialize(initialValues: any, onSubmit: Function): (f: FormState) => {
+export declare function initialize(initialValues: any, schema: FormFieldSchema[]): (f: FormState) => {
     arrayKeys: string[];
-    onSubmit: Function;
+    schema: FormFieldSchema[];
     values: Record<string, any>;
     initialValues: Record<string, any>;
+    initialized: boolean;
     submitting: boolean;
     submitSucceeded: boolean;
     errors: {
@@ -76,7 +74,6 @@ export declare function initialize(initialValues: any, onSubmit: Function): (f: 
             schema: FormFieldSchema;
         };
     };
-    initialized: boolean;
 };
 export declare function addArrayItem(key: string, oldKeys: string[]): (f: FormState) => {
     errors: {
@@ -90,18 +87,16 @@ export declare function addArrayItem(key: string, oldKeys: string[]): (f: FormSt
             schema: FormFieldSchema;
         };
     };
-    onSubmit: Function;
     initialValues: any;
     arrayKeys: string[];
     initialized: boolean;
 };
-export declare function removeArrayItem(key: string, oldKeys: string[], removedKey: string): (f: FormState) => {
+export declare function removeArrayItem(key: string, oldKeys: string[], removedId: string): (f: FormState) => {
     errors: any;
     values: any;
     meta: any;
     submitting: boolean;
     submitSucceeded: boolean;
-    onSubmit: Function;
     initialValues: any;
     arrayKeys: string[];
     initialized: boolean;

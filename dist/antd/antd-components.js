@@ -260,18 +260,19 @@ function GroupRenderer(_a) {
         React.createElement(Collapse.Panel, { key: "0", header: schema.label }, renderFields(form, schema.children || [], keyPath + "." + schema.key)));
 }
 function ArrayFieldRenderer(props) {
-    return React.createElement(FieldArray, { name: props.keyPath + "." + props.schema.key, form: props.form, value: props.value }, function (keys, add, remove) { return React.createElement(React.Fragment, null,
+    return React.createElement(FieldArray, { name: props.keyPath + "." + props.schema.key, form: props.form, value: props.value }, function (keys, add) { return React.createElement(React.Fragment, null,
         React.createElement("label", null, props.schema.label),
         React.createElement("div", { className: "add-button" },
             React.createElement(Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
                 React.createElement(Button, { icon: "plus", onClick: add }))),
-        React.createElement(Collapse, { style: { marginBottom: 16, marginTop: 16 } }, keys.map(function (id, index) {
-            return React.createElement(Collapse.Panel, { forceRender: true, showArrow: false, key: id, header: React.createElement("div", null,
+        React.createElement(Collapse, { style: { marginBottom: 16, marginTop: 16 } }, keys.map(function (_a, index) {
+            var key = _a.key, remove = _a.remove;
+            return React.createElement(Collapse.Panel, { forceRender: true, showArrow: false, key: key, header: React.createElement("div", null,
                     props.schema.label + " #" + index,
                     React.createElement("div", { className: "delete-button", onClick: function (e) { return e.stopPropagation(); } },
                         React.createElement(Tooltip, { placement: "topLeft", title: "\u5220\u9664", arrowPointAtCenter: true },
-                            React.createElement(Icon, { type: "close", style: { cursor: "pointer", marginRight: 8 }, onClick: function () { return remove(id); } })))) },
-                React.createElement("div", { key: id, className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, id)));
+                            React.createElement(Icon, { type: "close", style: { cursor: "pointer", marginRight: 8 }, onClick: remove })))) },
+                React.createElement("div", { className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, key)));
         }))); });
 }
 addType("group", GroupRenderer);

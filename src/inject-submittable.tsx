@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { Store, useSource } from 'rehooker';
 import { FormState } from './form';
-import { useSource, Store } from 'rehooker';
 import { map } from 'rxjs/operators';
-import { submit, reset } from './mutations';
+import { submit, reset } from '.';
 
 type FormButtonsProps = {
     disabled:boolean,
@@ -46,7 +46,8 @@ type InjectFormSubmittableProps = {
      *  @deprecated disableResubmit, use submittable instead
      */
     disableResubmit?:boolean
-    children?:typeof FormButtonsImpl
+    children?:typeof FormButtonsImpl,
+    onSubmit:(formValues:any)=>Promise<void>
 }
 
 export function FormButtons(props:InjectFormSubmittableProps){
@@ -58,14 +59,15 @@ export function FormButtons(props:InjectFormSubmittableProps){
             Object.keys(values).every(k=>{
                 const v1 = values[k]
                 const v2 = s.initialValues[k]
-                return v1 === v2 || !v1 && !v2
+                return v1 === v2 || v1 == undefined && v2 == undefined
             })
         const hasError = Object.keys(s.errors).length !== 0 
-        return {
-            submittable:!hasError&&
+        const submittable = !hasError&&
             !pristine &&
             !s.submitting &&
-            !(props.disableResubmit && s.submitSucceeded),
+            !(props.disableResubmit && s.submitSucceeded)
+        return {
+            submittable,
             submitting: s.submitting,
             submitSucceeded: s.submitSucceeded
         }
@@ -80,7 +82,7 @@ export function FormButtons(props:InjectFormSubmittableProps){
             if(e && e.preventDefault){
                 e.preventDefault()
             }
-            submit(props.form.next)
+            submit(props.form.next,props.onSubmit)
         },
         onReset:(e:any)=>{
             if(e && e.preventDefault){

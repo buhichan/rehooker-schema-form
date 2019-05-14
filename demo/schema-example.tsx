@@ -34,11 +34,11 @@ export let schema:FormFieldSchema[] = [
         type:"text",
         placeholder:"一般的文本,带验证",
         label:"文本属性",
-        validate:v=>{
-            if(v!=="a")
-                return "必须是a"
-            return undefined
-        }
+        // validate:v=>{
+        //     if(v!=="a")
+        //         return "必须是a"
+        //     return undefined
+        // }
     },{
         key:'select1',
         type:"select",
@@ -58,12 +58,12 @@ export let schema:FormFieldSchema[] = [
                 value:0
             }
         ],
-        validate:v=>{
-            if(v === 0){
-                return "不能是0"
-            }
-            return null
-        }
+        // validate:v=>{
+        //     if(v === 0){
+        //         return "不能是0"
+        //     }
+        //     return null
+        // }
     },{
         key:'select-long-list',
         type:"select",
@@ -130,11 +130,11 @@ export let schema:FormFieldSchema[] = [
         label:"文件",
         multiple:true,
         placeholder:"placeholder",
-        validate:(v:File|string)=>{
-            if(v instanceof File && !v.type.startsWith('image/'))
-                return "只能上传图片"
-            return undefined
-        },
+        // validate:(v:File|string)=>{
+        //     if(v instanceof File && !v.type.startsWith('image/'))
+        //         return "只能上传图片"
+        //     return undefined
+        // },
         onFileChange(_:File){
             return new Promise(r=>{
                 setTimeout(()=>{
@@ -173,11 +173,11 @@ export let schema:FormFieldSchema[] = [
                 type:"number",
                 key:"phone",
                 placeholder:"placeholder",
-                validate:v=>{
-                    if(v>900)
-                        return "最大900"
-                    return undefined
-                },
+                // validate:v=>{
+                //     if(v>900)
+                //         return "最大900"
+                //     return undefined
+                // },
                 label:"手机号",
                 listens:[
                     {
@@ -221,11 +221,11 @@ export let schema:FormFieldSchema[] = [
                 type:"email",
                 fullWidth:true,
                 label:"email with validation",
-                validate(v){
-                    if(!/.*@.*\..*/.test(v))
-                        return "not a valid email"
-                    return undefined
-                }
+                // validate(v){
+                //     if(!/.*@.*\..*/.test(v))
+                //         return "not a valid email"
+                //     return undefined
+                // }
             },
         ]
     },{

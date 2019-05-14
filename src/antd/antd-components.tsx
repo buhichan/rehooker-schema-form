@@ -408,7 +408,7 @@ function GroupRenderer({form,schema,keyPath,componentProps}:WidgetProps){
 
 function ArrayFieldRenderer(props:WidgetProps){
     return <FieldArray name={props.keyPath+"."+props.schema.key} form={props.form} value={props.value}>
-        {(keys,add,remove)=><>
+        {(keys,add)=><>
             <label>{props.schema.label}</label>
             <div className="add-button">
                 <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
@@ -417,18 +417,18 @@ function ArrayFieldRenderer(props:WidgetProps){
             </div>
             <Collapse style={{marginBottom:16,marginTop:16}}>
             {
-                keys.map((id,index) => {
-                    return <Collapse.Panel forceRender showArrow={false} key={id} header={<div>
+                keys.map(({key,remove},index) => {
+                    return <Collapse.Panel forceRender showArrow={false} key={key} header={<div>
                             {props.schema.label+" #"+index}
                             <div className="delete-button" onClick={e=>e.stopPropagation()}>
                                 <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
-                                    <Icon type="close" style={{cursor:"pointer",marginRight:8}} onClick={() => remove(id)}/>
+                                    <Icon type="close" style={{cursor:"pointer",marginRight:8}} onClick={remove}/>
                                 </Tooltip>
                             </div>
                         </div>}>
-                        <div key={id} className="array-field-child">
+                        <div  className="array-field-child">
                             {
-                                props.schema.children && renderFields(props.form,props.schema.children,id)
+                                props.schema.children && renderFields(props.form,props.schema.children,key)
                             }
                         </div>
                     </Collapse.Panel>
