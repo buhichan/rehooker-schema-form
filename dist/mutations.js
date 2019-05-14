@@ -26,13 +26,13 @@ export function unregisterField(schema, keyPath) {
             return f;
         }
         if (f.values) {
-            delete f.values[key];
+            f.values = deleteKey(f.values, key);
         }
         if (f.errors) {
-            delete f.errors[key];
+            f.errors = deleteKey(f.errors, key);
         }
         if (f.meta) {
-            delete f.meta[key];
+            f.meta = deleteKey(f.meta, key);
         }
         return tslib_1.__assign({}, f);
     };
@@ -92,14 +92,8 @@ export function startValidation(key, validate) {
         if (s.values) {
             var finalKey = key.slice(1);
             var value = s.values[finalKey];
-            var error = validate && validate(value, s.values) || undefined;
-            if (error) {
-                s.errors = tslib_1.__assign({}, s.errors, (_a = {}, _a[finalKey] = error, _a));
-            }
-            else {
-                delete s.errors[finalKey];
-            }
-            return tslib_1.__assign({}, s, { errors: tslib_1.__assign({}, s.errors) });
+            var newError = validate && validate(value, s.values) || undefined;
+            return tslib_1.__assign({}, s, { errors: newError ? tslib_1.__assign({}, s.errors, (_a = {}, _a[finalKey] = newError, _a)) : deleteKey(s.errors, finalKey) });
         }
         else {
             return s;
@@ -110,14 +104,8 @@ export function changeValue(key, valueOrEvent, validate, parse) {
     return function changeValue(s) {
         var _a, _b;
         var newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent;
-        var error = validate && validate(newValue, s.values) || undefined;
-        if (error) {
-            s.errors = tslib_1.__assign({}, s.errors, (_a = {}, _a[key] = error, _a));
-        }
-        else {
-            delete s.errors[key];
-        }
-        return tslib_1.__assign({}, s, { errors: tslib_1.__assign({}, s.errors), values: tslib_1.__assign({}, s.values, (_b = {}, _b[key] = parse ? parse(newValue) : newValue, _b)) });
+        var newError = validate && validate(newValue, s.values) || undefined;
+        return tslib_1.__assign({}, s, { errors: newError ? tslib_1.__assign({}, s.errors, (_a = {}, _a[key] = newError, _a)) : deleteKey(s.errors, key), values: tslib_1.__assign({}, s.values, (_b = {}, _b[key] = parse ? parse(newValue) : newValue, _b)) });
     };
 }
 export function initialize(initialValues, onSubmit) {
@@ -165,5 +153,13 @@ export function removeArrayItem(key, oldKeys, removedKey) {
         var s1 = changeValue(key, copy)(f);
         return tslib_1.__assign({}, s1, { errors: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), values: filterKey(tslib_1.__assign({}, f.errors, s1.errors)), meta: filterKey(tslib_1.__assign({}, f.meta, s1.meta)) });
     };
+}
+function deleteKey(obj, key) {
+    if (obj == undefined || typeof obj !== 'object' || !(key in obj)) {
+        return obj;
+    }
+    var clone = tslib_1.__assign({}, obj);
+    delete clone[key];
+    return clone;
 }
 //# sourceMappingURL=mutations.js.map

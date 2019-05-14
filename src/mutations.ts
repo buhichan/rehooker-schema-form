@@ -32,16 +32,16 @@ export function unregisterField(schema:FormFieldSchema,keyPath:string){
             return f
         }
         if(f.values){
-            delete f.values[key]
+            f.values = deleteKey(f.values,key)
         }
         if(f.errors){
-            delete f.errors[key]
+            f.errors = deleteKey(f.errors,key)
         }
         if(f.meta){
-            delete f.meta[key]
+            f.meta = deleteKey(f.meta,key)
         }
         return {
-            ...f
+            ...f,
         }
     }
 }
@@ -123,20 +123,13 @@ export function startValidation(key:string,validate?:FormFieldSchema['validate']
         if(s.values){
             const finalKey = key.slice(1)
             const value = s.values[finalKey]
-            const error = validate && validate(value,s.values) || undefined
-            if(error){
-                s.errors = {
-                    ...s.errors,
-                    [finalKey]:error
-                }
-            }else{
-                delete s.errors[finalKey]
-            }
+            const newError = validate && validate(value,s.values) || undefined
             return {
                 ...s,
-                errors: {
-                    ...s.errors
-                }
+                errors: newError ? {
+                    ...s.errors,
+                    [finalKey]:newError
+                }: deleteKey(s.errors,finalKey)
             }
         }else{
             return s
@@ -147,20 +140,13 @@ export function startValidation(key:string,validate?:FormFieldSchema['validate']
 export function changeValue(key:string,valueOrEvent:any,validate?:FormFieldSchema['validate'],parse?:FormFieldSchema['parse']){
     return function changeValue(s:FormState){
         const newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent?valueOrEvent.target.value :valueOrEvent
-        const error = validate && validate(newValue,s.values) || undefined
-        if(error){
-            s.errors = {
-                ...s.errors,
-                [key]:error
-            }
-        }else{
-            delete s.errors[key]
-        }
+        const newError = validate && validate(newValue,s.values) || undefined
         return {
             ...s,
-            errors: {
-                ...s.errors
-            },
+            errors: newError ? {
+                ...s.errors,
+                [key]:newError
+            } : deleteKey(s.errors,key),
             values:{
                 ...s.values,
                 [key]:parse?parse(newValue):newValue,
@@ -234,4 +220,13 @@ export function removeArrayItem(key:string, oldKeys:string[], removedKey:string)
             }),
         }
     }
+}
+
+function deleteKey<T>(obj:T,key:keyof T){
+    if(obj == undefined || typeof obj !== 'object' || !(key in obj)){
+        return obj
+    }
+    const clone = {...obj}
+    delete clone[key]
+    return clone as T
 }

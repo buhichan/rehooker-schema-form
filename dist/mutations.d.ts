@@ -46,7 +46,7 @@ export declare function reset(f: FormState): {
 export declare function startValidation(key: string, validate?: FormFieldSchema['validate']): (s: FormState) => FormState;
 export declare function changeValue(key: string, valueOrEvent: any, validate?: FormFieldSchema['validate'], parse?: FormFieldSchema['parse']): (s: FormState) => {
     errors: {
-        [x: string]: string;
+        [key: string]: string;
     };
     values: {};
     submitting: boolean;
@@ -80,7 +80,7 @@ export declare function initialize(initialValues: any, onSubmit: Function): (f: 
 };
 export declare function addArrayItem(key: string, oldKeys: string[]): (f: FormState) => {
     errors: {
-        [x: string]: string;
+        [key: string]: string;
     };
     values: {};
     submitting: boolean;
