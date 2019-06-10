@@ -499,10 +499,11 @@ addType("textarea",TextareaInput);
 addType("password",TextInput);
 addType("email",TextInput);
 addType('text',TextInput);
+const FieldArray_ = FieldArray as any //fuck redux-form
 addTypeWithWrapper("array",(props)=>{
     return <div>
         <label className="control-label">{props.fieldSchema.label}</label>
-        <FieldArray props={props} keyPath={props.keyPath} name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.listens)} component={ArrayFieldRenderer}/>
+        <FieldArray_ props={props} keyPath={props.keyPath} name={props.keyPath} rerenderOnEveryChange={Boolean(props.fieldSchema.listens)} component={ArrayFieldRenderer as any}/>
     </div>
 });
 
