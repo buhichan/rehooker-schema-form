@@ -334,10 +334,11 @@ field_1.addType("textarea", TextareaInput);
 field_1.addType("password", TextInput);
 field_1.addType("email", TextInput);
 field_1.addType('text', TextInput);
+var FieldArray_ = redux_form_1.FieldArray; //fuck redux-form
 field_1.addTypeWithWrapper("array", function (props) {
     return React.createElement("div", null,
         React.createElement("label", { className: "control-label" }, props.fieldSchema.label),
-        React.createElement(redux_form_1.FieldArray, { props: props, keyPath: props.keyPath, name: props.keyPath, rerenderOnEveryChange: Boolean(props.fieldSchema.listens), component: ArrayFieldRenderer }));
+        React.createElement(FieldArray_, { props: props, keyPath: props.keyPath, name: props.keyPath, rerenderOnEveryChange: Boolean(props.fieldSchema.listens), component: ArrayFieldRenderer }));
 });
 field_1.addType("autocomplete-async", AutoCompleteAsync);
 buttons_1.setButton(function (props) {
