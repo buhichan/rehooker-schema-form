@@ -43,7 +43,7 @@ export declare type WidgetProps = {
 };
 export declare type FormFieldSchema = WidgetInjectedProps & {
     key: string;
-    label: string;
+    label: React.ReactNode;
     type: string | React.ComponentClass<WidgetProps> | React.StatelessComponent<WidgetProps>;
     children?: FormFieldSchema[];
     /**
