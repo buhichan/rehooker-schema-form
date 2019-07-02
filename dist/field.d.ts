@@ -8,6 +8,10 @@ import { Store } from 'rehooker';
  * Created by buhi on 2017/7/26.
  */
 export declare function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: string): (JSX.Element | null)[] | null;
+export declare function FormField(props: FormFieldSchema & {
+    form: Store<FormState>;
+    keyPath?: string;
+}): JSX.Element;
 declare type Widget = React.StatelessComponent<WidgetProps> | React.ComponentClass<WidgetProps>;
 export declare function addType(name: string, widget: Widget): void;
 export declare function clearTypes(): void;
@@ -50,6 +54,4 @@ export declare function useFieldState(form: Store<FormState>, key: string, forma
         schema: FormFieldSchema;
     };
 } | null;
-export declare const StatelessField: React.NamedExoticComponent<FieldProps>;
-export declare const StatefulField: React.NamedExoticComponent<FieldProps>;
 export {};

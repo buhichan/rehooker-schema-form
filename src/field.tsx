@@ -28,6 +28,14 @@ export function renderFields(form:Store<FormState>,schema:FormFieldSchema[],keyP
     })
 }
 
+export function FormField(props:FormFieldSchema & {form:Store<FormState>, keyPath?: string }){ //component flavored form field
+    const {form,keyPath="",...field} = props
+    if(field.listens && ( typeof field.listens === 'function' || Object.keys(field.listens).length))
+        return <StatefulField form={form} schema={field} keyPath={keyPath} />;
+    else
+        return <StatelessField form={form} schema={field} keyPath={keyPath} />;
+}
+
 type Widget = React.StatelessComponent<WidgetProps> | React.ComponentClass<WidgetProps>
 
 export function addType(name:string,widget:Widget) {
@@ -95,7 +103,7 @@ export function useFieldState(form:Store<FormState>,key:string,format?:(v:any)=>
     )),[form,name,format])
 }
 
-export const StatelessField = React.memo( function StatelessField(props:FieldProps){
+const StatelessField = React.memo( function StatelessField(props:FieldProps){
     const {schema, form, keyPath} = props;
     const componentProps = getComponentProps(schema)
 
@@ -170,7 +178,7 @@ export const StatelessField = React.memo( function StatelessField(props:FieldPro
 })
 
 
-export const StatefulField = React.memo(function StatefulField(props:FieldProps){
+const StatefulField = React.memo(function StatefulField(props:FieldProps){
     const [schema,setSchema] = React.useState(props.schema)
     const listens = schema.listens as Exclude<typeof schema.listens, undefined>
     React.useEffect(()=>{

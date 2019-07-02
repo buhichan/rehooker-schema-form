@@ -26,6 +26,13 @@ export function renderFields(form, schema, keyPath) {
             return React.createElement(StatelessField, { form: form, key: key, schema: field, keyPath: keyPath });
     });
 }
+export function FormField(props) {
+    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? "" : _a, field = tslib_1.__rest(props, ["form", "keyPath"]);
+    if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
+        return React.createElement(StatefulField, { form: form, schema: field, keyPath: keyPath });
+    else
+        return React.createElement(StatelessField, { form: form, schema: field, keyPath: keyPath });
+}
 export function addType(name, widget) {
     widgetRegistration.set(name, widget);
 }
@@ -50,7 +57,7 @@ export function useFieldState(form, key, format) {
         };
     }, debounceTime(24))); }, [form, name, format]);
 }
-export var StatelessField = React.memo(function StatelessField(props) {
+var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
     var componentProps = getComponentProps(schema);
     var finalKey = (keyPath + "." + schema.key).slice(1); /** it begins with dot */
@@ -109,7 +116,7 @@ export var StatelessField = React.memo(function StatelessField(props) {
                     JSON.stringify(schema)));
     }
 });
-export var StatefulField = React.memo(function StatefulField(props) {
+var StatefulField = React.memo(function StatefulField(props) {
     var _a = React.useState(props.schema), schema = _a[0], setSchema = _a[1];
     var listens = schema.listens;
     React.useEffect(function () {
