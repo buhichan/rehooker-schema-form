@@ -2,7 +2,7 @@
  * Created by buhi on 2017/7/26.
  */
 import * as React from "react"
-import { FormFieldSchema, FieldListens, FormState, WidgetProps } from "./form";
+import { FormFieldSchema, FieldListens, FormState, WidgetProps, WidgetInjectedProps } from "./form";
 import { useSource, Store } from 'rehooker';
 import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
 import { combineLatest, merge } from 'rxjs';
@@ -228,16 +228,14 @@ export type FormFieldProps = {
     defaultValue?:FormFieldSchema['defaultValue'] // set when mount
     options?:FormFieldSchema['options']
     wrapperProps?:any // used as antd's Form.Item props
-}
+} & WidgetInjectedProps
 
 export function FormField(props: FormFieldProps) { //component flavored form field
     const { form, keyPath = "", name, ...restField } = props
-    const field = React.useMemo(() => {
-        return {
-            ...restField,
-            key: name
-        } as FormFieldSchema
-    }, [restField, name])
+    const field = {
+        ...restField,
+        key: name
+    } as FormFieldSchema
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
         return <StatefulField form={form} schema={field} keyPath={keyPath} />;
     else

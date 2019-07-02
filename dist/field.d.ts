@@ -2,7 +2,7 @@
  * Created by buhi on 2017/7/26.
  */
 import * as React from "react";
-import { FormFieldSchema, FieldListens, FormState, WidgetProps } from "./form";
+import { FormFieldSchema, FieldListens, FormState, WidgetProps, WidgetInjectedProps } from "./form";
 import { Store } from 'rehooker';
 /**
  * Created by buhi on 2017/7/26.
@@ -64,6 +64,6 @@ export declare type FormFieldProps = {
     defaultValue?: FormFieldSchema['defaultValue'];
     options?: FormFieldSchema['options'];
     wrapperProps?: any;
-};
+} & WidgetInjectedProps;
 export declare function FormField(props: FormFieldProps): JSX.Element;
 export {};

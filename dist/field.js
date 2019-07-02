@@ -136,9 +136,7 @@ var StatefulField = React.memo(function StatefulField(props) {
 });
 export function FormField(props) {
     var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? "" : _a, name = props.name, restField = tslib_1.__rest(props, ["form", "keyPath", "name"]);
-    var field = React.useMemo(function () {
-        return tslib_1.__assign({}, restField, { key: name });
-    }, [restField, name]);
+    var field = tslib_1.__assign({}, restField, { key: name });
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
         return React.createElement(StatefulField, { form: form, schema: field, keyPath: keyPath });
     else
