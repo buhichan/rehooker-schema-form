@@ -50,7 +50,7 @@ export function useFieldState(form, key, format) {
         };
     }, debounceTime(24))); }, [form, name, format]);
 }
-var StatelessField = React.memo(function StatelessField(props) {
+export var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
     var componentProps = getComponentProps(schema);
     var finalKey = (keyPath + "." + schema.key).slice(1); /** it begins with dot */
@@ -109,7 +109,7 @@ var StatelessField = React.memo(function StatelessField(props) {
                     JSON.stringify(schema)));
     }
 });
-var StatefulField = React.memo(function StatefulField(props) {
+export var StatefulField = React.memo(function StatefulField(props) {
     var _a = React.useState(props.schema), schema = _a[0], setSchema = _a[1];
     var listens = schema.listens;
     React.useEffect(function () {

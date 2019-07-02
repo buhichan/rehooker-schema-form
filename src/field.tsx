@@ -95,7 +95,7 @@ export function useFieldState(form:Store<FormState>,key:string,format?:(v:any)=>
     )),[form,name,format])
 }
 
-const StatelessField = React.memo( function StatelessField(props:FieldProps){
+export const StatelessField = React.memo( function StatelessField(props:FieldProps){
     const {schema, form, keyPath} = props;
     const componentProps = getComponentProps(schema)
 
@@ -170,7 +170,7 @@ const StatelessField = React.memo( function StatelessField(props:FieldProps){
 })
 
 
-const StatefulField = React.memo(function StatefulField(props:FieldProps){
+export const StatefulField = React.memo(function StatefulField(props:FieldProps){
     const [schema,setSchema] = React.useState(props.schema)
     const listens = schema.listens as Exclude<typeof schema.listens, undefined>
     React.useEffect(()=>{

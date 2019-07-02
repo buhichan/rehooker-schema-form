@@ -50,4 +50,6 @@ export declare function useFieldState(form: Store<FormState>, key: string, forma
         schema: FormFieldSchema;
     };
 } | null;
+export declare const StatelessField: React.NamedExoticComponent<FieldProps>;
+export declare const StatefulField: React.NamedExoticComponent<FieldProps>;
 export {};
