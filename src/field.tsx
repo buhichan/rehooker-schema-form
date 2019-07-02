@@ -211,7 +211,7 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
         })
         return () => subscription.unsubscribe()
     }, [props.form, schema.listeners])
-    return <StatelessField schema={schema} form={props.form} keyPath={props.keyPath} />
+    return <StatelessField schema={schema} form={props.form} keyPath={props.keyPath} noWrapper={props.noWrapper} />
 })
 
 export type FormFieldProps = {
@@ -219,7 +219,7 @@ export type FormFieldProps = {
     name: string,
     keyPath?: string,
     label?: React.ReactNode,
-
+    noWrapper?: boolean
     //hardcode these from FormFieldSchema because Omit<xxx,'key'> reports error
     type: FormFieldSchema['type'], 
     listens?: FormFieldSchema['listens']
@@ -233,13 +233,13 @@ export type FormFieldProps = {
 } & WidgetInjectedProps
 
 export function FormField(props: FormFieldProps) { //component flavored form field
-    const { form, keyPath = "", name, ...restField } = props
+    const { form, keyPath = "", noWrapper,name, ...restField } = props
     const field = {
         ...restField,
         key: name
     } as FormFieldSchema
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return <StatefulField form={form} schema={field} keyPath={keyPath} />;
+        return <StatefulField noWrapper={noWrapper} form={form} schema={field} keyPath={keyPath} />;
     else
-        return <StatelessField form={form} schema={field} keyPath={keyPath} />;
+        return <StatelessField noWrapper={noWrapper} form={form} schema={field} keyPath={keyPath} />;
 }

@@ -56,6 +56,7 @@ export declare type FormFieldProps = {
     name: string;
     keyPath?: string;
     label?: React.ReactNode;
+    noWrapper?: boolean;
     type: FormFieldSchema['type'];
     listens?: FormFieldSchema['listens'];
     validate?: FormFieldSchema['validate'];

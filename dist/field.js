@@ -134,14 +134,14 @@ var StatefulField = React.memo(function StatefulField(props) {
         });
         return function () { return subscription.unsubscribe(); };
     }, [props.form, schema.listeners]);
-    return React.createElement(StatelessField, { schema: schema, form: props.form, keyPath: props.keyPath });
+    return React.createElement(StatelessField, { schema: schema, form: props.form, keyPath: props.keyPath, noWrapper: props.noWrapper });
 });
 export function FormField(props) {
-    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? "" : _a, name = props.name, restField = tslib_1.__rest(props, ["form", "keyPath", "name"]);
+    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? "" : _a, noWrapper = props.noWrapper, name = props.name, restField = tslib_1.__rest(props, ["form", "keyPath", "noWrapper", "name"]);
     var field = tslib_1.__assign({}, restField, { key: name });
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return React.createElement(StatefulField, { form: form, schema: field, keyPath: keyPath });
+        return React.createElement(StatefulField, { noWrapper: noWrapper, form: form, schema: field, keyPath: keyPath });
     else
-        return React.createElement(StatelessField, { form: form, schema: field, keyPath: keyPath });
+        return React.createElement(StatelessField, { noWrapper: noWrapper, form: form, schema: field, keyPath: keyPath });
 }
 //# sourceMappingURL=field.js.map
