@@ -17,6 +17,7 @@ export interface FieldProps {
     schema: FormFieldSchema;
     keyPath: string;
     listeners?: FieldListens;
+    noWrapper?: boolean;
 }
 export declare function getComponentProps(field: FormFieldSchema): {
     [propName: string]: any;

@@ -49,6 +49,7 @@ export interface FieldProps {
     schema: FormFieldSchema,
     keyPath: string,
     listeners?: FieldListens,
+    noWrapper?:boolean,
 }
 
 export function getComponentProps(field: FormFieldSchema) {
@@ -128,17 +129,19 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
         + (componentProps.required ? " required" : "")
         + (componentProps.disabled ? " disabled" : "")
         + (fieldState.error ? " invalid" : " valid")
+    let fieldNode = null
     if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
         const StoredWidget = widgetRegistration.get(schema.type);
         if (StoredWidget) {
-            return <div className={className} style={schema.style}>
-                <StoredWidget form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
-            </div>
+            fieldNode = <StoredWidget form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
         }
     } else if (typeof schema.type === 'function') {
         const Comp = schema.type
-        return <div className={className} style={schema.style}>
-            <Comp form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
+        fieldNode = <Comp form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
+    }
+    if(fieldNode !== null){
+        return props.noWrapper ? fieldNode : <div className={className} style={schema.style}>
+            {fieldNode}
         </div>
     }
     switch (schema.type) {
@@ -168,7 +171,6 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
             </div>
     }
 })
-
 
 const StatefulField = React.memo(function StatefulField(props: FieldProps) {
     const [schema, setSchema] = React.useState(props.schema)

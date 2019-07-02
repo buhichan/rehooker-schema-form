@@ -77,17 +77,19 @@ var StatelessField = React.memo(function StatelessField(props) {
         + (componentProps.required ? " required" : "")
         + (componentProps.disabled ? " disabled" : "")
         + (fieldState.error ? " invalid" : " valid");
+    var fieldNode = null;
     if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
         var StoredWidget = widgetRegistration.get(schema.type);
         if (StoredWidget) {
-            return React.createElement("div", { className: className, style: schema.style },
-                React.createElement(StoredWidget, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur })));
+            fieldNode = React.createElement(StoredWidget, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur }));
         }
     }
     else if (typeof schema.type === 'function') {
         var Comp = schema.type;
-        return React.createElement("div", { className: className, style: schema.style },
-            React.createElement(Comp, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur })));
+        fieldNode = React.createElement(Comp, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur }));
+    }
+    if (fieldNode !== null) {
+        return props.noWrapper ? fieldNode : React.createElement("div", { className: className, style: schema.style }, fieldNode);
     }
     switch (schema.type) {
         //这里不可能存在getChildren还没有被执行的情况
