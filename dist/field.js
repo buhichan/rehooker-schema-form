@@ -89,7 +89,7 @@ var StatelessField = React.memo(function StatelessField(props) {
         fieldNode = React.createElement(Comp, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur }));
     }
     if (fieldNode !== null) {
-        return props.noWrapper ? fieldNode : React.createElement("div", { className: className, style: schema.style }, fieldNode);
+        return props.noWrapper ? React.createElement(React.Fragment, null, fieldNode) : React.createElement("div", { className: className, style: schema.style }, fieldNode);
     }
     switch (schema.type) {
         //这里不可能存在getChildren还没有被执行的情况

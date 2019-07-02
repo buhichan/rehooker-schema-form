@@ -129,7 +129,7 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
         + (componentProps.required ? " required" : "")
         + (componentProps.disabled ? " disabled" : "")
         + (fieldState.error ? " invalid" : " valid")
-    let fieldNode = null
+    let fieldNode = null as React.ReactNode | null
     if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
         const StoredWidget = widgetRegistration.get(schema.type);
         if (StoredWidget) {
@@ -140,7 +140,7 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
         fieldNode = <Comp form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
     }
     if(fieldNode !== null){
-        return props.noWrapper ? fieldNode : <div className={className} style={schema.style}>
+        return props.noWrapper ? <>{fieldNode}</> : <div className={className} style={schema.style}>
             {fieldNode}
         </div>
     }
