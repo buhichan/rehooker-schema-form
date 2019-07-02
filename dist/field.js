@@ -26,13 +26,6 @@ export function renderFields(form, schema, keyPath) {
             return React.createElement(StatelessField, { form: form, key: key, schema: field, keyPath: keyPath });
     });
 }
-export function FormField(props) {
-    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? "" : _a, field = tslib_1.__rest(props, ["form", "keyPath"]);
-    if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return React.createElement(StatefulField, { form: form, schema: field, keyPath: keyPath });
-    else
-        return React.createElement(StatelessField, { form: form, schema: field, keyPath: keyPath });
-}
 export function addType(name, widget) {
     widgetRegistration.set(name, widget);
 }
@@ -141,4 +134,14 @@ var StatefulField = React.memo(function StatefulField(props) {
     }, [props.form, schema.listeners]);
     return React.createElement(StatelessField, { schema: schema, form: props.form, keyPath: props.keyPath });
 });
+export function FormField(props) {
+    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? "" : _a, name = props.name, restField = tslib_1.__rest(props, ["form", "keyPath", "name"]);
+    var field = React.useMemo(function () {
+        return tslib_1.__assign({}, restField, { key: name });
+    }, [restField, name]);
+    if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
+        return React.createElement(StatefulField, { form: form, schema: field, keyPath: keyPath });
+    else
+        return React.createElement(StatelessField, { form: form, schema: field, keyPath: keyPath });
+}
 //# sourceMappingURL=field.js.map
