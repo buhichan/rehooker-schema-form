@@ -196,17 +196,28 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
                 map(x.then),
             )
         }))
+        const processChange = (change:void | Partial<FormFieldSchema> & {value?:any})=>{
+            if(!subscription.closed && !!change){
+                const {
+                    value,
+                    ...rest
+                } = change
+                const newSchema = {
+                    ...props.schema,
+                    ...rest,
+                }
+                if(value){
+                    const finalKey = (props.keyPath + "." + props.schema.key).slice(1) /** it begins with dot */
+                    props.form.next(changeValue(finalKey, value, newSchema.validate, newSchema.parse))
+                }
+                setSchema(newSchema)
+            }
+        }
         const subscription = $change.subscribe(change => {
             if (change instanceof Promise) {
-                change.then(change => !subscription.closed && setSchema({
-                    ...props.schema,
-                    ...change
-                }))
-            } else if (change) {
-                setSchema({
-                    ...props.schema,
-                    ...change
-                })
+                change.then(processChange)
+            }else{
+                processChange(change)
             }
         })
         return () => subscription.unsubscribe()
