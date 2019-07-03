@@ -125,7 +125,7 @@ var StatefulField = React.memo(function StatefulField(props) {
             })).pipe(map(x.then));
         }));
         var processChange = function (change) {
-            if (!subscription.closed && !!change) {
+            if (!!change) {
                 var value = change.value, rest = tslib_1.__rest(change, ["value"]);
                 var newSchema = tslib_1.__assign({}, props.schema, rest);
                 if (value) {
@@ -137,7 +137,9 @@ var StatefulField = React.memo(function StatefulField(props) {
         };
         var subscription = $change.subscribe(function (change) {
             if (change instanceof Promise) {
-                change.then(processChange);
+                change.then(function (change) {
+                    !subscription.closed && processChange(change);
+                });
             }
             else {
                 processChange(change);
