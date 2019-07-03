@@ -265,7 +265,7 @@ function ArrayFieldRenderer(props) {
         React.createElement("div", { className: "add-button" },
             React.createElement(Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
                 React.createElement(Button, { icon: "plus", onClick: add }))),
-        React.createElement(Collapse, { defaultActiveKey: keys.map(function (x) { return x.key; }), style: { marginBottom: 16, marginTop: 16 } }, keys.map(function (_a, index) {
+        React.createElement(Collapse, { activeKey: keys.map(function (x) { return x.key; }), style: { marginBottom: 16, marginTop: 16 } }, keys.map(function (_a, index) {
             var key = _a.key, remove = _a.remove;
             return React.createElement(Collapse.Panel, { forceRender: true, showArrow: false, key: key, header: React.createElement("div", null,
                     props.schema.label + " #" + index,
