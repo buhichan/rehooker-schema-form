@@ -124,12 +124,23 @@ var StatefulField = React.memo(function StatefulField(props) {
                 }), distinctUntilChanged());
             })).pipe(map(x.then));
         }));
+        var processChange = function (change) {
+            if (!subscription.closed && !!change) {
+                var value = change.value, rest = tslib_1.__rest(change, ["value"]);
+                var newSchema = tslib_1.__assign({}, props.schema, rest);
+                if (value) {
+                    var finalKey = (props.keyPath + "." + props.schema.key).slice(1); /** it begins with dot */
+                    props.form.next(changeValue(finalKey, value, newSchema.validate, newSchema.parse));
+                }
+                setSchema(newSchema);
+            }
+        };
         var subscription = $change.subscribe(function (change) {
             if (change instanceof Promise) {
-                change.then(function (change) { return !subscription.closed && setSchema(tslib_1.__assign({}, props.schema, change)); });
+                change.then(processChange);
             }
-            else if (change) {
-                setSchema(tslib_1.__assign({}, props.schema, change));
+            else {
+                processChange(change);
             }
         });
         return function () { return subscription.unsubscribe(); };
