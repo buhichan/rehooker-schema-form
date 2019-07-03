@@ -117,7 +117,7 @@ var StatefulField = React.memo(function StatefulField(props) {
     React.useEffect(function () {
         var $value = props.form.stream.pipe(skipWhile(function (x) { return x.values === undefined; }), map(function (x) { return x.values; }), distinct());
         var $change = merge.apply(void 0, listens.map(function (x) {
-            var listenTo = typeof x.to === 'function' ? x.to(props.keyPath) : x.to;
+            var listenTo = typeof x.to === 'function' ? x.to(props.keyPath.slice(1)) : x.to;
             return combineLatest(listenTo.map(function (x) {
                 return $value.pipe(map(function (v) {
                     return v && v[x];

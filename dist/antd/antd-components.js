@@ -268,7 +268,7 @@ function ArrayFieldRenderer(props) {
         React.createElement(Collapse, { activeKey: keys.map(function (x) { return x.key; }), style: { marginBottom: 16, marginTop: 16 } }, keys.map(function (_a, index) {
             var key = _a.key, remove = _a.remove;
             return React.createElement(Collapse.Panel, { forceRender: true, showArrow: false, key: key, header: React.createElement("div", null,
-                    props.schema.label + " #" + index,
+                    props.schema.label + " #" + (index + 1),
                     React.createElement("div", { className: "delete-button", onClick: function (e) { return e.stopPropagation(); } },
                         React.createElement(Tooltip, { placement: "topLeft", title: "\u5220\u9664", arrowPointAtCenter: true },
                             React.createElement(Icon, { type: "close", style: { cursor: "pointer", marginRight: 8 }, onClick: remove })))) },
