@@ -182,7 +182,7 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
             distinct(),
         )
         const $change = merge(...listens.map((x) => {
-            let listenTo = typeof x.to === 'function' ? x.to(props.keyPath) : x.to
+            let listenTo = typeof x.to === 'function' ? x.to(props.keyPath.slice(1)) : x.to
             return combineLatest(
                 listenTo.map(x => {
                     return $value.pipe(

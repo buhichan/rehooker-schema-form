@@ -419,7 +419,7 @@ function ArrayFieldRenderer(props:WidgetProps){
             {
                 keys.map(({key,remove},index) => {
                     return <Collapse.Panel forceRender showArrow={false} key={key} header={<div>
-                            {props.schema.label+" #"+index}
+                            {props.schema.label+" #"+(index+1)}
                             <div className="delete-button" onClick={e=>e.stopPropagation()}>
                                 <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
                                     <Icon type="close" style={{cursor:"pointer",marginRight:8}} onClick={remove}/>
