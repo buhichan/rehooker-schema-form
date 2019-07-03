@@ -415,7 +415,7 @@ function ArrayFieldRenderer(props:WidgetProps){
                     <Button icon="plus" onClick={add}/>
                 </Tooltip>
             </div>
-            <Collapse defaultActiveKey={keys.map(x=>x.key)} style={{marginBottom:16,marginTop:16}}>
+            <Collapse activeKey={keys.map(x=>x.key)} style={{marginBottom:16,marginTop:16}}>
             {
                 keys.map(({key,remove},index) => {
                     return <Collapse.Panel forceRender showArrow={false} key={key} header={<div>
