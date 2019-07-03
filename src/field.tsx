@@ -197,7 +197,7 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
             )
         }))
         const processChange = (change:void | Partial<FormFieldSchema> & {value?:any})=>{
-            if(!subscription.closed && !!change){
+            if(!!change){
                 const {
                     value,
                     ...rest
@@ -215,7 +215,9 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
         }
         const subscription = $change.subscribe(change => {
             if (change instanceof Promise) {
-                change.then(processChange)
+                change.then(change=>{
+                    !subscription.closed && processChange(change)
+                })
             }else{
                 processChange(change)
             }
