@@ -58,10 +58,6 @@ function SelectInput(props:WidgetProps){
 
     const onBlur = ()=>setSearch("")
 
-    const onChange= (v:any)=>{
-        setSearch("")
-        props.onChange(v)
-    }
     const {schema:fieldSchema,value,componentProps} = props
 
     const [options,setOptions] = React.useState(null as null | Options)
@@ -83,23 +79,41 @@ function SelectInput(props:WidgetProps){
         }
     },[fieldSchema.options instanceof Function && fieldSchema.options.length > 0 ? search : ""])
 
-    React.useEffect(()=>{
-        if(options){
-            if(props.value instanceof Array){
-                const validValues = new Set(options.map(x=>x.value))
-                props.onChange(props.value.filter(y=>{
-                    return validValues.has(y)
-                }))
-            }else if(value != null && value != ""){
-                const validValues = new Set(options.map(x=>x.value))
-                if(!validValues.has(value)){
-                    props.onChange(undefined)
-                }
-            }
+    const validValues = React.useMemo(()=>{
+        if(!options){
+            return null
+        }else{
+            return new Set(options.map(x=>x.value))
         }
     },[options])
 
-    const finalValue = fieldSchema.multiple||componentProps.mode==="multiple"?(Array.isArray(value)?value:[]):value === "" ? undefined : value
+    const onChange= (newValue:any)=>{
+        setSearch("")
+        if(validValues){
+            if(newValue instanceof Array){
+                newValue = newValue.filter(y=>{
+                    return validValues.has(y)
+                })
+            }
+        }
+        props.onChange(newValue)
+    }
+
+    let finalValue = React.useMemo(()=>{
+        let finalValue = value
+        if(fieldSchema.multiple|| componentProps.mode==="multiple"){
+            if(Array.isArray(value)){
+                finalValue = value.filter(x=>!validValues || validValues.has(x))
+            }
+        }else{
+            if(value === ''){
+                finalValue = undefined
+            }else if(value != undefined && !!validValues && !validValues.has(value)){
+                finalValue = undefined
+            }
+        }
+        return finalValue
+    },[value,validValues]) 
 
     return <InputWraper {...props}>
         <Select
@@ -123,48 +137,6 @@ function SelectInput(props:WidgetProps){
         </Select>
     </InputWraper>
 }
-
-// class SelectInput extends React.PureComponent<WidgetProps>{
-//     state={
-//         search:""
-//     }
-//     onChange=(v:any)=>{
-//         this.setState({
-//             search:""
-//         })
-//         this.props.onChange(v)
-//     }
-//     onSearchChange=(v:string)=>this.setState({search:v})
-//     render(){
-//         const {schema,componentProps,value,onBlur} = this.props
-//         return <InputWraper {...this.props}>
-//             <ResolveMaybePromise maybePromise={schema.options} >
-//                 {(options)=>{
-//                     if(options == undefined)
-//                         options = emptyArray
-//                     const finalValue = schema.multiple||componentProps.mode==="multiple"?(Array.isArray(value)?value:[]):value
-//                     return <Select
-//                         showSearch
-//                         onSearch={this.onSearchChange}
-//                         mode={schema.multiple?"multiple":"default"}
-//                         value={finalValue}
-//                         onChange={this.onChange}
-//                         onBlur={onBlur}
-//                         filterOption={false}
-//                         {...componentProps}
-//                     >
-//                         {options.filter((option)=>{
-//                             return !this.state.search || option.name.toLowerCase().indexOf(this.state.search.toLowerCase()) >= 0
-//                         }).slice(0,schema.maxOptionCount || Infinity).map(option=>{
-//                             const {name,value,...rest} = option
-//                             return <Option key={name} value={value} {...rest}>{name}</Option>
-//                         })}
-//                     </Select>
-//                 }}
-//             </ResolveMaybePromise>
-//         </InputWraper>
-//     }
-// }
 
 function CheckboxInput (props:WidgetProps){
     return <InputWraper {...props}>
