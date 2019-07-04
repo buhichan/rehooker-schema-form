@@ -11,7 +11,7 @@ import { OperatorFunction } from 'rxjs';
 
 export type Options = {name:string,value:any}[]
 export type AsyncOptions = ()=>Promise<Options>
-export type RuntimeAsyncOptions = (value:any, props?:WidgetProps)=>(Promise<Options>|Options)
+export type RuntimeAsyncOptions = (search:any, props?:WidgetProps)=>Promise<Options>
 export type FieldListens={
     /**
      * q:what is valuePath here?
