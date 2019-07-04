@@ -128,7 +128,7 @@ var StatefulField = React.memo(function StatefulField(props) {
             if (!!change) {
                 var value = change.value, rest = tslib_1.__rest(change, ["value"]);
                 var newSchema = tslib_1.__assign({}, props.schema, rest);
-                if (value) {
+                if ('value' in change) {
                     var finalKey = (props.keyPath + "." + props.schema.key).slice(1); /** it begins with dot */
                     props.form.next(changeValue(finalKey, value, newSchema.validate, newSchema.parse));
                 }
