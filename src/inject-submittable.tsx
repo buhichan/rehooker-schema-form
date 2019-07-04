@@ -6,6 +6,7 @@ import { submit, reset } from '.';
 
 type FormButtonsProps = {
     disabled:boolean,
+    pristine?:boolean,
     submitSucceeded:boolean,
     submitting:boolean,
     onSubmit:(e?:any)=>void,
@@ -67,6 +68,7 @@ export function FormButtons(props:InjectFormSubmittableProps){
             !s.submitting &&
             !(props.disableResubmit && s.submitSucceeded)
         return {
+            pristine,
             submittable,
             submitting: s.submitting,
             submitSucceeded: s.submitSucceeded
@@ -75,6 +77,7 @@ export function FormButtons(props:InjectFormSubmittableProps){
     if(!res)
         return null
     const childProps = {
+        pristine:res.pristine,
         disabled:!res.submittable,
         submitting:res.submitting,
         submitSucceeded: res.submitSucceeded,
