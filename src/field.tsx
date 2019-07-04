@@ -206,7 +206,7 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
                     ...props.schema,
                     ...rest,
                 }
-                if(value){
+                if('value' in change){
                     const finalKey = (props.keyPath + "." + props.schema.key).slice(1) /** it begins with dot */
                     props.form.next(changeValue(finalKey, value, newSchema.validate, newSchema.parse))
                 }
