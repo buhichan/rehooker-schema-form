@@ -31,40 +31,96 @@ function TextInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
         React.createElement(Input, tslib_1.__assign({ type: props.schema.type, id: props.schema.key, className: "full-width", style: { width: "100%" }, name: props.schema.name, value: props.value, onChange: props.onChange, onBlur: props.onBlur }, props.componentProps)));
 }
-var SelectInput = /** @class */ (function (_super) {
-    tslib_1.__extends(SelectInput, _super);
-    function SelectInput() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = {
-            search: ""
-        };
-        _this.onChange = function (v) {
-            _this.setState({
-                search: ""
-            });
-            _this.props.onChange(v);
-        };
-        _this.onSearchChange = function (v) { return _this.setState({ search: v }); };
-        return _this;
-    }
-    SelectInput.prototype.render = function () {
-        var _this = this;
-        var _a = this.props, schema = _a.schema, componentProps = _a.componentProps, value = _a.value, onBlur = _a.onBlur;
-        return React.createElement(InputWraper, tslib_1.__assign({}, this.props),
-            React.createElement(ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
-                if (options == undefined)
-                    options = emptyArray;
-                var finalValue = schema.multiple || componentProps.mode === "multiple" ? (Array.isArray(value) ? value : []) : value;
-                return React.createElement(Select, tslib_1.__assign({ showSearch: true, onSearch: _this.onSearchChange, mode: schema.multiple ? "multiple" : "default", value: finalValue, onChange: _this.onChange, onBlur: onBlur, filterOption: false }, componentProps), options.filter(function (option) {
-                    return !_this.state.search || option.name.toLowerCase().indexOf(_this.state.search.toLowerCase()) >= 0;
-                }).slice(0, schema.maxOptionCount || Infinity).map(function (option) {
-                    var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
-                    return React.createElement(Option, tslib_1.__assign({ key: name, value: value }, rest), name);
-                }));
-            }));
+function SelectInput(props) {
+    var _a = React.useState(""), search = _a[0], setSearch = _a[1];
+    var onBlur = function () { return setSearch(""); };
+    var onChange = function (v) {
+        setSearch("");
+        props.onChange(v);
     };
-    return SelectInput;
-}(React.PureComponent));
+    var fieldSchema = props.schema, value = props.value, componentProps = props.componentProps;
+    var _b = React.useState(null), options = _b[0], setOptions = _b[1];
+    React.useEffect(function () {
+        if (Array.isArray(fieldSchema.options)) {
+            setOptions(fieldSchema.options);
+        }
+    }, [fieldSchema.options]);
+    React.useEffect(function () {
+        if (fieldSchema.options instanceof Function) {
+            var canceled_1 = false;
+            fieldSchema.options(search, props).then(function (options) {
+                if (!canceled_1) {
+                    setOptions(options);
+                }
+            });
+        }
+    }, [fieldSchema.options instanceof Function && fieldSchema.options.length > 0 ? search : ""]);
+    React.useEffect(function () {
+        if (options) {
+            if (props.value instanceof Array) {
+                var validValues_1 = new Set(options.map(function (x) { return x.value; }));
+                props.onChange(props.value.filter(function (y) {
+                    return validValues_1.has(y);
+                }));
+            }
+            else if (value != null && value != "") {
+                var validValues = new Set(options.map(function (x) { return x.value; }));
+                if (!validValues.has(value)) {
+                    props.onChange(undefined);
+                }
+            }
+        }
+    }, [options]);
+    var finalValue = fieldSchema.multiple || componentProps.mode === "multiple" ? (Array.isArray(value) ? value : []) : value === "" ? undefined : value;
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(Select, tslib_1.__assign({ allowClear: !fieldSchema.required, showSearch: true, style: { width: "100%" }, onSearch: setSearch, mode: fieldSchema.multiple ? "multiple" : "default", value: finalValue, onChange: onChange, filterOption: false }, componentProps, { onBlur: onBlur }), options ? options.filter(function (option) {
+            return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+        }).slice(0, fieldSchema.maxOptionCount || Infinity).map(function (option) {
+            var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
+            return React.createElement(Select.Option, tslib_1.__assign({ key: name, value: value }, rest), name);
+        }) : null));
+}
+// class SelectInput extends React.PureComponent<WidgetProps>{
+//     state={
+//         search:""
+//     }
+//     onChange=(v:any)=>{
+//         this.setState({
+//             search:""
+//         })
+//         this.props.onChange(v)
+//     }
+//     onSearchChange=(v:string)=>this.setState({search:v})
+//     render(){
+//         const {schema,componentProps,value,onBlur} = this.props
+//         return <InputWraper {...this.props}>
+//             <ResolveMaybePromise maybePromise={schema.options} >
+//                 {(options)=>{
+//                     if(options == undefined)
+//                         options = emptyArray
+//                     const finalValue = schema.multiple||componentProps.mode==="multiple"?(Array.isArray(value)?value:[]):value
+//                     return <Select
+//                         showSearch
+//                         onSearch={this.onSearchChange}
+//                         mode={schema.multiple?"multiple":"default"}
+//                         value={finalValue}
+//                         onChange={this.onChange}
+//                         onBlur={onBlur}
+//                         filterOption={false}
+//                         {...componentProps}
+//                     >
+//                         {options.filter((option)=>{
+//                             return !this.state.search || option.name.toLowerCase().indexOf(this.state.search.toLowerCase()) >= 0
+//                         }).slice(0,schema.maxOptionCount || Infinity).map(option=>{
+//                             const {name,value,...rest} = option
+//                             return <Option key={name} value={value} {...rest}>{name}</Option>
+//                         })}
+//                     </Select>
+//                 }}
+//             </ResolveMaybePromise>
+//         </InputWraper>
+//     }
+// }
 function CheckboxInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
         React.createElement(Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, onBlur: props.onBlur, checked: Boolean(props.value) }, props.componentProps)));
@@ -192,17 +248,16 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
             _this.pendingUpdate = setTimeout(function () {
                 _this.fetchingQuery = name;
                 var result = _this.props.schema.options(name, _this.props);
-                if (result instanceof Promise)
-                    result.then(function (options) {
-                        if (_this.fetchingQuery === name && _this.$isMounted)
-                            _this.setState({
-                                dataSource: options.map(function (itm) { return ({ text: itm.name, value: itm.value }); })
-                            });
-                    });
-                else
-                    _this.setState({
-                        dataSource: result.map(function (itm) { return ({ text: itm.name, value: itm.value }); })
-                    });
+                // if(result instanceof Promise)
+                result.then(function (options) {
+                    if (_this.fetchingQuery === name && _this.$isMounted)
+                        _this.setState({
+                            dataSource: options.map(function (itm) { return ({ text: itm.name, value: itm.value }); })
+                        });
+                });
+                // else this.setState({
+                //     dataSource:result.map(itm=>({text:itm.name,value:itm.value}))
+                // })
             }, throttle);
         };
         _this.onSelected = function (params) {
