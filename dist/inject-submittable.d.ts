@@ -3,6 +3,7 @@ import { Store } from 'rehooker';
 import { FormState } from './form';
 declare type FormButtonsProps = {
     disabled: boolean;
+    pristine?: boolean;
     submitSucceeded: boolean;
     submitting: boolean;
     onSubmit: (e?: any) => void;

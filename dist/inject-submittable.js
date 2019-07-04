@@ -31,6 +31,7 @@ export function FormButtons(props) {
             !s.submitting &&
             !(props.disableResubmit && s.submitSucceeded);
         return {
+            pristine: pristine,
             submittable: submittable,
             submitting: s.submitting,
             submitSucceeded: s.submitSucceeded
@@ -39,6 +40,7 @@ export function FormButtons(props) {
     if (!res)
         return null;
     var childProps = {
+        pristine: res.pristine,
         disabled: !res.submittable,
         submitting: res.submitting,
         submitSucceeded: res.submitSucceeded,
