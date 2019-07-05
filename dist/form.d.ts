@@ -35,6 +35,7 @@ export declare type WidgetProps = {
     form: Store<FormState>;
     onChange: (e: any) => void;
     onBlur: (e: any) => void;
+    onError: (e: string) => void;
     value: any;
     componentProps: any;
     keyPath: string;

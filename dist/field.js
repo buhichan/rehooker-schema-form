@@ -6,7 +6,7 @@ import * as React from "react";
 import { useSource } from 'rehooker';
 import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
 import { combineLatest, merge } from 'rxjs';
-import { registerField, unregisterField, changeValue, startValidation } from './mutations';
+import { registerField, unregisterField, changeValue, startValidation, setFieldError } from './mutations';
 import { isFullWidth } from './constants';
 /**
  * Created by buhi on 2017/7/26.
@@ -53,6 +53,7 @@ export function useFieldState(form, key, format) {
 var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
     var componentProps = getComponentProps(schema);
+    /** assume finalKey will not change */
     var finalKey = (keyPath + "." + schema.key).slice(1); /** it begins with dot */
     var fieldState = useFieldState(form, finalKey, schema.format);
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
@@ -61,6 +62,9 @@ var StatelessField = React.memo(function StatelessField(props) {
     var onBlur = React.useMemo(function () { return function () {
         form.next(startValidation(finalKey, schema.validate));
     }; }, [form, schema.validate, schema.parse]);
+    var onError = React.useMemo(function () { return function (errorMessage) {
+        form.next(setFieldError(finalKey, errorMessage));
+    }; }, [form]);
     React.useEffect(function () {
         props.form.next(registerField(finalKey, schema));
         return function () { return props.form.next(unregisterField(finalKey)); };
@@ -81,12 +85,12 @@ var StatelessField = React.memo(function StatelessField(props) {
     if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
         var StoredWidget = widgetRegistration.get(schema.type);
         if (StoredWidget) {
-            fieldNode = React.createElement(StoredWidget, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur }));
+            fieldNode = React.createElement(StoredWidget, tslib_1.__assign({ onError: onError, form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur }));
         }
     }
     else if (typeof schema.type === 'function') {
         var Comp = schema.type;
-        fieldNode = React.createElement(Comp, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur }));
+        fieldNode = React.createElement(Comp, tslib_1.__assign({ onError: onError, form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldState, { onChange: onChange, onBlur: onBlur }));
     }
     if (fieldNode !== null) {
         return props.noWrapper ? React.createElement(React.Fragment, null, fieldNode) : React.createElement("div", { className: className, style: schema.style }, fieldNode);

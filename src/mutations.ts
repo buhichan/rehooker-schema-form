@@ -114,6 +114,22 @@ export function submit(dispatch:(m:(s:FormState)=>FormState)=>void,submitFunc:(f
     })
 }
 
+export function setFieldError(key:string,error:string){
+    return (s:FormState)=>{
+        if(s.values){
+            return {
+                ...s,
+                errors: error ? {
+                    ...s.errors,
+                    [key]:error
+                }: deleteKey(s.errors,key)
+            }
+        }else{
+            return s
+        }
+    }
+}
+
 export function reset(f:FormState){
     return {
         ...f,

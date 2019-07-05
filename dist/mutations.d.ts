@@ -25,6 +25,7 @@ export declare function registerField(key: string, schema: FormFieldSchema): (f:
 };
 export declare function unregisterField(key: string): (f: FormState) => FormState;
 export declare function submit(dispatch: (m: (s: FormState) => FormState) => void, submitFunc: (formValue: any) => Promise<void>): void;
+export declare function setFieldError(key: string, error: string): (s: FormState) => FormState;
 export declare function reset(f: FormState): {
     values: any;
     submitting: boolean;

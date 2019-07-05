@@ -6,7 +6,7 @@ import { FormFieldSchema, FieldListens, FormState, WidgetProps, WidgetInjectedPr
 import { useSource, Store } from 'rehooker';
 import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
 import { combineLatest, merge } from 'rxjs';
-import { registerField, unregisterField, changeValue, startValidation } from './mutations';
+import { registerField, unregisterField, changeValue, startValidation, setFieldError } from './mutations';
 import { isFullWidth } from './constants';
 /**
  * Created by buhi on 2017/7/26.
@@ -100,6 +100,7 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
     const { schema, form, keyPath } = props;
     const componentProps = getComponentProps(schema)
 
+    /** assume finalKey will not change */
     const finalKey = (keyPath + "." + schema.key).slice(1) /** it begins with dot */
 
     const fieldState = useFieldState(form, finalKey, schema.format)
@@ -113,10 +114,15 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
         form.next(startValidation(finalKey, schema.validate))
     }, [form, schema.validate, schema.parse])
 
+    const onError = React.useMemo(()=>(errorMessage:string)=>{
+        form.next(setFieldError(finalKey,errorMessage))
+    },[form])
+
     React.useEffect(() => {
         props.form.next(registerField(finalKey, schema))
         return () => props.form.next(unregisterField(finalKey))
     }, [])
+    
     if (!fieldState)
         return null
     if (schema.hide)
@@ -133,11 +139,11 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
     if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
         const StoredWidget = widgetRegistration.get(schema.type);
         if (StoredWidget) {
-            fieldNode = <StoredWidget form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
+            fieldNode = <StoredWidget onError={onError} form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
         }
     } else if (typeof schema.type === 'function') {
         const Comp = schema.type
-        fieldNode = <Comp form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
+        fieldNode = <Comp onError={onError} form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
     }
     if(fieldNode !== null){
         return props.noWrapper ? <>{fieldNode}</> : <div className={className} style={schema.style}>

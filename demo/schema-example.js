@@ -30,6 +30,79 @@ var arrayFieldChildren = [
         ]
     }
 ];
+function wait(s) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, s * 1000);
+    });
+}
+exports.schema2 = [
+    {
+        key: "1",
+        type: 'select',
+        label: "1",
+        options: function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, wait(1)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, [
+                                {
+                                    name: "宕机",
+                                    value: "宕机",
+                                }, {
+                                    name: "误告",
+                                    value: "误告",
+                                },
+                            ]];
+                }
+            });
+        }); }
+    }, {
+        key: "2",
+        type: 'select',
+        label: "2",
+        options: [],
+        listens: [
+            {
+                to: ["1"],
+                then: function (_a) {
+                    var v = _a[0];
+                    return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                        return tslib_1.__generator(this, function (_b) {
+                            switch (_b.label) {
+                                case 0: return [4 /*yield*/, wait(0)];
+                                case 1:
+                                    _b.sent();
+                                    return [2 /*return*/, {
+                                            options: v === "宕机" ? [
+                                                {
+                                                    name: "宕机1",
+                                                    value: "宕机1",
+                                                },
+                                                {
+                                                    name: "宕机2",
+                                                    value: "宕机2",
+                                                },
+                                            ] : [
+                                                {
+                                                    name: "误告1",
+                                                    value: "误告1",
+                                                },
+                                                {
+                                                    name: "误告2",
+                                                    value: "误告2",
+                                                },
+                                            ]
+                                        }];
+                            }
+                        });
+                    });
+                }
+            }
+        ]
+    },
+];
 exports.schema = [
     {
         key: "text",
@@ -359,14 +432,15 @@ exports.schema = [
         type: "autocomplete-async",
         label: "自动完成(async options)",
         placeholder: "placeholder",
-        options: function (t) {
-            if (/^\d+$/.test(t))
-                return new Promise(function (resolve) {
-                    setTimeout(function () { return resolve(new Array(100).fill(0).map(function (_, i) { return ({ name: String(i), value: "value-" + i }); })); }, 1000);
-                });
-            else
-                return [{ name: "0", value: 0 }];
-        }
+        options: function (t) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                if (/^\d+$/.test(t))
+                    return [2 /*return*/, new Array(100).fill(0).map(function (_, i) { return ({ name: String(i), value: "value-" + i }); })];
+                else
+                    return [2 /*return*/, [{ name: "0", value: 0 }]];
+                return [2 /*return*/];
+            });
+        }); }
     }, {
         key: "textarea",
         type: "textarea",

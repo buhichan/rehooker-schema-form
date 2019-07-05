@@ -15,11 +15,8 @@ var App = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
             data: {
-                state: 2,
-                "dependant_lv1": "animal",
-                "dependant_lv2": "dog",
-                "select": "pear",
-                select1: 0,
+                "1": "宕机",
+                "2": "误告1",
             }
         };
         _this.onSubmit = function (values) { return tslib_1.__awaiter(_this, void 0, void 0, function () {

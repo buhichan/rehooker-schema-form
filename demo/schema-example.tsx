@@ -28,6 +28,66 @@ const arrayFieldChildren:FormFieldSchema[] = [
     }
 ]
 
+function wait(s:number){
+    return new Promise(resolve=>{
+        setTimeout(resolve,s * 1000)
+    })
+}
+
+export const schema2:FormFieldSchema[] = [
+    {
+        key:"1",
+        type:'select',
+        label:"1",
+        options:async ()=>{
+            await wait(1);
+            return [
+                {
+                    name:"宕机",
+                    value:"宕机",
+                },{
+                    name:"误告",
+                    value:"误告",
+                },
+            ]
+        }
+    },{
+        key:"2",
+        type:'select',
+        label:"2",
+        options:[],
+        listens:[
+            {
+                to:["1"],
+                then:async ([v])=>{
+                    await wait(0);
+                    return {
+                        options:v === "宕机" ? [
+                            {
+                                name:"宕机1",
+                                value:"宕机1",
+                            },
+                            {
+                                name:"宕机2",
+                                value:"宕机2",
+                            },
+                        ]: [
+                            {
+                                name:"误告1",
+                                value:"误告1",
+                            },
+                            {
+                                name:"误告2",
+                                value:"误告2",
+                            },
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+]
+
 export let schema:FormFieldSchema[] = [
     {
         key:"text",
@@ -360,11 +420,9 @@ export let schema:FormFieldSchema[] = [
         type:"autocomplete-async",
         label:"自动完成(async options)",
         placeholder:"placeholder",
-        options:t=>{
+        options:async t=>{
             if(/^\d+$/.test(t))
-                return new Promise(resolve=>{
-                    setTimeout(()=> resolve(new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))), 1000)
-                });
+                return new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))
             else return [{name:"0",value:0}];
         }
     },{

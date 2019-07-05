@@ -51,20 +51,20 @@ function SelectInput(props) {
             });
         }
     }, [fieldSchema.options instanceof Function && fieldSchema.options.length > 0 ? search : ""]);
-    var validValues = React.useMemo(function () {
+    var optionValueMap = React.useMemo(function () {
         if (!options) {
             return null;
         }
         else {
-            return new Set(options.map(function (x) { return x.value; }));
+            return new Map(options.map(function (x) { return [x.value, x.name]; }));
         }
     }, [options]);
     var onChange = function (newValue) {
         setSearch("");
-        if (validValues) {
+        if (optionValueMap) {
             if (newValue instanceof Array) {
                 newValue = newValue.filter(function (y) {
-                    return validValues.has(y);
+                    return optionValueMap.has(y);
                 });
             }
         }
@@ -74,19 +74,40 @@ function SelectInput(props) {
         var finalValue = value;
         if (fieldSchema.multiple || componentProps.mode === "multiple") {
             if (Array.isArray(value)) {
-                finalValue = value.filter(function (x) { return !validValues || validValues.has(x); });
+                // finalValue = value.filter(x=>!validValues || validValues.has(x))
+            }
+            else {
+                finalValue = [];
             }
         }
         else {
-            if (value === '') {
+            if (value === '' || value === null) {
                 finalValue = undefined;
             }
-            else if (value != undefined && !!validValues && !validValues.has(value)) {
-                finalValue = undefined;
-            }
+            // else if(value != undefined && !!validValues && !validValues.has(value)){
+            //     finalValue = undefined
+            // }
         }
         return finalValue;
-    }, [value, validValues]);
+    }, [value]);
+    React.useEffect(function () {
+        if (componentProps.allowInvalidOption) {
+            return;
+        }
+        else if (optionValueMap) {
+            if (finalValue instanceof Array) {
+                var invalidValues = finalValue.filter(function (y) { return !optionValueMap.has(y); });
+                if (invalidValues.length > 0) {
+                    props.onError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(invalidValues) || "\u9009\u9879\u65E0\u6548, \u8BF7\u91CD\u65B0\u9009\u62E9.");
+                }
+            }
+            else if (finalValue != undefined) {
+                if (!optionValueMap.has(finalValue)) {
+                    props.onError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(finalValue) || "\u9009\u9879\u65E0\u6548, \u8BF7\u91CD\u65B0\u9009\u62E9.");
+                }
+            }
+        }
+    }, [finalValue, optionValueMap]);
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
         React.createElement(Select, tslib_1.__assign({ allowClear: !fieldSchema.required, showSearch: true, style: { width: "100%" }, onSearch: setSearch, mode: fieldSchema.multiple ? "multiple" : "default", value: finalValue, onChange: onChange, filterOption: false }, componentProps, { onBlur: onBlur }), options ? options.filter(function (option) {
             return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
@@ -291,9 +312,6 @@ function GroupRenderer(_a) {
 function ArrayFieldRenderer(props) {
     return React.createElement(FieldArray, { name: props.keyPath + "." + props.schema.key, form: props.form, value: props.value }, function (keys, add) { return React.createElement(React.Fragment, null,
         React.createElement("label", null, props.schema.label),
-        React.createElement("div", { className: "add-button" },
-            React.createElement(Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
-                React.createElement(Button, { icon: "plus", onClick: add }))),
         React.createElement(Collapse, { activeKey: keys.map(function (x) { return x.key; }), style: { marginBottom: 16, marginTop: 16 } }, keys.map(function (_a, index) {
             var key = _a.key, remove = _a.remove;
             return React.createElement(Collapse.Panel, { forceRender: true, showArrow: false, key: key, header: React.createElement("div", null,
@@ -302,7 +320,10 @@ function ArrayFieldRenderer(props) {
                         React.createElement(Tooltip, { placement: "topLeft", title: "\u5220\u9664", arrowPointAtCenter: true },
                             React.createElement(Icon, { type: "close", style: { cursor: "pointer", marginRight: 8 }, onClick: remove })))) },
                 React.createElement("div", { className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, key)));
-        }))); });
+        })),
+        React.createElement("div", { className: "add-button" },
+            React.createElement(Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
+                React.createElement(Button, { icon: "plus", onClick: add })))); });
 }
 addType("group", GroupRenderer);
 addType('text', TextInput);

@@ -83,6 +83,17 @@ export function submit(dispatch, submitFunc) {
         return tslib_1.__assign({}, f, { submitting: true });
     });
 }
+export function setFieldError(key, error) {
+    return function (s) {
+        var _a;
+        if (s.values) {
+            return tslib_1.__assign({}, s, { errors: error ? tslib_1.__assign({}, s.errors, (_a = {}, _a[key] = error, _a)) : deleteKey(s.errors, key) });
+        }
+        else {
+            return s;
+        }
+    };
+}
 export function reset(f) {
     return tslib_1.__assign({}, f, { values: f.initialValues });
 }

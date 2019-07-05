@@ -11,11 +11,8 @@ const form = createForm()
 class App extends React.PureComponent<any,any>{
     state={
         data:{
-            state:2,
-            "dependant_lv1": "animal",
-            "dependant_lv2": "dog",
-            "select": "pear",
-            select1:0,
+            "1": "宕机",
+            "2": "误告1",
         }
     }
     onSubmit=async (values:any)=>{

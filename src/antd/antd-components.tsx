@@ -79,20 +79,20 @@ function SelectInput(props:WidgetProps){
         }
     },[fieldSchema.options instanceof Function && fieldSchema.options.length > 0 ? search : ""])
 
-    const validValues = React.useMemo(()=>{
+    const optionValueMap = React.useMemo(()=>{
         if(!options){
             return null
         }else{
-            return new Set(options.map(x=>x.value))
+            return new Map(options.map(x=>[x.value,x.name]))
         }
     },[options])
 
     const onChange= (newValue:any)=>{
         setSearch("")
-        if(validValues){
+        if(optionValueMap){
             if(newValue instanceof Array){
                 newValue = newValue.filter(y=>{
-                    return validValues.has(y)
+                    return optionValueMap.has(y)
                 })
             }
         }
@@ -103,17 +103,37 @@ function SelectInput(props:WidgetProps){
         let finalValue = value
         if(fieldSchema.multiple|| componentProps.mode==="multiple"){
             if(Array.isArray(value)){
-                finalValue = value.filter(x=>!validValues || validValues.has(x))
+                // finalValue = value.filter(x=>!validValues || validValues.has(x))
+            }else{
+                finalValue = []
             }
         }else{
-            if(value === ''){
-                finalValue = undefined
-            }else if(value != undefined && !!validValues && !validValues.has(value)){
+            if(value === '' || value === null){
                 finalValue = undefined
             }
+            // else if(value != undefined && !!validValues && !validValues.has(value)){
+            //     finalValue = undefined
+            // }
         }
         return finalValue
-    },[value,validValues]) 
+    },[value]) 
+
+    React.useEffect(()=>{
+        if(componentProps.allowInvalidOption){
+            return
+        }else if(optionValueMap){
+            if( finalValue instanceof Array ){
+                const invalidValues = finalValue.filter(y=>!optionValueMap.has(y))
+                if(invalidValues.length > 0){
+                    props.onError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(invalidValues) || `选项无效, 请重新选择.`)
+                }
+            }else if(finalValue != undefined){
+                if(!optionValueMap.has(finalValue)){
+                    props.onError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(finalValue) || `选项无效, 请重新选择.`)
+                }
+            }
+        }
+    },[finalValue,optionValueMap])
 
     return <InputWraper {...props}>
         <Select
@@ -454,11 +474,6 @@ function ArrayFieldRenderer(props:WidgetProps){
     return <FieldArray name={props.keyPath+"."+props.schema.key} form={props.form} value={props.value}>
         {(keys,add)=><>
             <label>{props.schema.label}</label>
-            <div className="add-button">
-                <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
-                    <Button icon="plus" onClick={add}/>
-                </Tooltip>
-            </div>
             <Collapse activeKey={keys.map(x=>x.key)} style={{marginBottom:16,marginTop:16}}>
             {
                 keys.map(({key,remove},index) => {
@@ -479,6 +494,11 @@ function ArrayFieldRenderer(props:WidgetProps){
                 })
             }
             </Collapse>
+            <div className="add-button">
+                <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
+                    <Button icon="plus" onClick={add}/>
+                </Tooltip>
+            </div>
         </>}
     </FieldArray>
 }
