@@ -22,7 +22,6 @@ export function registerField(key:string,schema:FormFieldSchema){
 export function unregisterField(key:string){
     return function unregisterField(f:FormState){
         if( 
-            !(f.values && key in f.values) && 
             !(f.errors && key in f.errors) && 
             !(f.meta && key in f.meta)
         ){
@@ -31,9 +30,6 @@ export function unregisterField(key:string){
         }
         return {
             ...f,
-            ...f.values ? {
-                values: deleteKey(f.values,key)
-            } : {},
             ...f.errors ? {
                 errors: deleteKey(f.errors,key)
             } : {},

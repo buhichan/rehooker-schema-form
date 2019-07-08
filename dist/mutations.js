@@ -17,15 +17,12 @@ export function registerField(key, schema) {
 }
 export function unregisterField(key) {
     return function unregisterField(f) {
-        if (!(f.values && key in f.values) &&
-            !(f.errors && key in f.errors) &&
+        if (!(f.errors && key in f.errors) &&
             !(f.meta && key in f.meta)) {
             //no change to make
             return f;
         }
-        return tslib_1.__assign({}, f, f.values ? {
-            values: deleteKey(f.values, key)
-        } : {}, f.errors ? {
+        return tslib_1.__assign({}, f, f.errors ? {
             errors: deleteKey(f.errors, key)
         } : {}, f.meta ? {
             meta: deleteKey(f.meta, key)
