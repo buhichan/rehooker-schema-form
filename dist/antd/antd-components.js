@@ -70,6 +70,7 @@ function SelectInput(props) {
         }
         props.onChange(newValue);
     };
+    var _c = React.useState(""), innerError = _c[0], setInnerError = _c[1];
     var finalValue = React.useMemo(function () {
         var finalValue = value;
         if (fieldSchema.multiple || componentProps.mode === "multiple") {
@@ -98,17 +99,26 @@ function SelectInput(props) {
             if (finalValue instanceof Array) {
                 var invalidValues = finalValue.filter(function (y) { return !optionValueMap.has(y); });
                 if (invalidValues.length > 0) {
-                    props.onError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(invalidValues) || "\u9009\u9879\u65E0\u6548, \u8BF7\u91CD\u65B0\u9009\u62E9.");
+                    setInnerError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(invalidValues) || "\u9009\u9879\u65E0\u6548, \u8BF7\u91CD\u65B0\u9009\u62E9.");
+                }
+                else {
+                    setInnerError("");
                 }
             }
             else if (finalValue != undefined) {
                 if (!optionValueMap.has(finalValue)) {
-                    props.onError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(finalValue) || "\u9009\u9879\u65E0\u6548, \u8BF7\u91CD\u65B0\u9009\u62E9.");
+                    setInnerError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(finalValue) || "\u9009\u9879\u65E0\u6548, \u8BF7\u91CD\u65B0\u9009\u62E9.");
                 }
+                else {
+                    setInnerError("");
+                }
+            }
+            else {
+                setInnerError("");
             }
         }
     }, [finalValue, optionValueMap]);
-    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+    return React.createElement(InputWraper, tslib_1.__assign({}, props, { error: props.error || innerError }),
         React.createElement(Select, tslib_1.__assign({ allowClear: !fieldSchema.required, showSearch: true, style: { width: "100%" }, onSearch: setSearch, mode: fieldSchema.multiple ? "multiple" : "default", value: finalValue, onChange: onChange, filterOption: false }, componentProps, { onBlur: onBlur }), options ? options.filter(function (option) {
             return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
         }).slice(0, fieldSchema.maxOptionCount || Infinity).map(function (option) {
