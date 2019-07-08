@@ -99,6 +99,8 @@ function SelectInput(props:WidgetProps){
         props.onChange(newValue)
     }
 
+    const [innerError,setInnerError] = React.useState("")
+
     let finalValue = React.useMemo(()=>{
         let finalValue = value
         if(fieldSchema.multiple|| componentProps.mode==="multiple"){
@@ -125,17 +127,23 @@ function SelectInput(props:WidgetProps){
             if( finalValue instanceof Array ){
                 const invalidValues = finalValue.filter(y=>!optionValueMap.has(y))
                 if(invalidValues.length > 0){
-                    props.onError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(invalidValues) || `选项无效, 请重新选择.`)
+                    setInnerError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(invalidValues) || `选项无效, 请重新选择.`)
+                }else{
+                    setInnerError("")
                 }
             }else if(finalValue != undefined){
                 if(!optionValueMap.has(finalValue)){
-                    props.onError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(finalValue) || `选项无效, 请重新选择.`)
+                    setInnerError(componentProps.invalidOptionAlert && componentProps.invalidOptionAlert(finalValue) || `选项无效, 请重新选择.`)
+                }else{
+                    setInnerError("")
                 }
+            }else{
+                setInnerError("")
             }
         }
     },[finalValue,optionValueMap])
 
-    return <InputWraper {...props}>
+    return <InputWraper {...props} error={props.error || innerError}>
         <Select
             allowClear={!fieldSchema.required}
             showSearch
