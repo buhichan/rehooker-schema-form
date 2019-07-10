@@ -52,7 +52,7 @@ function SelectInput(props) {
         }
     }, [fieldSchema.options instanceof Function && fieldSchema.options.length > 0 ? search : ""]);
     var optionValueMap = React.useMemo(function () {
-        if (!options) {
+        if (!options || !options.length) {
             return null;
         }
         else {

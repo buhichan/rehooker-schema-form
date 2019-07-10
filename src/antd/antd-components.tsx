@@ -80,7 +80,7 @@ function SelectInput(props:WidgetProps){
     },[fieldSchema.options instanceof Function && fieldSchema.options.length > 0 ? search : ""])
 
     const optionValueMap = React.useMemo(()=>{
-        if(!options){
+        if(!options || !options.length){
             return null
         }else{
             return new Map(options.map(x=>[x.value,x.name]))
