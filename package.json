@@ -1,6 +1,6 @@
 {
   "name": "rehooker-schema-form",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "form component",
   "main": "dist/index.js",
   "repository": {

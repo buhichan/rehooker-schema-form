@@ -129,7 +129,7 @@ function SelectInput(props) {
                 return React.createElement(Select.Option, tslib_1.__assign({ key: name, value: value }, rest), name);
             }) : null,
             filteredOptions && filteredOptions.length > optionNumMaximum ?
-                React.createElement(Select.Option, { key: "_____more", value: "_____more" }, fieldSchema.maxOptionCountTips || "\u5DF2\u9690\u85CF\u5269\u4F59\u7684" + (filteredOptions.length - optionNumMaximum) + "\u4E2A\u9009\u9879, \u8BF7\u4F7F\u7528\u641C\u7D22") :
+                React.createElement(Select.Option, { disabled: true, key: "_____more", value: "_____more", style: { opacity: .5 } }, fieldSchema.maxOptionCountTips || "\u5DF2\u9690\u85CF\u5269\u4F59\u7684" + (filteredOptions.length - optionNumMaximum) + "\u4E2A\u9009\u9879, \u8BF7\u4F7F\u7528\u641C\u7D22") :
                 null));
 }
 function CheckboxInput(props) {
