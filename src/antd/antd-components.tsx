@@ -143,6 +143,12 @@ function SelectInput(props:WidgetProps){
         }
     },[finalValue,optionValueMap])
 
+    const filteredOptions = options ? options.filter((option)=>{
+        return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0
+    }) : null
+
+    const optionNumMaximum = fieldSchema.maxOptionCount || Infinity
+
     return <InputWraper {...props} error={props.error || innerError}>
         <Select
             allowClear={!fieldSchema.required}
@@ -156,12 +162,15 @@ function SelectInput(props:WidgetProps){
             {...componentProps}
             onBlur={onBlur}
         >
-            {options ? options.filter((option)=>{
-                return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0
-            }).slice(0,fieldSchema.maxOptionCount || Infinity).map(option=>{
+            {filteredOptions? filteredOptions.slice(0,optionNumMaximum).map(option=>{
                 const {name,value,...rest} = option
                 return <Select.Option key={name} value={value} {...rest}>{name}</Select.Option>
             }) : null}
+            {
+                filteredOptions && filteredOptions.length > optionNumMaximum ? 
+                <Select.Option key="_____more" value="_____more">{fieldSchema.maxOptionCountTips || `已隐藏剩余的${filteredOptions.length - optionNumMaximum}个选项, 请使用搜索`}</Select.Option> : 
+                null
+            }
         </Select>
     </InputWraper>
 }
