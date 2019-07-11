@@ -168,7 +168,9 @@ function SelectInput(props:WidgetProps){
             }) : null}
             {
                 filteredOptions && filteredOptions.length > optionNumMaximum ? 
-                <Select.Option key="_____more" value="_____more">{fieldSchema.maxOptionCountTips || `已隐藏剩余的${filteredOptions.length - optionNumMaximum}个选项, 请使用搜索`}</Select.Option> : 
+                <Select.Option disabled key="_____more" value="_____more" style={{opacity:.5}}>
+                    {fieldSchema.maxOptionCountTips || `已隐藏剩余的${filteredOptions.length - optionNumMaximum}个选项, 请使用搜索`}
+                </Select.Option> : 
                 null
             }
         </Select>
