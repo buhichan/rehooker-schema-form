@@ -118,13 +118,19 @@ function SelectInput(props) {
             }
         }
     }, [finalValue, optionValueMap]);
+    var filteredOptions = options ? options.filter(function (option) {
+        return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+    }) : null;
+    var optionNumMaximum = fieldSchema.maxOptionCount || Infinity;
     return React.createElement(InputWraper, tslib_1.__assign({}, props, { error: props.error || innerError }),
-        React.createElement(Select, tslib_1.__assign({ allowClear: !fieldSchema.required, showSearch: true, style: { width: "100%" }, onSearch: setSearch, mode: fieldSchema.multiple ? "multiple" : "default", value: finalValue, onChange: onChange, filterOption: false }, componentProps, { onBlur: onBlur }), options ? options.filter(function (option) {
-            return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
-        }).slice(0, fieldSchema.maxOptionCount || Infinity).map(function (option) {
-            var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
-            return React.createElement(Select.Option, tslib_1.__assign({ key: name, value: value }, rest), name);
-        }) : null));
+        React.createElement(Select, tslib_1.__assign({ allowClear: !fieldSchema.required, showSearch: true, style: { width: "100%" }, onSearch: setSearch, mode: fieldSchema.multiple ? "multiple" : "default", value: finalValue, onChange: onChange, filterOption: false }, componentProps, { onBlur: onBlur }),
+            filteredOptions ? filteredOptions.slice(0, optionNumMaximum).map(function (option) {
+                var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
+                return React.createElement(Select.Option, tslib_1.__assign({ key: name, value: value }, rest), name);
+            }) : null,
+            filteredOptions && filteredOptions.length > optionNumMaximum ?
+                React.createElement(Select.Option, { key: "_____more", value: "_____more" }, fieldSchema.maxOptionCountTips || "\u5DF2\u9690\u85CF\u5269\u4F59\u7684" + (filteredOptions.length - optionNumMaximum) + "\u4E2A\u9009\u9879, \u8BF7\u4F7F\u7528\u641C\u7D22") :
+                null));
 }
 function CheckboxInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
