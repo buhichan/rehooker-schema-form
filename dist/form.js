@@ -4,31 +4,30 @@ import * as tslib_1 from "tslib";
  */
 import * as React from 'react';
 import { createStore } from "rehooker";
-import { identity } from 'rxjs';
+import { debounceTime, distinctUntilKeyChanged } from 'rxjs/operators';
 import { renderFields } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
-import { debounceTime, distinctUntilKeyChanged, filter } from 'rxjs/operators';
+var emptyMap = {};
 var defaultFormState = {
     submitting: false,
     submitSucceeded: false,
-    initialValues: {},
-    errors: {},
-    values: {},
+    initialValues: emptyMap,
+    errors: emptyMap,
+    values: emptyMap,
     valid: true,
 };
 export function createForm(options) {
     var _this = this;
-    var store = createStore(tslib_1.__assign({}, defaultFormState), options ? options.middleware : undefined);
+    var store = createStore(tslib_1.__assign({}, defaultFormState, { hasValidator: options && !!options.validator || false }), options ? options.middleware : undefined);
     var validator = options && options.validator;
-    store.stream.pipe(distinctUntilKeyChanged("values"), filter(function (x) { return !x.valid; }), options && options.validationDelay ? debounceTime(options.validationDelay) : identity).subscribe(function (fs) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+    store.stream.pipe(distinctUntilKeyChanged("values"), debounceTime(options && options.validationDelay || 50)).subscribe(function (fs) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
         var errors_1;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!(fs.values !== fs.initialValues)) return [3 /*break*/, 3];
                     if (!validator) return [3 /*break*/, 2];
-                    console.log("validating...");
                     return [4 /*yield*/, validator(fs.values)];
                 case 1:
                     errors_1 = _a.sent();
@@ -58,8 +57,8 @@ export function SchemaForm(props) {
     }, [props.initialValues]);
     React.useEffect(function () { return function () {
         if (!props.disableDestruction) {
-            props.form.next(function destroyOnUnmounnt() {
-                return defaultFormState;
+            props.form.next(function destroyOnUnmounnt(s) {
+                return tslib_1.__assign({}, s, defaultFormState);
             });
         }
     }; }, [props.form]);

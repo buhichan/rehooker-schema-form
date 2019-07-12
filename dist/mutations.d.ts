@@ -12,6 +12,7 @@ export declare function reset(f: FormState): {
     errors: any;
     initialValues: any;
     valid: boolean;
+    hasValidator: boolean;
 };
 export declare function changeValue(key: FieldPath, valueOrEvent: any, parse?: FormFieldSchema['parse']): (s: FormState) => {
     values: any;
@@ -20,6 +21,7 @@ export declare function changeValue(key: FieldPath, valueOrEvent: any, parse?: F
     submitSucceeded: boolean;
     errors: any;
     initialValues: any;
+    hasValidator: boolean;
 };
 export declare function initialize(initialValues: any): (f: FormState) => {
     values: any;
@@ -29,4 +31,5 @@ export declare function initialize(initialValues: any): (f: FormState) => {
     submitSucceeded: boolean;
     errors: any;
     valid: boolean;
+    hasValidator: boolean;
 };

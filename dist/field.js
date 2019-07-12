@@ -4,11 +4,11 @@ import * as tslib_1 from "tslib";
  */
 import * as React from "react";
 import { useSource } from 'rehooker';
-import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
 import { combineLatest, merge } from 'rxjs';
+import { distinct, distinctUntilChanged, map } from 'rxjs/operators';
 import { isFullWidth } from './constants';
-import { deepGet } from './utils';
 import { changeValue } from './mutations';
+import { deepGet } from './utils';
 /**
  * Created by buhi on 2017/7/26.
  */
@@ -42,13 +42,13 @@ export function getComponentProps(field) {
     return rest;
 }
 export function useField(form, key, format) {
-    return useSource(form.stream, function (ob) { return ob.pipe(skipWhile(function (x) { return x.values === undefined; }), map(function (s) {
+    return useSource(form.stream, function (ob) { return ob.pipe(distinctUntilChanged(function (a, b) { return a.values === b.values && a.errors === b.errors; }), map(function (s) {
         var value = deepGet(s.values, key);
         return {
             value: format ? format(value) : value,
             error: deepGet(s.errors, key)
         };
-    }), debounceTime(24)); }, [form, name, format]);
+    })); }, [form, name, format]);
 }
 var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath;
@@ -109,7 +109,7 @@ var StatefulField = React.memo(function StatefulField(props) {
     var _a = React.useState(props.schema), schema = _a[0], setSchema = _a[1];
     var listens = schema.listens;
     React.useEffect(function () {
-        var $value = props.form.stream.pipe(skipWhile(function (x) { return x.values === undefined; }), map(function (x) { return x.values; }), distinct());
+        var $value = props.form.stream.pipe(map(function (x) { return x.values; }), distinct());
         var $change = merge.apply(void 0, listens.map(function (x) {
             var listenTo = typeof x.to === 'function' ? x.to(props.keyPath.join(".")) : x.to;
             return combineLatest(listenTo.map(function (x) {

@@ -70,6 +70,7 @@ export declare type FormState = {
     values: any;
     initialValues: any;
     valid: boolean;
+    hasValidator: boolean;
 };
 declare type ErrorMap = Record<string, any>;
 declare type CreateFormOptions = {
@@ -77,14 +78,7 @@ declare type CreateFormOptions = {
     validationDelay?: number;
     middleware?: OperatorFunction<Mutation<FormState>, Mutation<FormState>>;
 };
-export declare function createForm(options?: CreateFormOptions): Store<{
-    submitting: boolean;
-    submitSucceeded: boolean;
-    errors: any;
-    values: any;
-    initialValues: any;
-    valid: boolean;
-}>;
+export declare function createForm(options?: CreateFormOptions): Store<FormState>;
 export declare type SchemaFormProps = {
     schema: FormFieldSchema[];
     noButton?: boolean;

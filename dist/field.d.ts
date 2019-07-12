@@ -2,8 +2,8 @@
  * Created by buhi on 2017/7/26.
  */
 import * as React from "react";
-import { FormFieldSchema, FieldListens, FormState, WidgetProps, WidgetInjectedProps } from "./form";
 import { Store } from 'rehooker';
+import { FieldListens, FormFieldSchema, FormState, WidgetInjectedProps, WidgetProps } from "./form";
 /**
  * Created by buhi on 2017/7/26.
  */

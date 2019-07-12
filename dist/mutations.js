@@ -39,7 +39,7 @@ export function reset(f) {
 export function changeValue(key, valueOrEvent, parse) {
     return function changeValue(s) {
         var newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent;
-        return tslib_1.__assign({}, s, { values: deepSet(s.values, key, parse ? parse(newValue) : newValue), valid: false });
+        return tslib_1.__assign({}, s, { values: deepSet(s.values, key, parse ? parse(newValue) : newValue), valid: s.hasValidator ? false : true });
     };
 }
 export function initialize(initialValues) {

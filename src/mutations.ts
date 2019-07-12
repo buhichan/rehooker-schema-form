@@ -65,7 +65,7 @@ export function changeValue(key:FieldPath,valueOrEvent:any,parse?:FormFieldSchem
         return {
             ...s,
             values:deepSet(s.values,key,parse?parse(newValue):newValue),
-            valid:false,
+            valid: s.hasValidator ? false : true,
         }
     }
 }

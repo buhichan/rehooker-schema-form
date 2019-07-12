@@ -16,15 +16,7 @@ export function setButton(buttons) {
 }
 export function FormButtons(props) {
     var res = useSource(props.form.stream, map(function (s) {
-        var values = s.values;
-        var pristine = s.initialValues &&
-            values &&
-            Object.keys(values).length === Object.keys(s.initialValues).length &&
-            Object.keys(values).every(function (k) {
-                var v1 = values[k];
-                var v2 = s.initialValues[k];
-                return v1 === v2 || v1 == undefined && v2 == undefined;
-            });
+        var pristine = s.initialValues === s.values;
         var hasError = !s.valid;
         var submittable = !hasError &&
             !pristine &&

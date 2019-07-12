@@ -7,12 +7,19 @@ require("antd/dist/antd.css");
 require("../styles/antd-components.css");
 
 const form = createForm({
-    validator:(v:any)=>{
-        return {
-            '1':! v[1] ? "必填" : ""
-        }
-    },
-    validationDelay:1000
+    // validator:(v:any)=>{
+    //     return {
+    //         '1':! v[1] ? "必填" : ""
+    //     }
+    // },
+    // validationDelay:1000
+})
+
+form.stream.subscribe((v:any)=>{
+    console.log(v)
+    if(!v.valid){
+        console.log("???")
+    }
 })
 
 class App extends React.PureComponent<any,any>{

@@ -53,15 +53,7 @@ type InjectFormSubmittableProps = {
 
 export function FormButtons(props:InjectFormSubmittableProps){
     const res = useSource(props.form.stream,map(s=>{
-        const values = s.values
-        const pristine = s.initialValues &&
-            values && 
-            Object.keys(values).length === Object.keys(s.initialValues).length && 
-            Object.keys(values).every(k=>{
-                const v1 = values[k]
-                const v2 = s.initialValues[k]
-                return v1 === v2 || v1 == undefined && v2 == undefined
-            })
+        const pristine = s.initialValues === s.values
         const hasError = !s.valid
         const submittable = !hasError&&
             !pristine &&

@@ -1,14 +1,14 @@
 /**
  * Created by buhi on 2017/7/26.
  */
-import * as React from "react"
-import { FormFieldSchema, FieldListens, FormState, WidgetProps, WidgetInjectedProps } from "./form";
-import { useSource, Store } from 'rehooker';
-import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
+import * as React from "react";
+import { Store, useSource } from 'rehooker';
 import { combineLatest, merge } from 'rxjs';
+import { distinct, distinctUntilChanged, map } from 'rxjs/operators';
 import { isFullWidth } from './constants';
-import { deepGet } from './utils';
+import { FieldListens, FormFieldSchema, FormState, WidgetInjectedProps, WidgetProps } from "./form";
 import { changeValue } from './mutations';
+import { deepGet } from './utils';
 /**
  * Created by buhi on 2017/7/26.
  */
@@ -86,7 +86,7 @@ export function getComponentProps(field: FormFieldSchema) {
 
 export function useField(form: Store<FormState>, key: FieldPath, format?: (v: any) => any) {
     return useSource(form.stream, ob => ob.pipe(
-        skipWhile(x => x.values === undefined),
+        distinctUntilChanged((a,b)=>a.values === b.values && a.errors === b.errors),
         map(s => {
             const value = deepGet(s.values,key)
             return {
@@ -94,7 +94,6 @@ export function useField(form: Store<FormState>, key: FieldPath, format?: (v: an
                 error: deepGet(s.errors,key)
             }
         }),
-        debounceTime(24)
     ), [form, name, format])
 }
 
@@ -171,7 +170,6 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
     const listens = schema.listens as Exclude<typeof schema.listens, undefined>
     React.useEffect(() => {
         const $value = props.form.stream.pipe(
-            skipWhile(x => x.values === undefined),
             map(x => x.values),
             distinct(),
         )

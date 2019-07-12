@@ -3,11 +3,11 @@
  */
 import * as React from 'react';
 import { createStore, Mutation, Store } from "rehooker";
-import { OperatorFunction, identity } from 'rxjs';
-import { renderFields, FieldPath } from "./field";
+import { OperatorFunction } from 'rxjs';
+import { debounceTime, distinctUntilKeyChanged } from 'rxjs/operators';
+import { FieldPath, renderFields } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
-import { debounceTime, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 
 export type Option = {name:string,value:any,group?:string}
 export type AsyncOptions = ()=>Promise<Option[]>
@@ -72,16 +72,10 @@ export type FormState = {
     values:any
     initialValues:any,
     valid:boolean,
+    hasValidator:boolean,
 }
 
-const defaultFormState:FormState = {
-    submitting:false,
-    submitSucceeded:false,
-    initialValues:{},
-    errors:{},
-    values:{},
-    valid:true,
-}
+const emptyMap = {}
 
 type ErrorMap = Record<string,any>
 type CreateFormOptions = {
@@ -90,21 +84,29 @@ type CreateFormOptions = {
     middleware?:OperatorFunction<Mutation<FormState>,Mutation<FormState>>
 }
 
+const defaultFormState = {
+    submitting:false,
+    submitSucceeded:false,
+    initialValues:emptyMap,
+    errors:emptyMap,
+    values:emptyMap,
+    valid:true,
+}
+
 export function createForm(options?:CreateFormOptions){
     const store = createStore({
         ...defaultFormState,
+        hasValidator: options && !!options.validator || false,
     },options?options.middleware:undefined)
 
     const validator = options && options.validator
 
     store.stream.pipe(
         distinctUntilKeyChanged("values"),
-        filter(x=>!x.valid),
-        options && options.validationDelay ? debounceTime(options.validationDelay) : identity
+        debounceTime(options && options.validationDelay || 50)
     ).subscribe(async fs=>{
         if(fs.values !== fs.initialValues){
             if(validator){
-                console.log("validating...")
                 const errors = await validator(fs.values)
                 store.next(f=>({
                     ...f,
@@ -152,8 +154,11 @@ export function SchemaForm(props:SchemaFormProps){
 
     React.useEffect(()=>()=>{
         if(!props.disableDestruction){
-            props.form.next(function destroyOnUnmounnt(){
-                return defaultFormState 
+            props.form.next(function destroyOnUnmounnt(s){
+                return {
+                    ...s,
+                    ...defaultFormState,
+                } 
             })
         }
     },[props.form])
