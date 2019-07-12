@@ -25,7 +25,7 @@ export function FormButtons(props) {
                 var v2 = s.initialValues[k];
                 return v1 === v2 || v1 == undefined && v2 == undefined;
             });
-        var hasError = Object.keys(s.errors).length !== 0;
+        var hasError = !s.valid;
         var submittable = !hasError &&
             !pristine &&
             !s.submitting &&

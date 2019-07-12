@@ -4,33 +4,43 @@ import * as tslib_1 from "tslib";
  */
 import * as React from 'react';
 import { createStore } from "rehooker";
+import { identity } from 'rxjs';
 import { renderFields } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 var defaultFormState = {
     submitting: false,
     submitSucceeded: false,
     initialValues: {},
     errors: {},
     values: {},
+    valid: true,
 };
 export function createForm(options) {
+    var _this = this;
+    var store = createStore(tslib_1.__assign({}, defaultFormState), options ? options.middleware : undefined);
     var validator = options && options.validator;
-    var store = createStore(tslib_1.__assign({}, defaultFormState, options ? {
-        validator: validator,
-    } : {}), options ? options.middleware : undefined);
-    store.stream.pipe(debounceTime(1000)).subscribe(function (fs) {
-        if (fs.values !== fs.initialValues) {
-            if (validator) {
-                var errors_1 = validator(fs.values);
-                store.next(function (f) { return (tslib_1.__assign({}, f, { errors: errors_1 })); });
+    store.stream.pipe(distinctUntilKeyChanged("values"), filter(function (x) { return !x.valid; }), options && options.validationDelay ? debounceTime(options.validationDelay) : identity).subscribe(function (fs) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+        var errors_1;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(fs.values !== fs.initialValues)) return [3 /*break*/, 3];
+                    if (!validator) return [3 /*break*/, 2];
+                    console.log("validating...");
+                    return [4 /*yield*/, validator(fs.values)];
+                case 1:
+                    errors_1 = _a.sent();
+                    store.next(function (f) { return (tslib_1.__assign({}, f, { valid: !Object.keys(errors_1).some(function (y) { return !!errors_1[y]; }), errors: errors_1 })); });
+                    return [3 /*break*/, 3];
+                case 2:
+                    store.next(function (f) { return (tslib_1.__assign({}, f, { valid: true, errors: {} })); });
+                    _a.label = 3;
+                case 3: return [2 /*return*/];
             }
-            else if (Object.keys(store.stream.value.errors).length > 0) {
-                store.next(function (f) { return (tslib_1.__assign({}, f, { errors: {} })); });
-            }
-        }
-    });
+        });
+    }); });
     return store;
 }
 export function SchemaForm(props) {

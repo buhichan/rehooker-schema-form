@@ -6,18 +6,14 @@ export class SubmissionError{
     constructor(public error:any){}
 }
 
-export function submit(dispatch:(m:(s:FormState)=>FormState)=>void,submitFunc:(formValue:any)=>Promise<void>){
+export function submit(
+    dispatch:(m:(s:FormState)=>FormState)=>void,
+    submitFunc:(formValue:any)=>Promise<void>,
+){
     return dispatch(function submit(f:FormState){
         const values = f.values
         if(!values)
             return f
-        const errors = f.validator ? f.validator(values) : {}
-        if(Object.keys(errors).length > 0){
-            return {
-                ...f,
-                errors,
-            }
-        }
         const maybePromise = submitFunc(values)
         if(maybePromise instanceof Promise){
             //setTimeout 是为了避免立刻提交产生的执行顺序的问题
@@ -68,7 +64,8 @@ export function changeValue(key:FieldPath,valueOrEvent:any,parse?:FormFieldSchem
         const newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent?valueOrEvent.target.value :valueOrEvent
         return {
             ...s,
-            values:deepSet(s.values,key,parse?parse(newValue):newValue)
+            values:deepSet(s.values,key,parse?parse(newValue):newValue),
+            valid:false,
         }
     }
 }

@@ -3,11 +3,11 @@
  */
 import * as React from 'react';
 import { createStore, Mutation, Store } from "rehooker";
-import { OperatorFunction } from 'rxjs';
+import { OperatorFunction, identity } from 'rxjs';
 import { renderFields, FieldPath } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 
 export type Option = {name:string,value:any,group?:string}
 export type AsyncOptions = ()=>Promise<Option[]>
@@ -64,7 +64,6 @@ export type FormFieldSchema = WidgetInjectedProps & {
 /**
  * type ErrorMap = Record<string,string|null|undefined|Array<ErrorMap>|ErrorMap>
  */
-type ErrorMap = Record<string,any>
 
 export type FormState = {
     submitting:boolean,
@@ -72,7 +71,7 @@ export type FormState = {
     errors:any
     values:any
     initialValues:any,
-    validator?:(v:any)=>Promise<ErrorMap>,
+    valid:boolean,
 }
 
 const defaultFormState:FormState = {
@@ -81,35 +80,41 @@ const defaultFormState:FormState = {
     initialValues:{},
     errors:{},
     values:{},
+    valid:true,
 }
 
+type ErrorMap = Record<string,any>
 type CreateFormOptions = {
-    validator?:(v:any)=>any,
+    validator?:(v:any)=>Promise<ErrorMap>,
+    validationDelay?:number,
     middleware?:OperatorFunction<Mutation<FormState>,Mutation<FormState>>
 }
 
 export function createForm(options?:CreateFormOptions){
-    const validator = options && options.validator
     const store = createStore({
         ...defaultFormState,
-        ...options?{
-            validator:validator,
-        }:{}
     },options?options.middleware:undefined)
 
+    const validator = options && options.validator
+
     store.stream.pipe(
-        debounceTime(1000),
-    ).subscribe(fs=>{
+        distinctUntilKeyChanged("values"),
+        filter(x=>!x.valid),
+        options && options.validationDelay ? debounceTime(options.validationDelay) : identity
+    ).subscribe(async fs=>{
         if(fs.values !== fs.initialValues){
             if(validator){
-                const errors = validator(fs.values)
+                console.log("validating...")
+                const errors = await validator(fs.values)
                 store.next(f=>({
                     ...f,
+                    valid:!Object.keys(errors).some(y=>!!errors[y]),
                     errors
                 }))
-            }else if(Object.keys(store.stream.value.errors).length > 0){
+            }else{
                 store.next(f=>({
                     ...f,
+                    valid:true,
                     errors:{}
                 }))
             }

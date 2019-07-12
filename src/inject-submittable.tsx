@@ -62,7 +62,7 @@ export function FormButtons(props:InjectFormSubmittableProps){
                 const v2 = s.initialValues[k]
                 return v1 === v2 || v1 == undefined && v2 == undefined
             })
-        const hasError = Object.keys(s.errors).length !== 0 
+        const hasError = !s.valid
         const submittable = !hasError&&
             !pristine &&
             !s.submitting &&

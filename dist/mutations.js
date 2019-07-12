@@ -12,10 +12,6 @@ export function submit(dispatch, submitFunc) {
         var values = f.values;
         if (!values)
             return f;
-        var errors = f.validator ? f.validator(values) : {};
-        if (Object.keys(errors).length > 0) {
-            return tslib_1.__assign({}, f, { errors: errors });
-        }
         var maybePromise = submitFunc(values);
         if (maybePromise instanceof Promise) {
             //setTimeout 是为了避免立刻提交产生的执行顺序的问题
@@ -43,7 +39,7 @@ export function reset(f) {
 export function changeValue(key, valueOrEvent, parse) {
     return function changeValue(s) {
         var newValue = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent;
-        return tslib_1.__assign({}, s, { values: deepSet(s.values, key, parse ? parse(newValue) : newValue) });
+        return tslib_1.__assign({}, s, { values: deepSet(s.values, key, parse ? parse(newValue) : newValue), valid: false });
     };
 }
 export function initialize(initialValues) {

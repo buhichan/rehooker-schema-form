@@ -11,15 +11,15 @@ export declare function reset(f: FormState): {
     submitSucceeded: boolean;
     errors: any;
     initialValues: any;
-    validator?: ((v: any) => Promise<Record<string, any>>) | undefined;
+    valid: boolean;
 };
 export declare function changeValue(key: FieldPath, valueOrEvent: any, parse?: FormFieldSchema['parse']): (s: FormState) => {
     values: any;
+    valid: boolean;
     submitting: boolean;
     submitSucceeded: boolean;
     errors: any;
     initialValues: any;
-    validator?: ((v: any) => Promise<Record<string, any>>) | undefined;
 };
 export declare function initialize(initialValues: any): (f: FormState) => {
     values: any;
@@ -28,5 +28,5 @@ export declare function initialize(initialValues: any): (f: FormState) => {
     submitting: boolean;
     submitSucceeded: boolean;
     errors: any;
-    validator?: ((v: any) => Promise<Record<string, any>>) | undefined;
+    valid: boolean;
 };
