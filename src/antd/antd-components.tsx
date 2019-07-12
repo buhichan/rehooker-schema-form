@@ -218,24 +218,11 @@ function DateTimeInput(props:WidgetProps){
             format={props.componentProps.dateFormat||DEFAULT_DATETIME_FORMAT}
             value={value}
             style={{width:"100%"}}
-            onChange={(_,dateString)=>props.onChange(dateString)}
-            {...props.componentProps}
-        />
-    </InputWraper>
-}
-
-function DateInput(props:WidgetProps){
-    let value= null;
-    if(props.value){
-        if(!(props.value instanceof moment))
-            value= moment(props.value);
-    }
-    return<InputWraper {...props}>
-        <DatePicker
-            key={props.schema.name}
-            value={value}
-            style={{width:"100%"}}
-            onChange={(_,dateString)=>{props.onChange(dateString)}}
+            onChange={(m,dateString)=>{
+                props.componentProps.unixtime ? 
+                props.onChange(m && m.unix() || m) : 
+                props.onChange(dateString)
+            }}
             {...props.componentProps}
         />
     </InputWraper>
@@ -254,7 +241,9 @@ function DateTimeRangeInput (props:WidgetProps){
             format={props.componentProps.dateFormat||DEFAULT_DATETIME_FORMAT}
             placeholder={['开始时间', '结束时间']}
             value={range}
-            onChange={(_,dataStrings)=>{
+            onChange={(m,dataStrings)=>{
+                props.componentProps.unixtime ? 
+                props.onChange([m[0] && m[0].unix() || m[0],m[1] && m[1].unix() || m[1]]) : 
                 props.onChange(dataStrings);
             }}
             {...props.componentProps}
@@ -547,8 +536,6 @@ addType('select',SelectInput);
 addType('radio',SelectRadio)
 
 addType('checkbox',CheckboxInput);
-
-addType('date',DateInput);
 
 addType('autocomplete-text',AutoCompleteText);
 
