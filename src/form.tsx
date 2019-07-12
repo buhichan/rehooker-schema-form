@@ -7,7 +7,7 @@ import { OperatorFunction } from 'rxjs';
 import { renderFields, FieldPath } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
-import { map, debounceTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 export type Option = {name:string,value:any,group?:string}
 export type AsyncOptions = ()=>Promise<Option[]>
