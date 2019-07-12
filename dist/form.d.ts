@@ -76,7 +76,7 @@ declare type CreateFormOptions = {
     validator?: (v: any) => any;
     middleware?: OperatorFunction<Mutation<FormState>, Mutation<FormState>>;
 };
-export declare function createForm(options?: CreateFormOptions): void;
+export declare function createForm(options?: CreateFormOptions): Store<FormState>;
 export declare type SchemaFormProps = {
     schema: FormFieldSchema[];
     noButton?: boolean;

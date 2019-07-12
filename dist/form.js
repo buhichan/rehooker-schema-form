@@ -29,6 +29,7 @@ export function createForm(options) {
             store.next(function (f) { return (tslib_1.__assign({}, f, { errors: {} })); });
         }
     });
+    return store;
 }
 export function SchemaForm(props) {
     var handleSubmit = React.useMemo(function () { return function (e) {

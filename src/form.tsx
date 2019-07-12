@@ -114,6 +114,7 @@ export function createForm(options?:CreateFormOptions){
             }))
         }
     })
+    return store
 }
 
 // const store = createStore({})
