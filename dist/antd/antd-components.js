@@ -156,16 +156,11 @@ function CheckboxInput(props) {
 function DateTimeInput(props) {
     var value = props.value ? props.componentProps.unixtime ? moment.unix(props.value) : moment(props.value) : undefined;
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || DEFAULT_DATETIME_FORMAT, value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); } }, props.componentProps)));
-}
-function DateInput(props) {
-    var value = null;
-    if (props.value) {
-        if (!(props.value instanceof moment))
-            value = moment(props.value);
-    }
-    return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(DatePicker, tslib_1.__assign({ key: props.schema.name, value: value, style: { width: "100%" }, onChange: function (_, dateString) { props.onChange(dateString); } }, props.componentProps)));
+        React.createElement(DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || DEFAULT_DATETIME_FORMAT, value: value, style: { width: "100%" }, onChange: function (m, dateString) {
+                props.componentProps.unixtime ?
+                    props.onChange(m && m.unix() || m) :
+                    props.onChange(dateString);
+            } }, props.componentProps)));
 }
 function DateTimeRangeInput(props) {
     var value = props.value;
@@ -174,8 +169,10 @@ function DateTimeRangeInput(props) {
         (value && value[1] && props.componentProps.unixtime ? moment.unix(value[1]) : moment(value[1])) || moment()
     ];
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || DEFAULT_DATETIME_FORMAT, placeholder: ['开始时间', '结束时间'], value: range, onChange: function (_, dataStrings) {
-                props.onChange(dataStrings);
+        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || DEFAULT_DATETIME_FORMAT, placeholder: ['开始时间', '结束时间'], value: range, onChange: function (m, dataStrings) {
+                props.componentProps.unixtime ?
+                    props.onChange([m[0] && m[0].unix() || m[0], m[1] && m[1].unix() || m[1]]) :
+                    props.onChange(dataStrings);
             } }, props.componentProps)));
 }
 function NumberInput(props) {
@@ -373,7 +370,6 @@ addType('text', TextInput);
 addType('select', SelectInput);
 addType('radio', SelectRadio);
 addType('checkbox', CheckboxInput);
-addType('date', DateInput);
 addType('autocomplete-text', AutoCompleteText);
 addType('datetime', DateTimeInput);
 addType('datetimeRange', DateTimeRangeInput);
