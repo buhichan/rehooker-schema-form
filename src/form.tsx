@@ -98,20 +98,21 @@ export function createForm(options?:CreateFormOptions){
     },options?options.middleware:undefined)
 
     store.stream.pipe(
-        map(x=>x.values),
         debounceTime(1000),
-    ).subscribe(values=>{
-        if(validator){
-            const errors = validator(values)
-            store.next(f=>({
-                ...f,
-                errors
-            }))
-        }else if(Object.keys(store.stream.value.errors).length > 0){
-            store.next(f=>({
-                ...f,
-                errors:{}
-            }))
+    ).subscribe(fs=>{
+        if(fs.values !== fs.initialValues){
+            if(validator){
+                const errors = validator(fs.values)
+                store.next(f=>({
+                    ...f,
+                    errors
+                }))
+            }else if(Object.keys(store.stream.value.errors).length > 0){
+                store.next(f=>({
+                    ...f,
+                    errors:{}
+                }))
+            }
         }
     })
     return store

@@ -7,7 +7,7 @@ import { createStore } from "rehooker";
 import { renderFields } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
-import { map, debounceTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 var defaultFormState = {
     submitting: false,
     submitSucceeded: false,
@@ -20,13 +20,15 @@ export function createForm(options) {
     var store = createStore(tslib_1.__assign({}, defaultFormState, options ? {
         validator: validator,
     } : {}), options ? options.middleware : undefined);
-    store.stream.pipe(map(function (x) { return x.values; }), debounceTime(1000)).subscribe(function (values) {
-        if (validator) {
-            var errors_1 = validator(values);
-            store.next(function (f) { return (tslib_1.__assign({}, f, { errors: errors_1 })); });
-        }
-        else if (Object.keys(store.stream.value.errors).length > 0) {
-            store.next(function (f) { return (tslib_1.__assign({}, f, { errors: {} })); });
+    store.stream.pipe(debounceTime(1000)).subscribe(function (fs) {
+        if (fs.values !== fs.initialValues) {
+            if (validator) {
+                var errors_1 = validator(fs.values);
+                store.next(function (f) { return (tslib_1.__assign({}, f, { errors: errors_1 })); });
+            }
+            else if (Object.keys(store.stream.value.errors).length > 0) {
+                store.next(function (f) { return (tslib_1.__assign({}, f, { errors: {} })); });
+            }
         }
     });
     return store;
