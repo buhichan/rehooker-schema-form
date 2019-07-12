@@ -472,5 +472,16 @@ export let schema:FormFieldSchema[] = [
                 }
             }
         }]
+    },{
+        key:"select()",
+        label:"select with option group",
+        type:'select',
+        options:new Array(100).fill(0).map((x,i)=>{
+            return {
+                name:i+"",
+                value:i,
+                group:Math.pow(i % 10,2) + "",
+            }
+        })
     }
 ];

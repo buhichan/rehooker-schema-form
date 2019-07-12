@@ -6,7 +6,7 @@
 import * as React from "react"
 import {addType, renderFields} from "../field";
 import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input,Select,DatePicker, Collapse, Form} from 'antd';
-import {Options, WidgetProps} from "../form";
+import {Option, WidgetProps} from "../form";
 import {RuntimeAsyncOptions} from "../form";
 import { setButton } from "../inject-submittable";
 import * as moment from "moment"
@@ -58,7 +58,7 @@ function SelectInput(props:WidgetProps){
 
     const {schema:fieldSchema,value,componentProps} = props
 
-    const [options,setOptions] = React.useState(null as null | Options)
+    const [options,setOptions] = React.useState(null as null | Option[])
     
     React.useEffect(()=>{
         if(Array.isArray(fieldSchema.options)){
@@ -141,11 +141,22 @@ function SelectInput(props:WidgetProps){
         }
     },[finalValue,optionValueMap])
 
-    const filteredOptions = options ? options.filter((option)=>{
-        return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0
-    }) : null
+    const filteredOptions = React.useMemo(()=>{
+        const searchLowercase = search.toLowerCase()
+        return options ? options.filter((option)=>{
+            return !search || option.name.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase)
+        }) : null
+    },[options,search])
 
     const optionNumMaximum = fieldSchema.maxOptionCount || Infinity
+
+    const optionGroups = React.useMemo(()=>{
+        return filteredOptions ? filteredOptions.slice(0,optionNumMaximum).reduce((map,option)=>{
+            map[option.group || ""] = map[option.group || ""] || []
+            map[option.group || ""].push(option)
+            return map
+        },{} as Record<string,Option[]>) : null
+    },[filteredOptions,optionNumMaximum]) 
 
     return <InputWraper {...props} error={props.error || innerError}>
         <Select
@@ -160,16 +171,28 @@ function SelectInput(props:WidgetProps){
             {...componentProps}
             onBlur={onBlur}
         >
-            {filteredOptions? filteredOptions.slice(0,optionNumMaximum).map(option=>{
-                const {name,value,...rest} = option
-                return <Select.Option key={name} value={value} {...rest}>{name}</Select.Option>
-            }) : null}
             {
-                filteredOptions && filteredOptions.length > optionNumMaximum ? 
+                optionGroups && optionGroups[''] && optionGroups[''].map(option=>{
+                    const {name,value,...rest} = option
+                    return <Select.Option key={name} value={value} {...rest}>{name}</Select.Option>
+                })
+            }
+            {
+                optionGroups && Object.keys(optionGroups).filter(x=>!!x).map(group=>{
+                    const options = optionGroups[group]
+                    const rendered = options.map(option=>{
+                        const {name,value,...rest} = option
+                        return <Select.Option key={name} value={value} {...rest}>{name}</Select.Option>
+                    })
+                    return <Select.OptGroup key={group} label={group}>
+                        {rendered}
+                    </Select.OptGroup>
+                })}
+            {
+                filteredOptions && filteredOptions.length > optionNumMaximum && 
                 <Select.Option disabled key="_____more" value="_____more" style={{opacity:.5}}>
                     {fieldSchema.maxOptionCountTips || `已隐藏剩余的${filteredOptions.length - optionNumMaximum}个选项, 请使用搜索`}
-                </Select.Option> : 
-                null
+                </Select.Option>
             }
         </Select>
     </InputWraper>
@@ -398,7 +421,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
             })
     }
     findName(value:any){
-        const entry = (this.state.dataSource as Options).find(x=>x.value === value);
+        const entry = (this.state.dataSource as Option[]).find(x=>x.value === value);
         return entry?entry.name:value;
     }
     onUpdateInput=(name:string)=>{
@@ -448,14 +471,14 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
 
 class AutoCompleteText extends React.Component<WidgetProps,any>{
     onUpdateInput=(name:string)=>{
-        const entry = (this.props.schema.options as Options).find(x=>x.name===name);
+        const entry = (this.props.schema.options as Option[]).find(x=>x.name===name);
         return this.props.onChange(entry?entry.value:name);
     };
     render(){
         const {componentProps,onChange,schema} = this.props;
         return <InputWraper {...this.props}>
             <AutoComplete
-                dataSource={(schema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
+                dataSource={(schema.options as Option[]).map(itm=>({text:itm.name,value:itm.value}))}
                 onSearch={this.onUpdateInput}
                 onSelect={onChange}
                 filterOption={defaultAutoCompleteFilter}

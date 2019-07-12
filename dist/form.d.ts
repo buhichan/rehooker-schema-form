@@ -5,12 +5,13 @@ import * as React from 'react';
 import { Mutation, Store } from "rehooker";
 import { OperatorFunction } from 'rxjs';
 import { FieldPath } from "./field";
-export declare type Options = {
+export declare type Option = {
     name: string;
     value: any;
-}[];
-export declare type AsyncOptions = () => Promise<Options>;
-export declare type RuntimeAsyncOptions = (search: any, props?: WidgetProps) => Promise<Options>;
+    group?: string;
+};
+export declare type AsyncOptions = () => Promise<Option[]>;
+export declare type RuntimeAsyncOptions = (search: any, props?: WidgetProps) => Promise<Option[]>;
 export declare type FieldListens = {
     /**
      * q:what is valuePath here?
@@ -56,7 +57,7 @@ export declare type FormFieldSchema = WidgetInjectedProps & {
     format?: (v: any) => any;
     style?: React.CSSProperties;
     defaultValue?: any;
-    options?: Options | AsyncOptions | RuntimeAsyncOptions;
+    options?: Option[] | AsyncOptions | RuntimeAsyncOptions;
     wrapperProps?: any;
 };
 export declare type FormState = {

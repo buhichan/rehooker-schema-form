@@ -8,9 +8,9 @@ import { renderFields, FieldPath } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
 
-export type Options = {name:string,value:any}[]
-export type AsyncOptions = ()=>Promise<Options>
-export type RuntimeAsyncOptions = (search:any, props?:WidgetProps)=>Promise<Options>
+export type Option = {name:string,value:any,group?:string}
+export type AsyncOptions = ()=>Promise<Option[]>
+export type RuntimeAsyncOptions = (search:any, props?:WidgetProps)=>Promise<Option[]>
 export type FieldListens={
     /**
      * q:what is valuePath here?
@@ -55,7 +55,7 @@ export type FormFieldSchema = WidgetInjectedProps & {
     format?:(v:any)=>any,
     style?:React.CSSProperties,
     defaultValue?:any // set when mount
-    options?:Options | AsyncOptions | RuntimeAsyncOptions,
+    options?:Option[] | AsyncOptions | RuntimeAsyncOptions,
 
     wrapperProps?:any // used as antd's Form.Item props
 }

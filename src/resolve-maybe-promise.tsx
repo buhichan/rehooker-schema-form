@@ -1,12 +1,12 @@
 import * as React from "react"
-import { AsyncOptions, Options } from './form';
+import { AsyncOptions, Option } from './form';
 import { FormFieldSchema } from './index';
 
 type PossibleOptions = FormFieldSchema['options']
 
-export class ResolveMaybePromise extends React.PureComponent<{maybePromise:PossibleOptions,children:(maybepromise:Options | null)=>React.ReactElement<any>}>{
+export class ResolveMaybePromise extends React.PureComponent<{maybePromise:PossibleOptions,children:(maybepromise:Option[] | null)=>React.ReactElement<any>}>{
     state={
-        maybePromise:null as Options | null
+        maybePromise:null as Option[] | null
     };
     loadOptions(rawOptions:PossibleOptions){
         if(typeof rawOptions=== 'function'){

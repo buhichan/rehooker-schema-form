@@ -117,19 +117,36 @@ function SelectInput(props) {
             }
         }
     }, [finalValue, optionValueMap]);
-    var filteredOptions = options ? options.filter(function (option) {
-        return !search || option.name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
-    }) : null;
+    var filteredOptions = React.useMemo(function () {
+        var searchLowercase = search.toLowerCase();
+        return options ? options.filter(function (option) {
+            return !search || option.name.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase);
+        }) : null;
+    }, [options, search]);
     var optionNumMaximum = fieldSchema.maxOptionCount || Infinity;
+    var optionGroups = React.useMemo(function () {
+        return filteredOptions ? filteredOptions.slice(0, optionNumMaximum).reduce(function (map, option) {
+            map[option.group || ""] = map[option.group || ""] || [];
+            map[option.group || ""].push(option);
+            return map;
+        }, {}) : null;
+    }, [filteredOptions, optionNumMaximum]);
     return React.createElement(InputWraper, tslib_1.__assign({}, props, { error: props.error || innerError }),
         React.createElement(Select, tslib_1.__assign({ allowClear: !fieldSchema.required, showSearch: true, style: { width: "100%" }, onSearch: setSearch, mode: fieldSchema.multiple ? "multiple" : "default", value: finalValue, onChange: onChange, filterOption: false }, componentProps, { onBlur: onBlur }),
-            filteredOptions ? filteredOptions.slice(0, optionNumMaximum).map(function (option) {
+            optionGroups && optionGroups[''] && optionGroups[''].map(function (option) {
                 var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
                 return React.createElement(Select.Option, tslib_1.__assign({ key: name, value: value }, rest), name);
-            }) : null,
-            filteredOptions && filteredOptions.length > optionNumMaximum ?
-                React.createElement(Select.Option, { disabled: true, key: "_____more", value: "_____more", style: { opacity: .5 } }, fieldSchema.maxOptionCountTips || "\u5DF2\u9690\u85CF\u5269\u4F59\u7684" + (filteredOptions.length - optionNumMaximum) + "\u4E2A\u9009\u9879, \u8BF7\u4F7F\u7528\u641C\u7D22") :
-                null));
+            }),
+            optionGroups && Object.keys(optionGroups).filter(function (x) { return !!x; }).map(function (group) {
+                var options = optionGroups[group];
+                var rendered = options.map(function (option) {
+                    var name = option.name, value = option.value, rest = tslib_1.__rest(option, ["name", "value"]);
+                    return React.createElement(Select.Option, tslib_1.__assign({ key: name, value: value }, rest), name);
+                });
+                return React.createElement(Select.OptGroup, { key: group, label: group }, rendered);
+            }),
+            filteredOptions && filteredOptions.length > optionNumMaximum &&
+                React.createElement(Select.Option, { disabled: true, key: "_____more", value: "_____more", style: { opacity: .5 } }, fieldSchema.maxOptionCountTips || "\u5DF2\u9690\u85CF\u5269\u4F59\u7684" + (filteredOptions.length - optionNumMaximum) + "\u4E2A\u9009\u9879, \u8BF7\u4F7F\u7528\u641C\u7D22")));
 }
 function CheckboxInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
