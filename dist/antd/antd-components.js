@@ -19,6 +19,7 @@ RCSelect.propTypes['value'] = PropTypes.any;
 Option.propTypes && (Option.propTypes['value'] = PropTypes.any);
 Select.propTypes['value'] = PropTypes.any;
 var emptyArray = [];
+var DEFAULT_DATETIME_FORMAT = "YYYY/MM/DD HH:mm:ss";
 function ErrorText(_a) {
     var children = _a.children;
     return children ? React.createElement("div", { className: "error-text" }, children) : null;
@@ -153,9 +154,9 @@ function CheckboxInput(props) {
         React.createElement(Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, checked: Boolean(props.value) }, props.componentProps)));
 }
 function DateTimeInput(props) {
-    var value = props.value ? moment(props.value) : undefined;
+    var value = props.value ? props.componentProps.unixtime ? moment.unix(props.value) : moment(props.value) : undefined;
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); } }, props.componentProps)));
+        React.createElement(DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || DEFAULT_DATETIME_FORMAT, value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); } }, props.componentProps)));
 }
 function DateInput(props) {
     var value = null;
@@ -168,8 +169,12 @@ function DateInput(props) {
 }
 function DateTimeRangeInput(props) {
     var value = props.value;
+    var range = [
+        (value && value[0] && props.componentProps.unixtime ? moment.unix(value[0]) : moment(value[0])) || moment(),
+        (value && value[1] && props.componentProps.unixtime ? moment.unix(value[1]) : moment(value[1])) || moment()
+    ];
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], value: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
+        React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || DEFAULT_DATETIME_FORMAT, placeholder: ['开始时间', '结束时间'], value: range, onChange: function (_, dataStrings) {
                 props.onChange(dataStrings);
             } }, props.componentProps)));
 }

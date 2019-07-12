@@ -43,6 +43,7 @@ export declare function getComponentProps(field: FormFieldSchema): {
     locale?: any;
     dateFormat?: string | undefined;
     defaultValue?: any;
+    unixtime?: boolean | undefined;
     wrapperProps?: any;
 };
 export declare function useField(form: Store<FormState>, key: FieldPath, format?: (v: any) => any): {

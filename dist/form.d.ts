@@ -57,7 +57,10 @@ export declare type FormFieldSchema = WidgetInjectedProps & {
     format?: (v: any) => any;
     style?: React.CSSProperties;
     defaultValue?: any;
+    /** antd component specific props */
     options?: Option[] | AsyncOptions | RuntimeAsyncOptions;
+    unixtime?: boolean;
+    dateFormat?: string;
     wrapperProps?: any;
 };
 /**
