@@ -1,3 +1,5 @@
+import { FieldPath } from './field';
+
 export const requestFileUpload = (multiple:boolean)=>{
     let input:HTMLInputElement
     input = document.getElementById('hidden-file-input') as any
@@ -34,22 +36,34 @@ export const requestDownload = (options:any)=>{
     input.click()
 }
 
-export function deepSet(target:any,keys:(string|number)[],value:any){
-    let parent
-    let p = target
-    for(let i=0; i<keys.length;i++){
-        const key = keys[i]
-        if(typeof p === 'object' && p[key] === undefined){
-            if(i < keys.length && typeof keys[i+1] === 'number'){
-                p[key] = []
-            }else
-                p[key] = {}
-        }
-        parent = p
-        p = p[key]
+export function deepGet(target:any,keys:FieldPath,i=0):any{
+    if(i >= keys.length || target == undefined){
+        return target
+    }else{
+        return deepGet(target[keys[i]],keys,i+1)
     }
-    if(typeof parent === 'object')
-        parent[keys[keys.length-1]] = value
+}
+
+export function deepSet(target:any,keys:FieldPath,newValue:any,i=0, parentCursor?:any):any{
+    if(!parentCursor){
+        target = Array.isArray(target) ? [...target] : {...target}
+        parentCursor = target
+    }
+    if(i===keys.length - 1){
+        parentCursor[keys[i]] = newValue
+        return target
+    }else{
+        const key = keys[i]
+        const oldValue = parentCursor[keys[i]]
+        if(Array.isArray(oldValue)){
+            parentCursor[keys[i]] = [...oldValue]
+        }else if(typeof oldValue === 'object'){
+            parentCursor[keys[i]] = {...oldValue}
+        }else{
+            parentCursor[keys[i]] = typeof key === 'number' ? [] : {}
+        }
+        return deepSet(target,keys,newValue,i+1,parentCursor[keys[i]])
+    }
 }
 
 export function randomID(){

@@ -1,3 +1,4 @@
+import * as tslib_1 from "tslib";
 export var requestFileUpload = function (multiple) {
     var input;
     input = document.getElementById('hidden-file-input');
@@ -32,23 +33,39 @@ export var requestDownload = function (options) {
     input.download = options.download;
     input.click();
 };
-export function deepSet(target, keys, value) {
-    var parent;
-    var p = target;
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        if (typeof p === 'object' && p[key] === undefined) {
-            if (i < keys.length && typeof keys[i + 1] === 'number') {
-                p[key] = [];
-            }
-            else
-                p[key] = {};
-        }
-        parent = p;
-        p = p[key];
+export function deepGet(target, keys, i) {
+    if (i === void 0) { i = 0; }
+    if (i >= keys.length || target == undefined) {
+        return target;
     }
-    if (typeof parent === 'object')
-        parent[keys[keys.length - 1]] = value;
+    else {
+        return deepGet(target[keys[i]], keys, i + 1);
+    }
+}
+export function deepSet(target, keys, newValue, i, parentCursor) {
+    if (i === void 0) { i = 0; }
+    if (!parentCursor) {
+        target = Array.isArray(target) ? target.slice() : tslib_1.__assign({}, target);
+        parentCursor = target;
+    }
+    if (i === keys.length - 1) {
+        parentCursor[keys[i]] = newValue;
+        return target;
+    }
+    else {
+        var key = keys[i];
+        var oldValue = parentCursor[keys[i]];
+        if (Array.isArray(oldValue)) {
+            parentCursor[keys[i]] = oldValue.slice();
+        }
+        else if (typeof oldValue === 'object') {
+            parentCursor[keys[i]] = tslib_1.__assign({}, oldValue);
+        }
+        else {
+            parentCursor[keys[i]] = typeof key === 'number' ? [] : {};
+        }
+        return deepSet(target, keys, newValue, i + 1, parentCursor[keys[i]]);
+    }
 }
 export function randomID() {
     return String(Math.floor(Math.random() * 1000000000));

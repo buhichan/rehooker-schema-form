@@ -7,15 +7,16 @@ import { Store } from 'rehooker';
 /**
  * Created by buhi on 2017/7/26.
  */
-export declare function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: string): (JSX.Element | null)[] | null;
+export declare function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: FieldPath): (JSX.Element | null)[] | null;
 declare type Widget = React.StatelessComponent<WidgetProps> | React.ComponentClass<WidgetProps>;
 export declare function addType(name: string, widget: Widget): void;
 export declare function clearTypes(): void;
 export declare function getType(name: string): Widget | undefined;
+export declare type FieldPath = (string | number)[];
 export interface FieldProps {
     form: Store<FormState>;
     schema: FormFieldSchema;
-    keyPath: string;
+    keyPath: FieldPath;
     listeners?: FieldListens;
     noWrapper?: boolean;
 }
@@ -44,17 +45,14 @@ export declare function getComponentProps(field: FormFieldSchema): {
     defaultValue?: any;
     wrapperProps?: any;
 };
-export declare function useFieldState(form: Store<FormState>, key: string, format?: (v: any) => any): {
+export declare function useField(form: Store<FormState>, key: FieldPath, format?: (v: any) => any): {
     value: any;
-    error: string;
-    meta: {
-        schema: FormFieldSchema;
-    };
+    error: any;
 } | null;
 export declare type FormFieldProps = {
     form: Store<FormState>;
     name: string;
-    keyPath?: string;
+    keyPath?: string[];
     label?: React.ReactNode;
     noWrapper?: boolean;
     type: FormFieldSchema['type'];

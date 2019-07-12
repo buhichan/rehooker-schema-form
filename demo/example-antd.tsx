@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import "../dist/antd";
-import { createForm, SchemaForm } from '../dist/form';
+const { createForm, SchemaForm } = require('../dist/form')
 import { schema } from "./schema-example";
 require("antd/dist/antd.css");
 require("../styles/antd-components.css");

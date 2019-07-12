@@ -17,7 +17,7 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "allowJs": false,
-    "outDir":"dist",
+    "outDir":"./dist",
     "strict":true,
     "allowSyntheticDefaultImports": true,
     "jsx":"react",

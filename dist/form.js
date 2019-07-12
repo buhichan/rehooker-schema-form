@@ -1,24 +1,23 @@
+import * as tslib_1 from "tslib";
 /**
  * Created by YS on 2016/10/31.
  */
-import { FormButtons } from './inject-submittable';
 import * as React from 'react';
+import { createStore } from "rehooker";
 import { renderFields } from "./field";
-import { createStore, useSource } from "rehooker";
+import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
-import { map } from 'rxjs/operators';
 var defaultFormState = {
     submitting: false,
     submitSucceeded: false,
-    initialValues: undefined,
-    meta: {},
+    initialValues: {},
     errors: {},
-    values: undefined,
-    arrayKeys: [],
-    initialized: false,
+    values: {},
 };
-export function createForm(middleware) {
-    return createStore(defaultFormState, middleware);
+export function createForm(options) {
+    return createStore(tslib_1.__assign({}, defaultFormState, options ? {
+        validator: options.validator,
+    } : {}), options ? options.middleware : undefined);
 }
 export function SchemaForm(props) {
     var handleSubmit = React.useMemo(function () { return function (e) {
@@ -29,10 +28,10 @@ export function SchemaForm(props) {
     React.useEffect(function () {
         if (!props.disableInitialize) {
             props.form.next(function (s) {
-                return initialize(props.initialValues, props.schema)(s);
+                return initialize(props.initialValues)(s);
             });
         }
-    }, [props.initialValues, props.schema, props.onSubmit]);
+    }, [props.initialValues]);
     React.useEffect(function () { return function () {
         if (!props.disableDestruction) {
             props.form.next(function destroyOnUnmounnt() {
@@ -40,9 +39,8 @@ export function SchemaForm(props) {
             });
         }
     }; }, [props.form]);
-    var initialized = useSource(props.form.stream, map(function (x) { return x.values; }));
     return React.createElement("form", { className: "schema-form", onSubmit: handleSubmit },
-        !initialized ? null : renderFields(props.form, props.schema, ""),
+        renderFields(props.form, props.schema, []),
         (!props.noButton) ? React.createElement(FormButtons, { onSubmit: props.onSubmit || noopSubmit, form: props.form }) : null);
 }
 var noopSubmit = function () {

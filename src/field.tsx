@@ -6,13 +6,14 @@ import { FormFieldSchema, FieldListens, FormState, WidgetProps, WidgetInjectedPr
 import { useSource, Store } from 'rehooker';
 import { map, distinct, debounceTime, skipWhile, distinctUntilChanged } from 'rxjs/operators';
 import { combineLatest, merge } from 'rxjs';
-import { registerField, unregisterField, changeValue, startValidation, setFieldError } from './mutations';
 import { isFullWidth } from './constants';
+import { deepGet } from './utils';
+import { changeValue } from './mutations';
 /**
  * Created by buhi on 2017/7/26.
  */
 
-export function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: string) {
+export function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: FieldPath) {
     if (!schema)
         return null;
     return schema.map(field => {
@@ -44,10 +45,12 @@ export function getType(name: string): Widget | undefined {
     return widgetRegistration.get(name)
 }
 
+export type FieldPath = (string|number)[]
+
 export interface FieldProps {
     form: Store<FormState>,
     schema: FormFieldSchema,
-    keyPath: string,
+    keyPath: FieldPath,
     listeners?: FieldListens,
     noWrapper?:boolean,
 }
@@ -81,19 +84,18 @@ export function getComponentProps(field: FormFieldSchema) {
     return rest
 }
 
-export function useFieldState(form: Store<FormState>, key: string, format?: (v: any) => any) {
+export function useField(form: Store<FormState>, key: FieldPath, format?: (v: any) => any) {
     return useSource(form.stream, ob => ob.pipe(
         skipWhile(x => x.values === undefined),
         map(s => {
-            const value = s.values && s.values[key]
+            const value = deepGet(s.values,key)
             return {
                 value: format ? format(value) : value,
-                error: s.errors[key],
-                meta: s.meta[key]
+                error: deepGet(s.errors,key)
             }
-        },
-            debounceTime(24)
-        )), [form, name, format])
+        }),
+        debounceTime(24)
+    ), [form, name, format])
 }
 
 const StatelessField = React.memo(function StatelessField(props: FieldProps) {
@@ -101,29 +103,15 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
     const componentProps = getComponentProps(schema)
 
     /** assume finalKey will not change */
-    const finalKey = (keyPath + "." + schema.key).slice(1) /** it begins with dot */
+    const finalKey:FieldPath = [...keyPath,...schema.key.split(".")] /** it begins with dot */
 
-    const fieldState = useFieldState(form, finalKey, schema.format)
-
+    const fieldValue = useField(form, finalKey, schema.format)
 
     const onChange = React.useMemo(() => (valueOrEvent: any) => {
-        form.next(changeValue(finalKey, valueOrEvent, schema.validate, schema.parse))
-    }, [form, schema.validate, schema.parse])
-
-    const onBlur = React.useMemo(() => () => {
-        form.next(startValidation(finalKey, schema.validate))
-    }, [form, schema.validate, schema.parse])
-
-    const onError = React.useMemo(()=>(errorMessage:string)=>{
-        form.next(setFieldError(finalKey,errorMessage))
-    },[form])
-
-    React.useEffect(() => {
-        props.form.next(registerField(finalKey, schema))
-        return () => props.form.next(unregisterField(finalKey))
-    }, [])
+        form.next(changeValue(finalKey, valueOrEvent, schema.parse))
+    }, [form, schema.parse])
     
-    if (!fieldState)
+    if (!fieldValue)
         return null
     if (schema.hide)
         return null;
@@ -134,16 +122,16 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
         + (isFullWidth(schema) ? " full-width" : "")
         + (componentProps.required ? " required" : "")
         + (componentProps.disabled ? " disabled" : "")
-        + (fieldState.error ? " invalid" : " valid")
+        + (fieldValue.error ? " invalid" : " valid")
     let fieldNode = null as React.ReactNode | null
     if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
         const StoredWidget = widgetRegistration.get(schema.type);
         if (StoredWidget) {
-            fieldNode = <StoredWidget onError={onError} form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
+            fieldNode = <StoredWidget form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldValue} onChange={onChange} />
         }
     } else if (typeof schema.type === 'function') {
         const Comp = schema.type
-        fieldNode = <Comp onError={onError} form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldState} onChange={onChange} onBlur={onBlur} />
+        fieldNode = <Comp form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldValue} onChange={onChange} />
     }
     if(fieldNode !== null){
         return props.noWrapper ? <>{fieldNode}</> : <div className={className} style={schema.style}>
@@ -165,7 +153,7 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
                     <legend>{schema.label}</legend>
                     <div className="schema-node">
                         {
-                            renderFields(form, children, keyPath + "." + schema.key)
+                            renderFields(form, children, keyPath.concat(schema.key))
                         }
                     </div>
                 </fieldset>
@@ -188,12 +176,12 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
             distinct(),
         )
         const $change = merge(...listens.map((x) => {
-            let listenTo = typeof x.to === 'function' ? x.to(props.keyPath.slice(1)) : x.to
+            let listenTo = typeof x.to === 'function' ? x.to(props.keyPath.join(".")) : x.to
             return combineLatest(
                 listenTo.map(x => {
                     return $value.pipe(
                         map(v => {
-                            return v && v[x]
+                            return deepGet(v, x.split("."))
                         }),
                         distinctUntilChanged()
                     )
@@ -213,8 +201,8 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
                     ...rest,
                 }
                 if('value' in change){
-                    const finalKey = (props.keyPath + "." + props.schema.key).slice(1) /** it begins with dot */
-                    props.form.next(changeValue(finalKey, value, newSchema.validate, newSchema.parse))
+                    const finalKey = props.keyPath.concat(props.schema.key)
+                    props.form.next(changeValue(finalKey, value,newSchema.parse))
                 }
                 setSchema(newSchema)
             }
@@ -236,7 +224,7 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
 export type FormFieldProps = {
     form: Store<FormState>,
     name: string,
-    keyPath?: string,
+    keyPath?: string[],
     label?: React.ReactNode,
     noWrapper?: boolean
     //hardcode these from FormFieldSchema because Omit<xxx,'key'> reports error
@@ -252,7 +240,7 @@ export type FormFieldProps = {
 } & WidgetInjectedProps
 
 export function FormField(props: FormFieldProps) { //component flavored form field
-    const { form, keyPath = "", noWrapper,name, ...restField } = props
+    const { form, keyPath = [] as string[], noWrapper,name, ...restField } = props
     const field = {
         ...restField,
         key: name

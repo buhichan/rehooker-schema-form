@@ -1,6 +1,10 @@
+/**
+ * Created by YS on 2016/10/31.
+ */
 import * as React from 'react';
-import { Store, Mutation } from "rehooker";
+import { Mutation, Store } from "rehooker";
 import { OperatorFunction } from 'rxjs';
+import { FieldPath } from "./field";
 export declare type Options = {
     name: string;
     value: any;
@@ -34,13 +38,10 @@ export declare type WidgetProps = {
     schema: FormFieldSchema;
     form: Store<FormState>;
     onChange: (e: any) => void;
-    onBlur: (e: any) => void;
-    onError: (e: string) => void;
     value: any;
     componentProps: any;
-    keyPath: string;
+    keyPath: FieldPath;
     error: any;
-    meta: any;
 };
 export declare type FormFieldSchema = WidgetInjectedProps & {
     key: string;
@@ -51,7 +52,6 @@ export declare type FormFieldSchema = WidgetInjectedProps & {
      * keyPath will keyPath from the root of the form to your deeply nested field. e.g. foo.bar[1].far
      */
     listens?: FieldListens;
-    validate?: (value: any, formValue: any) => string | undefined | null;
     parse?: (v: any) => any;
     format?: (v: any) => any;
     style?: React.CSSProperties;
@@ -62,21 +62,16 @@ export declare type FormFieldSchema = WidgetInjectedProps & {
 export declare type FormState = {
     submitting: boolean;
     submitSucceeded: boolean;
-    errors: {
-        [key: string]: string;
-    };
-    values: {
-        [key: string]: any;
-    } | undefined;
-    meta: {
-        [key: string]: {
-            schema: FormFieldSchema;
-        };
-    };
+    errors: any;
+    values: any;
     initialValues: any;
-    arrayKeys: string[];
-    initialized: boolean;
+    validator?: (v: any) => any;
 };
+declare type CreateFormOptions = {
+    validator?: (v: any) => any;
+    middleware?: OperatorFunction<Mutation<FormState>, Mutation<FormState>>;
+};
+export declare function createForm(options?: CreateFormOptions): Store<FormState>;
 export declare type SchemaFormProps = {
     schema: FormFieldSchema[];
     noButton?: boolean;
@@ -86,5 +81,5 @@ export declare type SchemaFormProps = {
     disableInitialize?: boolean;
     disableDestruction?: boolean;
 };
-export declare function createForm(middleware?: OperatorFunction<Mutation<FormState>, Mutation<FormState>>): Store<FormState>;
 export declare function SchemaForm(props: SchemaFormProps): JSX.Element;
+export {};

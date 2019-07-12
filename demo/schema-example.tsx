@@ -362,6 +362,9 @@ export let schema:FormFieldSchema[] = [
         type:"array",
         placeholder:"placeholder",
         label:"Array(当select是梨子的时候会少一个child)",
+        defaultValue:{
+            ['array-child']:"default-value foo"
+        },
         listens:[
             {
                 to:["select1"],

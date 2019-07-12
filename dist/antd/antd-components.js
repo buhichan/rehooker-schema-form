@@ -9,7 +9,6 @@ import { AutoComplete, Radio, Checkbox, InputNumber, Tooltip, Upload, Button, Ic
 import { setButton } from "../inject-submittable";
 import * as moment from "moment";
 import { ResolveMaybePromise } from '../resolve-maybe-promise';
-import { FieldArray } from '../field-array';
 var RadioGroup = Radio.Group;
 var TextArea = Input.TextArea;
 var RangePicker = DatePicker.RangePicker;
@@ -29,7 +28,7 @@ function InputWraper(props) {
 }
 function TextInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(Input, tslib_1.__assign({ type: props.schema.type, id: props.schema.key, className: "full-width", style: { width: "100%" }, name: props.schema.name, value: props.value, onChange: props.onChange, onBlur: props.onBlur }, props.componentProps)));
+        React.createElement(Input, tslib_1.__assign({ type: props.schema.type, id: props.schema.key, className: "full-width", style: { width: "100%" }, name: props.schema.name, value: props.value, onChange: props.onChange }, props.componentProps)));
 }
 function SelectInput(props) {
     var _a = React.useState(""), search = _a[0], setSearch = _a[1];
@@ -134,12 +133,12 @@ function SelectInput(props) {
 }
 function CheckboxInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, onBlur: props.onBlur, checked: Boolean(props.value) }, props.componentProps)));
+        React.createElement(Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, checked: Boolean(props.value) }, props.componentProps)));
 }
 function DateTimeInput(props) {
     var value = props.value ? moment(props.value) : undefined;
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); }, onBlur: props.onBlur }, props.componentProps)));
+        React.createElement(DatePicker, tslib_1.__assign({ showTime: true, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", value: value, style: { width: "100%" }, onChange: function (_, dateString) { return props.onChange(dateString); } }, props.componentProps)));
 }
 function DateInput(props) {
     var value = null;
@@ -148,14 +147,14 @@ function DateInput(props) {
             value = moment(props.value);
     }
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(DatePicker, tslib_1.__assign({ key: props.schema.name, value: value, style: { width: "100%" }, onChange: function (_, dateString) { props.onChange(dateString); }, onBlur: props.onBlur }, props.componentProps)));
+        React.createElement(DatePicker, tslib_1.__assign({ key: props.schema.name, value: value, style: { width: "100%" }, onChange: function (_, dateString) { props.onChange(dateString); } }, props.componentProps)));
 }
 function DateTimeRangeInput(props) {
     var value = props.value;
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
         React.createElement(RangePicker, tslib_1.__assign({ showTime: { format: 'HH:mm:ss' }, style: { width: "100%" }, format: props.componentProps.dateFormat || "YYYY/MM/DD HH:mm:ss", placeholder: ['开始时间', '结束时间'], value: [(value && value[0] && moment(value[0])) || moment(), (value && value[1] && moment(value[1])) || moment()], onChange: function (_, dataStrings) {
                 props.onChange(dataStrings);
-            }, onBlur: props.onBlur }, props.componentProps)));
+            } }, props.componentProps)));
 }
 function NumberInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
@@ -166,7 +165,7 @@ function NumberInput(props) {
                 else {
                     props.onChange(parseFloat(value));
                 }
-            }, onBlur: props.onBlur }, props.componentProps)));
+            } }, props.componentProps)));
 }
 var defaultAutoCompleteFilter = function (input, element) {
     return typeof element.props.children === 'string' && element.props.children.includes(input);
@@ -175,7 +174,7 @@ var AutoCompleteDefault = function (props) {
     var value = props.value, onChange = props.onChange, schema = props.schema;
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
         React.createElement(ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
-            return React.createElement(AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange, onBlur: props.onBlur }, props.componentProps));
+            return React.createElement(AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange }, props.componentProps));
         }));
 };
 var FileInput = /** @class */ (function (_super) {
@@ -215,17 +214,17 @@ var FileInput = /** @class */ (function (_super) {
     FileInput.prototype.render = function () {
         return React.createElement("div", { style: { paddingLeft: "var(--schema-form-label-width)" } },
             React.createElement("div", null,
-                React.createElement(Upload, tslib_1.__assign({ fileList: this.props.value || emptyArray, multiple: true, onChange: this.onChange, customRequest: this.customRequest, onBlur: this.props.onBlur }, this.props.componentProps),
+                React.createElement(Upload, tslib_1.__assign({ fileList: this.props.value || emptyArray, multiple: true, onChange: this.onChange, customRequest: this.customRequest }, this.props.componentProps),
                     React.createElement(Button, null,
                         React.createElement(Icon, { type: "upload" }),
                         React.createElement("span", null, this.props.schema.label)))),
-            React.createElement(ErrorText, null, this.props.meta.error));
+            React.createElement(ErrorText, null, this.props.error));
     };
     return FileInput;
 }(React.Component));
 function SelectRadio(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value, onChange: function (v) { return props.onChange(v); }, onBlur: props.onBlur }, props.componentProps), options ? options.map(function (option) { return (React.createElement(Radio, { style: {
+        React.createElement(ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value, onChange: function (v) { return props.onChange(v); } }, props.componentProps), options ? options.map(function (option) { return (React.createElement(Radio, { style: {
                 width: "auto",
                 flex: 1,
                 whiteSpace: "nowrap",
@@ -238,11 +237,11 @@ function DateRangeInput(props) {
     var from = value ? value[0] : undefined;
     var to = value ? value[1] : undefined;
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(RangePicker, tslib_1.__assign({ defaultValue: [from ? moment(from, dateFormat) : undefined, to ? moment(to, dateFormat) : undefined], format: dateFormat, onChange: function (_, dateStrings) { props.onChange(dateStrings); }, onBlur: props.onBlur }, props.componentProps)));
+        React.createElement(RangePicker, tslib_1.__assign({ defaultValue: [from ? moment(from, dateFormat) : undefined, to ? moment(to, dateFormat) : undefined], format: dateFormat, onChange: function (_, dateStrings) { props.onChange(dateStrings); } }, props.componentProps)));
 }
 function TextareaInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(TextArea, tslib_1.__assign({ value: props.value, onChange: function (value) { return props.onChange(value); }, onBlur: props.onBlur, autosize: { minRows: 4, maxRows: 8 } }, props.componentProps)));
+        React.createElement(TextArea, tslib_1.__assign({ value: props.value, onChange: function (value) { return props.onChange(value); }, autosize: { minRows: 4, maxRows: 8 } }, props.componentProps)));
 }
 var AutoCompleteAsync = /** @class */ (function (_super) {
     tslib_1.__extends(AutoCompleteAsync, _super);
@@ -297,9 +296,9 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
         return entry ? entry.name : value;
     };
     AutoCompleteAsync.prototype.render = function () {
-        var _a = this.props, onChange = _a.onChange, onBlur = _a.onBlur, componentProps = _a.componentProps;
+        var _a = this.props, onChange = _a.onChange, componentProps = _a.componentProps;
         return React.createElement(InputWraper, tslib_1.__assign({}, this.props),
-            React.createElement(AutoComplete, tslib_1.__assign({ dataSource: this.state.dataSource, style: { width: "100%" }, onSelect: onChange, onSearch: this.onUpdateInput, onBlur: onBlur, filterOption: false }, componentProps)));
+            React.createElement(AutoComplete, tslib_1.__assign({ dataSource: this.state.dataSource, style: { width: "100%" }, onSelect: onChange, onSearch: this.onUpdateInput, filterOption: false }, componentProps)));
     };
     return AutoCompleteAsync;
 }(React.Component));
@@ -314,32 +313,38 @@ var AutoCompleteText = /** @class */ (function (_super) {
         return _this;
     }
     AutoCompleteText.prototype.render = function () {
-        var _a = this.props, componentProps = _a.componentProps, onChange = _a.onChange, onBlur = _a.onBlur, schema = _a.schema;
+        var _a = this.props, componentProps = _a.componentProps, onChange = _a.onChange, schema = _a.schema;
         return React.createElement(InputWraper, tslib_1.__assign({}, this.props),
-            React.createElement(AutoComplete, tslib_1.__assign({ dataSource: schema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: onChange, onBlur: onBlur, filterOption: defaultAutoCompleteFilter }, componentProps)));
+            React.createElement(AutoComplete, tslib_1.__assign({ dataSource: schema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: onChange, filterOption: defaultAutoCompleteFilter }, componentProps)));
     };
     return AutoCompleteText;
 }(React.Component));
 function GroupRenderer(_a) {
     var form = _a.form, schema = _a.schema, keyPath = _a.keyPath, componentProps = _a.componentProps;
     return React.createElement(Collapse, tslib_1.__assign({ defaultActiveKey: ["0"], style: { marginBottom: 15 } }, componentProps),
-        React.createElement(Collapse.Panel, { key: "0", header: schema.label }, renderFields(form, schema.children || [], keyPath + "." + schema.key)));
+        React.createElement(Collapse.Panel, { key: "0", header: schema.label }, renderFields(form, schema.children || [], keyPath.concat(schema.key))));
 }
 function ArrayFieldRenderer(props) {
-    return React.createElement(FieldArray, { name: props.keyPath + "." + props.schema.key, form: props.form, value: props.value }, function (keys, add) { return React.createElement(React.Fragment, null,
+    var list = Array.isArray(props.value) ? props.value : [];
+    return React.createElement(React.Fragment, null,
         React.createElement("label", null, props.schema.label),
-        React.createElement(Collapse, { activeKey: keys.map(function (x) { return x.key; }), style: { marginBottom: 16, marginTop: 16 } }, keys.map(function (_a, index) {
-            var key = _a.key, remove = _a.remove;
-            return React.createElement(Collapse.Panel, { forceRender: true, showArrow: false, key: key, header: React.createElement("div", null,
+        React.createElement(Collapse, { activeKey: list.map(function (_, i) { return String(i); }), style: { marginBottom: 16, marginTop: 16 } }, list.map(function (_, index) {
+            return React.createElement(Collapse.Panel, { forceRender: true, showArrow: false, key: String(index), header: React.createElement("div", null,
                     props.schema.label + " #" + (index + 1),
                     React.createElement("div", { className: "delete-button", onClick: function (e) { return e.stopPropagation(); } },
                         React.createElement(Tooltip, { placement: "topLeft", title: "\u5220\u9664", arrowPointAtCenter: true },
-                            React.createElement(Icon, { type: "close", style: { cursor: "pointer", marginRight: 8 }, onClick: remove })))) },
-                React.createElement("div", { className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, key)));
+                            React.createElement(Icon, { type: "close", style: { cursor: "pointer", marginRight: 8 }, onClick: function () {
+                                    var clone = list.slice();
+                                    clone.splice(index, 1);
+                                    props.onChange(clone);
+                                } })))) },
+                React.createElement("div", { className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, props.keyPath.concat(props.schema.key, index))));
         })),
         React.createElement("div", { className: "add-button" },
             React.createElement(Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
-                React.createElement(Button, { icon: "plus", onClick: add })))); });
+                React.createElement(Button, { icon: "plus", onClick: function () {
+                        props.onChange(list.concat(props.schema.defaultValue || {}));
+                    } }))));
 }
 addType("group", GroupRenderer);
 addType('text', TextInput);

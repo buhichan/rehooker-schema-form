@@ -11,7 +11,6 @@ import {RuntimeAsyncOptions} from "../form";
 import { setButton } from "../inject-submittable";
 import * as moment from "moment"
 import { ResolveMaybePromise } from '../resolve-maybe-promise';
-import { FieldArray } from '../field-array';
 
 const RadioGroup = Radio.Group;
 const {TextArea} =Input;
@@ -46,7 +45,6 @@ function TextInput(props:WidgetProps){
             name={props.schema.name}
             value={props.value}
             onChange={props.onChange}
-            onBlur={props.onBlur}
             {...props.componentProps}
         />
     </InputWraper>
@@ -181,7 +179,6 @@ function CheckboxInput (props:WidgetProps){
     return <InputWraper {...props}>
         <Checkbox
             onChange={(e)=>props.onChange((e.target as HTMLInputElement).checked)}
-            onBlur={props.onBlur}
             checked={Boolean(props.value)}
             {...props.componentProps}
         />
@@ -200,7 +197,6 @@ function DateTimeInput(props:WidgetProps){
             value={value}
             style={{width:"100%"}}
             onChange={(_,dateString)=>props.onChange(dateString)}
-            onBlur={props.onBlur}
             {...props.componentProps}
         />
     </InputWraper>
@@ -218,7 +214,6 @@ function DateInput(props:WidgetProps){
             value={value}
             style={{width:"100%"}}
             onChange={(_,dateString)=>{props.onChange(dateString)}}
-            onBlur={props.onBlur}
             {...props.componentProps}
         />
     </InputWraper>
@@ -236,7 +231,6 @@ function DateTimeRangeInput (props:WidgetProps){
             onChange={(_,dataStrings)=>{
                 props.onChange(dataStrings);
             }}
-            onBlur={props.onBlur}
             {...props.componentProps}
         />
     </InputWraper>
@@ -257,7 +251,6 @@ function NumberInput(props:WidgetProps){
                     props.onChange(parseFloat(value as any) )
                 }
             }} 
-            onBlur={props.onBlur}
             {...props.componentProps}
         />
     </InputWraper>
@@ -278,7 +271,6 @@ const AutoCompleteDefault = function(props:WidgetProps){
                     value={value}
                     filterOption={defaultAutoCompleteFilter}
                     onSelect={onChange}
-                    onBlur={props.onBlur}
                     {...props.componentProps}
                 />
             }}
@@ -325,7 +317,6 @@ class FileInput extends React.Component<WidgetProps,any>{
                     multiple={true}
                     onChange={this.onChange}
                     customRequest={this.customRequest}
-                    onBlur={this.props.onBlur}
                     {...this.props.componentProps}
                 >
                     <Button>
@@ -334,7 +325,7 @@ class FileInput extends React.Component<WidgetProps,any>{
                     </Button>
                 </Upload>
             </div>
-            <ErrorText>{this.props.meta.error}</ErrorText>
+            <ErrorText>{this.props.error}</ErrorText>
         </div>
     }
 }
@@ -345,7 +336,6 @@ function SelectRadio (props:WidgetProps){
             {options=><RadioGroup
                 value={props.value}
                 onChange={(v)=>props.onChange(v)}
-                onBlur={props.onBlur}
                 {...props.componentProps}
             >
                 {
@@ -373,7 +363,6 @@ function DateRangeInput (props:WidgetProps){
             defaultValue={[from?moment(from,dateFormat):undefined, to?moment(to,dateFormat):undefined]}
             format={dateFormat}
             onChange={(_,dateStrings)=>{props.onChange(dateStrings)}}
-            onBlur={props.onBlur}
             {...props.componentProps}
         />
     </InputWraper>
@@ -385,7 +374,6 @@ function TextareaInput (props:WidgetProps){
         <TextArea 
             value={props.value}
             onChange={(value)=>props.onChange(value)}
-            onBlur={props.onBlur}
             autosize={{minRows:4,maxRows:8}} 
             {...props.componentProps}
         />
@@ -443,14 +431,13 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
         dataSource:emptyArray
     };
     render(){
-        const {onChange,onBlur,componentProps} = this.props;
+        const {onChange,componentProps} = this.props;
         return <InputWraper {...this.props}>
             <AutoComplete
                 dataSource={this.state.dataSource}
                 style={{width:"100%"}}
                 onSelect={onChange}
                 onSearch={this.onUpdateInput}
-                onBlur={onBlur}
                 filterOption={false}
                 {...componentProps}
             />
@@ -465,13 +452,12 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
         return this.props.onChange(entry?entry.value:name);
     };
     render(){
-        const {componentProps,onChange,onBlur,schema} = this.props;
+        const {componentProps,onChange,schema} = this.props;
         return <InputWraper {...this.props}>
             <AutoComplete
                 dataSource={(schema.options as Options).map(itm=>({text:itm.name,value:itm.value}))}
                 onSearch={this.onUpdateInput}
                 onSelect={onChange}
-                onBlur={onBlur}
                 filterOption={defaultAutoCompleteFilter}
                 {...componentProps}
             />
@@ -483,43 +469,48 @@ function GroupRenderer({form,schema,keyPath,componentProps}:WidgetProps){
     return <Collapse defaultActiveKey={["0"]} style={{marginBottom:15}} {...componentProps}>
         <Collapse.Panel key={"0"} header={schema.label}>
             {
-                renderFields(form, schema.children || [], keyPath +"." + schema.key)
+                renderFields(form, schema.children || [], keyPath.concat(schema.key))
             }
         </Collapse.Panel>
     </Collapse>
 }
 
 function ArrayFieldRenderer(props:WidgetProps){
-    return <FieldArray name={props.keyPath+"."+props.schema.key} form={props.form} value={props.value}>
-        {(keys,add)=><>
-            <label>{props.schema.label}</label>
-            <Collapse activeKey={keys.map(x=>x.key)} style={{marginBottom:16,marginTop:16}}>
-            {
-                keys.map(({key,remove},index) => {
-                    return <Collapse.Panel forceRender showArrow={false} key={key} header={<div>
-                            {props.schema.label+" #"+(index+1)}
-                            <div className="delete-button" onClick={e=>e.stopPropagation()}>
-                                <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
-                                    <Icon type="close" style={{cursor:"pointer",marginRight:8}} onClick={remove}/>
-                                </Tooltip>
-                            </div>
-                        </div>}>
-                        <div  className="array-field-child">
-                            {
-                                props.schema.children && renderFields(props.form,props.schema.children,key)
-                            }
+    const list = Array.isArray(props.value) ? props.value : []
+    return <>
+        <label>{props.schema.label}</label>
+        <Collapse activeKey={list.map((_,i)=>String(i))} style={{marginBottom:16,marginTop:16}}>
+        {
+            list.map((_,index) => {
+                return <Collapse.Panel forceRender showArrow={false} key={String(index)} header={<div>
+                        {props.schema.label+" #"+(index+1)}
+                        <div className="delete-button" onClick={e=>e.stopPropagation()}>
+                            <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
+                                <Icon type="close" style={{cursor:"pointer",marginRight:8}} onClick={()=>{
+                                    const clone = list.slice()
+                                    clone.splice(index,1)
+                                    props.onChange(clone)
+                                }}/>
+                            </Tooltip>
                         </div>
-                    </Collapse.Panel>
-                })
-            }
-            </Collapse>
-            <div className="add-button">
-                <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
-                    <Button icon="plus" onClick={add}/>
-                </Tooltip>
-            </div>
-        </>}
-    </FieldArray>
+                    </div>}>
+                    <div  className="array-field-child">
+                        {
+                            props.schema.children && renderFields(props.form,props.schema.children,props.keyPath.concat(props.schema.key,index))
+                        }
+                    </div>
+                </Collapse.Panel>
+            })
+        }
+        </Collapse>
+        <div className="add-button">
+            <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
+                <Button icon="plus" onClick={()=>{
+                    props.onChange(list.concat(props.schema.defaultValue || {}))
+                }}/>
+            </Tooltip>
+        </div>
+    </>
 }
 
 addType("group",GroupRenderer)
