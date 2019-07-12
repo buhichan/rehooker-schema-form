@@ -25,6 +25,8 @@ Option.propTypes && ( Option.propTypes['value'] = PropTypes.any );
 
 const emptyArray:any[] = []
 
+const DEFAULT_DATETIME_FORMAT = "YYYY/MM/DD HH:mm:ss"
+
 function ErrorText({children}:{children:React.ReactText}){
     return children ? <div className="error-text" >{children}</div> : null
 }
@@ -208,15 +210,12 @@ function CheckboxInput (props:WidgetProps){
     </InputWraper>
 }
 
-
-
-
 function DateTimeInput(props:WidgetProps){
-    const value=props.value?moment(props.value):undefined;
+    const value = props.value ? props.componentProps.unixtime ? moment.unix(props.value) : moment(props.value):undefined;
     return <InputWraper {...props}>
         <DatePicker
             showTime
-            format={props.componentProps.dateFormat||"YYYY/MM/DD HH:mm:ss"}
+            format={props.componentProps.dateFormat||DEFAULT_DATETIME_FORMAT}
             value={value}
             style={{width:"100%"}}
             onChange={(_,dateString)=>props.onChange(dateString)}
@@ -244,13 +243,17 @@ function DateInput(props:WidgetProps){
 
 function DateTimeRangeInput (props:WidgetProps){
     let value =props.value
+    const range = [
+        (value&&value[0]&& props.componentProps.unixtime ? moment.unix(value[0]) : moment(value[0]))||moment(),
+        (value&&value[1]&& props.componentProps.unixtime ? moment.unix(value[1]) : moment(value[1]))||moment()
+    ]
     return <InputWraper {...props}>
         <RangePicker
             showTime={{ format: 'HH:mm:ss' }}
             style={{width:"100%"}}
-            format={props.componentProps.dateFormat||"YYYY/MM/DD HH:mm:ss"}
+            format={props.componentProps.dateFormat||DEFAULT_DATETIME_FORMAT}
             placeholder={['开始时间', '结束时间']}
-            value={[(value&&value[0]&&moment(value[0]))||moment(),(value&&value[1]&&moment(value[1]))||moment()]}
+            value={range}
             onChange={(_,dataStrings)=>{
                 props.onChange(dataStrings);
             }}

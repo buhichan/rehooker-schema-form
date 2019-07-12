@@ -56,8 +56,12 @@ export type FormFieldSchema = WidgetInjectedProps & {
     format?:(v:any)=>any,
     style?:React.CSSProperties,
     defaultValue?:any // set when mount
-    options?:Option[] | AsyncOptions | RuntimeAsyncOptions,
 
+    /** antd component specific props */
+    options?:Option[] | AsyncOptions | RuntimeAsyncOptions,
+    unixtime?:boolean
+    dateFormat?:string
+    
     wrapperProps?:any // used as antd's Form.Item props
 }
 
