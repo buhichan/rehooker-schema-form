@@ -7,6 +7,7 @@ import { createStore } from "rehooker";
 import { renderFields } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
+import { map, debounceTime } from 'rxjs/operators';
 var defaultFormState = {
     submitting: false,
     submitSucceeded: false,
@@ -15,9 +16,19 @@ var defaultFormState = {
     values: {},
 };
 export function createForm(options) {
-    return createStore(tslib_1.__assign({}, defaultFormState, options ? {
-        validator: options.validator,
+    var validator = options && options.validator;
+    var store = createStore(tslib_1.__assign({}, defaultFormState, options ? {
+        validator: validator,
     } : {}), options ? options.middleware : undefined);
+    store.stream.pipe(map(function (x) { return x.values; }), debounceTime(1000)).subscribe(function (values) {
+        if (validator) {
+            var errors_1 = validator(values);
+            store.next(function (f) { return (tslib_1.__assign({}, f, { errors: errors_1 })); });
+        }
+        else if (Object.keys(store.stream.value.errors).length > 0) {
+            store.next(function (f) { return (tslib_1.__assign({}, f, { errors: {} })); });
+        }
+    });
 }
 export function SchemaForm(props) {
     var handleSubmit = React.useMemo(function () { return function (e) {

@@ -60,19 +60,23 @@ export declare type FormFieldSchema = WidgetInjectedProps & {
     options?: Option[] | AsyncOptions | RuntimeAsyncOptions;
     wrapperProps?: any;
 };
+/**
+ * type ErrorMap = Record<string,string|null|undefined|Array<ErrorMap>|ErrorMap>
+ */
+declare type ErrorMap = Record<string, any>;
 export declare type FormState = {
     submitting: boolean;
     submitSucceeded: boolean;
     errors: any;
     values: any;
     initialValues: any;
-    validator?: (v: any) => any;
+    validator?: (v: any) => Promise<ErrorMap>;
 };
 declare type CreateFormOptions = {
     validator?: (v: any) => any;
     middleware?: OperatorFunction<Mutation<FormState>, Mutation<FormState>>;
 };
-export declare function createForm(options?: CreateFormOptions): Store<FormState>;
+export declare function createForm(options?: CreateFormOptions): void;
 export declare type SchemaFormProps = {
     schema: FormFieldSchema[];
     noButton?: boolean;

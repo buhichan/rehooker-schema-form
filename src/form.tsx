@@ -7,6 +7,7 @@ import { OperatorFunction } from 'rxjs';
 import { renderFields, FieldPath } from "./field";
 import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
+import { map, debounceTime } from 'rxjs/operators';
 
 export type Option = {name:string,value:any,group?:string}
 export type AsyncOptions = ()=>Promise<Option[]>
@@ -60,13 +61,18 @@ export type FormFieldSchema = WidgetInjectedProps & {
     wrapperProps?:any // used as antd's Form.Item props
 }
 
+/**
+ * type ErrorMap = Record<string,string|null|undefined|Array<ErrorMap>|ErrorMap>
+ */
+type ErrorMap = Record<string,any>
+
 export type FormState = {
     submitting:boolean,
     submitSucceeded:boolean,
     errors:any
     values:any
     initialValues:any,
-    validator?:(v:any)=>any,
+    validator?:(v:any)=>Promise<ErrorMap>,
 }
 
 const defaultFormState:FormState = {
@@ -83,12 +89,31 @@ type CreateFormOptions = {
 }
 
 export function createForm(options?:CreateFormOptions){
-    return createStore({
+    const validator = options && options.validator
+    const store = createStore({
         ...defaultFormState,
         ...options?{
-            validator:options.validator,
+            validator:validator,
         }:{}
     },options?options.middleware:undefined)
+
+    store.stream.pipe(
+        map(x=>x.values),
+        debounceTime(1000),
+    ).subscribe(values=>{
+        if(validator){
+            const errors = validator(values)
+            store.next(f=>({
+                ...f,
+                errors
+            }))
+        }else if(Object.keys(store.stream.value.errors).length > 0){
+            store.next(f=>({
+                ...f,
+                errors:{}
+            }))
+        }
+    })
 }
 
 // const store = createStore({})
