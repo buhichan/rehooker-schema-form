@@ -146,7 +146,11 @@ function SelectInput(props:WidgetProps){
     const filteredOptions = React.useMemo(()=>{
         const searchLowercase = search.toLowerCase()
         return options ? options.filter((option)=>{
-            return !search || option.name.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase)
+            return !search || 
+                props.value === option.value || 
+                props.value instanceof Array && props.value.includes(option.value) || 
+                option.name.toLowerCase().includes(searchLowercase) || 
+                option.group && option.group.toLowerCase().includes(searchLowercase)
         }) : null
     },[options,search])
 
