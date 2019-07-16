@@ -156,19 +156,6 @@ export let schema:FormFieldSchema[] = [
             }
         ]
     },{
-        key:"date",
-        type:"date",
-        label:"date",
-        placeholder:"placeholder",
-        listens:[
-            {
-                to:["text"],
-                then:(v)=>({
-                    placeholder:v
-                })
-            }
-        ]
-    },{
         key:"datetime",
         type:"datetime",
         label:"datetime",
@@ -416,7 +403,7 @@ export let schema:FormFieldSchema[] = [
         label:"自动完成(select)",
         placeholder:"placeholder",
         maxOptionCount:5,
-        options:new Array(100).fill(0).map((_,i)=>({name:String(i),value:String(i)}))
+        options:new Array(1000).fill(0).map((_,i)=>({name:String(i),value:String(i)}))
     },
     {
         key:"autocomplete2",
@@ -425,7 +412,7 @@ export let schema:FormFieldSchema[] = [
         placeholder:"placeholder",
         options:async t=>{
             if(/^\d+$/.test(t))
-                return new Array(100).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))
+                return new Array(1000).fill(0).map((_,i)=>({name:String(i),value:"value-"+i}))
             else return [{name:"0",value:0}];
         }
     },{
@@ -476,9 +463,10 @@ export let schema:FormFieldSchema[] = [
         key:"select()",
         label:"select with option group",
         type:'select',
-        options:new Array(100).fill(0).map((x,i)=>{
+        maxOptionCount: 10,
+        options:new Array(1000).fill(0).map((x,i)=>{
             return {
-                name:i+"",
+                name:"数字:"+i+"",
                 value:i,
                 group:Math.pow(i % 10,2) + "",
             }

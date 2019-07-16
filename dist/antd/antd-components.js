@@ -120,22 +120,28 @@ function SelectInput(props) {
     }, [finalValue, optionValueMap]);
     var filteredOptions = React.useMemo(function () {
         var searchLowercase = search.toLowerCase();
-        return options ? options.filter(function (option) {
-            return !search ||
-                props.value === option.value ||
-                props.value instanceof Array && props.value.includes(option.value) ||
-                option.name.toLowerCase().includes(searchLowercase) ||
-                option.group && option.group.toLowerCase().includes(searchLowercase);
+        return options ? !search ? options : options.filter(function (option) {
+            return option.name.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase);
         }) : null;
     }, [options, search]);
     var optionNumMaximum = fieldSchema.maxOptionCount || Infinity;
+    var slicedOptions = React.useMemo(function () {
+        if (!filteredOptions || filteredOptions.length < optionNumMaximum) {
+            return filteredOptions;
+        }
+        return filteredOptions.filter(function (x, i) {
+            return i < optionNumMaximum ||
+                props.value === x.value ||
+                props.value instanceof Array && props.value.includes(x.value);
+        });
+    }, [filteredOptions, optionNumMaximum, props.value]);
     var optionGroups = React.useMemo(function () {
-        return filteredOptions ? filteredOptions.slice(0, optionNumMaximum).reduce(function (map, option) {
+        return slicedOptions && slicedOptions.reduce(function (map, option) {
             map[option.group || ""] = map[option.group || ""] || [];
             map[option.group || ""].push(option);
             return map;
-        }, {}) : null;
-    }, [filteredOptions, optionNumMaximum]);
+        }, {});
+    }, [slicedOptions]);
     return React.createElement(InputWraper, tslib_1.__assign({}, props, { error: props.error || innerError }),
         React.createElement(Select, tslib_1.__assign({ allowClear: !fieldSchema.required, showSearch: true, style: { width: "100%" }, onSearch: setSearch, mode: fieldSchema.multiple ? "multiple" : "default", value: finalValue, onChange: onChange, filterOption: false }, componentProps, { onBlur: onBlur }),
             optionGroups && optionGroups[''] && optionGroups[''].map(function (option) {
@@ -150,8 +156,8 @@ function SelectInput(props) {
                 });
                 return React.createElement(Select.OptGroup, { key: group, label: group }, rendered);
             }),
-            filteredOptions && filteredOptions.length > optionNumMaximum &&
-                React.createElement(Select.Option, { disabled: true, key: "_____more", value: "_____more", style: { opacity: .5 } }, fieldSchema.maxOptionCountTips || "\u5DF2\u9690\u85CF\u5269\u4F59\u7684" + (filteredOptions.length - optionNumMaximum) + "\u4E2A\u9009\u9879, \u8BF7\u4F7F\u7528\u641C\u7D22")));
+            slicedOptions && filteredOptions && filteredOptions.length > slicedOptions.length &&
+                React.createElement(Select.Option, { disabled: true, key: "_____more", value: "_____more", style: { opacity: .5 } }, fieldSchema.maxOptionCountTips || "\u5DF2\u9690\u85CF\u5269\u4F59\u7684" + (filteredOptions.length - slicedOptions.length) + "\u4E2A\u9009\u9879, \u8BF7\u4F7F\u7528\u641C\u7D22")));
 }
 function CheckboxInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),

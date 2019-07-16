@@ -145,24 +145,31 @@ function SelectInput(props:WidgetProps){
 
     const filteredOptions = React.useMemo(()=>{
         const searchLowercase = search.toLowerCase()
-        return options ? options.filter((option)=>{
-            return !search || 
-                props.value === option.value || 
-                props.value instanceof Array && props.value.includes(option.value) || 
-                option.name.toLowerCase().includes(searchLowercase) || 
-                option.group && option.group.toLowerCase().includes(searchLowercase)
+        return options ? !search ? options : options.filter((option)=>{
+            return option.name.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase)
         }) : null
     },[options,search])
 
     const optionNumMaximum = fieldSchema.maxOptionCount || Infinity
 
+    const slicedOptions = React.useMemo(()=>{
+        if(!filteredOptions || filteredOptions.length < optionNumMaximum){
+            return filteredOptions
+        } 
+        return filteredOptions.filter((x,i)=>{
+            return i < optionNumMaximum || 
+            props.value === x.value || 
+            props.value instanceof Array && props.value.includes(x.value)
+        })
+    },[filteredOptions,optionNumMaximum,props.value]) 
+
     const optionGroups = React.useMemo(()=>{
-        return filteredOptions ? filteredOptions.slice(0,optionNumMaximum).reduce((map,option)=>{
+        return slicedOptions && slicedOptions.reduce((map,option)=>{
             map[option.group || ""] = map[option.group || ""] || []
             map[option.group || ""].push(option)
             return map
-        },{} as Record<string,Option[]>) : null
-    },[filteredOptions,optionNumMaximum]) 
+        },{} as Record<string,Option[]>)
+    },[slicedOptions])
 
     return <InputWraper {...props} error={props.error || innerError}>
         <Select
@@ -195,9 +202,9 @@ function SelectInput(props:WidgetProps){
                     </Select.OptGroup>
                 })}
             {
-                filteredOptions && filteredOptions.length > optionNumMaximum && 
+                slicedOptions && filteredOptions && filteredOptions.length > slicedOptions.length && 
                 <Select.Option disabled key="_____more" value="_____more" style={{opacity:.5}}>
-                    {fieldSchema.maxOptionCountTips || `已隐藏剩余的${filteredOptions.length - optionNumMaximum}个选项, 请使用搜索`}
+                    {fieldSchema.maxOptionCountTips || `已隐藏剩余的${filteredOptions.length - slicedOptions.length}个选项, 请使用搜索`}
                 </Select.Option>
             }
         </Select>
