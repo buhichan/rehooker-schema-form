@@ -121,7 +121,11 @@ function SelectInput(props) {
     var filteredOptions = React.useMemo(function () {
         var searchLowercase = search.toLowerCase();
         return options ? options.filter(function (option) {
-            return !search || option.name.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase);
+            return !search ||
+                props.value === option.value ||
+                props.value instanceof Array && props.value.includes(option.value) ||
+                option.name.toLowerCase().includes(searchLowercase) ||
+                option.group && option.group.toLowerCase().includes(searchLowercase);
         }) : null;
     }, [options, search]);
     var optionNumMaximum = fieldSchema.maxOptionCount || Infinity;
