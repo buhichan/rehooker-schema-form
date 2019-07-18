@@ -11,7 +11,7 @@ import { initialize, submit } from './mutations';
 
 export type Option = {name:string,value:any,group?:string}
 export type AsyncOptions = ()=>Promise<Option[]>
-export type RuntimeAsyncOptions = (search:any, props?:WidgetProps)=>Promise<Option[]>
+export type RuntimeAsyncOptions = (search:any)=>Promise<Option[]>
 export type FieldListens={
     /**
      * q:what is valuePath here?

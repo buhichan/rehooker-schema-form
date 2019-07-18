@@ -3,14 +3,13 @@
  */
 ///<reference path="./declarations.d.ts" />
 
-import * as React from "react"
-import {addType, renderFields} from "../field";
-import { AutoComplete, Radio ,Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input,Select,DatePicker, Collapse, Form} from 'antd';
-import {Option, WidgetProps} from "../form";
-import {RuntimeAsyncOptions} from "../form";
+import { AutoComplete, Button, Checkbox, Collapse, DatePicker, Form, Icon, Input, InputNumber, Radio, Select, Tooltip, Upload } from 'antd';
+import * as moment from "moment";
+import * as React from "react";
+import { addType, renderFields } from "../field";
+import { Option, RuntimeAsyncOptions, WidgetProps } from "../form";
 import { setButton } from "../inject-submittable";
-import * as moment from "moment"
-import { ResolveMaybePromise } from '../resolve-maybe-promise';
+import { useEnumOptions } from '../use-enum-options';
 
 const RadioGroup = Radio.Group;
 const {TextArea} =Input;
@@ -60,24 +59,7 @@ function SelectInput(props:WidgetProps){
 
     const {schema:fieldSchema,value,componentProps} = props
 
-    const [options,setOptions] = React.useState(null as null | Option[])
-    
-    React.useEffect(()=>{
-        if(Array.isArray(fieldSchema.options)){
-            setOptions(fieldSchema.options)
-        }
-    },[fieldSchema.options])
-
-    React.useEffect(()=>{
-        if(fieldSchema.options instanceof Function){
-            let canceled = false
-            fieldSchema.options(search,props).then((options)=>{
-                if(!canceled){
-                    setOptions(options)
-                }
-            })
-        }
-    },[fieldSchema.options instanceof Function && fieldSchema.options.length > 0 ? search : ""])
+    const options = useEnumOptions(props.schema.options,search)
 
     const optionValueMap = React.useMemo(()=>{
         if(!options || !options.length){
@@ -221,6 +203,21 @@ function CheckboxInput (props:WidgetProps){
     </InputWraper>
 }
 
+function CheckboxGroupInput (props:WidgetProps){
+    const options = useEnumOptions(props.schema.options)
+    return <InputWraper {...props}>
+        <Checkbox.Group
+            value={props.value}
+            onChange={props.onChange}
+            {...props.componentProps}
+        >
+            {options && options.map(x=>{
+                return <Checkbox value={x.value} key={x.value} data-option={x}>{x.name}</Checkbox>
+            })}
+        </Checkbox.Group>
+    </InputWraper>
+}
+
 function DateTimeInput(props:WidgetProps){
     const value = props.value ? props.componentProps.unixtime ? moment.unix(props.value) : moment(props.value):undefined;
     return <InputWraper {...props}>
@@ -288,19 +285,16 @@ const defaultAutoCompleteFilter = (input:string,element:any)=>{
 
 const AutoCompleteDefault = function(props:WidgetProps){
     const {value,onChange,schema} = props;
+    const options = useEnumOptions(schema.options)
     return <InputWraper {...props}>
-        <ResolveMaybePromise maybePromise={schema.options}>
-            {options=>{
-                return <AutoComplete
-                    dataSource={options?options.map(itm=>({value:itm.value,text:itm.name})):emptyArray}
-                    style={{ width:"100%" }}
-                    value={value}
-                    filterOption={defaultAutoCompleteFilter}
-                    onSelect={onChange}
-                    {...props.componentProps}
-                />
-            }}
-        </ResolveMaybePromise>
+        <AutoComplete
+            dataSource={options?options.map(itm=>({value:itm.value,text:itm.name})):emptyArray}
+            style={{ width:"100%" }}
+            value={value}
+            filterOption={defaultAutoCompleteFilter}
+            onSelect={onChange}
+            {...props.componentProps}
+        />
     </InputWraper>
 }
 
@@ -357,25 +351,24 @@ class FileInput extends React.Component<WidgetProps,any>{
 }
 
 function SelectRadio (props:WidgetProps){
+    const options = useEnumOptions(props.schema.options)
     return <InputWraper {...props}>
-        <ResolveMaybePromise maybePromise={props.schema.options}>
-            {options=><RadioGroup
-                value={props.value}
-                onChange={(v)=>props.onChange(v)}
-                {...props.componentProps}
-            >
-                {
-                    options?options.map((option) => (
-                        <Radio style={{
-                            width:"auto",
-                            flex:1,
-                            whiteSpace:"nowrap",
-                            margin:"0 15px 0 0"
-                        }} key={option.value} value={option.value} >{option.name}</Radio>
-                    )):null
-                }
-            </RadioGroup>}
-        </ResolveMaybePromise>
+        <RadioGroup
+            value={props.value}
+            onChange={(v)=>props.onChange(v)}
+            {...props.componentProps}
+        >
+            {
+                options?options.map((option) => (
+                    <Radio style={{
+                        width:"auto",
+                        flex:1,
+                        whiteSpace:"nowrap",
+                        margin:"0 15px 0 0"
+                    }} key={option.value} value={option.value} data-option={option} >{option.name}</Radio>
+                )):null
+            }
+        </RadioGroup>
     </InputWraper>
 }
 
@@ -436,7 +429,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
             clearTimeout(this.pendingUpdate);
         this.pendingUpdate = setTimeout(()=>{
             this.fetchingQuery = name;
-            const result = (this.props.schema.options as RuntimeAsyncOptions)(name,this.props);
+            const result = (this.props.schema.options as RuntimeAsyncOptions)(name);
             // if(result instanceof Promise)
             result.then(options=>{
                 if(this.fetchingQuery === name && this.$isMounted)
@@ -547,6 +540,7 @@ addType('select',SelectInput);
 addType('radio',SelectRadio)
 
 addType('checkbox',CheckboxInput);
+addType('checkbox-group', CheckboxGroupInput);
 
 addType('autocomplete-text',AutoCompleteText);
 
