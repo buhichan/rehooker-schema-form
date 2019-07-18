@@ -11,7 +11,7 @@ export declare type Option = {
     group?: string;
 };
 export declare type AsyncOptions = () => Promise<Option[]>;
-export declare type RuntimeAsyncOptions = (search: any, props?: WidgetProps) => Promise<Option[]>;
+export declare type RuntimeAsyncOptions = (search: any) => Promise<Option[]>;
 export declare type FieldListens = {
     /**
      * q:what is valuePath here?

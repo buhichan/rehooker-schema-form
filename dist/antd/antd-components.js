@@ -3,12 +3,12 @@
  */
 ///<reference path="./declarations.d.ts" />
 import * as tslib_1 from "tslib";
+import { AutoComplete, Button, Checkbox, Collapse, DatePicker, Form, Icon, Input, InputNumber, Radio, Select, Tooltip, Upload } from 'antd';
+import * as moment from "moment";
 import * as React from "react";
 import { addType, renderFields } from "../field";
-import { AutoComplete, Radio, Checkbox, InputNumber, Tooltip, Upload, Button, Icon, Input, Select, DatePicker, Collapse, Form } from 'antd';
 import { setButton } from "../inject-submittable";
-import * as moment from "moment";
-import { ResolveMaybePromise } from '../resolve-maybe-promise';
+import { useEnumOptions } from '../use-enum-options';
 var RadioGroup = Radio.Group;
 var TextArea = Input.TextArea;
 var RangePicker = DatePicker.RangePicker;
@@ -35,22 +35,7 @@ function SelectInput(props) {
     var _a = React.useState(""), search = _a[0], setSearch = _a[1];
     var onBlur = function () { return setSearch(""); };
     var fieldSchema = props.schema, value = props.value, componentProps = props.componentProps;
-    var _b = React.useState(null), options = _b[0], setOptions = _b[1];
-    React.useEffect(function () {
-        if (Array.isArray(fieldSchema.options)) {
-            setOptions(fieldSchema.options);
-        }
-    }, [fieldSchema.options]);
-    React.useEffect(function () {
-        if (fieldSchema.options instanceof Function) {
-            var canceled_1 = false;
-            fieldSchema.options(search, props).then(function (options) {
-                if (!canceled_1) {
-                    setOptions(options);
-                }
-            });
-        }
-    }, [fieldSchema.options instanceof Function && fieldSchema.options.length > 0 ? search : ""]);
+    var options = useEnumOptions(props.schema.options, search);
     var optionValueMap = React.useMemo(function () {
         if (!options || !options.length) {
             return null;
@@ -70,7 +55,7 @@ function SelectInput(props) {
         }
         props.onChange(newValue);
     };
-    var _c = React.useState(""), innerError = _c[0], setInnerError = _c[1];
+    var _b = React.useState(""), innerError = _b[0], setInnerError = _b[1];
     var finalValue = React.useMemo(function () {
         var finalValue = value;
         if (fieldSchema.multiple || componentProps.mode === "multiple") {
@@ -163,6 +148,13 @@ function CheckboxInput(props) {
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
         React.createElement(Checkbox, tslib_1.__assign({ onChange: function (e) { return props.onChange(e.target.checked); }, checked: Boolean(props.value) }, props.componentProps)));
 }
+function CheckboxGroupInput(props) {
+    var options = useEnumOptions(props.schema.options);
+    return React.createElement(InputWraper, tslib_1.__assign({}, props),
+        React.createElement(Checkbox.Group, tslib_1.__assign({ value: props.value, onChange: props.onChange }, props.componentProps), options && options.map(function (x) {
+            return React.createElement(Checkbox, { value: x.value, key: x.value, "data-option": x }, x.name);
+        })));
+}
 function DateTimeInput(props) {
     var value = props.value ? props.componentProps.unixtime ? moment.unix(props.value) : moment(props.value) : undefined;
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
@@ -201,10 +193,9 @@ var defaultAutoCompleteFilter = function (input, element) {
 };
 var AutoCompleteDefault = function (props) {
     var value = props.value, onChange = props.onChange, schema = props.schema;
+    var options = useEnumOptions(schema.options);
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(ResolveMaybePromise, { maybePromise: schema.options }, function (options) {
-            return React.createElement(AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange }, props.componentProps));
-        }));
+        React.createElement(AutoComplete, tslib_1.__assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange }, props.componentProps)));
 };
 var FileInput = /** @class */ (function (_super) {
     tslib_1.__extends(FileInput, _super);
@@ -252,13 +243,14 @@ var FileInput = /** @class */ (function (_super) {
     return FileInput;
 }(React.Component));
 function SelectRadio(props) {
+    var options = useEnumOptions(props.schema.options);
     return React.createElement(InputWraper, tslib_1.__assign({}, props),
-        React.createElement(ResolveMaybePromise, { maybePromise: props.schema.options }, function (options) { return React.createElement(RadioGroup, tslib_1.__assign({ value: props.value, onChange: function (v) { return props.onChange(v); } }, props.componentProps), options ? options.map(function (option) { return (React.createElement(Radio, { style: {
+        React.createElement(RadioGroup, tslib_1.__assign({ value: props.value, onChange: function (v) { return props.onChange(v); } }, props.componentProps), options ? options.map(function (option) { return (React.createElement(Radio, { style: {
                 width: "auto",
                 flex: 1,
                 whiteSpace: "nowrap",
                 margin: "0 15px 0 0"
-            }, key: option.value, value: option.value }, option.name)); }) : null); }));
+            }, key: option.value, value: option.value, "data-option": option }, option.name)); }) : null));
 }
 function DateRangeInput(props) {
     var dateFormat = props.schema.dateFormat || 'YYYY/MM/DD';
@@ -286,7 +278,7 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
                 clearTimeout(_this.pendingUpdate);
             _this.pendingUpdate = setTimeout(function () {
                 _this.fetchingQuery = name;
-                var result = _this.props.schema.options(name, _this.props);
+                var result = _this.props.schema.options(name);
                 // if(result instanceof Promise)
                 result.then(function (options) {
                     if (_this.fetchingQuery === name && _this.$isMounted)
@@ -380,6 +372,7 @@ addType('text', TextInput);
 addType('select', SelectInput);
 addType('radio', SelectRadio);
 addType('checkbox', CheckboxInput);
+addType('checkbox-group', CheckboxGroupInput);
 addType('autocomplete-text', AutoCompleteText);
 addType('datetime', DateTimeInput);
 addType('datetimeRange', DateTimeRangeInput);
