@@ -6,14 +6,15 @@ import { Store, useSource } from 'rehooker';
 import { combineLatest, merge } from 'rxjs';
 import { distinct, distinctUntilChanged, map } from 'rxjs/operators';
 import { isFullWidth } from './constants';
-import { FieldListens, FormFieldSchema, FormState, WidgetInjectedProps, WidgetProps } from "./form";
 import { changeValue } from './mutations';
 import { deepGet } from './utils';
+import { FormFieldSchema, FieldPath, FieldProps, FormState, WidgetInjectedProps } from './types';
+import { ComponentMap } from './config';
 /**
  * Created by buhi on 2017/7/26.
  */
 
-export function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: FieldPath) {
+export function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: FieldPath, componentMap:ComponentMap) {
     if (!schema)
         return null;
     return schema.map(field => {
@@ -23,36 +24,10 @@ export function renderFields(form: Store<FormState>, schema: FormFieldSchema[], 
             return null
         }
         if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-            return <StatefulField form={form} key={key} schema={field} keyPath={keyPath} />;
+            return <StatefulField componentMap={componentMap} form={form} key={key} schema={field} keyPath={keyPath} />;
         else
-            return <StatelessField form={form} key={key} schema={field} keyPath={keyPath} />;
+            return <StatelessField componentMap={componentMap} form={form} key={key} schema={field} keyPath={keyPath} />;
     })
-}
-
-type Widget = React.StatelessComponent<WidgetProps> | React.ComponentClass<WidgetProps>
-
-export function addType(name: string, widget: Widget) {
-    widgetRegistration.set(name, widget);
-}
-
-let widgetRegistration = new Map<string, Widget>();
-
-export function clearTypes() {
-    widgetRegistration.clear()
-}
-
-export function getType(name: string): Widget | undefined {
-    return widgetRegistration.get(name)
-}
-
-export type FieldPath = (string|number)[]
-
-export interface FieldProps {
-    form: Store<FormState>,
-    schema: FormFieldSchema,
-    keyPath: FieldPath,
-    listeners?: FieldListens,
-    noWrapper?:boolean,
 }
 
 export function getComponentProps(field: FormFieldSchema) {
@@ -79,6 +54,7 @@ export function getComponentProps(field: FormFieldSchema) {
         multiple,
         value,
         maxOptionCount,
+        componentMap,
         ...rest
     } = field;
     return rest
@@ -98,7 +74,7 @@ export function useField(form: Store<FormState>, key: FieldPath, format?: (v: an
 }
 
 const StatelessField = React.memo(function StatelessField(props: FieldProps) {
-    const { schema, form, keyPath } = props;
+    const { schema, form, keyPath, componentMap } = props;
     const componentProps = getComponentProps(schema)
 
     /** assume finalKey will not change */
@@ -123,14 +99,14 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
         + (componentProps.disabled ? " disabled" : "")
         + (fieldValue.error ? " invalid" : " valid")
     let fieldNode = null as React.ReactNode | null
-    if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
-        const StoredWidget = widgetRegistration.get(schema.type);
+    if (typeof schema.type === 'string' && componentMap.has(schema.type)) {
+        const StoredWidget = componentMap.get(schema.type);
         if (StoredWidget) {
-            fieldNode = <StoredWidget form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldValue} onChange={onChange} />
+            fieldNode = <StoredWidget componentMap={componentMap} form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldValue} onChange={onChange} />
         }
     } else if (typeof schema.type === 'function') {
         const Comp = schema.type
-        fieldNode = <Comp form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldValue} onChange={onChange} />
+        fieldNode = <Comp componentMap={componentMap} form={form} keyPath={keyPath} schema={schema} componentProps={componentProps} {...fieldValue} onChange={onChange} />
     }
     if(fieldNode !== null){
         return props.noWrapper ? <>{fieldNode}</> : <div className={className} style={schema.style}>
@@ -142,7 +118,7 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
         case "virtual-group": {
             const children = schema.children as Exclude<typeof schema.children, undefined>;
             return <>
-                {renderFields(form, children, keyPath)}
+                {renderFields(form, children, keyPath,componentMap)}
             </>
         }
         case "group": {
@@ -152,7 +128,7 @@ const StatelessField = React.memo(function StatelessField(props: FieldProps) {
                     <legend>{schema.label}</legend>
                     <div className="schema-node">
                         {
-                            renderFields(form, children, keyPath.concat(schema.key))
+                            renderFields(form, children, keyPath.concat(schema.key),componentMap)
                         }
                     </div>
                 </fieldset>
@@ -216,7 +192,7 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
         })
         return () => subscription.unsubscribe()
     }, [props.form, schema.listeners])
-    return <StatelessField schema={schema} form={props.form} keyPath={props.keyPath} noWrapper={props.noWrapper} />
+    return <StatelessField componentMap={props.componentMap} schema={schema} form={props.form} keyPath={props.keyPath} noWrapper={props.noWrapper} />
 })
 
 export type FormFieldProps = {
@@ -235,16 +211,17 @@ export type FormFieldProps = {
     defaultValue?:FormFieldSchema['defaultValue'] // set when mount
     options?:FormFieldSchema['options']
     wrapperProps?:any // used as antd's Form.Item props
+    componentMap:ComponentMap
 } & WidgetInjectedProps
 
 export function FormField(props: FormFieldProps) { //component flavored form field
-    const { form, keyPath = [] as string[], noWrapper,name, ...restField } = props
+    const { form, keyPath = [] as string[], noWrapper,name,componentMap, ...restField } = props
     const field = {
         ...restField,
         key: name
     } as FormFieldSchema
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return <StatefulField noWrapper={noWrapper} form={form} schema={field} keyPath={keyPath} />;
+        return <StatefulField componentMap={componentMap} noWrapper={noWrapper} form={form} schema={field} keyPath={keyPath} />;
     else
-        return <StatelessField noWrapper={noWrapper} form={form} schema={field} keyPath={keyPath} />;
+        return <StatelessField componentMap={componentMap} noWrapper={noWrapper} form={form} schema={field} keyPath={keyPath} />;
 }

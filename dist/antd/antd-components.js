@@ -6,17 +6,16 @@ import * as tslib_1 from "tslib";
 import { AutoComplete, Button, Checkbox, Collapse, DatePicker, Form, Icon, Input, InputNumber, Radio, Select, Tooltip, Upload } from 'antd';
 import * as moment from "moment";
 import * as React from "react";
-import { addType, renderFields } from "../field";
-import { setButton } from "../inject-submittable";
+import { renderFields } from "../field";
 import { useEnumOptions } from '../use-enum-options';
 var RadioGroup = Radio.Group;
 var TextArea = Input.TextArea;
 var RangePicker = DatePicker.RangePicker;
-var Option = Select.Option;
+// const Option = ;
 var PropTypes = require('prop-types');
 var RCSelect = require("rc-select").default;
 RCSelect.propTypes['value'] = PropTypes.any;
-Option.propTypes && (Option.propTypes['value'] = PropTypes.any);
+Select.Option.propTypes && (Select.Option.propTypes['value'] = PropTypes.any);
 Select.propTypes['value'] = PropTypes.any;
 var emptyArray = [];
 var DEFAULT_DATETIME_FORMAT = "YYYY/MM/DD HH:mm:ss";
@@ -341,9 +340,9 @@ var AutoCompleteText = /** @class */ (function (_super) {
     return AutoCompleteText;
 }(React.Component));
 function GroupRenderer(_a) {
-    var form = _a.form, schema = _a.schema, keyPath = _a.keyPath, componentProps = _a.componentProps;
+    var form = _a.form, schema = _a.schema, keyPath = _a.keyPath, componentMap = _a.componentMap, componentProps = _a.componentProps;
     return React.createElement(Collapse, tslib_1.__assign({ defaultActiveKey: ["0"], style: { marginBottom: 15 } }, componentProps),
-        React.createElement(Collapse.Panel, { key: "0", header: schema.label }, renderFields(form, schema.children || [], keyPath.concat(schema.key))));
+        React.createElement(Collapse.Panel, { key: "0", header: schema.label }, renderFields(form, schema.children || [], keyPath.concat(schema.key), componentMap)));
 }
 function ArrayFieldRenderer(props) {
     var list = Array.isArray(props.value) ? props.value : [];
@@ -359,7 +358,7 @@ function ArrayFieldRenderer(props) {
                                     clone.splice(index, 1);
                                     props.onChange(clone);
                                 } })))) },
-                React.createElement("div", { className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, props.keyPath.concat(props.schema.key, index))));
+                React.createElement("div", { className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, props.keyPath.concat(props.schema.key, index), props.componentMap)));
         })),
         React.createElement("div", { className: "add-button" },
             React.createElement(Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
@@ -367,31 +366,32 @@ function ArrayFieldRenderer(props) {
                         props.onChange(list.concat(props.schema.defaultValue || {}));
                     } }))));
 }
-addType("group", GroupRenderer);
-addType('text', TextInput);
-addType('select', SelectInput);
-addType('radio', SelectRadio);
-addType('checkbox', CheckboxInput);
-addType('checkbox-group', CheckboxGroupInput);
-addType('autocomplete-text', AutoCompleteText);
-addType('datetime', DateTimeInput);
-addType('datetimeRange', DateTimeRangeInput);
-addType('number', NumberInput);
-addType('autocomplete', AutoCompleteDefault);
-addType("file", FileInput);
-addType("dateRange", DateRangeInput);
-addType("textarea", TextareaInput);
-addType("password", TextInput);
-addType("email", TextInput);
-addType('text', TextInput);
-addType("array", ArrayFieldRenderer);
-addType("autocomplete-async", AutoCompleteAsync);
-setButton(function (props) {
+export var componentMap = new Map();
+componentMap.set("group", GroupRenderer);
+componentMap.set("select", SelectInput);
+componentMap.set("radio", SelectRadio);
+componentMap.set("checkbox", CheckboxInput);
+componentMap.set("checkbox-group", CheckboxGroupInput);
+componentMap.set("autocomplete-text", AutoCompleteText);
+componentMap.set("datetime", DateTimeInput);
+componentMap.set("datetimeRange", DateTimeRangeInput);
+componentMap.set("number", NumberInput);
+componentMap.set("autocomplete", AutoCompleteDefault);
+componentMap.set("file", FileInput);
+componentMap.set("date-range", DateRangeInput);
+componentMap.set("textarea", TextareaInput);
+componentMap.set("password", TextInput);
+componentMap.set("email", TextInput);
+componentMap.set("text", TextInput);
+componentMap.set("input", TextInput);
+componentMap.set("array", ArrayFieldRenderer);
+componentMap.set("autocomplete-async", AutoCompleteAsync);
+export var buttonRenderer = function (props) {
     return React.createElement("div", { style: { textAlign: "center", float: "left", margin: 15, width: "100%" } },
         React.createElement(Button.Group, null,
             React.createElement(Button, { style: {
                     backgroundColor: "transparent",
-                }, onClick: props.onReset, disabled: props.disabled, type: "default", htmlType: 'reset' }, "\u91CD\u7F6E"),
+                }, onClick: props.onReset, disabled: props.disabled, htmlType: 'reset' }, "\u91CD\u7F6E"),
             React.createElement(Button, { className: "raised-button", onClick: props.onSubmit, icon: props.submitSucceeded ? "check" : undefined, disabled: props.disabled, type: 'primary', loading: props.submitting, htmlType: 'submit' }, "\u63D0\u4EA4")));
-});
+};
 //# sourceMappingURL=antd-components.js.map

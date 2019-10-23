@@ -6,8 +6,9 @@ import * as React from 'react';
 import { createStore } from "rehooker";
 import { debounceTime, distinctUntilKeyChanged } from 'rxjs/operators';
 import { renderFields } from "./field";
-import { FormButtons } from './inject-submittable';
 import { initialize, submit } from './mutations';
+import { SchemaFormConfigConsumer } from './config';
+import { FormButtons } from '.';
 var emptyMap = {};
 var defaultFormState = {
     submitting: false,
@@ -62,9 +63,12 @@ export function SchemaForm(props) {
             });
         }
     }; }, [props.form]);
-    return React.createElement("form", { className: "schema-form", onSubmit: handleSubmit },
-        renderFields(props.form, props.schema, []),
-        (!props.noButton) ? React.createElement(FormButtons, { onSubmit: props.onSubmit || noopSubmit, form: props.form }) : null);
+    return React.createElement(SchemaFormConfigConsumer, null, function (_a) {
+        var componentMap = _a.componentMap;
+        return React.createElement("form", { className: "schema-form", onSubmit: handleSubmit },
+            renderFields(props.form, props.schema, [], componentMap),
+            (!props.noButton) ? React.createElement(FormButtons, { onSubmit: props.onSubmit || noopSubmit, form: props.form }) : null);
+    });
 }
 var noopSubmit = function () {
     return Promise.resolve();

@@ -2,18 +2,8 @@ import * as tslib_1 from "tslib";
 import * as React from 'react';
 import { useSource } from 'rehooker';
 import { map } from 'rxjs/operators';
-import { submit, reset } from '.';
-var FormButtonsImpl = function (props) {
-    return React.createElement("div", { className: "button" },
-        React.createElement("div", { className: "btn-group" },
-            React.createElement("button", { type: "submit", className: "btn btn-primary" + (props.disabled ? " disabled" : ""), disabled: props.disabled, onClick: props.onSubmit }, "submit"),
-            React.createElement("button", { type: "submit", className: "btn btn-primary" + (props.disabled ? " disabled" : ""), disabled: props.disabled, onClick: props.onSubmit }, "reset")));
-};
-export function setButton(buttons) {
-    if (buttons) {
-        FormButtonsImpl = buttons;
-    }
-}
+import { submit, reset } from './mutations';
+import { SchemaFormConfigConsumer } from "./config";
 export function FormButtons(props) {
     var res = useSource(props.form.stream, map(function (s) {
         var pristine = s.initialValues === s.values;
@@ -50,7 +40,10 @@ export function FormButtons(props) {
         }
     };
     if (!props.children)
-        return React.createElement(FormButtonsImpl, tslib_1.__assign({}, childProps));
+        return React.createElement(SchemaFormConfigConsumer, null, function (_a) {
+            var FormButtonsImpl = _a.buttonRenderer;
+            return React.createElement(FormButtonsImpl, tslib_1.__assign({}, childProps));
+        });
     return React.createElement(React.Fragment, null, props.children(childProps));
 }
 //# sourceMappingURL=inject-submittable.js.map

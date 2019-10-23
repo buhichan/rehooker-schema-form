@@ -1,5 +1,5 @@
-import { FormState, FormFieldSchema } from './form';
-import { FieldPath } from './field';
+import { FormState, FormFieldSchema } from './types';
+import { FieldPath } from './types';
 export declare class SubmissionError {
     error: any;
     constructor(error: any);

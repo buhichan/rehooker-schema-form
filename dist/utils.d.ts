@@ -1,4 +1,4 @@
-import { FieldPath } from './field';
+import { FieldPath } from './types';
 export declare const requestFileUpload: (multiple: boolean) => Promise<unknown>;
 export declare const requestDownload: (options: any) => void;
 export declare function deepGet(target: any, keys: FieldPath, i?: number): any;

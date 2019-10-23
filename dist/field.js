@@ -12,7 +12,7 @@ import { deepGet } from './utils';
 /**
  * Created by buhi on 2017/7/26.
  */
-export function renderFields(form, schema, keyPath) {
+export function renderFields(form, schema, keyPath, componentMap) {
     if (!schema)
         return null;
     return schema.map(function (field) {
@@ -22,23 +22,13 @@ export function renderFields(form, schema, keyPath) {
             return null;
         }
         if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-            return React.createElement(StatefulField, { form: form, key: key, schema: field, keyPath: keyPath });
+            return React.createElement(StatefulField, { componentMap: componentMap, form: form, key: key, schema: field, keyPath: keyPath });
         else
-            return React.createElement(StatelessField, { form: form, key: key, schema: field, keyPath: keyPath });
+            return React.createElement(StatelessField, { componentMap: componentMap, form: form, key: key, schema: field, keyPath: keyPath });
     });
 }
-export function addType(name, widget) {
-    widgetRegistration.set(name, widget);
-}
-var widgetRegistration = new Map();
-export function clearTypes() {
-    widgetRegistration.clear();
-}
-export function getType(name) {
-    return widgetRegistration.get(name);
-}
 export function getComponentProps(field) {
-    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, value = field.value, maxOptionCount = field.maxOptionCount, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple", "value", "maxOptionCount"]);
+    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, value = field.value, maxOptionCount = field.maxOptionCount, componentMap = field.componentMap, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple", "value", "maxOptionCount", "componentMap"]);
     return rest;
 }
 export function useField(form, key, format) {
@@ -51,7 +41,7 @@ export function useField(form, key, format) {
     })); }, [form, name, format]);
 }
 var StatelessField = React.memo(function StatelessField(props) {
-    var schema = props.schema, form = props.form, keyPath = props.keyPath;
+    var schema = props.schema, form = props.form, keyPath = props.keyPath, componentMap = props.componentMap;
     var componentProps = getComponentProps(schema);
     /** assume finalKey will not change */
     var finalKey = keyPath.concat(schema.key.split(".")); /** it begins with dot */
@@ -72,15 +62,15 @@ var StatelessField = React.memo(function StatelessField(props) {
         + (componentProps.disabled ? " disabled" : "")
         + (fieldValue.error ? " invalid" : " valid");
     var fieldNode = null;
-    if (typeof schema.type === 'string' && widgetRegistration.has(schema.type)) {
-        var StoredWidget = widgetRegistration.get(schema.type);
+    if (typeof schema.type === 'string' && componentMap.has(schema.type)) {
+        var StoredWidget = componentMap.get(schema.type);
         if (StoredWidget) {
-            fieldNode = React.createElement(StoredWidget, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldValue, { onChange: onChange }));
+            fieldNode = React.createElement(StoredWidget, tslib_1.__assign({ componentMap: componentMap, form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldValue, { onChange: onChange }));
         }
     }
     else if (typeof schema.type === 'function') {
         var Comp = schema.type;
-        fieldNode = React.createElement(Comp, tslib_1.__assign({ form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldValue, { onChange: onChange }));
+        fieldNode = React.createElement(Comp, tslib_1.__assign({ componentMap: componentMap, form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldValue, { onChange: onChange }));
     }
     if (fieldNode !== null) {
         return props.noWrapper ? React.createElement(React.Fragment, null, fieldNode) : React.createElement("div", { className: className, style: schema.style }, fieldNode);
@@ -89,14 +79,14 @@ var StatelessField = React.memo(function StatelessField(props) {
         //这里不可能存在getChildren还没有被执行的情况
         case "virtual-group": {
             var children = schema.children;
-            return React.createElement(React.Fragment, null, renderFields(form, children, keyPath));
+            return React.createElement(React.Fragment, null, renderFields(form, children, keyPath, componentMap));
         }
         case "group": {
             var children = schema.children;
             return React.createElement("div", { className: className, style: schema.style },
                 React.createElement("fieldset", null,
                     React.createElement("legend", null, schema.label),
-                    React.createElement("div", { className: "schema-node" }, renderFields(form, children, keyPath.concat(schema.key)))));
+                    React.createElement("div", { className: "schema-node" }, renderFields(form, children, keyPath.concat(schema.key), componentMap))));
         }
         default:
             return React.createElement("div", { className: "field" },
@@ -141,14 +131,14 @@ var StatefulField = React.memo(function StatefulField(props) {
         });
         return function () { return subscription.unsubscribe(); };
     }, [props.form, schema.listeners]);
-    return React.createElement(StatelessField, { schema: schema, form: props.form, keyPath: props.keyPath, noWrapper: props.noWrapper });
+    return React.createElement(StatelessField, { componentMap: props.componentMap, schema: schema, form: props.form, keyPath: props.keyPath, noWrapper: props.noWrapper });
 });
 export function FormField(props) {
-    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? [] : _a, noWrapper = props.noWrapper, name = props.name, restField = tslib_1.__rest(props, ["form", "keyPath", "noWrapper", "name"]);
+    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? [] : _a, noWrapper = props.noWrapper, name = props.name, componentMap = props.componentMap, restField = tslib_1.__rest(props, ["form", "keyPath", "noWrapper", "name", "componentMap"]);
     var field = tslib_1.__assign({}, restField, { key: name });
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
-        return React.createElement(StatefulField, { noWrapper: noWrapper, form: form, schema: field, keyPath: keyPath });
+        return React.createElement(StatefulField, { componentMap: componentMap, noWrapper: noWrapper, form: form, schema: field, keyPath: keyPath });
     else
-        return React.createElement(StatelessField, { noWrapper: noWrapper, form: form, schema: field, keyPath: keyPath });
+        return React.createElement(StatelessField, { componentMap: componentMap, noWrapper: noWrapper, form: form, schema: field, keyPath: keyPath });
 }
 //# sourceMappingURL=field.js.map

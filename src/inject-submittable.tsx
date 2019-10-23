@@ -1,30 +1,10 @@
 import * as React from 'react';
 import { Store, useSource } from 'rehooker';
-import { FormState } from './form';
 import { map } from 'rxjs/operators';
-import { submit, reset } from '.';
+import { submit, reset } from './mutations';
+import { FormState } from "./types"
+import { FormButtonsProps, SchemaFormConfigConsumer } from "./config"
 
-type FormButtonsProps = {
-    disabled:boolean,
-    pristine?:boolean,
-    submitSucceeded:boolean,
-    submitting:boolean,
-    onSubmit:(e?:any)=>void,
-    onReset:(e?:any)=>void
-}
-
-let FormButtonsImpl = (props:FormButtonsProps)=>{
-    return <div className="button">
-        <div className="btn-group">
-            <button type="submit" className={"btn btn-primary"+(props.disabled?" disabled":"")} disabled={props.disabled} onClick={props.onSubmit}>
-                submit
-            </button>
-            <button type="submit" className={"btn btn-primary"+(props.disabled?" disabled":"")} disabled={props.disabled} onClick={props.onSubmit}>
-                reset
-            </button>
-        </div>
-    </div>
-}
 
 export type ButtonProps = {
     disabled:boolean,
@@ -35,19 +15,13 @@ export type ButtonProps = {
     children:any
 }
 
-export function setButton(buttons:InjectFormSubmittableProps['children']){
-    if(buttons){
-        FormButtonsImpl = buttons
-    }
-}
-
 type InjectFormSubmittableProps = {  
     form:Store<FormState>,
     /**
      *  @deprecated disableResubmit, use submittable instead
      */
     disableResubmit?:boolean
-    children?:typeof FormButtonsImpl,
+    children?:(props:FormButtonsProps)=>React.ReactNode,
     onSubmit:(formValues:any)=>Promise<void>
 }
 
@@ -87,7 +61,11 @@ export function FormButtons(props:InjectFormSubmittableProps){
         }
     }
     if(!props.children)
-        return <FormButtonsImpl {...childProps}/>
+        return <SchemaFormConfigConsumer>
+            {({buttonRenderer: FormButtonsImpl})=>{
+                return <FormButtonsImpl {...childProps}/>
+            }}
+        </SchemaFormConfigConsumer>
     return <>
         {props.children(childProps)}
     </>

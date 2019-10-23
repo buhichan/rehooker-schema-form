@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Option } from './form';
+import { Option } from './types';
 import { FormFieldSchema } from './index';
 
 export function useEnumOptions(maybeOptions:FormFieldSchema['options'],search?:string){

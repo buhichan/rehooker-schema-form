@@ -3,23 +3,12 @@
  */
 import * as React from "react";
 import { Store } from 'rehooker';
-import { FieldListens, FormFieldSchema, FormState, WidgetInjectedProps, WidgetProps } from "./form";
+import { FormFieldSchema, FieldPath, FormState, WidgetInjectedProps } from './types';
+import { ComponentMap } from './config';
 /**
  * Created by buhi on 2017/7/26.
  */
-export declare function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: FieldPath): (JSX.Element | null)[] | null;
-declare type Widget = React.StatelessComponent<WidgetProps> | React.ComponentClass<WidgetProps>;
-export declare function addType(name: string, widget: Widget): void;
-export declare function clearTypes(): void;
-export declare function getType(name: string): Widget | undefined;
-export declare type FieldPath = (string | number)[];
-export interface FieldProps {
-    form: Store<FormState>;
-    schema: FormFieldSchema;
-    keyPath: FieldPath;
-    listeners?: FieldListens;
-    noWrapper?: boolean;
-}
+export declare function renderFields(form: Store<FormState>, schema: FormFieldSchema[], keyPath: FieldPath, componentMap: ComponentMap): (JSX.Element | null)[] | null;
 export declare function getComponentProps(field: FormFieldSchema): {
     [propName: string]: any;
     placeholder?: any;
@@ -65,6 +54,6 @@ export declare type FormFieldProps = {
     defaultValue?: FormFieldSchema['defaultValue'];
     options?: FormFieldSchema['options'];
     wrapperProps?: any;
+    componentMap: ComponentMap;
 } & WidgetInjectedProps;
 export declare function FormField(props: FormFieldProps): JSX.Element;
-export {};

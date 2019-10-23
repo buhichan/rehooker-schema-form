@@ -1,4 +1,4 @@
-import { FieldPath } from './field';
+import { FieldPath } from './types';
 
 export const requestFileUpload = (multiple:boolean)=>{
     let input:HTMLInputElement

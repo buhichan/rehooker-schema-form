@@ -6,20 +6,20 @@
 import { AutoComplete, Button, Checkbox, Collapse, DatePicker, Form, Icon, Input, InputNumber, Radio, Select, Tooltip, Upload } from 'antd';
 import * as moment from "moment";
 import * as React from "react";
-import { addType, renderFields } from "../field";
-import { Option, RuntimeAsyncOptions, WidgetProps } from "../form";
-import { setButton } from "../inject-submittable";
+import { renderFields } from "../field";
 import { useEnumOptions } from '../use-enum-options';
+import { WidgetProps,Option, RuntimeAsyncOptions } from '../types';
+import { FormButtonsProps, ComponentMap } from '../config';
 
 const RadioGroup = Radio.Group;
 const {TextArea} =Input;
 const {RangePicker} = DatePicker;
-const Option = Select.Option;
+// const Option = ;
 const PropTypes = require('prop-types')
 const RCSelect = require("rc-select").default
 
 RCSelect.propTypes['value'] = PropTypes.any;
-Option.propTypes && ( Option.propTypes['value'] = PropTypes.any );
+(Select as any).Option.propTypes && ( (Select as any).Option.propTypes['value'] = PropTypes.any );
 (Select as any).propTypes['value'] = PropTypes.any as any
 
 const emptyArray:any[] = []
@@ -484,11 +484,11 @@ class AutoCompleteText extends React.Component<WidgetProps,any>{
     }
 }
 
-function GroupRenderer({form,schema,keyPath,componentProps}:WidgetProps){
+function GroupRenderer({form,schema,keyPath,componentMap,componentProps}:WidgetProps){
     return <Collapse defaultActiveKey={["0"]} style={{marginBottom:15}} {...componentProps}>
         <Collapse.Panel key={"0"} header={schema.label}>
             {
-                renderFields(form, schema.children || [], keyPath.concat(schema.key))
+                renderFields(form, schema.children || [], keyPath.concat(schema.key), componentMap)
             }
         </Collapse.Panel>
     </Collapse>
@@ -515,7 +515,7 @@ function ArrayFieldRenderer(props:WidgetProps){
                     </div>}>
                     <div  className="array-field-child">
                         {
-                            props.schema.children && renderFields(props.form,props.schema.children,props.keyPath.concat(props.schema.key,index))
+                            props.schema.children && renderFields(props.form,props.schema.children,props.keyPath.concat(props.schema.key,index),props.componentMap)
                         }
                     </div>
                 </Collapse.Panel>
@@ -532,42 +532,30 @@ function ArrayFieldRenderer(props:WidgetProps){
     </>
 }
 
-addType("group",GroupRenderer)
 
-addType('text',TextInput);
-addType('select',SelectInput);
+export let componentMap:ComponentMap = new Map()
 
-addType('radio',SelectRadio)
+componentMap.set("group", GroupRenderer)
+componentMap.set("select", SelectInput)
+componentMap.set("radio", SelectRadio)
+componentMap.set("checkbox", CheckboxInput)
+componentMap.set("checkbox-group", CheckboxGroupInput)
+componentMap.set("autocomplete-text", AutoCompleteText)
+componentMap.set("datetime", DateTimeInput)
+componentMap.set("datetimeRange", DateTimeRangeInput)
+componentMap.set("number", NumberInput)
+componentMap.set("autocomplete", AutoCompleteDefault)
+componentMap.set("file", FileInput)
+componentMap.set("date-range", DateRangeInput)
+componentMap.set("textarea", TextareaInput)
+componentMap.set("password", TextInput)
+componentMap.set("email", TextInput)
+componentMap.set("text", TextInput)
+componentMap.set("input", TextInput)
+componentMap.set("array", ArrayFieldRenderer)
+componentMap.set("autocomplete-async", AutoCompleteAsync)
 
-addType('checkbox',CheckboxInput);
-addType('checkbox-group', CheckboxGroupInput);
-
-addType('autocomplete-text',AutoCompleteText);
-
-addType('datetime',DateTimeInput);
-
-addType('datetimeRange',DateTimeRangeInput);
-
-addType('number',NumberInput);
-
-addType('autocomplete',AutoCompleteDefault);
-
-addType("file",FileInput);
-
-addType("dateRange",DateRangeInput);
-
-addType("textarea",TextareaInput);
-
-
-addType("password",TextInput);
-addType("email",TextInput);
-addType('text',TextInput);
-
-addType("array",ArrayFieldRenderer);
-
-addType("autocomplete-async",AutoCompleteAsync);
-
-setButton(props=>{
+export const buttonRenderer = (props:FormButtonsProps)=>{
     return <div style={{textAlign:"center",float:"left",margin:15,width:"100%"}}>
         <Button.Group>
             <Button
@@ -576,7 +564,6 @@ setButton(props=>{
                 }}
                 onClick={props.onReset}
                 disabled={props.disabled}
-                type={"default"}
                 htmlType={'reset'}
             >
                 重置
@@ -586,7 +573,7 @@ setButton(props=>{
                 onClick={props.onSubmit}
                 icon={props.submitSucceeded?"check":undefined}
                 disabled={props.disabled}
-                type={'primary'}
+                type={'primary' as any}
                 loading={props.submitting}
                 htmlType={'submit'}
             >
@@ -594,4 +581,4 @@ setButton(props=>{
             </Button>
         </Button.Group>
     </div>
-})
+}

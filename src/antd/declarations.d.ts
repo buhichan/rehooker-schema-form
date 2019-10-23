@@ -1,6 +1,6 @@
-import {WidgetInjectedProps} from "../form"
+import {WidgetInjectedProps} from "../types"
 
-declare module "../form"{
+declare module "../types"{
     interface WidgetInjectedProps{
         /**
          * type: "file"

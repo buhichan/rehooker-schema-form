@@ -1,6 +1,6 @@
-import { FormState, FormFieldSchema } from './form';
+import { FormState, FormFieldSchema } from './types';
 import { deepSet } from './utils';
-import { FieldPath } from './field';
+import { FieldPath } from './types';
 
 export class SubmissionError{
     constructor(public error:any){}
