@@ -67,7 +67,7 @@ export function SchemaForm(props) {
         var componentMap = _a.componentMap;
         return React.createElement("form", { className: "schema-form", onSubmit: handleSubmit },
             renderFields(props.form, props.schema, [], componentMap),
-            (!props.noButton) ? React.createElement(FormButtons, { onSubmit: props.onSubmit || noopSubmit, form: props.form }) : null);
+            (!props.noButton) ? React.createElement(FormButtons, { allowPristine: props.allowPristine, onSubmit: props.onSubmit || noopSubmit, form: props.form }) : null);
     });
 }
 var noopSubmit = function () {

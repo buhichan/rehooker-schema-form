@@ -9,7 +9,7 @@ export function FormButtons(props) {
         var pristine = s.initialValues === s.values;
         var hasError = !s.valid;
         var submittable = !hasError &&
-            !pristine &&
+            (props.allowPristine || !pristine) &&
             !s.submitting &&
             !(props.disableResubmit && s.submitSucceeded);
         return {
@@ -18,7 +18,7 @@ export function FormButtons(props) {
             submitting: s.submitting,
             submitSucceeded: s.submitSucceeded
         };
-    }), [props.form]);
+    }), [props.form, props.allowPristine, props.disableResubmit]);
     if (!res)
         return null;
     var childProps = {

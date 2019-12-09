@@ -20,6 +20,7 @@ type InjectFormSubmittableProps = {
     /**
      *  @deprecated disableResubmit, use submittable instead
      */
+    allowPristine?:boolean
     disableResubmit?:boolean
     children?:(props:FormButtonsProps)=>React.ReactNode,
     onSubmit:(formValues:any)=>Promise<void>
@@ -30,7 +31,7 @@ export function FormButtons(props:InjectFormSubmittableProps){
         const pristine = s.initialValues === s.values
         const hasError = !s.valid
         const submittable = !hasError&&
-            !pristine &&
+            (props.allowPristine || !pristine) &&
             !s.submitting &&
             !(props.disableResubmit && s.submitSucceeded)
         return {
@@ -39,7 +40,7 @@ export function FormButtons(props:InjectFormSubmittableProps){
             submitting: s.submitting,
             submitSucceeded: s.submitSucceeded
         }
-    }),[props.form])
+    }),[props.form,props.allowPristine,props.disableResubmit])
     if(!res)
         return null
     const childProps = {

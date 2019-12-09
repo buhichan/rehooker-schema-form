@@ -72,6 +72,7 @@ export type SchemaFormProps = {
     form:Store<FormState>,
     initialValues?:any
     onSubmit?:(values:any)=>Promise<void>,
+    allowPristine?:boolean,
     disableInitialize?:boolean
     disableDestruction?:boolean
 }
@@ -106,7 +107,7 @@ export function SchemaForm(props:SchemaFormProps){
         {({componentMap})=><form className="schema-form" onSubmit={handleSubmit}>
             { renderFields(props.form,props.schema,[],componentMap)}
             {
-                (!props.noButton)? <FormButtons onSubmit={props.onSubmit || noopSubmit} form={props.form} /> : null
+                (!props.noButton)? <FormButtons allowPristine={props.allowPristine} onSubmit={props.onSubmit || noopSubmit} form={props.form} /> : null
             }
         </form>}
     </SchemaFormConfigConsumer>

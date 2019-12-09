@@ -15,6 +15,7 @@ declare type InjectFormSubmittableProps = {
     /**
      *  @deprecated disableResubmit, use submittable instead
      */
+    allowPristine?: boolean;
     disableResubmit?: boolean;
     children?: (props: FormButtonsProps) => React.ReactNode;
     onSubmit: (formValues: any) => Promise<void>;

@@ -15,6 +15,7 @@ export declare type SchemaFormProps = {
     form: Store<FormState>;
     initialValues?: any;
     onSubmit?: (values: any) => Promise<void>;
+    allowPristine?: boolean;
     disableInitialize?: boolean;
     disableDestruction?: boolean;
 };
