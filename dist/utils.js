@@ -1,4 +1,4 @@
-import * as tslib_1 from "tslib";
+import { __assign, __spreadArrays } from "tslib";
 export var requestFileUpload = function (multiple) {
     var input;
     input = document.getElementById('hidden-file-input');
@@ -45,7 +45,7 @@ export function deepGet(target, keys, i) {
 export function deepSet(target, keys, newValue, i, parentCursor) {
     if (i === void 0) { i = 0; }
     if (!parentCursor) {
-        target = Array.isArray(target) ? target.slice() : tslib_1.__assign({}, target);
+        target = Array.isArray(target) ? __spreadArrays(target) : __assign({}, target);
         parentCursor = target;
     }
     if (i === keys.length - 1) {
@@ -56,10 +56,10 @@ export function deepSet(target, keys, newValue, i, parentCursor) {
         var key = keys[i];
         var oldValue = parentCursor[keys[i]];
         if (Array.isArray(oldValue)) {
-            parentCursor[keys[i]] = oldValue.slice();
+            parentCursor[keys[i]] = __spreadArrays(oldValue);
         }
         else if (typeof oldValue === 'object') {
-            parentCursor[keys[i]] = tslib_1.__assign({}, oldValue);
+            parentCursor[keys[i]] = __assign({}, oldValue);
         }
         else {
             parentCursor[keys[i]] = typeof key === 'number' ? [] : {};

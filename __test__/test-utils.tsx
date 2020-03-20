@@ -1,6 +1,8 @@
 window['requestAnimationFrame'] = function(callback:any) {
     setTimeout(callback, 0);
 } as any
+require('matchmedia-polyfill');
+require('matchmedia-polyfill/matchMedia.addListener');
 
 import "jest";
 

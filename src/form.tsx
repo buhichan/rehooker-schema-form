@@ -14,6 +14,7 @@ import { FormButtons } from '.';
 
 const emptyMap = {}
 
+export {FormFieldSchema, WidgetProps} from "./types"
 
 const defaultFormState = {
     submitting:false,

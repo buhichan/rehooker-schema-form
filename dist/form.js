@@ -1,4 +1,4 @@
-import * as tslib_1 from "tslib";
+import { __assign, __awaiter, __generator } from "tslib";
 /**
  * Created by YS on 2016/10/31.
  */
@@ -20,11 +20,11 @@ var defaultFormState = {
 };
 export function createForm(options) {
     var _this = this;
-    var store = createStore(tslib_1.__assign({}, defaultFormState, { hasValidator: options && !!options.validator || false }), options ? options.middleware : undefined);
+    var store = createStore(__assign(__assign({}, defaultFormState), { hasValidator: options && !!options.validator || false }), options ? options.middleware : undefined);
     var validator = options && options.validator;
-    store.stream.pipe(distinctUntilKeyChanged("values"), debounceTime(options && options.validationDelay || 50)).subscribe(function (fs) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+    store.stream.pipe(distinctUntilKeyChanged("values"), debounceTime(options && options.validationDelay || 50)).subscribe(function (fs) { return __awaiter(_this, void 0, void 0, function () {
         var errors_1;
-        return tslib_1.__generator(this, function (_a) {
+        return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!(fs.values !== fs.initialValues)) return [3 /*break*/, 3];
@@ -32,10 +32,10 @@ export function createForm(options) {
                     return [4 /*yield*/, validator(fs.values)];
                 case 1:
                     errors_1 = _a.sent();
-                    store.next(function (f) { return (tslib_1.__assign({}, f, { valid: !Object.keys(errors_1).some(function (y) { return !!errors_1[y]; }), errors: errors_1 })); });
+                    store.next(function (f) { return (__assign(__assign({}, f), { valid: !Object.keys(errors_1).some(function (y) { return !!errors_1[y]; }), errors: errors_1 })); });
                     return [3 /*break*/, 3];
                 case 2:
-                    store.next(function (f) { return (tslib_1.__assign({}, f, { valid: true, errors: {} })); });
+                    store.next(function (f) { return (__assign(__assign({}, f), { valid: true, errors: {} })); });
                     _a.label = 3;
                 case 3: return [2 /*return*/];
             }
@@ -59,7 +59,7 @@ export function SchemaForm(props) {
     React.useEffect(function () { return function () {
         if (!props.disableDestruction) {
             props.form.next(function destroyOnUnmounnt(s) {
-                return tslib_1.__assign({}, s, defaultFormState);
+                return __assign(__assign({}, s), defaultFormState);
             });
         }
     }; }, [props.form]);

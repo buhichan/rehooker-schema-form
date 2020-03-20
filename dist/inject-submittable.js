@@ -1,4 +1,4 @@
-import * as tslib_1 from "tslib";
+import { __assign } from "tslib";
 import * as React from 'react';
 import { useSource } from 'rehooker';
 import { map } from 'rxjs/operators';
@@ -42,7 +42,7 @@ export function FormButtons(props) {
     if (!props.children)
         return React.createElement(SchemaFormConfigConsumer, null, function (_a) {
             var FormButtonsImpl = _a.buttonRenderer;
-            return React.createElement(FormButtonsImpl, tslib_1.__assign({}, childProps));
+            return React.createElement(FormButtonsImpl, __assign({}, childProps));
         });
     return React.createElement(React.Fragment, null, props.children(childProps));
 }

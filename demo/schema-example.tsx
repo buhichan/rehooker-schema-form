@@ -1,4 +1,4 @@
-import {FormFieldSchema, WidgetProps} from "../src/form";
+import {FormFieldSchema, WidgetProps} from "../dist/form";
 import * as React from "react"
 
 const arrayFieldChildren:FormFieldSchema[] = [

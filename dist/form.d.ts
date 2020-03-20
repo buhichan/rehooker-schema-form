@@ -2,6 +2,7 @@
 import { Mutation, Store } from "rehooker";
 import { OperatorFunction } from 'rxjs';
 import { FormState, FormFieldSchema } from './types';
+export { FormFieldSchema, WidgetProps } from "./types";
 declare type CreateFormOptions = {
     validator?: (v: any) => Promise<ErrorMap>;
     validationDelay?: number;
@@ -20,4 +21,3 @@ export declare type SchemaFormProps = {
     disableDestruction?: boolean;
 };
 export declare function SchemaForm(props: SchemaFormProps): JSX.Element;
-export {};

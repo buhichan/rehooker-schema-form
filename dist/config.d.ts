@@ -15,6 +15,6 @@ export declare type SchemaFormConfig = {
     buttonRenderer: (props: FormButtonsProps) => JSX.Element;
 };
 export declare const defaultSchemaFormConfig: SchemaFormConfig;
-export declare const SchemaFormConfigProvider: React.ProviderExoticComponent<React.ProviderProps<SchemaFormConfig>>;
-export declare const SchemaFormConfigConsumer: React.ExoticComponent<React.ConsumerProps<SchemaFormConfig>>;
+export declare const SchemaFormConfigProvider: React.Provider<SchemaFormConfig>;
+export declare const SchemaFormConfigConsumer: React.Consumer<SchemaFormConfig>;
 export {};

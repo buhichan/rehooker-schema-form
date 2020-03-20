@@ -3,7 +3,7 @@
  */
 ///<reference path="./declarations.d.ts" />
 
-import { AutoComplete, Button, Checkbox, Collapse, DatePicker, Form, Icon, Input, InputNumber, Radio, Select, Tooltip, Upload } from 'antd';
+import { AutoComplete, Button, Checkbox, Collapse, DatePicker, Form, Input, InputNumber, Radio, Select, Tooltip, Upload } from 'antd';
 import * as moment from "moment";
 import * as React from "react";
 import { renderFields } from "../field";
@@ -15,12 +15,12 @@ const RadioGroup = Radio.Group;
 const {TextArea} =Input;
 const {RangePicker} = DatePicker;
 // const Option = ;
-const PropTypes = require('prop-types')
-const RCSelect = require("rc-select").default
+// const PropTypes = require('prop-types')
+// const RCSelect = require("rc-select").default
 
-RCSelect.propTypes['value'] = PropTypes.any;
-(Select as any).Option.propTypes && ( (Select as any).Option.propTypes['value'] = PropTypes.any );
-(Select as any).propTypes['value'] = PropTypes.any as any
+// RCSelect.propTypes['value'] = PropTypes.any;
+// (Select as any).Option.propTypes && ( (Select as any).Option.propTypes['value'] = PropTypes.any );
+// (Select as any).propTypes['value'] = PropTypes.any as any
 
 const emptyArray:any[] = []
 
@@ -250,9 +250,11 @@ function DateTimeRangeInput (props:WidgetProps){
             placeholder={['开始时间', '结束时间']}
             value={range}
             onChange={(m,dataStrings)=>{
-                props.componentProps.unixtime ? 
-                props.onChange([m[0] && m[0].unix() || m[0],m[1] && m[1].unix() || m[1]]) : 
-                props.onChange(dataStrings);
+                if(m){
+                    props.componentProps.unixtime ? 
+                    props.onChange([m[0] && m[0].unix() || m[0],m[1] && m[1].unix() || m[1]]) : 
+                    props.onChange(dataStrings);
+                }
             }}
             {...props.componentProps}
         />
@@ -340,7 +342,7 @@ class FileInput extends React.Component<WidgetProps,any>{
                     {...this.props.componentProps}
                 >
                     <Button>
-                        <Icon type="upload" />
+                        {this.props.schema.icon}
                         <span>{this.props.schema.label}</span>
                     </Button>
                 </Upload>
@@ -505,11 +507,13 @@ function ArrayFieldRenderer(props:WidgetProps){
                         {props.schema.label+" #"+(index+1)}
                         <div className="delete-button" onClick={e=>e.stopPropagation()}>
                             <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
-                                <Icon type="close" style={{cursor:"pointer",marginRight:8}} onClick={()=>{
+                                <i style={{cursor:"pointer",marginRight:8}} onClick={()=>{
                                     const clone = list.slice()
                                     clone.splice(index,1)
                                     props.onChange(clone)
-                                }}/>
+                                }}>
+                                    {props.schema.closeIcon || "❌"}
+                                </i>
                             </Tooltip>
                         </div>
                     </div>}>

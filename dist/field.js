@@ -1,4 +1,4 @@
-import * as tslib_1 from "tslib";
+import { __assign, __rest, __spreadArrays } from "tslib";
 /**
  * Created by buhi on 2017/7/26.
  */
@@ -28,7 +28,7 @@ export function renderFields(form, schema, keyPath, componentMap) {
     });
 }
 export function getComponentProps(field) {
-    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, value = field.value, maxOptionCount = field.maxOptionCount, componentMap = field.componentMap, rest = tslib_1.__rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple", "value", "maxOptionCount", "componentMap"]);
+    var hide = field.hide, type = field.type, key = field.key, label = field.label, options = field.options, fullWidth = field.fullWidth, component = field.component, normalize = field.normalize, props = field.props, warn = field.warn, withRef = field.withRef, style = field.style, children = field.children, onChange = field.onChange, listens = field.listens, onFileChange = field.onFileChange, validate = field.validate, format = field.format, parse = field.parse, multiple = field.multiple, value = field.value, maxOptionCount = field.maxOptionCount, componentMap = field.componentMap, rest = __rest(field, ["hide", "type", "key", "label", "options", "fullWidth", "component", "normalize", "props", "warn", "withRef", "style", "children", "onChange", "listens", "onFileChange", "validate", "format", "parse", "multiple", "value", "maxOptionCount", "componentMap"]);
     return rest;
 }
 export function useField(form, key, format) {
@@ -44,7 +44,7 @@ var StatelessField = React.memo(function StatelessField(props) {
     var schema = props.schema, form = props.form, keyPath = props.keyPath, componentMap = props.componentMap;
     var componentProps = getComponentProps(schema);
     /** assume finalKey will not change */
-    var finalKey = keyPath.concat(schema.key.split(".")); /** it begins with dot */
+    var finalKey = __spreadArrays(keyPath, schema.key.split(".")); /** it begins with dot */
     var fieldValue = useField(form, finalKey, schema.format);
     var onChange = React.useMemo(function () { return function (valueOrEvent) {
         form.next(changeValue(finalKey, valueOrEvent, schema.parse));
@@ -65,12 +65,12 @@ var StatelessField = React.memo(function StatelessField(props) {
     if (typeof schema.type === 'string' && componentMap.has(schema.type)) {
         var StoredWidget = componentMap.get(schema.type);
         if (StoredWidget) {
-            fieldNode = React.createElement(StoredWidget, tslib_1.__assign({ componentMap: componentMap, form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldValue, { onChange: onChange }));
+            fieldNode = React.createElement(StoredWidget, __assign({ componentMap: componentMap, form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldValue, { onChange: onChange }));
         }
     }
     else if (typeof schema.type === 'function') {
         var Comp = schema.type;
-        fieldNode = React.createElement(Comp, tslib_1.__assign({ componentMap: componentMap, form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldValue, { onChange: onChange }));
+        fieldNode = React.createElement(Comp, __assign({ componentMap: componentMap, form: form, keyPath: keyPath, schema: schema, componentProps: componentProps }, fieldValue, { onChange: onChange }));
     }
     if (fieldNode !== null) {
         return props.noWrapper ? React.createElement(React.Fragment, null, fieldNode) : React.createElement("div", { className: className, style: schema.style }, fieldNode);
@@ -110,8 +110,8 @@ var StatefulField = React.memo(function StatefulField(props) {
         }));
         var processChange = function (change) {
             if (!!change) {
-                var value = change.value, rest = tslib_1.__rest(change, ["value"]);
-                var newSchema = tslib_1.__assign({}, props.schema, rest);
+                var value = change.value, rest = __rest(change, ["value"]);
+                var newSchema = __assign(__assign({}, props.schema), rest);
                 if ('value' in change) {
                     var finalKey = props.keyPath.concat(props.schema.key);
                     props.form.next(changeValue(finalKey, value, newSchema.parse));
@@ -134,8 +134,8 @@ var StatefulField = React.memo(function StatefulField(props) {
     return React.createElement(StatelessField, { componentMap: props.componentMap, schema: schema, form: props.form, keyPath: props.keyPath, noWrapper: props.noWrapper });
 });
 export function FormField(props) {
-    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? [] : _a, noWrapper = props.noWrapper, name = props.name, componentMap = props.componentMap, restField = tslib_1.__rest(props, ["form", "keyPath", "noWrapper", "name", "componentMap"]);
-    var field = tslib_1.__assign({}, restField, { key: name });
+    var form = props.form, _a = props.keyPath, keyPath = _a === void 0 ? [] : _a, noWrapper = props.noWrapper, name = props.name, componentMap = props.componentMap, restField = __rest(props, ["form", "keyPath", "noWrapper", "name", "componentMap"]);
+    var field = __assign(__assign({}, restField), { key: name });
     if (field.listens && (typeof field.listens === 'function' || Object.keys(field.listens).length))
         return React.createElement(StatefulField, { componentMap: componentMap, noWrapper: noWrapper, form: form, schema: field, keyPath: keyPath });
     else
