@@ -25,7 +25,7 @@ function ErrorText(_a) {
     return children ? React.createElement("div", { className: "error-text" }, children) : null;
 }
 function InputWraper(props) {
-    return React.createElement(Form.Item, __assign({ help: props.error, required: props.schema.required, validateStatus: props.error ? "error" : undefined, label: props.schema.label, hasFeedback: !!props.error }, props.schema.wrapperProps), props.children);
+    return React.createElement(Form.Item, __assign({ help: props.error || props.schema.help, required: props.schema.required, validateStatus: props.error ? "error" : "success", label: props.schema.label, hasFeedback: !!props.error }, props.schema.wrapperProps), props.children);
 }
 function TextInput(props) {
     return React.createElement(InputWraper, __assign({}, props),

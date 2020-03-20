@@ -34,7 +34,7 @@ function ErrorText({children}:{children:React.ReactText}){
 }
 
 function InputWraper(props:WidgetProps & {children:React.ReactNode}){
-    return <Form.Item help={props.error} required={props.schema.required} validateStatus={props.error ? "error" : undefined} label={props.schema.label} hasFeedback={!!props.error} {...props.schema.wrapperProps}>
+    return <Form.Item help={props.error || props.schema.help} required={props.schema.required} validateStatus={props.error ? "error" : "success"} label={props.schema.label} hasFeedback={!!props.error} {...props.schema.wrapperProps}>
         {props.children}
     </Form.Item>
 }

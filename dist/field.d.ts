@@ -31,6 +31,7 @@ export declare function getComponentProps(field: FormFieldSchema): {
     cancelLabel?: string | undefined;
     locale?: any;
     dateFormat?: string | undefined;
+    help?: React.ReactNode;
     defaultValue?: any;
     unixtime?: boolean | undefined;
     wrapperProps?: any;
