@@ -512,7 +512,7 @@ function ArrayFieldRenderer(props:WidgetProps){
                                     clone.splice(index,1)
                                     props.onChange(clone)
                                 }}>
-                                    {props.schema.closeIcon || "❌"}
+                                    {props.schema.deleteIcon || "✖️"}
                                 </i>
                             </Tooltip>
                         </div>
@@ -528,7 +528,7 @@ function ArrayFieldRenderer(props:WidgetProps){
         </Collapse>
         <div className="add-button">
             <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
-                <Button icon="plus" onClick={()=>{
+                <Button icon={props.schema.plusIcon || "+"} onClick={()=>{
                     props.onChange(list.concat(props.schema.defaultValue || {}))
                 }}/>
             </Tooltip>
@@ -575,7 +575,6 @@ export const buttonRenderer = (props:FormButtonsProps)=>{
             <Button
                 className="raised-button"
                 onClick={props.onSubmit}
-                icon={props.submitSucceeded?"check":undefined}
                 disabled={props.disabled}
                 type={'primary' as any}
                 loading={props.submitting}

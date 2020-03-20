@@ -359,12 +359,12 @@ function ArrayFieldRenderer(props) {
                                     var clone = list.slice();
                                     clone.splice(index, 1);
                                     props.onChange(clone);
-                                } }, props.schema.closeIcon || "❌")))) },
+                                } }, props.schema.deleteIcon || "✖️")))) },
                 React.createElement("div", { className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, props.keyPath.concat(props.schema.key, index), props.componentMap)));
         })),
         React.createElement("div", { className: "add-button" },
             React.createElement(Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
-                React.createElement(Button, { icon: "plus", onClick: function () {
+                React.createElement(Button, { icon: props.schema.plusIcon || "+", onClick: function () {
                         props.onChange(list.concat(props.schema.defaultValue || {}));
                     } }))));
 }
@@ -394,6 +394,6 @@ export var buttonRenderer = function (props) {
             React.createElement(Button, { style: {
                     backgroundColor: "transparent",
                 }, onClick: props.onReset, disabled: props.disabled, htmlType: 'reset' }, "\u91CD\u7F6E"),
-            React.createElement(Button, { className: "raised-button", onClick: props.onSubmit, icon: props.submitSucceeded ? "check" : undefined, disabled: props.disabled, type: 'primary', loading: props.submitting, htmlType: 'submit' }, "\u63D0\u4EA4")));
+            React.createElement(Button, { className: "raised-button", onClick: props.onSubmit, disabled: props.disabled, type: 'primary', loading: props.submitting, htmlType: 'submit' }, "\u63D0\u4EA4")));
 };
 //# sourceMappingURL=antd-components.js.map
