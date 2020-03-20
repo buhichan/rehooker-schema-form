@@ -8,6 +8,7 @@ import * as moment from "moment";
 import * as React from "react";
 import { renderFields } from "../field";
 import { useEnumOptions } from '../use-enum-options';
+import { DeleteOutlined, PlusOutlined, CheckOutlined } from "@ant-design/icons";
 var RadioGroup = Radio.Group;
 var TextArea = Input.TextArea;
 var RangePicker = DatePicker.RangePicker;
@@ -359,12 +360,12 @@ function ArrayFieldRenderer(props) {
                                     var clone = list.slice();
                                     clone.splice(index, 1);
                                     props.onChange(clone);
-                                } }, props.schema.deleteIcon || "✖️")))) },
+                                } }, props.schema.deleteIcon || React.createElement(DeleteOutlined, null))))) },
                 React.createElement("div", { className: "array-field-child" }, props.schema.children && renderFields(props.form, props.schema.children, props.keyPath.concat(props.schema.key, index), props.componentMap)));
         })),
         React.createElement("div", { className: "add-button" },
             React.createElement(Tooltip, { placement: "topLeft", title: "\u6DFB\u52A0", arrowPointAtCenter: true },
-                React.createElement(Button, { icon: props.schema.plusIcon || "+", onClick: function () {
+                React.createElement(Button, { icon: props.schema.plusIcon || React.createElement(PlusOutlined, null), onClick: function () {
                         props.onChange(list.concat(props.schema.defaultValue || {}));
                     } }))));
 }
@@ -394,6 +395,6 @@ export var buttonRenderer = function (props) {
             React.createElement(Button, { style: {
                     backgroundColor: "transparent",
                 }, onClick: props.onReset, disabled: props.disabled, htmlType: 'reset' }, "\u91CD\u7F6E"),
-            React.createElement(Button, { className: "raised-button", onClick: props.onSubmit, disabled: props.disabled, type: 'primary', loading: props.submitting, htmlType: 'submit' }, "\u63D0\u4EA4")));
+            React.createElement(Button, { className: "raised-button", onClick: props.onSubmit, disabled: props.disabled, icon: props.submitSucceeded ? React.createElement(CheckOutlined, null) : undefined, type: 'primary', loading: props.submitting, htmlType: 'submit' }, "\u63D0\u4EA4")));
 };
 //# sourceMappingURL=antd-components.js.map

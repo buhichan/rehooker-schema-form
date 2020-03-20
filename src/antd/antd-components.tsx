@@ -10,10 +10,13 @@ import { renderFields } from "../field";
 import { useEnumOptions } from '../use-enum-options';
 import { WidgetProps,Option, RuntimeAsyncOptions } from '../types';
 import { FormButtonsProps, ComponentMap } from '../config';
+import { DeleteOutlined, PlusOutlined, CheckOutlined } from "@ant-design/icons"
 
 const RadioGroup = Radio.Group;
 const {TextArea} =Input;
 const {RangePicker} = DatePicker;
+
+
 // const Option = ;
 // const PropTypes = require('prop-types')
 // const RCSelect = require("rc-select").default
@@ -512,7 +515,7 @@ function ArrayFieldRenderer(props:WidgetProps){
                                     clone.splice(index,1)
                                     props.onChange(clone)
                                 }}>
-                                    {props.schema.deleteIcon || "✖️"}
+                                    {props.schema.deleteIcon || <DeleteOutlined /> }
                                 </i>
                             </Tooltip>
                         </div>
@@ -528,7 +531,7 @@ function ArrayFieldRenderer(props:WidgetProps){
         </Collapse>
         <div className="add-button">
             <Tooltip placement="topLeft" title="添加" arrowPointAtCenter>
-                <Button icon={props.schema.plusIcon || "+"} onClick={()=>{
+                <Button icon={props.schema.plusIcon || <PlusOutlined />} onClick={()=>{
                     props.onChange(list.concat(props.schema.defaultValue || {}))
                 }}/>
             </Tooltip>
@@ -576,6 +579,7 @@ export const buttonRenderer = (props:FormButtonsProps)=>{
                 className="raised-button"
                 onClick={props.onSubmit}
                 disabled={props.disabled}
+                icon={props.submitSucceeded?<CheckOutlined />:undefined}
                 type={'primary' as any}
                 loading={props.submitting}
                 htmlType={'submit'}
