@@ -30,7 +30,8 @@ export function FormButtons(props:InjectFormSubmittableProps){
     const res = useSource(props.form.stream,map(s=>{
         const pristine = s.initialValues === s.values
         const hasError = !s.valid
-        const submittable = !hasError&&
+        const submittable = !hasError &&
+            !s.validating &&
             (props.allowPristine || !pristine) &&
             !s.submitting &&
             !(props.disableResubmit && s.submitSucceeded)

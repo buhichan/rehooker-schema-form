@@ -71,6 +71,7 @@ export type FormState = {
     initialValues:any,
     valid:boolean,
     hasValidator:boolean,
+    validating: boolean,
 }
 
 export type FieldPath = (string|number)[]

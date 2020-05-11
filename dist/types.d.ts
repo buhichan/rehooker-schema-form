@@ -72,6 +72,7 @@ export declare type FormState = {
     initialValues: any;
     valid: boolean;
     hasValidator: boolean;
+    validating: boolean;
 };
 export declare type FieldPath = (string | number)[];
 export interface FieldProps {

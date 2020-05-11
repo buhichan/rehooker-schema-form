@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { createStore, Mutation, Store } from "rehooker";
 import { OperatorFunction } from 'rxjs';
-import { debounceTime, distinctUntilKeyChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilKeyChanged, scan } from 'rxjs/operators';
 import { renderFields } from "./field";
 import { initialize, submit } from './mutations';
 import { FormState, FormFieldSchema } from './types';
@@ -23,6 +23,8 @@ const defaultFormState = {
     errors:emptyMap,
     values:emptyMap,
     valid:true,
+    hasValidator: false,
+    validating: false,
 }
 
 type CreateFormOptions = {
@@ -34,12 +36,13 @@ type CreateFormOptions = {
 type ErrorMap = Record<string,any>
 
 export function createForm(options?:CreateFormOptions){
+
+    const validator = options?.validator
+
     const store = createStore({
         ...defaultFormState,
-        hasValidator: options && !!options.validator || false,
+        hasValidator: !!validator,
     },options?options.middleware:undefined)
-
-    const validator = options && options.validator
 
     const hasValidatorError = (errorInfo:any):boolean => {
         return Object.keys(errorInfo).some(y=>{
@@ -57,13 +60,23 @@ export function createForm(options?:CreateFormOptions){
 
     store.stream.pipe(
         distinctUntilKeyChanged("values"),
-        debounceTime(options && options.validationDelay || 50)
-    ).subscribe(async fs=>{
-        if(fs.values !== fs.initialValues){
+        debounceTime(options && options.validationDelay || 50),
+        scan<FormState, [FormState?, FormState?]>((acc,v)=>{
+            acc[0] = acc[1]
+            acc[1] = v
+            return acc
+        }, [undefined,undefined])
+    ).subscribe(async ([prevFs, curFs])=>{
+        if(curFs && prevFs?.values !== curFs?.values){
             if(validator){
-                const errors = await validator(fs.values)
                 store.next(f=>({
                     ...f,
+                    validating: true,
+                }))
+                const errors = await validator(curFs.values)
+                store.next(f=>({
+                    ...f,
+                    validating: false,
                     valid:!hasValidatorError(errors),
                     errors
                 }))

@@ -9,6 +9,7 @@ export function FormButtons(props) {
         var pristine = s.initialValues === s.values;
         var hasError = !s.valid;
         var submittable = !hasError &&
+            !s.validating &&
             (props.allowPristine || !pristine) &&
             !s.submitting &&
             !(props.disableResubmit && s.submitSucceeded);
