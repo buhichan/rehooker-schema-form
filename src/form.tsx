@@ -41,6 +41,20 @@ export function createForm(options?:CreateFormOptions){
 
     const validator = options && options.validator
 
+    const hasValidatorError = (errorInfo:any):boolean => {
+        return Object.keys(errorInfo).some(y=>{
+            const errorItem = errorInfo[y]
+            if(Array.isArray(errorItem)){
+                return errorItem.some(hasValidatorError)
+            }
+            if(errorItem !== null && typeof errorItem === 'object'){
+                return hasValidatorError(errorItem)
+            }else{
+                return !!errorItem
+            }
+        })
+    }
+
     store.stream.pipe(
         distinctUntilKeyChanged("values"),
         debounceTime(options && options.validationDelay || 50)
@@ -50,7 +64,7 @@ export function createForm(options?:CreateFormOptions){
                 const errors = await validator(fs.values)
                 store.next(f=>({
                     ...f,
-                    valid:!Object.keys(errors).some(y=>!!errors[y]),
+                    valid:!hasValidatorError(errors),
                     errors
                 }))
             }else{
