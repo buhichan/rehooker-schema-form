@@ -41,7 +41,7 @@ function SelectInput(props) {
             return null;
         }
         else {
-            return new Map(options.map(function (x) { return [x.value, x.name]; }));
+            return new Map(options.map(function (x) { return [x.value, x.label]; }));
         }
     }, [options]);
     var onChange = function (newValue) {
@@ -106,7 +106,7 @@ function SelectInput(props) {
     var filteredOptions = React.useMemo(function () {
         var searchLowercase = search.toLowerCase();
         return options ? !search ? options : options.filter(function (option) {
-            return option.name.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase);
+            return option.label.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase);
         }) : null;
     }, [options, search]);
     var optionNumMaximum = fieldSchema.maxOptionCount || Infinity;
@@ -130,13 +130,13 @@ function SelectInput(props) {
     return React.createElement(InputWraper, __assign({}, props, { error: props.error || innerError }),
         React.createElement(Select, __assign({ allowClear: !fieldSchema.required, showSearch: true, style: { width: "100%" }, onSearch: setSearch, mode: fieldSchema.multiple ? "multiple" : "default", value: finalValue, onChange: onChange, filterOption: false }, componentProps, { onBlur: onBlur }),
             optionGroups && optionGroups[''] && optionGroups[''].map(function (option) {
-                var name = option.name, value = option.value, rest = __rest(option, ["name", "value"]);
+                var name = option.label, value = option.value, rest = __rest(option, ["label", "value"]);
                 return React.createElement(Select.Option, __assign({ key: name, value: value }, rest), name);
             }),
             optionGroups && Object.keys(optionGroups).filter(function (x) { return !!x; }).map(function (group) {
                 var options = optionGroups[group];
                 var rendered = options.map(function (option) {
-                    var name = option.name, value = option.value, rest = __rest(option, ["name", "value"]);
+                    var name = option.label, value = option.value, rest = __rest(option, ["label", "value"]);
                     return React.createElement(Select.Option, __assign({ key: name, value: value }, rest), name);
                 });
                 return React.createElement(Select.OptGroup, { key: group, label: group }, rendered);
@@ -152,7 +152,7 @@ function CheckboxGroupInput(props) {
     var options = useEnumOptions(props.schema.options);
     return React.createElement(InputWraper, __assign({}, props),
         React.createElement(Checkbox.Group, __assign({ value: props.value, onChange: props.onChange }, props.componentProps), options && options.map(function (x) {
-            return React.createElement(Checkbox, { value: x.value, key: x.value, "data-option": x }, x.name);
+            return React.createElement(Checkbox, { value: x.value, key: x.value, "data-option": x }, x.label);
         })));
 }
 function DateTimeInput(props) {
@@ -197,7 +197,7 @@ var AutoCompleteDefault = function (props) {
     var value = props.value, onChange = props.onChange, schema = props.schema;
     var options = useEnumOptions(schema.options);
     return React.createElement(InputWraper, __assign({}, props),
-        React.createElement(AutoComplete, __assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.name }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange }, props.componentProps)));
+        React.createElement(AutoComplete, __assign({ dataSource: options ? options.map(function (itm) { return ({ value: itm.value, text: itm.label }); }) : emptyArray, style: { width: "100%" }, value: value, filterOption: defaultAutoCompleteFilter, onSelect: onChange }, props.componentProps)));
 };
 var FileInput = /** @class */ (function (_super) {
     __extends(FileInput, _super);
@@ -252,7 +252,7 @@ function SelectRadio(props) {
                 flex: 1,
                 whiteSpace: "nowrap",
                 margin: "0 15px 0 0"
-            }, key: option.value, value: option.value, "data-option": option }, option.name)); }) : null));
+            }, key: option.value, value: option.value, "data-option": option }, option.label)); }) : null));
 }
 function DateRangeInput(props) {
     var dateFormat = props.schema.dateFormat || 'YYYY/MM/DD';
@@ -285,7 +285,7 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
                 result.then(function (options) {
                     if (_this.fetchingQuery === name && _this.$isMounted)
                         _this.setState({
-                            dataSource: options.map(function (itm) { return ({ text: itm.name, value: itm.value }); })
+                            dataSource: options.map(function (itm) { return ({ text: itm.label, value: itm.value }); })
                         });
                 });
                 // else this.setState({
@@ -316,7 +316,7 @@ var AutoCompleteAsync = /** @class */ (function (_super) {
     };
     AutoCompleteAsync.prototype.findName = function (value) {
         var entry = this.state.dataSource.find(function (x) { return x.value === value; });
-        return entry ? entry.name : value;
+        return entry ? entry.label : value;
     };
     AutoCompleteAsync.prototype.render = function () {
         var _a = this.props, onChange = _a.onChange, componentProps = _a.componentProps;
@@ -330,7 +330,7 @@ var AutoCompleteText = /** @class */ (function (_super) {
     function AutoCompleteText() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onUpdateInput = function (name) {
-            var entry = _this.props.schema.options.find(function (x) { return x.name === name; });
+            var entry = _this.props.schema.options.find(function (x) { return x.label === name; });
             return _this.props.onChange(entry ? entry.value : name);
         };
         return _this;
@@ -338,7 +338,7 @@ var AutoCompleteText = /** @class */ (function (_super) {
     AutoCompleteText.prototype.render = function () {
         var _a = this.props, componentProps = _a.componentProps, onChange = _a.onChange, schema = _a.schema;
         return React.createElement(InputWraper, __assign({}, this.props),
-            React.createElement(AutoComplete, __assign({ dataSource: schema.options.map(function (itm) { return ({ text: itm.name, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: onChange, filterOption: defaultAutoCompleteFilter }, componentProps)));
+            React.createElement(AutoComplete, __assign({ dataSource: schema.options.map(function (itm) { return ({ text: itm.label, value: itm.value }); }), onSearch: this.onUpdateInput, onSelect: onChange, filterOption: defaultAutoCompleteFilter }, componentProps)));
     };
     return AutoCompleteText;
 }(React.Component));

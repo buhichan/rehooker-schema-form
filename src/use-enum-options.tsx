@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Option } from './types';
+import { EnumOption } from './types';
 import { FormFieldSchema } from './index';
 
 export function useEnumOptions(maybeOptions:FormFieldSchema['options'],search?:string){
-    const [options,setOptions] = React.useState(null as null | Option[])
+    const [options,setOptions] = React.useState(null as null | EnumOption[])
     
     React.useEffect(()=>{
         if(Array.isArray(maybeOptions)){

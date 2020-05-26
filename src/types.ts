@@ -1,9 +1,9 @@
 import { Store } from 'rehooker';
 import { ComponentMap } from './config';
 
-export type Option = {name:string,value:any,group?:string}
-export type AsyncOptions = ()=>Promise<Option[]>
-export type RuntimeAsyncOptions = (search:any)=>Promise<Option[]>
+export type EnumOption = {label:string,value:any,group?:string}
+export type AsyncOptions = ()=>Promise<EnumOption[]>
+export type RuntimeAsyncOptions = (search:any)=>Promise<EnumOption[]>
 export type FieldListens={
     /**
      * q:what is valuePath here?
@@ -52,7 +52,7 @@ export type FormFieldSchema = WidgetInjectedProps & {
     defaultValue?:any // set when mount
 
     /** antd component specific props */
-    options?:Option[] | AsyncOptions | RuntimeAsyncOptions,
+    options?:EnumOption[] | AsyncOptions | RuntimeAsyncOptions,
     unixtime?:boolean
     dateFormat?:string
     

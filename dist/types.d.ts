@@ -1,13 +1,13 @@
 /// <reference types="react" />
 import { Store } from 'rehooker';
 import { ComponentMap } from './config';
-export declare type Option = {
-    name: string;
+export declare type EnumOption = {
+    label: string;
     value: any;
     group?: string;
 };
-export declare type AsyncOptions = () => Promise<Option[]>;
-export declare type RuntimeAsyncOptions = (search: any) => Promise<Option[]>;
+export declare type AsyncOptions = () => Promise<EnumOption[]>;
+export declare type RuntimeAsyncOptions = (search: any) => Promise<EnumOption[]>;
 export declare type FieldListens = {
     /**
      * q:what is valuePath here?
@@ -56,7 +56,7 @@ export declare type FormFieldSchema = WidgetInjectedProps & {
     style?: React.CSSProperties;
     defaultValue?: any;
     /** antd component specific props */
-    options?: Option[] | AsyncOptions | RuntimeAsyncOptions;
+    options?: EnumOption[] | AsyncOptions | RuntimeAsyncOptions;
     unixtime?: boolean;
     dateFormat?: string;
     wrapperProps?: any;

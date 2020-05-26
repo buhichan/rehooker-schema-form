@@ -8,7 +8,7 @@ import * as moment from "moment";
 import * as React from "react";
 import { renderFields } from "../field";
 import { useEnumOptions } from '../use-enum-options';
-import { WidgetProps,Option, RuntimeAsyncOptions } from '../types';
+import { WidgetProps,EnumOption, RuntimeAsyncOptions } from '../types';
 import { FormButtonsProps, ComponentMap } from '../config';
 import { DeleteOutlined, PlusOutlined, CheckOutlined } from "@ant-design/icons"
 
@@ -68,7 +68,7 @@ function SelectInput(props:WidgetProps){
         if(!options || !options.length){
             return null
         }else{
-            return new Map(options.map(x=>[x.value,x.name]))
+            return new Map(options.map(x=>[x.value,x.label]))
         }
     },[options])
 
@@ -131,7 +131,7 @@ function SelectInput(props:WidgetProps){
     const filteredOptions = React.useMemo(()=>{
         const searchLowercase = search.toLowerCase()
         return options ? !search ? options : options.filter((option)=>{
-            return option.name.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase)
+            return option.label.toLowerCase().includes(searchLowercase) || option.group && option.group.toLowerCase().includes(searchLowercase)
         }) : null
     },[options,search])
 
@@ -153,7 +153,7 @@ function SelectInput(props:WidgetProps){
             map[option.group || ""] = map[option.group || ""] || []
             map[option.group || ""].push(option)
             return map
-        },{} as Record<string,Option[]>)
+        },{} as Record<string,EnumOption[]>)
     },[slicedOptions])
 
     return <InputWraper {...props} error={props.error || innerError}>
@@ -171,7 +171,7 @@ function SelectInput(props:WidgetProps){
         >
             {
                 optionGroups && optionGroups[''] && optionGroups[''].map(option=>{
-                    const {name,value,...rest} = option
+                    const {label: name,value,...rest} = option
                     return <Select.Option key={name} value={value} {...rest}>{name}</Select.Option>
                 })
             }
@@ -179,7 +179,7 @@ function SelectInput(props:WidgetProps){
                 optionGroups && Object.keys(optionGroups).filter(x=>!!x).map(group=>{
                     const options = optionGroups[group]
                     const rendered = options.map(option=>{
-                        const {name,value,...rest} = option
+                        const {label: name,value,...rest} = option
                         return <Select.Option key={name} value={value} {...rest}>{name}</Select.Option>
                     })
                     return <Select.OptGroup key={group} label={group}>
@@ -215,7 +215,7 @@ function CheckboxGroupInput (props:WidgetProps){
             {...props.componentProps}
         >
             {options && options.map(x=>{
-                return <Checkbox value={x.value} key={x.value} data-option={x}>{x.name}</Checkbox>
+                return <Checkbox value={x.value} key={x.value} data-option={x}>{x.label}</Checkbox>
             })}
         </Checkbox.Group>
     </InputWraper>
@@ -293,7 +293,7 @@ const AutoCompleteDefault = function(props:WidgetProps){
     const options = useEnumOptions(schema.options)
     return <InputWraper {...props}>
         <AutoComplete
-            dataSource={options?options.map(itm=>({value:itm.value,text:itm.name})):emptyArray}
+            dataSource={options?options.map(itm=>({value:itm.value,text:itm.label})):emptyArray}
             style={{ width:"100%" }}
             value={value}
             filterOption={defaultAutoCompleteFilter}
@@ -370,7 +370,7 @@ function SelectRadio (props:WidgetProps){
                         flex:1,
                         whiteSpace:"nowrap",
                         margin:"0 15px 0 0"
-                    }} key={option.value} value={option.value} data-option={option} >{option.name}</Radio>
+                    }} key={option.value} value={option.value} data-option={option} >{option.label}</Radio>
                 )):null
             }
         </RadioGroup>
@@ -422,8 +422,8 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
             })
     }
     findName(value:any){
-        const entry = (this.state.dataSource as Option[]).find(x=>x.value === value);
-        return entry?entry.name:value;
+        const entry = (this.state.dataSource as EnumOption[]).find(x=>x.value === value);
+        return entry?entry.label:value;
     }
     onUpdateInput=(name:string)=>{
         const throttle = this.props.schema.throttle || 400
@@ -439,7 +439,7 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
             result.then(options=>{
                 if(this.fetchingQuery === name && this.$isMounted)
                     this.setState({
-                        dataSource:options.map(itm=>({text:itm.name,value:itm.value}))
+                        dataSource:options.map(itm=>({text:itm.label,value:itm.value}))
                     })
             });
             // else this.setState({
@@ -472,14 +472,14 @@ class AutoCompleteAsync extends React.Component<WidgetProps,any>{
 
 class AutoCompleteText extends React.Component<WidgetProps,any>{
     onUpdateInput=(name:string)=>{
-        const entry = (this.props.schema.options as Option[]).find(x=>x.name===name);
+        const entry = (this.props.schema.options as EnumOption[]).find(x=>x.label===name);
         return this.props.onChange(entry?entry.value:name);
     };
     render(){
         const {componentProps,onChange,schema} = this.props;
         return <InputWraper {...this.props}>
             <AutoComplete
-                dataSource={(schema.options as Option[]).map(itm=>({text:itm.name,value:itm.value}))}
+                dataSource={(schema.options as EnumOption[]).map(itm=>({text:itm.label,value:itm.value}))}
                 onSearch={this.onUpdateInput}
                 onSelect={onChange}
                 filterOption={defaultAutoCompleteFilter}
