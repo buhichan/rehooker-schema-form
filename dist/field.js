@@ -1,11 +1,11 @@
-import { __assign, __rest, __spreadArrays } from "tslib";
+import { __assign, __awaiter, __generator, __rest, __spreadArrays } from "tslib";
 /**
  * Created by buhi on 2017/7/26.
  */
 import * as React from "react";
 import { useSource } from 'rehooker';
 import { combineLatest, merge } from 'rxjs';
-import { distinct, distinctUntilChanged, map } from 'rxjs/operators';
+import { distinct, distinctUntilChanged, map, switchMap, debounceTime } from 'rxjs/operators';
 import { isFullWidth } from './constants';
 import { changeValue } from './mutations';
 import { deepGet } from './utils';
@@ -96,10 +96,11 @@ var StatelessField = React.memo(function StatelessField(props) {
     }
 });
 var StatefulField = React.memo(function StatefulField(props) {
+    var _this = this;
     var _a = React.useState(props.schema), schema = _a[0], setSchema = _a[1];
     var listens = schema.listens;
     React.useEffect(function () {
-        var $value = props.form.stream.pipe(map(function (x) { return x.values; }), distinct());
+        var $value = props.form.stream.pipe(map(function (x) { return x.values; }), distinct(), debounceTime(0));
         var $change = merge.apply(void 0, listens.map(function (x) {
             var listenTo = typeof x.to === 'function' ? x.to(props.keyPath.join(".")) : x.to;
             return combineLatest(listenTo.map(function (x) {
@@ -119,16 +120,11 @@ var StatefulField = React.memo(function StatefulField(props) {
                 setSchema(newSchema);
             }
         };
-        var subscription = $change.subscribe(function (change) {
-            if (change instanceof Promise) {
-                change.then(function (change) {
-                    !subscription.closed && processChange(change);
-                });
-            }
-            else {
-                processChange(change);
-            }
-        });
+        var subscription = $change.pipe(switchMap(function (change) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, change];
+            });
+        }); })).subscribe(processChange);
         return function () { return subscription.unsubscribe(); };
     }, [props.form, schema.listeners]);
     return React.createElement(StatelessField, { componentMap: props.componentMap, schema: schema, form: props.form, keyPath: props.keyPath, noWrapper: props.noWrapper });

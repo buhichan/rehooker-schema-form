@@ -4,7 +4,7 @@
 import * as React from "react";
 import { Store, useSource } from 'rehooker';
 import { combineLatest, merge } from 'rxjs';
-import { distinct, distinctUntilChanged, map } from 'rxjs/operators';
+import { distinct, distinctUntilChanged, map, switchMap, debounceTime } from 'rxjs/operators';
 import { isFullWidth } from './constants';
 import { changeValue } from './mutations';
 import { deepGet } from './utils';
@@ -148,6 +148,7 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
         const $value = props.form.stream.pipe(
             map(x => x.values),
             distinct(),
+            debounceTime(0),
         )
         const $change = merge(...listens.map((x) => {
             let listenTo = typeof x.to === 'function' ? x.to(props.keyPath.join(".")) : x.to
@@ -164,7 +165,7 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
                 map(x.then),
             )
         }))
-        const processChange = (change:void | Partial<FormFieldSchema> & {value?:any})=>{
+        const processChange = (change:undefined | Partial<FormFieldSchema> & {value?:any})=>{
             if(!!change){
                 const {
                     value,
@@ -181,15 +182,11 @@ const StatefulField = React.memo(function StatefulField(props: FieldProps) {
                 setSchema(newSchema)
             }
         }
-        const subscription = $change.subscribe(change => {
-            if (change instanceof Promise) {
-                change.then(change=>{
-                    !subscription.closed && processChange(change)
-                })
-            }else{
-                processChange(change)
-            }
-        })
+        const subscription = $change.pipe(
+            switchMap(async change=>{
+                return change
+            })
+        ).subscribe(processChange as any)
         return () => subscription.unsubscribe()
     }, [props.form, schema.listeners])
     return <StatelessField componentMap={props.componentMap} schema={schema} form={props.form} keyPath={props.keyPath} noWrapper={props.noWrapper} />
